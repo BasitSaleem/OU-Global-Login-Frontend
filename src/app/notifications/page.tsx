@@ -1,7 +1,9 @@
 "use client";
 
 import DashboardLayout from "@/components/layout/dashboard-layout";
-import NotificationItem from "@/components/layout/Notifications/NotificationItems";
+import NotificationsHeaderControls from "@/components/pages/Notifications/NotificationHeaderControls";
+import NotificationItem from "@/components/pages/Notifications/NotificationItems";
+import NotificationsSidebar from "@/components/pages/Notifications/NotificationSidebar";
 import { useState } from "react";
 import { HiMenu, HiX } from "react-icons/hi";
 
@@ -142,129 +144,26 @@ function NotificationsPage() {
 
   return (
     <div className="flex bg-white">
-      {/* Sidebar */}
-      <div
-        className={`fixed inset-y-0 left-0 z-40 w-[281px] bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out
-          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-          md:translate-x-0 md:static md:flex md:flex-col`}
-      >
-        {/* Mobile close header inside sidebar */}
-        <div className="p-4 border-b border-gray-200 flex items-center justify-between md:hidden bg-white">
-          <h1 className="text-xl font-bold">Notifications</h1>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="text-gray-600 hover:text-black"
-          >
-            <HiX size={24} />
-          </button>
-        </div>
+      <NotificationsSidebar
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+        sidebarFilters={sidebarFilters}
+        activeSidebarFilter={activeSidebarFilter}
+        setActiveSidebarFilter={setActiveSidebarFilter}
+        productFilters={productFilters}
+        activeProductFilter={activeProductFilter}
+        setActiveProductFilter={setActiveProductFilter}
+      />
 
-        {/* Sidebar content */}
-        <div className="p-8 pb-10 overflow-y-auto">
-          {/* Desktop title */}
-          <h1 className="text-2xl font-bold text-black mb-6 hidden md:block">
-            Notifications
-          </h1>
-
-          {/* Filter Tabs */}
-          <div className="flex gap-2 mb-6">
-            {sidebarFilters.map((filter) => (
-              <button
-                key={filter.id}
-                onClick={() => setActiveSidebarFilter(filter.id)}
-                className={`px-4 py-2 rounded-lg text-base transition-colors cursor-pointer ${
-                  activeSidebarFilter === filter.id
-                    ? "text-primary"
-                    : "text-black hover:bg-gray-50"
-                }`}
-                style={
-                  activeSidebarFilter === filter.id
-                    ? { backgroundColor: "#795CF512", color: "#795CF5" }
-                    : {}
-                }
-              >
-                {filter.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Products Section */}
-          <div>
-            <h3 className="text-base font-medium text-black mb-2">PRODUCTS</h3>
-            <div className="space-y-1">
-              {productFilters.map((product) => (
-                <button
-                  key={product.id}
-                  onClick={() => setActiveProductFilter(product.id)}
-                  className={`w-full text-left px-3 py-2 rounded-lg text-base transition-colors cursor-pointer ${
-                    activeProductFilter === product.id
-                      ? "text-primary"
-                      : "text-black hover:bg-gray-50"
-                  }`}
-                  style={
-                    activeProductFilter === product.id
-                      ? { backgroundColor: "#795CF512", color: "#795CF5" }
-                      : {}
-                  }
-                >
-                  {product.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Overlay for mobile */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/40 z-30 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
-        {/* Page Header */}
-        <div className="p-4 md:p-8 pb-6 border-b border-gray-100 bg-white flex-shrink-0 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {/* Mobile hamburger toggle (only for sidebar) */}
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="text-gray-600 hover:text-black md:hidden"
-            >
-              <HiMenu size={24} />
-            </button>
-            <h2 className="text-lg font-medium text-black">Latest</h2>
-          </div>
+        <NotificationsHeaderControls
+          setSidebarOpen={setSidebarOpen}
+          onMarkAllAsRead={markAllAsRead}
+          onlyUnread={onlyUnread}
+          setOnlyUnread={setOnlyUnread}
+        />
 
-          <div className="flex items-center gap-1 sm:gap-4">
-            <button
-              onClick={markAllAsRead} // ⬅️ add this
-              className="text-primary text-xs sm:text-lg text-[#795CF5] font-medium hover:underline cursor-pointer"
-            >
-              Mark all as read
-            </button>
-
-            <p className="text-[#4B5563] text-xs sm:text-lg hover:underline cursor-pointer"
-            onClick={() => setOnlyUnread((prev) => !prev)}
-            >Only show Unread</p>
-            <div
-              onClick={() => setOnlyUnread((prev) => !prev)}
-              className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-colors hidden sm:block ${
-                onlyUnread ? "bg-[#795CF5]" : "bg-gray-200"
-              }`}
-            >
-              <div
-                className={`w-4 h-4 bg-white rounded-full shadow transition-transform ${
-                  onlyUnread ? "translate-x-6" : "translate-x-0"
-                }`}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Notifications List */}
+        {/* Feed stays inline with your NotificationItem */}
         <div className="flex-1 overflow-y-auto">
           <div className="p-1 sm:p-8 pt-6">
             <div className="space-y-2">
@@ -282,11 +181,9 @@ function NotificationsPage() {
                     description={n.subtitle}
                     updates={n.updates}
                     onMarkAsRead={() =>
-                      setNotifications((prev) =>
-                        prev.map((notif) =>
-                          notif.id === n.id
-                            ? { ...notif, hasUnreadDot: false }
-                            : notif
+                      setNotifications(prev =>
+                        prev.map(notif =>
+                          notif.id === n.id ? { ...notif, hasUnreadDot: false } : notif
                         )
                       )
                     }

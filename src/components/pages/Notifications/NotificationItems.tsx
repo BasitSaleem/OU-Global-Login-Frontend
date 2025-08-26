@@ -9,7 +9,7 @@ type NotificationItemProps = {
   title: string;
   description: string;
   updates: string;
-  onMarkAsRead?: () => void; // 🔹 NEW
+  onMarkAsRead?: () => void;
 };
 
 const NotificationItem: React.FC<NotificationItemProps> = ({
@@ -43,19 +43,16 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
           <div className="flex items-center gap-3">
             <span className="text-xs sm:text-base text-gray-500">{time}</span>
 
-            {/* 🔹 Unread Dot */}
+            {/* Unread Dot */}
             {showDot && (
               <button
                 onClick={onMarkAsRead}
                 className="relative w-4 h-4 flex items-center justify-center group"
+                aria-label="Mark notification as read"
+                title="Mark as read"
               >
-                {/* Dot */}
                 <span className="w-2 h-2 rounded-full bg-[#795CF5] block" />
-
-                {/* Hover Circle */}
                 <span className="absolute inset-0 rounded-full border border-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                {/* Tooltip */}
                 <span className="absolute top-8 -left-[100%] -translate-x-1/2 whitespace-nowrap border border-gray-300 bg-white text-black text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
                   Mark as read
                 </span>
@@ -64,9 +61,11 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
           </div>
         </div>
 
-        <h4 className="text-xs sm:text-base font-medium text-black mb-1">{title}</h4>
+        <h4 className="text-xs sm:text-base font-medium text-black mb-1">
+          {title}
+        </h4>
         <p className="text-xs sm:text-sm text-gray-500 mb-2">{description}</p>
-        <p className="text-xs  sm:text-sm font-bold text-gray-500">{updates}</p>
+        <p className="text-xs sm:text-sm font-bold text-gray-500">{updates}</p>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import OrgCard from "../../organizations";
+import OrgCard from "../Organizations/organizations";
 
 export default function HomePage() {
   const orgs = [
