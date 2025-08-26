@@ -10,6 +10,7 @@ import {
   Menu,
   X
 } from 'lucide-react';
+import ComingSoonModal from '../modals/ComingSoonModal';
 
 interface SidebarProps {
   collapsed: boolean;
@@ -17,6 +18,7 @@ interface SidebarProps {
   onToggleCollapse: () => void;
   onToggleMobile: () => void;
   currentPath?: string;
+   onShowModal: (icon: React.ReactNode) => void; // 👈 new
 }
 
 export default function Sidebar({ 
@@ -24,8 +26,12 @@ export default function Sidebar({
   mobileOpen, 
   onToggleCollapse, 
   onToggleMobile,
-  currentPath = '/'
+  currentPath = '/',
+   onShowModal
 }: SidebarProps) {
+
+   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalIcon, setModalIcon] = useState<React.ReactNode>(null);
   
   const navigationItems = [
     {
@@ -46,6 +52,7 @@ export default function Sidebar({
       label: 'Inventory',
       image: 'https://api.builder.io/api/v1/image/assets/TEMP/3c4327f1dd595491744f2af966536dd987ec0a0a?width=66',
       hasExternal: true,
+       hasTime: true,
       isActive: currentPath === '/inventory'
     },
     {
@@ -64,22 +71,37 @@ export default function Sidebar({
       hasTime: true,
       isActive: currentPath === '/jungle'
     },
-    {
+     {
       href: '/analytics',
       icon: 'image',
       label: 'Analytics',
-      image: 'https://api.builder.io/api/v1/image/assets/TEMP/be8931ee53da43e803d3d1a1fddbcc1f9187aaa2?width=64',
+      image: 'https://api.builder.io/api/v1/image/assets/TEMP/72b1ea421112224fa1bea68adcd733be5aa8666b?width=76',
       hasBadge: true,
+       hasTime: true,
       isActive: currentPath === '/analytics'
-    }
+    },
+   
   ];
+
+const handleItemClick = (item: any, e: React.MouseEvent) => {
+    if (item.hasTime) {
+      e.preventDefault();
+      const iconNode = item.icon === 'image' 
+        ? <img src={item.image} alt={item.label} className="w-[40px] h-[40px]" /> 
+        : <item.icon className="w-6 h-6 text-[#795CF5]" />;
+
+        console.log('sfdsa', iconNode)
+      
+      onShowModal(iconNode); // 👈 call parent to show modal
+    }
+  };
 
   return (
     <>
       {/* Mobile Sidebar Overlay */}
       {mobileOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0  z-40 lg:hidden"
           onClick={onToggleMobile}
         />
       )}
@@ -116,6 +138,7 @@ export default function Sidebar({
             <a
               key={item.href}
               href={item.href}
+             onClick={(e) => handleItemClick(item, e)}
               className={`
                 flex items-center 
                 ${collapsed ? 'justify-center px-0' : 'px-3'} 
@@ -177,11 +200,11 @@ export default function Sidebar({
           
           {/* View All Products Grid Icon - appears right after Analytics when collapsed */}
           {collapsed && (
-            <div className="px-3 mt-1">
+            <div className="px-1 mt-1">
               <a
                 href="/view-all-product"
                 className={`
-                  flex items-center justify-center w-12 h-13 mx-auto rounded-lg border-t transition-all
+                  flex items-center justify-center w-12 h-13 mx-0 rounded-lg border-t transition-all
                   ${currentPath === '/view-all-product'
                     ? 'border-white shadow-md'
                     : 'border-white hover:shadow-sm'
@@ -217,6 +240,9 @@ export default function Sidebar({
             </a>
           </div>
         )}
+
+      
+
       </aside>
     </>
   );

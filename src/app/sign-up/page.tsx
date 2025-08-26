@@ -45,19 +45,19 @@ export default function SignUpPage() {
       </div>
 
       {/* Main content container */}
-      <div className="flex items-center justify-center px-4 sm:px-6 pb-4 sm:pb-6 pt-1 sm:pt-2">
+      <div className="flex items-center justify-center px-6 sm:px-6 pb-4 sm:pb-6 pt-1 sm:pt-2">
         {/* Main sign up card */}
-        <div className="relative z-10 w-full max-w-xs sm:max-w-sm">
-          <div className="bg-white rounded-2xl sm:rounded-[30px] shadow-[0_0_20px_0_rgba(0,0,0,0.06)] px-4 sm:px-5 py-3 sm:py-4">
+        <div className="relative z-10 w-full max-w-xs sm:max-w-md">
+          <div className="bg-white rounded-2xl sm:rounded-[15px] shadow-[0_0_20px_0_rgba(0,0,0,0.06)] px-4 sm:px-14 py-3 sm:py-4">
             {/* Welcome heading */}
-            <div className="text-center mb-3 sm:mb-4">
+            <div className="text-center mb-3 mt-2 sm:mb-4">
               <h1 className="text-base sm:text-lg font-bold text-gray-900">Sign up to get started</h1>
             </div>
 
             {/* Sign up form */}
             <form onSubmit={handleSubmit} className="space-y-2 sm:space-y-3">
               {/* Name fields row */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
                 {/* First Name field */}
                 <div>
                   <label htmlFor="firstName" className="block text-xs sm:text-sm font-medium text-gray-900 mb-1">
@@ -125,7 +125,7 @@ export default function SignUpPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2"
+                    className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
                   >
                     <svg width="16" height="12" viewBox="0 0 22 18" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 sm:w-4 sm:h-4">
                       <path d="M2.27489 12.2957C1.42496 11.1915 1 10.6394 1 9C1 7.3606 1.42496 6.80853 2.27489 5.70433C3.97196 3.49956 6.81811 1 11 1C15.1819 1 18.028 3.49956 19.7251 5.70433C20.575 6.80853 21 7.3606 21 9C21 10.6394 20.575 11.1915 19.7251 12.2957C18.028 14.5004 15.1819 17 11 17C6.81811 17 3.97196 14.5004 2.27489 12.2957Z" stroke="#C9C8CD" strokeWidth="2"/>
@@ -136,10 +136,10 @@ export default function SignUpPage() {
               </div>
 
               {/* Sign Up button */}
-              <div className="pt-2 sm:pt-3">
+              <div className="pt-2 sm:pt-3 sm:mt-5">
                 <button
                   type="submit"
-                  className="w-full h-8 sm:h-9 bg-[#795CF5] hover:bg-[#7C3AED] text-white text-xs sm:text-sm font-bold rounded-full transition-colors"
+                  className="w-full h-8 sm:h-9 bg-[#795CF5] hover:bg-[#7C3AED] text-white text-xs sm:text-sm font-bold rounded-full transition-colors cursor-pointer"
                 >
                   Sign Up
                 </button>
@@ -147,15 +147,15 @@ export default function SignUpPage() {
             </form>
 
             {/* Divider */}
-            <div className="my-3 sm:my-4 flex items-center">
+            <div className="my-3 sm:my-7 flex items-center">
               <div className="flex-1 border-t border-[#C9C8CD]"></div>
               <span className="px-2 sm:px-3 text-xs sm:text-sm text-gray-900">Or</span>
               <div className="flex-1 border-t border-[#C9C8CD]"></div>
             </div>
 
             {/* Social login buttons */}
-            <div className="space-y-2 sm:space-y-3">
-              <button className="w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border border-[#C9C8CD] rounded-full hover:bg-gray-50 transition-colors">
+            <div className="space-y-2 sm:space-y-5">
+              <button className="w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border border-[#C9C8CD] rounded-full hover:bg-gray-50 transition-colors cursor-pointer">
                 <img
                   src="https://api.builder.io/api/v1/image/assets/TEMP/dd3b649d040969f0c8d38d8d09939f56ff9ac765?width=48"
                   alt="Google"
@@ -163,7 +163,7 @@ export default function SignUpPage() {
                 />
                 <span className="text-xs sm:text-sm text-gray-900">Continue with Google</span>
               </button>
-              <button className="w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border border-[#C9C8CD] rounded-full hover:bg-gray-50 transition-colors">
+              <button className="w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border border-[#C9C8CD] rounded-full hover:bg-gray-50 transition-colors cursor-pointer">
                 <img
                   src="https://api.builder.io/api/v1/image/assets/TEMP/d812f75e7b50b0dc62e53bde84d2928047908c47?width=48"
                   alt="Microsoft"
@@ -176,7 +176,7 @@ export default function SignUpPage() {
             {/* Sign in link */}
             <div className="mt-3 sm:mt-4 text-center">
               <span className="text-xs sm:text-sm text-gray-900">Already have an account </span>
-              <Link href="/login" className="text-xs sm:text-sm font-bold text-[#795CF5] hover:underline">
+              <Link href="/login" className="text-xs sm:text-sm font-bold text-[#795CF5] hover:underline underline">
                 Sign In
               </Link>
             </div>

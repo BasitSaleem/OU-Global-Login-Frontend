@@ -1,4 +1,27 @@
+import OrgCard from "../../organizations";
+
 export default function HomePage() {
+  const orgs = [
+    {
+      initials: "RS",
+      color: "#F95C5B",
+      title: "Marketing",
+      subtitle: "Organization",
+    },
+    {
+      initials: "S",
+      color: "#795CF5",
+      title: "Spotify",
+      subtitle: "Organization",
+    },
+    {
+      initials: "RS",
+      color: "#B11E67",
+      title: "Al-Asif Interiors",
+      subtitle: "Organization",
+    },
+  ];
+  
   return (
     <div className="p-8">
       <div className="max-w-7xl mx-auto space-y-8">
@@ -19,7 +42,7 @@ export default function HomePage() {
             
             {/* Quote Card */}
             <div className="bg-white rounded-lg p-4 max-w-xl">
-              <p className="text-base text-gray-600">
+              <p className="text-base text-gray-600 cursor-auto">
                 You don't have to be great to start, but you have to start to be great.{' '}
                 <span className="font-bold">Zig Ziglar</span>
               </p>
@@ -40,10 +63,10 @@ export default function HomePage() {
         <div>
           <h2 className="text-heading-1 mb-6">Your Products</h2>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 cursor-pointer">
             {/* Owners Inventory Card */}
             <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-              <div className="flex items-start gap-6">
+              <div className="flex items-start gap-6 ">
                 <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(121, 92, 245, 0.07)' }}>
                   <img 
                     src="https://api.builder.io/api/v1/image/assets/TEMP/276b450512429e60a22a48a764c5c78681bf4093?width=66" 
@@ -84,60 +107,31 @@ export default function HomePage() {
         <div>
           <h2 className="text-heading-2 mb-4">Recent</h2>
           
-          <div className="space-y-3">
-            {/* Marketing */}
-            <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#F95C5B' }}>
-                  <span className="text-white text-base font-medium">RS</span>
-                </div>
-                <div>
-                  <h4 className="text-base font-medium">Marketing</h4>
-                  <p className="text-sm text-gray-600">Organization</p>
-                </div>
-              </div>
-            </div>
-            
-            {/* Spotify */}
-            <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#795CF5' }}>
-                  <span className="text-white text-base font-medium">S</span>
-                </div>
-                <div>
-                  <h4 className="text-base font-medium">Spotify</h4>
-                  <p className="text-sm text-gray-600">Organization</p>
-                </div>
-              </div>
-            </div>
-            
-            {/* Al-Asif Interiors */}
-            <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#B11E67' }}>
-                  <span className="text-white text-base font-medium">RS</span>
-                </div>
-                <div>
-                  <h4 className="text-base font-medium">Al-Asif Interiors</h4>
-                  <p className="text-sm text-gray-600">Organization</p>
-                </div>
-              </div>
-            </div>
-          </div>
+           <div className="space-y-3 cursor-pointer">
+      {orgs.map((org, i) => (
+        <OrgCard key={i} {...org} />
+      ))}
+    </div>
         </div>
 
         {/* What's New Section */}
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-heading-2 mb-1">What's New</h3>
-              <p className="text-sm text-gray-600">Check out our latest updates and features</p>
-            </div>
-            <button className="text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity" style={{ backgroundColor: '#795CF5' }}>
-              Explore All Products
-            </button>
-          </div>
-        </div>
+     <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6">
+  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    {/* Left Side */}
+    <div>
+      <h3 className="text-lg sm:text-xl font-bold text-black mb-1">What's New</h3>
+      <p className="text-xs sm:text-sm text-gray-600">
+        Check out our latest updates and features
+      </p>
+    </div>
+
+    {/* Right Side */}
+    <button className="w-full sm:w-auto text-white text-xs sm:text-sm px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:opacity-90 transition-opacity cursor-pointer bg-[#795CF5]">
+      Explore All Products
+    </button>
+  </div>
+</div>
+
       </div>
     </div>
   );

@@ -45,13 +45,13 @@ export default function LoginPage() {
       </div>
 
       {/* Main content container */}
-      <div className="flex items-center justify-center px-4 sm:px-6 pb-4 sm:pb-6 pt-1 sm:pt-2">
+      <div className="flex items-center justify-center px-6 h-[450px] sm:h-full sm:px-6 pb-4 sm:pb-6 pt-1 sm:pt-2">
         {/* Main login card */}
-        <div className="relative z-10 w-full max-w-xs sm:max-w-sm">
-          <div className="bg-white rounded-2xl sm:rounded-[30px] shadow-[0_0_20px_0_rgba(0,0,0,0.06)] px-4 sm:px-5 py-3 sm:py-4">
+        <div className="relative z-10 w-full max-w-sm sm:max-w-md xl:max-w-md">
+          <div className="bg-white rounded-2xl sm:rounded-[16px] shadow-[0_0_20px_0_rgba(0,0,0,0.06)] px-4 sm:px-14 py-3 sm:py-4">
             {/* Welcome heading */}
-            <div className="text-center mb-3 sm:mb-4">
-              <h1 className="text-base sm:text-lg font-bold text-gray-900">Welcome back</h1>
+            <div className="text-center mb-3 mt-2 sm:mb-4">
+              <h1 className="text-base sm:text-xl font-bold text-gray-900">Welcome back</h1>
             </div>
 
             {/* Login form */}
@@ -90,7 +90,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2"
+                    className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
                   >
                     <svg width="16" height="12" viewBox="0 0 22 18" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 sm:w-4 sm:h-4">
                       <path d="M2.27489 12.2957C1.42496 11.1915 1 10.6394 1 9C1 7.3606 1.42496 6.80853 2.27489 5.70433C3.97196 3.49956 6.81811 1 11 1C15.1819 1 18.028 3.49956 19.7251 5.70433C20.575 6.80853 21 7.3606 21 9C21 10.6394 20.575 11.1915 19.7251 12.2957C18.028 14.5004 15.1819 17 11 17C6.81811 17 3.97196 14.5004 2.27489 12.2957Z" stroke="#C9C8CD" strokeWidth="2"/>
@@ -107,20 +107,20 @@ export default function LoginPage() {
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    className="w-3 h-3 sm:w-4 sm:h-4 border border-[#C9C8CD] rounded focus:ring-[#795CF5] focus:ring-1 bg-white"
+                    className="w-3 h-3 sm:w-4 sm:h-4 border border-[#C9C8CD] rounded focus:ring-[#795CF5] focus:ring-1 cursor-pointer"
                   />
                   <span className="text-xs text-gray-900">Remember me</span>
                 </label>
-                <Link href="/forgot-password" className="text-xs font-bold text-[#795CF5] hover:underline">
+                <Link href="/forgot-password" className="text-xs font-bold text-[#795CF5] underline hover:underline">
                   Forget Password?
                 </Link>
               </div>
 
               {/* Sign In button */}
-              <div className="pt-2 sm:pt-3">
+              <div className="pt-2 sm:pt-3 sm:mt-5">
                 <button
                   type="submit"
-                  className="w-full h-8 sm:h-9 bg-[#795CF5] hover:bg-[#7C3AED] text-white text-xs sm:text-sm font-bold rounded-full transition-colors"
+                  className="w-full h-8 sm:h-9 bg-[#795CF5] hover:bg-[#7C3AED] text-white text-xs sm:text-sm font-bold rounded-full transition-colors cursor-pointer"
                 >
                   Sign In
                 </button>
@@ -128,15 +128,15 @@ export default function LoginPage() {
             </form>
 
             {/* Divider */}
-            <div className="my-3 sm:my-4 flex items-center">
+            <div className="my-3 sm:my-7 flex items-center">
               <div className="flex-1 border-t border-[#C9C8CD]"></div>
               <span className="px-2 sm:px-3 text-xs sm:text-sm text-gray-900">Or</span>
               <div className="flex-1 border-t border-[#C9C8CD]"></div>
             </div>
 
             {/* Social login buttons */}
-            <div className="space-y-2 sm:space-y-3">
-              <button className="w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border border-[#C9C8CD] rounded-full hover:bg-gray-50 transition-colors">
+            <div className="space-y-2 sm:space-y-5">
+              <button className="cursor-pointer w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border border-[#C9C8CD] rounded-full hover:bg-gray-50 transition-colors">
                 <img
                   src="https://api.builder.io/api/v1/image/assets/TEMP/dd3b649d040969f0c8d38d8d09939f56ff9ac765?width=48"
                   alt="Google"
@@ -144,7 +144,7 @@ export default function LoginPage() {
                 />
                 <span className="text-xs sm:text-sm text-gray-900">Continue with Google</span>
               </button>
-              <button className="w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border border-[#C9C8CD] rounded-full hover:bg-gray-50 transition-colors">
+              <button className="cursor-pointer w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border border-[#C9C8CD] rounded-full hover:bg-gray-50 transition-colors">
                 <img
                   src="https://api.builder.io/api/v1/image/assets/TEMP/d812f75e7b50b0dc62e53bde84d2928047908c47?width=48"
                   alt="Microsoft"
@@ -157,7 +157,7 @@ export default function LoginPage() {
             {/* Sign up link */}
             <div className="mt-3 sm:mt-4 text-center">
               <span className="text-xs sm:text-sm text-gray-900">Don't have an account </span>
-              <Link href="/sign-up" className="text-xs sm:text-sm font-bold text-[#795CF5] hover:underline">
+              <Link href="/sign-up" className="underline text-xs sm:text-sm font-bold text-[#795CF5] hover:underline">
                 Sign Up
               </Link>
             </div>
@@ -166,8 +166,8 @@ export default function LoginPage() {
       </div>
 
       {/* Footer */}
-      <div className="text-center relative z-10 pb-2 sm:pb-4">
-        <p className="text-xs text-gray-700">©2025 Owners Inventory - All rights reserved</p>
+      <div className="text-center relative z-10 pb-2 sm:pb-4 ">
+        <p className="text-sm text-gray-700">©2025 Owners Inventory - All rights reserved</p>
       </div>
     </div>
   );

@@ -86,12 +86,13 @@ export default function UserProfilePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-white flex font-inter">
+    <div className="min-h-screen w-full bg-white flex font-inter">
         {/* Page Content */}
         <main className="flex-1">
-          <div className="flex items-start gap-6 p-6">
+         <div className="flex flex-col sm:flex-row items-start gap-6 p-5">
+
             {/* Left Panel - User Info */}
-            <div className="flex flex-col items-center gap-6 p-6 border border-gray-200 rounded-lg bg-white shadow-sm">
+             <div className="flex flex-col items-start mx-auto gap-6 p-6 border border-gray-200 rounded-lg bg-white shadow-sm">
               {/* Profile Photo */}
               <div className="flex flex-col items-center gap-9">
                 <div 
@@ -105,7 +106,7 @@ export default function UserProfilePage() {
                   </svg>
                 </div>
                 
-                <button className="px-6 py-2 border border-primary rounded-md text-primary text-base font-medium hover:bg-purple-50 transition-colors">
+                <button className="px-14 py-2 border border-[#795CF5] rounded-md text-[#795CF5] font-medium hover:bg-purple-50 transition-colors cursor-pointer">
                   Change Photo
                 </button>
               </div>
@@ -128,7 +129,7 @@ export default function UserProfilePage() {
             </div>
 
             {/* Right Panel - Profile Form */}
-            <div className="flex-1 border border-gray-200 rounded-lg bg-white shadow-sm">
+            <div className="flex-1 border border-gray-200 rounded-lg w-full bg-white shadow-sm">
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-gray-200">
                 <h1 className="text-2xl font-bold text-black">Profile Information</h1>
@@ -274,8 +275,7 @@ export default function UserProfilePage() {
                 {/* Save Button */}
                 <div className="flex justify-end">
                   <button 
-                    className="px-6 py-2.5 rounded-md text-white text-base font-medium transition-colors"
-                    style={{ backgroundColor: '#795CF5' }}
+                    className="px-6 py-2.5 rounded-md text-white bg-[#785cf5] text-base hover:scale-105 cursor-pointer font-medium transition-colors"
                   >
                     Save Changes
                   </button>

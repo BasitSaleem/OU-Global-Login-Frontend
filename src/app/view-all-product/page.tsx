@@ -16,7 +16,7 @@ function ViewAllProductsPage() {
       id: 'analytics',
       title: 'Owners Analytics',
       description: 'Get insights and analyze your business performance',
-      icon: 'https://api.builder.io/api/v1/image/assets/TEMP/be8931ee53da43e803d3d1a1fddbcc1f9187aaa2?width=64',
+      icon: 'https://api.builder.io/api/v1/image/assets/TEMP/72b1ea421112224fa1bea68adcd733be5aa8666b?width=76',
       backgroundColor: '#FFEDD5',
       status: 'Coming Soon',
       available: false
@@ -54,7 +54,7 @@ function ViewAllProductsPage() {
           {products.map((product) => (
             <div
               key={product.id}
-              className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-sm transition-shadow"
+              className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-sm transition-shadow cursor-pointer"
             >
               <div className="flex items-start gap-6">
                 {/* Product Icon */}
