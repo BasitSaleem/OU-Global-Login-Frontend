@@ -1,3 +1,4 @@
+'use client'
 export default function EmailSettingsPage() {
   return (
     <main className="p-4 sm:p-8">

@@ -27,8 +27,8 @@ export default function DeclineModal({ isOpen, onClose, onConfirm }: DeclineModa
         </button>
         <button
           onClick={onConfirm}
-          className="px-8 py-2 rounded-lg text-white cursor-pointer"
-          style={{ backgroundColor: '#795CF5' }}
+          className="px-8 py-2 rounded-lg text-white cursor-pointer bg-[#795CF5] hover:bg-[#7C3AED]"
+   
         >
           Yes
         </button>

@@ -189,9 +189,9 @@ function ProfileMenu({
           <span className="text-base">Account settings</span>
         </button>
 
-        <button className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
+        <button onClick={() => router.push('/login')} className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
           <LogOut className="w-5 h-5 text-gray-600" />
-          <span className="text-base">Log out</span>
+          <span  className="text-base">Log out</span>
         </button>
       </div>
     </div>

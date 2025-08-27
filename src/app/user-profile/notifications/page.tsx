@@ -4,8 +4,31 @@ import { useState } from 'react';
 import { ShoppingCart, Clipboard, Truck, Factory } from 'lucide-react';
 import Image from 'next/image';
 import bell from '../../../../public/bell.svg';
-import Union from '../../../../public//Union.svg';
+import Union from '../../../../public/Union.svg';
 
+// Types
+type NotificationSettings = {
+  inAppNotifications: boolean;
+  emailNotifications: boolean;
+
+  saleComplete: { inApp: boolean; email: boolean };
+  saleReturned: { inApp: boolean; email: boolean };
+  saleEdited: { inApp: boolean; email: boolean };
+  saleDeleted: { inApp: boolean; email: boolean };
+
+  stockPurchased: { inApp: boolean; email: boolean };
+  stockAddedToInventory: { inApp: boolean; email: boolean };
+  purchaseDeleted: { inApp: boolean; email: boolean };
+
+  stockIssued: { inApp: boolean; email: boolean };
+  stockTransferCompleted: { inApp: boolean; email: boolean };
+
+  productionStarted: { inApp: boolean; email: boolean };
+  productionCompleted: { inApp: boolean; email: boolean };
+  productionCancelled: { inApp: boolean; email: boolean };
+};
+
+type OwnerKey = 'inventory' | 'jungle' | 'marketplace' | 'analytics';
 
 // reusable section component
 function NotificationSection({
@@ -17,9 +40,9 @@ function NotificationSection({
 }: {
   icon: any;
   title: string;
-  items: { key: keyof typeof settings; label: string; highlighted?: boolean }[];
-  settings: any;
-  updateNestedSetting: (category: string, type: string, value: boolean) => void;
+  items: { key: keyof NotificationSettings; label: string; highlighted?: boolean }[];
+  settings: NotificationSettings;
+  updateNestedSetting: (category: keyof NotificationSettings, type: 'inApp' | 'email', value: boolean) => void;
 }) {
   return (
     <div className="bg-white border border-gray-300 rounded-xl p-6">
@@ -29,95 +52,114 @@ function NotificationSection({
       </div>
 
       <div className="space-y-2">
-        {items.map((item, idx) => (
-         <div
-  key={item.key as string}
-  className={`flex items-center justify-between px-3 py-3 rounded-lg ${
-    item.highlighted ? 'bg-[rgba(121,92,245,0.07)]' : ''
-  }`}
->
-  {/* Label text */}
-  <span className="flex-1 text-sm sm:text-base text-black">{item.label}</span>
+        {items.map((item) => (
+          <div
+            key={item.key as string}
+            className={`flex items-center justify-between px-3 py-3 rounded-lg ${
+              item.highlighted ? 'bg-[rgba(121,92,245,0.07)]' : ''
+            }`}
+          >
+            {/* Label text */}
+            <span className="flex-1 text-sm sm:text-base text-black">{item.label}</span>
 
-  {/* Checkboxes */}
-  <div className="flex items-center gap-4 shrink-0">
-    <label className="flex items-center gap-2 cursor-pointer">
-      <input
-        type="checkbox"
-        checked={settings[item.key].inApp}
-        onChange={(e) =>
-          updateNestedSetting(item.key as string, 'inApp', e.target.checked)
-        }
-        className="w-4 h-4 rounded border-gray-300 cursor-pointer"
-      />
-      <span className="text-sm sm:text-base text-black">In App</span>
-    </label>
+            {/* Checkboxes */}
+            <div className="flex items-center gap-4 shrink-0">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={(settings[item.key] as any).inApp}
+                  onChange={(e) => updateNestedSetting(item.key, 'inApp', e.target.checked)}
+                  className="w-4 h-4 rounded border-gray-300 cursor-pointer"
+                />
+                <span className="text-sm sm:text-base text-black">In App</span>
+              </label>
 
-    <label className="flex items-center gap-2 cursor-pointer">
-      <input
-        type="checkbox"
-        checked={settings[item.key].email}
-        onChange={(e) =>
-          updateNestedSetting(item.key as string, 'email', e.target.checked)
-        }
-        className="w-4 h-4 rounded border-gray-300 cursor-pointer"
-      />
-      <span className="text-sm sm:text-base text-black">Email</span>
-    </label>
-  </div>
-</div>
-
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={(settings[item.key] as any).email}
+                  onChange={(e) => updateNestedSetting(item.key, 'email', e.target.checked)}
+                  className="w-4 h-4 rounded border-gray-300 cursor-pointer"
+                />
+                <span className="text-sm sm:text-base text-black">Email</span>
+              </label>
+            </div>
+          </div>
         ))}
       </div>
     </div>
   );
 }
 
+// helper for default settings
+const defaultSettings: NotificationSettings = {
+  inAppNotifications: false,
+  emailNotifications: false,
+
+  saleComplete: { inApp: false, email: false },
+  saleReturned: { inApp: false, email: false },
+  saleEdited: { inApp: false, email: false },
+  saleDeleted: { inApp: false, email: false },
+
+  stockPurchased: { inApp: false, email: false },
+  stockAddedToInventory: { inApp: false, email: false },
+  purchaseDeleted: { inApp: false, email: false },
+
+  stockIssued: { inApp: false, email: false },
+  stockTransferCompleted: { inApp: false, email: false },
+
+  productionStarted: { inApp: false, email: false },
+  productionCompleted: { inApp: false, email: false },
+  productionCancelled: { inApp: false, email: false }
+};
+
 export default function NotificationPreferencesPage() {
-  // Notification settings state
-  const [notificationSettings, setNotificationSettings] = useState({
-    inAppNotifications: false,
-    emailNotifications: false,
-
-    saleComplete: { inApp: false, email: false },
-    saleReturned: { inApp: false, email: false },
-    saleEdited: { inApp: false, email: false },
-    saleDeleted: { inApp: false, email: false },
-
-    stockPurchased: { inApp: false, email: false },
-    stockAddedToInventory: { inApp: false, email: false },
-    purchaseDeleted: { inApp: false, email: false },
-
-    stockIssued: { inApp: false, email: false },
-    stockTransferCompleted: { inApp: false, email: false },
-
-    productionStarted: { inApp: false, email: false },
-    productionCompleted: { inApp: false, email: false },
-    productionCancelled: { inApp: false, email: false }
+  // Store settings per owner
+  const [notificationSettings, setNotificationSettings] = useState<Record<OwnerKey, NotificationSettings>>({
+    inventory: { ...defaultSettings },
+    jungle: { ...defaultSettings },
+    marketplace: { ...defaultSettings },
+    analytics: { ...defaultSettings }
   });
 
-  const updateNotificationSetting = (setting: string, value: boolean) => {
+  // Which owner is active
+  const [selectedOwner, setSelectedOwner] = useState<OwnerKey>('inventory');
+
+  // update methods (scoped to selectedOwner)
+  const updateNotificationSetting = (setting: keyof NotificationSettings, value: boolean) => {
     setNotificationSettings((prev) => ({
       ...prev,
-      [setting]: value
+      [selectedOwner]: {
+        ...prev[selectedOwner],
+        [setting]: value as any
+      }
     }));
   };
 
-const updateNestedSetting = (category: string, type: string, value: boolean) => {
-  setNotificationSettings((prev) => {
-    const current = prev[category as keyof typeof prev] as { inApp: boolean; email: boolean };
-    return {
-      ...prev,
-      [category]: {
-        ...current,
-        [type]: value,
-      },
-    };
-  });
-};
+  const updateNestedSetting = (category: keyof NotificationSettings, type: 'inApp' | 'email', value: boolean) => {
+    setNotificationSettings((prev) => {
+      const current = prev[selectedOwner][category] as { inApp: boolean; email: boolean };
+      return {
+        ...prev,
+        [selectedOwner]: {
+          ...prev[selectedOwner],
+          [category]: {
+            ...current,
+            [type]: value
+          }
+        }
+      };
+    });
+  };
 
   // config objects
-  const sections = [
+   type Section = {
+  icon: any;
+  title: string;
+  items: { key: keyof NotificationSettings; label: string; highlighted?: boolean }[];
+};
+
+  const sections: Section[] = [
     {
       icon: ShoppingCart,
       title: 'Sale',
@@ -169,58 +211,67 @@ const updateNestedSetting = (category: string, type: string, value: boolean) => 
               Manage how you want to be notified about important updates
             </p>
           </div>
-      <div className="flex justify-center mt-5">
-  <div className="flex items-center gap-4">
-    {/* Icon 1 */}
-    <div className="relative group">
-      <img
-        src="https://api.builder.io/api/v1/image/assets/TEMP/bcff51bc038083aa17f692d66b4f8521dac82c55?width=76"
-        alt="owner inventory"
-        className="w-8 h-8 sm:w-10 sm:h-10 rounded cursor-pointer border border-transparent group-hover:border-[#795CF5] group-hover:bg-[#795CF512] p-1 transition"
-      />
-      <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-xs sm:text-sm font-medium rounded-md px-3 py-1 whitespace-nowrap z-10 shadow-sm">
-        Owners Inventory
-      </div>
-    </div>
 
-    {/* Icon 2 */}
-    <div className="relative group">
-      <img
-        src="https://api.builder.io/api/v1/image/assets/TEMP/eeed242f35b2e1aa1a69fb85fb47383ef68ac0af?width=78"
-        alt="owner jungle"
-        className="w-8 h-8 sm:w-10 sm:h-10 rounded cursor-pointer border border-transparent group-hover:border-[#795CF5] group-hover:bg-[#795CF512] p-1 transition"
-      />
-      <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-xs sm:text-sm font-medium rounded-md px-3 py-1 whitespace-nowrap z-10 shadow-sm">
-        Owners Jungle
-      </div>
-    </div>
+          {/* Owner Switcher */}
+          <div className="flex justify-center mt-5">
+            <div className="flex items-center gap-4">
+              {/* Inventory */}
+              <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('inventory')}>
+                <img
+                  src="https://api.builder.io/api/v1/image/assets/TEMP/3c4327f1dd595491744f2af966536dd987ec0a0a?width=66"
+                  alt="owner inventory"
+                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded p-1 transition border ${
+                    selectedOwner === 'inventory' ? 'border-[#795CF5]' : 'border-transparent'
+                  }`}
+                />
+                <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-xs sm:text-sm font-medium rounded-md px-3 py-1 whitespace-nowrap z-10 shadow-sm">
+                  Owners Inventory
+                </div>
+              </div>
 
-    {/* Icon 3 */}
-    <div className="relative group">
-      <img
-        src="https://api.builder.io/api/v1/image/assets/TEMP/2e5e61c17217b60ae9dfbc6168fcccfea3b25ebb?width=76"
-        alt="owner marketplace"
-        className="w-8 h-8 sm:w-10 sm:h-10 rounded cursor-pointer border border-transparent group-hover:border-[#795CF5] group-hover:bg-[#795CF512] p-1 transition"
-      />
-      <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-xs sm:text-sm font-medium rounded-md px-3 py-1 whitespace-nowrap z-10 shadow-sm">
-        Owner Marketplace
-      </div>
-    </div>
+              {/* Jungle */}
+              <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('jungle')}>
+                <img
+                  src="https://api.builder.io/api/v1/image/assets/TEMP/eeed242f35b2e1aa1a69fb85fb47383ef68ac0af?width=78"
+                  alt="owner jungle"
+                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded p-1 transition border ${
+                    selectedOwner === 'jungle' ? 'border-[#795CF5]' : 'border-transparent'
+                  }`}
+                />
+                <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-xs sm:text-sm font-medium rounded-md px-3 py-1 whitespace-nowrap z-10 shadow-sm">
+                  Owners Jungle
+                </div>
+              </div>
 
-    {/* Icon 4 */}
-    <div className="relative group">
-      <img
-        src="https://api.builder.io/api/v1/image/assets/TEMP/72b1ea421112224fa1bea68adcd733be5aa8666b?width=76"
-        alt="Owner Analytics"
-        className="w-8 h-8 sm:w-10 sm:h-10 rounded cursor-pointer border border-transparent group-hover:border-[#795CF5] group-hover:bg-[#795CF512] p-1 transition"
-      />
-      <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-xs sm:text-sm font-medium rounded-md px-3 py-1 whitespace-nowrap z-10 shadow-sm">
-        Analytics
-      </div>
-    </div>
-  </div>
-</div>
+              {/* Marketplace */}
+              <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('marketplace')}>
+                <img
+                  src="https://api.builder.io/api/v1/image/assets/TEMP/2e5e61c17217b60ae9dfbc6168fcccfea3b25ebb?width=76"
+                  alt="owner marketplace"
+                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded p-1 transition border ${
+                    selectedOwner === 'marketplace' ? 'border-[#795CF5]' : 'border-transparent'
+                  }`}
+                />
+                <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-xs sm:text-sm font-medium rounded-md px-3 py-1 whitespace-nowrap z-10 shadow-sm">
+                  Owner Marketplace
+                </div>
+              </div>
 
+              {/* Analytics */}
+              <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('analytics')}>
+                <img
+                  src="https://api.builder.io/api/v1/image/assets/TEMP/72b1ea421112224fa1bea68adcd733be5aa8666b?width=76"
+                  alt="Owner Analytics"
+                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded p-1 transition border ${
+                    selectedOwner === 'analytics' ? 'border-[#795CF5]' : 'border-transparent'
+                  }`}
+                />
+                <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-xs sm:text-sm font-medium rounded-md px-3 py-1 whitespace-nowrap z-10 shadow-sm">
+                  Analytics
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Notification Methods */}
@@ -231,15 +282,13 @@ const updateNestedSetting = (category: string, type: string, value: boolean) => 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* In-App Notifications */}
             <div className="flex items-center gap-4 p-4 border border-gray-300 rounded-lg">
-                <Image src={bell} height={24} width={24} alt="Bell Icon" />
+              <Image src={bell} height={24} width={24} alt="Bell Icon" />
               <span className="text-sm sm:text-base text-black">In-App Notifications</span>
               <div className="ml-auto">
                 <input
                   type="checkbox"
-                  checked={notificationSettings.inAppNotifications}
-                  onChange={(e) =>
-                    updateNotificationSetting('inAppNotifications', e.target.checked)
-                  }
+                  checked={notificationSettings[selectedOwner].inAppNotifications}
+                  onChange={(e) => updateNotificationSetting('inAppNotifications', e.target.checked)}
                   className="w-5 h-5 rounded border-gray-300 cursor-pointer"
                 />
               </div>
@@ -252,10 +301,8 @@ const updateNestedSetting = (category: string, type: string, value: boolean) => 
               <div className="ml-auto">
                 <input
                   type="checkbox"
-                  checked={notificationSettings.emailNotifications}
-                  onChange={(e) =>
-                    updateNotificationSetting('emailNotifications', e.target.checked)
-                  }
+                  checked={notificationSettings[selectedOwner].emailNotifications}
+                  onChange={(e) => updateNotificationSetting('emailNotifications', e.target.checked)}
                   className="w-5 h-5 rounded border-gray-300 cursor-pointer"
                 />
               </div>
@@ -271,7 +318,7 @@ const updateNestedSetting = (category: string, type: string, value: boolean) => 
               icon={section.icon}
               title={section.title}
               items={section.items}
-              settings={notificationSettings}
+              settings={notificationSettings[selectedOwner]}
               updateNestedSetting={updateNestedSetting}
             />
           ))}
@@ -281,7 +328,7 @@ const updateNestedSetting = (category: string, type: string, value: boolean) => 
         <div className="flex justify-end">
           <button
             className="px-6 py-2.5 rounded-lg text-white text-sm sm:text-base font-medium transition-colors cursor-pointer bg-[#795CF5] hover:bg-[#7C3AED]"
-          > 
+          >
             Save Preferences
           </button>
         </div>

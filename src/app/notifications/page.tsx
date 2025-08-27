@@ -4,7 +4,7 @@ import DashboardLayout from "@/components/layout/dashboard-layout";
 import NotificationsHeaderControls from "@/components/pages/Notifications/NotificationHeaderControls";
 import NotificationItem from "@/components/pages/Notifications/NotificationItems";
 import NotificationsSidebar from "@/components/pages/Notifications/NotificationSidebar";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { HiMenu, HiX } from "react-icons/hi";
 
 function NotificationsPage() {
@@ -202,10 +202,34 @@ function NotificationsPage() {
   );
 }
 
+// 🔹 Skeleton Loader (overlay style)
+function NotificationsSkeleton() {
+  return (
+    <div className="flex flex-1 items-center justify-center min-h-screen">
+      <div className="text-center space-y-4 animate-pulse">
+        <div className="h-6 w-48 bg-gray-200 rounded mx-auto" />
+        <div className="h-4 w-72 bg-gray-200 rounded mx-auto" />
+        <div className="space-y-2">
+          {[...Array(4)].map((_, i) => (
+            <div
+              key={i}
+              className="h-20 w-[500px] max-w-full bg-gray-200 rounded"
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Page() {
   return (
     <DashboardLayout>
-      <NotificationsPage />
+         <Suspense fallback={<NotificationsSkeleton />}>
+        <NotificationsPage />
+      </Suspense>
     </DashboardLayout>
   );
 }
+
+

@@ -30,7 +30,7 @@ export default function SignUpPage() {
       </div>
 
       {/* Header with logo and sign in */}
-      <div className="relative z-10 flex items-center justify-between p-4 sm:p-6 lg:p-8">
+      <div className="relative z-10 flex items-center justify-between p-4 sm:p-4 lg:p-6">
         <img
           src="https://api.builder.io/api/v1/image/assets/TEMP/937c40b9987de3535ac2f0ee40dc9fefa08db306?width=278"
           alt="Owners Universe Logo"
@@ -45,7 +45,7 @@ export default function SignUpPage() {
       </div>
 
       {/* Main content container */}
-      <div className="flex items-center justify-center px-6 sm:px-6 pb-4 sm:pb-6 pt-1 sm:pt-2">
+      <div className="flex items-center justify-center px-6 sm:px-6 pb-4 sm:pb-6 pt-0 sm:pt-2">
         {/* Main sign up card */}
         <div className="relative z-10 w-full max-w-xs sm:max-w-md">
           <div className="bg-white rounded-2xl sm:rounded-[15px] shadow-[0_0_20px_0_rgba(0,0,0,0.06)] px-4 sm:px-14 py-3 sm:py-4">
@@ -185,7 +185,7 @@ export default function SignUpPage() {
       </div>
 
       {/* Footer */}
-      <div className="text-center relative z-10 pb-2 sm:pb-4">
+      <div className="text-center relative z-10 pb-2 sm:pb-0">
         <p className="text-xs text-gray-700">©2025 Owners Inventory - All rights reserved</p>
       </div>
     </div>

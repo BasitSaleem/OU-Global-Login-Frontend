@@ -52,8 +52,8 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
                 title="Mark as read"
               >
                 <span className="w-2 h-2 rounded-full bg-[#795CF5] block" />
-                <span className="absolute inset-0 rounded-full border border-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <span className="absolute top-8 -left-[100%] -translate-x-1/2 whitespace-nowrap border border-gray-300 bg-white text-black text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                <span className="absolute -inset-[1px] rounded-full border-1 border-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <span className="absolute top-8 -left-[100%] -translate-x-1/2 whitespace-nowrap border border-gray-300 bg-white text-black text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity ">
                   Mark as read
                 </span>
               </button>

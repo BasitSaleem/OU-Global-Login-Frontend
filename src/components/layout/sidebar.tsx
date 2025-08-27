@@ -18,7 +18,7 @@ interface SidebarProps {
   onToggleCollapse: () => void;
   onToggleMobile: () => void;
   currentPath?: string;
-  onShowModal: (icon: React.ReactNode) => void; // 👈 new
+  onShowModal: (icon: React.ReactNode) => void; 
 }
 
 export default function Sidebar({
@@ -50,9 +50,10 @@ export default function Sidebar({
       href: "/inventory",
       icon: "image",
       label: "Inventory",
+      hasExternal: false,
       image:
         "https://api.builder.io/api/v1/image/assets/TEMP/3c4327f1dd595491744f2af966536dd987ec0a0a?width=66",
-      hasExternal: true,
+      
       hasTime: true,
       isActive: currentPath === "/inventory",
     },
@@ -81,7 +82,7 @@ export default function Sidebar({
       image:
         "https://api.builder.io/api/v1/image/assets/TEMP/72b1ea421112224fa1bea68adcd733be5aa8666b?width=76",
       hasBadge: true,
-      hasTime: true,
+      
       isActive: currentPath === "/analytics",
     },
   ];
