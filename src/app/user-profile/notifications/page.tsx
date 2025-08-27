@@ -221,7 +221,7 @@ export default function NotificationPreferencesPage() {
                   src="https://api.builder.io/api/v1/image/assets/TEMP/3c4327f1dd595491744f2af966536dd987ec0a0a?width=66"
                   alt="owner inventory"
                   className={`w-8 h-8 sm:w-10 sm:h-10 rounded p-1 transition border ${
-                    selectedOwner === 'inventory' ? 'border-[#795CF5]' : 'border-transparent'
+                    selectedOwner === 'inventory' ? 'border-[#795CF5] bg-[#795CF512]' : 'border-transparent'
                   }`}
                 />
                 <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-xs sm:text-sm font-medium rounded-md px-3 py-1 whitespace-nowrap z-10 shadow-sm">
@@ -235,7 +235,7 @@ export default function NotificationPreferencesPage() {
                   src="https://api.builder.io/api/v1/image/assets/TEMP/eeed242f35b2e1aa1a69fb85fb47383ef68ac0af?width=78"
                   alt="owner jungle"
                   className={`w-8 h-8 sm:w-10 sm:h-10 rounded p-1 transition border ${
-                    selectedOwner === 'jungle' ? 'border-[#795CF5]' : 'border-transparent'
+                    selectedOwner === 'jungle' ? 'border-[#795CF5] bg-[#795CF512]' : 'border-transparent'
                   }`}
                 />
                 <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-xs sm:text-sm font-medium rounded-md px-3 py-1 whitespace-nowrap z-10 shadow-sm">
@@ -249,7 +249,7 @@ export default function NotificationPreferencesPage() {
                   src="https://api.builder.io/api/v1/image/assets/TEMP/2e5e61c17217b60ae9dfbc6168fcccfea3b25ebb?width=76"
                   alt="owner marketplace"
                   className={`w-8 h-8 sm:w-10 sm:h-10 rounded p-1 transition border ${
-                    selectedOwner === 'marketplace' ? 'border-[#795CF5]' : 'border-transparent'
+                    selectedOwner === 'marketplace' ? 'border-[#795CF5] bg-[#795CF512]' : 'border-transparent'
                   }`}
                 />
                 <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-xs sm:text-sm font-medium rounded-md px-3 py-1 whitespace-nowrap z-10 shadow-sm">
@@ -263,7 +263,7 @@ export default function NotificationPreferencesPage() {
                   src="https://api.builder.io/api/v1/image/assets/TEMP/72b1ea421112224fa1bea68adcd733be5aa8666b?width=76"
                   alt="Owner Analytics"
                   className={`w-8 h-8 sm:w-10 sm:h-10 rounded p-1 transition border ${
-                    selectedOwner === 'analytics' ? 'border-[#795CF5]' : 'border-transparent'
+                    selectedOwner === 'analytics' ? 'border-[#795CF5]  bg-[#795CF512]' : 'border-transparent'
                   }`}
                 />
                 <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-xs sm:text-sm font-medium rounded-md px-3 py-1 whitespace-nowrap z-10 shadow-sm">
