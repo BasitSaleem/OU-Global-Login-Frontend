@@ -94,8 +94,7 @@ export default function CreateOrgModal({ isOpen, onClose, onSubmit }: CreateOrgM
         </button>
         <button
           onClick={handleSubmit}
-          className="px-4 py-2 rounded-lg text-white cursor-pointer"
-          style={{ backgroundColor: '#795CF5' }}
+          className="px-4 py-2 rounded-lg text-white cursor-pointer bg-[#795CF5] hover:bg-[#7C3AED]"
         >
           Continue
         </button>

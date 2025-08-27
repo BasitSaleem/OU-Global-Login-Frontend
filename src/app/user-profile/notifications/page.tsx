@@ -280,9 +280,8 @@ const updateNestedSetting = (category: string, type: string, value: boolean) => 
         {/* Save Button */}
         <div className="flex justify-end">
           <button
-            className="px-6 py-2.5 rounded-lg text-white text-sm sm:text-base font-medium transition-colors cursor-pointer"
-            style={{ backgroundColor: '#795CF5' }}
-          >
+            className="px-6 py-2.5 rounded-lg text-white text-sm sm:text-base font-medium transition-colors cursor-pointer bg-[#795CF5] hover:bg-[#7C3AED]"
+          > 
             Save Preferences
           </button>
         </div>

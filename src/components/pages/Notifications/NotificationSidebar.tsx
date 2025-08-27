@@ -34,7 +34,7 @@ export default function NotificationsSidebar({
         {/* Mobile close header */}
         <div className="p-4 border-b border-gray-200 flex items-center justify-between md:hidden bg-white">
           <h1 className="text-xl font-bold">Notifications</h1>
-          <button onClick={() => setSidebarOpen(false)} className="text-gray-600 hover:text-black">
+          <button onClick={() => setSidebarOpen(false)} className="text-gray-600  cursor-pointer hover:text-black ">
             <HiX size={24} />
           </button>
         </div>

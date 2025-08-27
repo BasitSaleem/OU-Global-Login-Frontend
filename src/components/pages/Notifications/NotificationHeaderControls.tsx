@@ -16,7 +16,7 @@ export default function NotificationsHeaderControls({
   return (
     <div className="p-4 md:p-8 pb-6 border-b border-gray-100 bg-white flex-shrink-0 flex items-center justify-between">
       <div className="flex items-center gap-3">
-        <button onClick={() => setSidebarOpen(true)} className="text-gray-600 hover:text-black md:hidden">
+        <button onClick={() => setSidebarOpen(true)} className="text-gray-600 cursor-pointer hover:text-black md:hidden">
           <HiMenu size={24} />
         </button>
         <h2 className="text-xs sm:text-lg font-medium text-black">Latest</h2>

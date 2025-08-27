@@ -275,7 +275,7 @@ export default function UserProfilePage() {
                 {/* Save Button */}
                 <div className="flex justify-end">
                   <button 
-                    className="px-6 py-2.5 rounded-md text-white bg-[#785cf5] text-base hover:scale-105 cursor-pointer font-medium transition-colors"
+                    className="px-6 py-2.5 rounded-md text-white bg-[#795CF5] hover:bg-[#7C3AED] text-base cursor-pointer font-medium transition-colors"
                   >
                     Save Changes
                   </button>

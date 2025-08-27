@@ -1,8 +1,10 @@
 "use client";
 
 import { Bell, LogOut, Menu, Search, Settings, User, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import NotificationItem from "../pages/Notifications/NotificationItems";
+import { useRouter } from "next/navigation";
+
 
 /* ---------------------------------- */
 /* Types                              */
@@ -31,7 +33,7 @@ type NotificationItemProps = {
 /* ---------------------------------- */
 
 // Controls row inside the notifications dropdown
-function ControlsRow({
+function NotificationsControlsRow({
   anyUnread,
   onMarkAllAsRead,
   unreadOnly,
@@ -48,7 +50,7 @@ function ControlsRow({
         onClick={onMarkAllAsRead}
         disabled={!anyUnread}
         className={`text-xs sm:text-base font-medium ${
-          anyUnread ? "text-primary hover:underline" : "text-gray-400 cursor-not-allowed"
+          anyUnread ? "text-primary hover:underline cursor-pointer " : "text-gray-400 cursor-not-allowed"
         }`}
       >
         Mark all as read
@@ -65,7 +67,7 @@ function ControlsRow({
         {/* Pill toggle (hidden on xs to save space) */}
         <button
           onClick={() => setUnreadOnly(!unreadOnly)}
-          className={`w-12 h-6 rounded-full p-1 hidden sm:flex items-center transition-colors ${
+          className={`w-12 h-6 rounded-full cursor-pointer p-1 hidden sm:flex items-center transition-colors ${
             unreadOnly ? "bg-[#795CF5]" : "bg-gray-200"
           }`}
           aria-pressed={unreadOnly}
@@ -114,7 +116,7 @@ function NotificationsDropdown({
       </div>
 
       {/* Controls */}
-      <ControlsRow
+      <NotificationsControlsRow
         anyUnread={anyUnread}
         onMarkAllAsRead={onMarkAllAsRead}
         unreadOnly={unreadOnly}
@@ -153,6 +155,8 @@ function ProfileMenu({
 }: {
   onClose: () => void;
 }) {
+
+  const router = useRouter();
   return (
     <div className="absolute -right-4 sm:right-0 top-12 w-72 sm:w-80 bg-white border border-gray-200 rounded-xl shadow-lg z-50">
       {/* User Info */}
@@ -172,9 +176,9 @@ function ProfileMenu({
       {/* Menu Items */}
       <div className="p-2">
         <a
-          href="/user-profile"
-          className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-          onClick={onClose}
+          onClick={() => router.push("/user-profile")}
+          className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
+          
         >
           <User className="w-5 h-5 text-gray-600" />
           <span className="text-base">Profile</span>
@@ -270,7 +274,7 @@ export default function AppHeader({
         {/* Mobile Menu Toggle */}
         <button
           onClick={onToggleMobileSidebar}
-          className="lg:hidden p-2 hover:bg-gray-50 rounded-lg transition-colors"
+          className="lg:hidden p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
         >
           {mobileSidebarOpen ? <X className="w-5 h-5 text-gray-600" /> : <Menu className="w-5 h-5 text-gray-600" />}
         </button>

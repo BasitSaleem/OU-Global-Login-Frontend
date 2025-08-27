@@ -25,7 +25,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
   onMarkAsRead,
 }) => {
   return (
-    <div className="flex items-start gap-6 p-6 hover:bg-gray-50 transition-colors">
+    <div className="flex items-start gap-6 p-6 hover:bg-gray-50 transition-colors cursor-pointer">
       {/* Avatar */}
       <div
         className="w-6 h-6 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white text-xs sm:text-lg font-medium"
@@ -36,7 +36,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
 
       {/* Content */}
       <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between mb-1">
+        <div className="flex items-center justify-between mb-1 ">
           <p className="text-xs sm:text-base text-black">
             <span className="font-medium">{name}</span> {action}
           </p>
@@ -47,13 +47,13 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
             {showDot && (
               <button
                 onClick={onMarkAsRead}
-                className="relative w-4 h-4 flex items-center justify-center group"
+                className="relative w-4 h-4 flex items-center justify-center group cursor-pointer"
                 aria-label="Mark notification as read"
                 title="Mark as read"
               >
                 <span className="w-2 h-2 rounded-full bg-[#795CF5] block" />
                 <span className="absolute inset-0 rounded-full border border-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <span className="absolute top-8 -left-[100%] -translate-x-1/2 whitespace-nowrap border border-gray-300 bg-white text-black text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="absolute top-8 -left-[100%] -translate-x-1/2 whitespace-nowrap border border-gray-300 bg-white text-black text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                   Mark as read
                 </span>
               </button>

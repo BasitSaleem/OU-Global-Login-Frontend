@@ -121,8 +121,7 @@ export default function ChangePasswordPage() {
 
                 {/* Update Button */}
                 <button 
-                  className="w-full px-6 py-3 rounded-lg text-white text-base font-medium transition-colors cursor-pointer"
-                  style={{ backgroundColor: '#795CF5' }}
+                  className="w-full px-6 py-3 rounded-lg text-white text-base font-medium transition-colors cursor-pointer bg-[#795CF5] hover:bg-[#7C3AED]"
                 >
                   Update Password
                 </button>

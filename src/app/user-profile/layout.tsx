@@ -1,15 +1,17 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
-import AppHeader from '../../components/layout/app-header';
-import { Bell, Home } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import AppHeader from "../../components/layout/app-header";
+import { Bell, Home } from "lucide-react";
 
 interface UserProfileLayoutProps {
   children: React.ReactNode;
 }
 
-export default function UserProfileLayout({ children }: UserProfileLayoutProps) {
+export default function UserProfileLayout({
+  children,
+}: UserProfileLayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const pathname = usePathname();
@@ -24,14 +26,14 @@ export default function UserProfileLayout({ children }: UserProfileLayoutProps) 
 
   const profileNavItems = [
     {
-      label: 'Profile',
-      href: '/user-profile',
+      label: "Profile",
+      href: "/user-profile",
       icon: Home,
-      isActive: pathname === '/user-profile'
+      isActive: pathname === "/user-profile",
     },
     {
-      label: 'Email',
-      href: '/user-profile/email',
+      label: "Email",
+      href: "/user-profile/email",
       icon: (props: any) => (
         <svg
           {...props}
@@ -59,11 +61,11 @@ export default function UserProfileLayout({ children }: UserProfileLayoutProps) 
           />
         </svg>
       ),
-      isActive: pathname === '/user-profile/email'
+      isActive: pathname === "/user-profile/email",
     },
     {
-      label: 'Change Password',
-      href: '/user-profile/change-password',
+      label: "Change Password",
+      href: "/user-profile/change-password",
       icon: (props: any) => (
         <svg
           {...props}
@@ -79,17 +81,17 @@ export default function UserProfileLayout({ children }: UserProfileLayoutProps) 
           />
         </svg>
       ),
-      isActive: pathname === '/user-profile/change-password'
+      isActive: pathname === "/user-profile/change-password",
     },
     {
-      label: 'Notifications',
-      href: '/user-profile/notifications',
+      label: "Notifications",
+      href: "/user-profile/notifications",
       icon: Bell,
-      isActive: pathname === '/user-profile/notifications'
-    }
+      isActive: pathname === "/user-profile/notifications",
+    },
   ];
-
-   useEffect(() => {
+  const router = useRouter();
+  useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 1024) {
         setSidebarCollapsed(true); // force collapsed until lg
@@ -99,9 +101,9 @@ export default function UserProfileLayout({ children }: UserProfileLayoutProps) 
     };
 
     handleResize(); // run once at mount
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
-    return () => window.removeEventListener('resize', handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
@@ -109,16 +111,16 @@ export default function UserProfileLayout({ children }: UserProfileLayoutProps) 
       {/* Desktop Sidebar */}
       <div
         className={`${
-          sidebarCollapsed ? 'w-[88px]' : 'w-[280px]'
+          sidebarCollapsed ? "w-[88px]" : "w-[280px]"
         } transition-all duration-300 bg-white border-r border-gray-200 hidden md:flex flex-col`}
       >
         {/* Logo */}
-        <div className="h-16 flex items-center justify-center px-6 border-b border-gray-200">
-          <a href="/">
+        <div className={`h-16 flex items-center justify-start border-b border-gray-200 ${sidebarCollapsed ? "px-6" : "px-2"}`}>
+          <a onClick={() => router.push("/")}>
             {sidebarCollapsed ? (
               <div
-                className="w-9 h-8 rounded flex items-center justify-center"
-                style={{ backgroundColor: '#795CF5' }}
+                className="w-9 h-8 rounded flex items-center justify-center cursor-pointer"
+                style={{ backgroundColor: "#795CF5" }}
               >
                 <img
                   src="https://api.builder.io/api/v1/image/assets/TEMP/c9c33312a3f9aa13e72013d867e81317b276f1fc?width=70"
@@ -130,7 +132,7 @@ export default function UserProfileLayout({ children }: UserProfileLayoutProps) 
               <img
                 src="https://api.builder.io/api/v1/image/assets/TEMP/0b766862203ee432b826ab8db2da20484b953ac7?width=384"
                 alt="Owners Universe Logo"
-                className="h-8"
+                className="h-13 cursor-pointer "
               />
             )}
           </a>
@@ -142,16 +144,20 @@ export default function UserProfileLayout({ children }: UserProfileLayoutProps) 
             {profileNavItems.map((item) => (
               <a
                 key={item.href}
-                href={item.href}
+                onClick={() => router.push(item.href)}
                 className={`
-                  flex items-center 
-                  ${sidebarCollapsed ? 'justify-center px-3' : 'px-3'} 
+                  flex cursor-pointer items-center 
+                  ${sidebarCollapsed ? "justify-center px-3" : "px-3"} 
                   py-3 rounded-lg transition-colors
-                  ${item.isActive ? 'text-white' : 'text-[#231F20] hover:bg-gray-50'}
-                  ${!sidebarCollapsed && !item.isActive ? 'gap-3' : 'gap-3'}
+                  ${
+                    item.isActive
+                      ? "text-white"
+                      : "text-[#231F20] hover:bg-gray-50"
+                  }
+                  ${!sidebarCollapsed && !item.isActive ? "gap-3" : "gap-3"}
                 `}
-                style={item.isActive ? { backgroundColor: '#795CF5' } : {}}
-                title={sidebarCollapsed ? item.label : ''}
+                style={item.isActive ? { backgroundColor: "#795CF5" } : {}}
+                title={sidebarCollapsed ? item.label : ""}
               >
                 <item.icon className="w-5 h-5 text-[#000000]" />
                 {!sidebarCollapsed && (
@@ -172,8 +178,19 @@ export default function UserProfileLayout({ children }: UserProfileLayoutProps) 
           />
           <div className="fixed inset-y-0 left-0 z-40 w-[280px] bg-white border-r border-gray-200 flex flex-col p-3 md:hidden">
             <div className="h-16 flex items-center justify-between border-b border-gray-200 px-4">
-              <span className="font-bold text-lg">Menu</span>
-              <button onClick={toggleMobileSidebar} className="text-gray-600">
+              <div className="h-16 flex items-center justify-between border-b border-gray-200 px-4 cursor-pointer">
+                <img
+                  src="https://api.builder.io/api/v1/image/assets/TEMP/0b766862203ee432b826ab8db2da20484b953ac7?width=384"
+                  alt="Owners Universe Logo"
+                  onClick={() => {
+                    toggleMobileSidebar();
+                    router.push("/");
+                  }}
+                  className="h-8"
+                />
+              </div>
+
+              <button onClick={toggleMobileSidebar} className="text-gray-600 cursor-pointer">
                 ✕
               </button>
             </div>
@@ -181,12 +198,14 @@ export default function UserProfileLayout({ children }: UserProfileLayoutProps) 
               {profileNavItems.map((item) => (
                 <a
                   key={item.href}
-                  href={item.href}
-                  onClick={toggleMobileSidebar}
-                  className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${
+                  onClick={() => {
+                    toggleMobileSidebar();
+                    router.push(item.href);
+                  }}
+                  className={`flex cursor-pointer items-center gap-3 px-3 py-3 rounded-lg transition-colors ${
                     item.isActive
-                      ? 'bg-[#795CF5] text-white'
-                      : 'text-gray-600 hover:bg-gray-50'
+                      ? "bg-[#795CF5] text-white"
+                      : "text-gray-600 hover:bg-gray-50"
                   }`}
                 >
                   <item.icon className="w-5 h-5" />
