@@ -6,6 +6,7 @@ import NotificationItem from "../pages/Notifications/NotificationItems";
 import { useRouter } from "next/navigation";
 
 
+
 /* ---------------------------------- */
 /* Types                              */
 /* ---------------------------------- */
@@ -210,6 +211,7 @@ export default function AppHeader({
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [unreadOnly, setUnreadOnly] = useState(false);
+  const router = useRouter();
 
   const profileDropdownRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
@@ -237,6 +239,22 @@ export default function AppHeader({
     setNotifications((prev) =>
       prev.map((n, i) => (i === index ? { ...n, showDot: false } : n))
     );
+  };
+
+    const [err, setErr] = useState<Error | null>(null);
+   // ⬇️ IMPORTANT: if we have an error, throw it during render so the boundary catches it
+  if (err) {
+    throw err;
+  }
+
+  // ⬇️ CHANGE THIS: don’t throw in the event handler
+  const handleSettingsClick = () => {    
+    try {
+      // whatever risky work...
+      throw new Error('Settings page is under development');
+    } catch (e) {
+      setErr(e as Error); // triggers a re-render; boundary will catch on next render
+    }
   };
 
   const filteredNotifications = unreadOnly
@@ -320,7 +338,7 @@ export default function AppHeader({
         </div>
 
         {/* Settings */}
-        <button className="p-2 hover:bg-gray-50 rounded-lg cursor-pointer">
+        <button onClick={handleSettingsClick} className="p-2 hover:bg-gray-50 rounded-lg cursor-pointer">
           <Settings className="w-6 h-6 text-gray-600" />
         </button>
 

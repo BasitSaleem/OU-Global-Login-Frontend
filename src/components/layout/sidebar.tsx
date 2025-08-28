@@ -87,10 +87,11 @@ export default function Sidebar({
     },
   ];
 
-  const handleItemClick = (item: any, e: React.MouseEvent) => {
+  
 
-    if (item.hasTime) {
-      e.preventDefault();
+  const handleItemClick = (item: any, e: React.MouseEvent) => {
+       e.preventDefault();
+        if (item.hasTime) {
       const iconNode =
         item.icon === "image" ? (
           <img
@@ -101,13 +102,11 @@ export default function Sidebar({
         ) : (
           <item.icon className="w-6 h-6 text-[#795CF5]" />
         );
-
-      console.log("sfdsa", iconNode);
-
       onShowModal(iconNode); // 👈 call parent to show modal
     }else{
       router.push(item.href);
     }
+   
       
     };
 

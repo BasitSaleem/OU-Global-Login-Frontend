@@ -21,7 +21,7 @@ export default function ComingSoonModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="md" ariaLabel="Coming soon">
       <Modal.Header className="justify-center">
-        <div className="mb-2 mt-2 rounded-full p-[2px] bg-gradient-to-b from-purple-100 to-purple-600">
+        <div className="mb-2 mt-2 rounded-full p-[2px]  bg-gradient-to-b from-white to-purple-950">
           <div className="w-20 h-20 flex items-center justify-center rounded-full bg-white shadow-[0_4px_20px_rgba(120,71,142,0.6)]">
             {icon}
           </div>

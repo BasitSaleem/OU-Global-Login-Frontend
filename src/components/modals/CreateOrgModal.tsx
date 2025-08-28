@@ -12,7 +12,7 @@ interface CreateOrgModalProps {
 export default function CreateOrgModal({ isOpen, onClose, onSubmit }: CreateOrgModalProps) {
   const [companyName, setCompanyName] = useState('');
   const [subDomain, setSubDomain] = useState('');
-  const [selectedProduct, setSelectedProduct] = useState('');
+  const [selectedProduct, setSelectedProduct] = useState('Owners Inventory');
 
   const products = [
     { id: 'inventory', name: 'Owners Inventory', icon: 'https://api.builder.io/api/v1/image/assets/TEMP/3c4327f1dd595491744f2af966536dd987ec0a0a?width=66' },

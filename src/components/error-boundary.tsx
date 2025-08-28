@@ -64,6 +64,7 @@ export class ErrorBoundary extends Component<Props, State> {
       error: null,
       errorInfo: null,
     });
+       window.location.reload()
   };
 
   public render() {
@@ -116,14 +117,7 @@ export class ErrorBoundary extends Component<Props, State> {
               >
                 Try Again
               </Button>
-              <Button
-                onClick={this.handleReload}
-                variant="outline"
-                className="flex-1"
-                leftIcon={<RefreshCw className="h-4 w-4" />}
-              >
-                Reload Page
-              </Button>
+            
               <Button
                 onClick={this.handleGoHome}
                 variant="ghost"

@@ -6,6 +6,7 @@ import Sidebar from './sidebar';
 import AppHeader from './app-header';
 import ComingSoonModal from '../modals/ComingSoonModal';
 
+
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
@@ -26,6 +27,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   };
 
   return (
+
     <div className="min-h-screen bg-white flex font-inter">
       {/* Sidebar */}
       <Sidebar

@@ -64,7 +64,7 @@ export default function NotFound() {
 
               <button
                 onClick={() => window.history.back()}
-                className="w-full h-8 sm:h-9 border border-[#795CF5] text-[#795CF5] hover:bg-purple-50 text-xs sm:text-sm font-bold rounded-full transition-colors flex items-center justify-center"
+                className="w-full cursor-pointer h-8 sm:h-9 border border-[#795CF5] text-[#795CF5] hover:bg-purple-50 text-xs sm:text-sm font-bold rounded-full transition-colors flex items-center justify-center"
               >
                 Go back
               </button>
