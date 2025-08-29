@@ -1,3 +1,4 @@
+import { Icons } from "@/components/utils/icons";
 import OrgCard from "../Organizations/organizations";
 
 export default function HomePage() {
@@ -69,7 +70,7 @@ export default function HomePage() {
               <div className="flex items-start gap-6 ">
                 <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(121, 92, 245, 0.07)' }}>
                   <img 
-                    src="https://api.builder.io/api/v1/image/assets/TEMP/276b450512429e60a22a48a764c5c78681bf4093?width=66" 
+                    src={Icons.ownerinventory}
                     alt="Owners Inventory" 
                     className="w-8 h-8"
                   />

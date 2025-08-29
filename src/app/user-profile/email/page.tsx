@@ -1,4 +1,8 @@
 'use client'
+
+import Image from "next/image"
+import { Icons } from "@/components/utils/icons";
+
 export default function EmailSettingsPage() {
   return (
     <main className="p-4 sm:p-8">
@@ -18,19 +22,13 @@ export default function EmailSettingsPage() {
               <span className="text-sm sm:text-base text-black break-all">
                 dev.logoanimations@gmail.com
               </span>
-              <button className="self-end sm:self-auto p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M13.75 17.5V19.0625C13.75 19.5803 13.3303 20 12.8125 20H2.1875C1.66973 20 1.25 19.5803 1.25 19.0625V4.6875C1.25 4.16973 1.66973 3.75 2.1875 3.75H5V15.3125C5 16.5187 5.98129 17.5 7.1875 17.5H13.75ZM13.75 4.0625V0H7.1875C6.66973 0 6.25 0.419727 6.25 0.9375V15.3125C6.25 15.8303 6.66973 16.25 7.1875 16.25H17.8125C18.3303 16.25 18.75 15.8303 18.75 15.3125V5H14.6875C14.1719 5 13.75 4.57812 13.75 4.0625ZM18.4754 2.85043L15.8996 0.27457C15.8117 0.186668 15.7103 0.11893 15.5954 0.0713583C15.4806 0.0237861 15.361 0 15.2367 0H15V3.75H18.75V3.51332C18.75 3.389 18.7262 3.26942 18.6786 3.15457C18.6311 3.03972 18.5633 2.93834 18.4754 2.85043Z"
-                    fill="#4B5563"
-                  />
-                </svg>
+              <button className="self-end sm:self-auto p-0 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
+              <Image
+                  src={Icons.files}
+                  alt="Edit"
+                  width={30}
+                  height={30}
+                />
               </button>
             </div>
           </div>

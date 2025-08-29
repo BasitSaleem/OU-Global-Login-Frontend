@@ -1,16 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-  Building2,
-  ChevronRight,
-  Clock,
-  ExternalLink,
-  Home,
-  Menu,
-  X,
-} from "lucide-react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { Icons } from "@/components/utils/icons"; // 👈 import your icons
 
 interface SidebarProps {
   collapsed: boolean;
@@ -18,7 +11,7 @@ interface SidebarProps {
   onToggleCollapse: () => void;
   onToggleMobile: () => void;
   currentPath?: string;
-  onShowModal: (icon: React.ReactNode) => void; 
+  onShowModal: (icon: React.ReactNode) => void;
 }
 
 export default function Sidebar({
@@ -29,20 +22,22 @@ export default function Sidebar({
   currentPath = "/",
   onShowModal,
 }: SidebarProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalIcon, setModalIcon] = useState<React.ReactNode>(null);
-
   const router = useRouter();
+
   const navigationItems = [
     {
       href: "/",
-      icon: Home,
+      icon: "local",
+      image: Icons.home,
+      activeImage: Icons.homewhite, // ✅ white version
       label: "Home",
       isActive: currentPath === "/",
     },
     {
       href: "/organizations",
-      icon: Building2,
+      icon: "local",
+      image: Icons.organization,
+      activeImage: Icons.organizationwhite, // ✅ white version
       label: "Organizations",
       isActive: currentPath === "/organizations",
     },
@@ -51,9 +46,7 @@ export default function Sidebar({
       icon: "image",
       label: "Inventory",
       hasExternal: false,
-      image:
-        "https://api.builder.io/api/v1/image/assets/TEMP/3c4327f1dd595491744f2af966536dd987ec0a0a?width=66",
-      
+      image: Icons.ownerinventory,
       hasTime: true,
       isActive: currentPath === "/inventory",
     },
@@ -61,8 +54,7 @@ export default function Sidebar({
       href: "/marketplace",
       icon: "image",
       label: "Marketplace",
-      image:
-        "https://api.builder.io/api/v1/image/assets/TEMP/df8a47bf275bccdb600fe4495f3d4bead9cb844f?width=64",
+      image: Icons.ownermarketplace,
       hasTime: true,
       isActive: currentPath === "/marketplace",
     },
@@ -70,28 +62,23 @@ export default function Sidebar({
       href: "/jungle",
       icon: "image",
       label: "Jungle",
-      image:
-        "https://api.builder.io/api/v1/image/assets/TEMP/78407e1c15d2b695844d30eed5f5358ca8da09f8?width=64",
+      image: Icons.ownerjungle,
       hasTime: true,
       isActive: currentPath === "/jungle",
     },
     {
       href: "/analytics",
       icon: "image",
+      image: Icons.owneranalytics,
       label: "Analytics",
-      image:
-        "https://api.builder.io/api/v1/image/assets/TEMP/72b1ea421112224fa1bea68adcd733be5aa8666b?width=76",
       hasBadge: true,
-      
       isActive: currentPath === "/analytics",
     },
   ];
 
-  
-
   const handleItemClick = (item: any, e: React.MouseEvent) => {
-       e.preventDefault();
-        if (item.hasTime) {
+    e.preventDefault();
+    if (item.hasTime) {
       const iconNode =
         item.icon === "image" ? (
           <img
@@ -100,56 +87,66 @@ export default function Sidebar({
             className="w-[40px] h-[40px]"
           />
         ) : (
-          <item.icon className="w-6 h-6 text-[#795CF5]" />
+          <Image
+            src={item.image}
+            alt={item.label}
+            width={40}
+            height={40}
+          />
         );
-      onShowModal(iconNode); // 👈 call parent to show modal
-    }else{
+      onShowModal(iconNode);
+    } else {
       router.push(item.href);
     }
-   
-      
-    };
+  };
 
   return (
     <>
-      {/* Mobile Sidebar Overlay */}
       {mobileOpen && (
         <div
-          className="fixed inset-0  z-40 lg:hidden"
+          className="fixed inset-0 z-40 lg:hidden"
           onClick={onToggleMobile}
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={`
-        ${collapsed ? "w-20" : "w-72"} 
-        ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
-        border-r border-gray-200 flex-shrink-0 transition-all duration-300 ease-in-out
-        fixed lg:relative inset-y-0 left-0 z-50 bg-white
-      `}
+          ${collapsed ? "w-20" : "w-72"}
+          ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+          border-r border-gray-200 flex-shrink-0 transition-all duration-300 ease-in-out
+          fixed lg:relative inset-y-0 left-0 z-50 bg-white
+        `}
       >
         {/* Logo */}
-        <div className={`h-16 flex items-center justify-start  border-b border-gray-200 cursor-pointer ${collapsed ? "px-5" : "px-2"}`}>
+        <div
+          className={`h-16 flex items-center justify-start border-b border-gray-200 cursor-pointer ${
+            collapsed ? "px-5" : "px-4"
+          }`}
+        >
           {collapsed ? (
             <div
               className="w-9 h-8 rounded flex items-center justify-center"
               style={{ backgroundColor: "#795CF5" }}
             >
-              <img
-                src="https://api.builder.io/api/v1/image/assets/TEMP/c9c33312a3f9aa13e72013d867e81317b276f1fc?width=70"
-                onClick={() => router.push("/")}
-                alt="Logo"
-                className="w-6 h-6"
+              <Image
+                src={Icons.owneruniversecoll}
+                alt="Owners Universe Logo"
+                width={20}
+                height={20}
               />
             </div>
           ) : (
-            <img
-              src="https://api.builder.io/api/v1/image/assets/TEMP/0b766862203ee432b826ab8db2da20484b953ac7?width=384"
-              alt="Owners Universe Logo"
-              onClick={() => router.push("/")}
-              className="h-13"
-            />
+            <div>
+              <Image
+                src={Icons.owneruniverse}
+                alt="Owners Universe Logo"
+                width={150}
+                height={150}
+                className="h-13"
+                onClick={() => router.push("/")}
+              />
+           
+             </div> 
           )}
         </div>
 
@@ -158,11 +155,10 @@ export default function Sidebar({
           {navigationItems.map((item) => (
             <a
               key={item.href}
-              
               onClick={(e) => handleItemClick(item, e)}
               className={`
-                flex cursor-pointer items-center 
-                ${collapsed ? "justify-center px-0" : "px-3"} 
+                flex cursor-pointer items-center
+                ${collapsed ? "justify-center px-0" : "px-3"}
                 py-3 rounded-lg transition-colors
                 ${
                   item.isActive
@@ -181,24 +177,47 @@ export default function Sidebar({
               title={collapsed ? item.label : ""}
             >
               {collapsed ? (
-                // Collapsed view - show only icon/image
                 item.icon === "image" ? (
-                  <img src={item.image} alt={item.label} className="w-8 h-8 cursor-pointer" />
+                  <img
+                    src={item.image}
+                    alt={item.label}
+                    className="w-8 h-8 cursor-pointer"
+                  />
                 ) : (
-                  <item.icon className="w-5 h-5 cursor-pointer" />
+                  <Image
+                    src={item.image}
+                    alt={item.label}
+                    width={24}
+                    height={24}
+                  />
                 )
               ) : (
-                // Expanded view
                 <>
                   <div className="flex items-center gap-3">
                     {item.icon === "image" ? (
                       <img
-                        src={item.image}
+                      src={
+                      item.isActive && item.activeImage
+                        ? item.activeImage
+                        : item.image
+                    }
                         alt={item.label}
                         className="w-8 h-8"
                       />
                     ) : (
-                      <item.icon className="w-5 h-5" />
+                      <div className={`${collapsed ? "px-0" : "px-1"}`}>
+                      <Image
+                      src={
+                      item.isActive && item.activeImage
+                        ? item.activeImage
+                        : item.image
+                    }
+                        alt={item.label}
+                        width={24}
+                        height={24}
+                      
+                      />
+                      </div>
                     )}
                     <span
                       className={`text-base ${
@@ -210,8 +229,22 @@ export default function Sidebar({
                   </div>
 
                   {/* Right side icons/badges */}
-                  {item.hasExternal && <ExternalLink className="w-4 h-4" />}
-                  {item.hasTime && <Clock className="w-4 h-4" />}
+                  {item.hasExternal && (
+                    <Image
+                      src={Icons.expand}
+                      alt="external"
+                      width={16}
+                      height={16}
+                    />
+                  )}
+                  {item.hasTime && (
+                    <Image
+                      src={Icons.pie}
+                      alt="time"
+                      width={16}
+                      height={16}
+                    />
+                  )}
                   {item.hasBadge && !item.isActive && (
                     <span
                       className="text-xs font-medium px-2 py-1 rounded-full"
@@ -228,7 +261,7 @@ export default function Sidebar({
             </a>
           ))}
 
-          {/* View All Products Grid Icon - appears right after Analytics when collapsed */}
+          {/* View All Products - collapsed */}
           {collapsed && (
             <div className="px-1 mt-1">
               <a
@@ -244,30 +277,22 @@ export default function Sidebar({
                 style={{ backgroundColor: "#795CF5" }}
                 title="View All Products"
               >
-                <svg
-                  width="23"
-                  height="23"
-                  viewBox="0 0 23 23"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M4 4.15625C4 3.56082 4.21052 3.05259 4.63155 2.63155C5.05258 2.21052 5.56082 2 6.15625 2H8.3125C8.90793 2 9.41616 2.21052 9.8372 2.63155C10.2582 3.05259 10.4687 3.56082 10.4687 4.15625V6.3125C10.4687 6.90793 10.2582 7.41617 9.8372 7.8372C9.41616 8.25823 8.90793 8.46875 8.3125 8.46875H6.15625C5.56082 8.46875 5.05259 8.25823 4.63155 7.8372C4.21052 7.41616 4 6.90793 4 6.3125V4.15625ZM4 13.5C4 12.9046 4.21052 12.3963 4.63155 11.9753C5.05258 11.5543 5.56082 11.3437 6.15625 11.3437H8.3125C8.90793 11.3437 9.41616 11.5543 9.8372 11.9753C10.2582 12.3963 10.4687 12.9046 10.4687 13.5V15.6562C10.4687 16.2517 10.2582 16.7599 9.8372 17.1809C9.41616 17.602 8.90793 17.8125 8.3125 17.8125H6.15625C5.56082 17.8125 5.05258 17.602 4.63155 17.1809C4.21052 16.7599 4 16.2517 4 15.6562V13.5ZM13.3437 4.15625C13.3437 3.56082 13.5543 3.05259 13.9753 2.63155C14.3963 2.21052 14.9046 2 15.5 2H17.6562C18.2517 2 18.7599 2.21052 19.1809 2.63155C19.602 3.05258 19.8125 3.56082 19.8125 4.15625V6.3125C19.8125 6.90793 19.602 7.41616 19.1809 7.8372C18.7599 8.25823 18.2517 8.46875 17.6562 8.46875H15.5C14.9046 8.46875 14.3963 8.25823 13.9753 7.8372C13.5543 7.41616 13.3437 6.90793 13.3437 6.3125V4.15625ZM13.3437 13.5C13.3437 12.9046 13.5543 12.3963 13.9753 11.9753C14.3963 11.5543 14.9046 11.3437 15.5 11.3437H17.6562C18.2517 11.3437 18.7599 11.5543 19.1809 11.9753C19.602 12.3963 19.8125 12.9046 19.8125 13.5V15.6562C19.8125 16.2517 19.602 16.7599 19.1809 17.1809C18.7599 17.602 18.2517 17.8125 17.6562 17.8125H15.5C14.9046 17.8125 14.3963 17.602 13.9753 17.1809C13.5543 16.7599 13.3437 16.2517 13.3437 15.6562V13.5Z"
-                    stroke="white"
-                    strokeWidth="1.25"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <Image
+                  src={Icons.allProducts}
+                  alt="View All Products"
+                  width={23}
+                  height={23}
+                />
               </a>
             </div>
           )}
         </nav>
 
-        {/* View All Products - Full section when expanded */}
+        {/* View All Products - expanded */}
         {!collapsed && (
           <div className="px-3 mt-8 pt-6 border-t border-gray-200">
             <a
-             onClick={() => router.push("/view-all-product")}
+              onClick={() => router.push("/view-all-product")}
               className={`
                 flex items-center justify-between w-full px-3 py-4 rounded-lg transition-colors cursor-pointer
                 ${
@@ -283,7 +308,12 @@ export default function Sidebar({
               }
             >
               <span className="text-base font-medium">View All Products</span>
-              <ChevronRight className="w-5 h-5" />
+              <Image
+                src={Icons.arrowRight}
+                alt="Arrow Right"
+                width={20}
+                height={20}
+              />
             </a>
           </div>
         )}

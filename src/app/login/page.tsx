@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
+import Image from "next/image";
+import { Icons } from "@/components/utils/icons";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,11 +33,13 @@ export default function LoginPage() {
 
       {/* Header with logo and sign up */}
       <div className="relative z-10 flex items-center justify-between p-4 sm:p-6 lg:p-8">
-        <img
-          src="https://api.builder.io/api/v1/image/assets/TEMP/b6883933800beaaed00fccc27c64d8d36242d8ba?width=278"
-          alt="Owners Universe Logo"
-          className="h-6 sm:h-8 lg:h-10"
-        />
+        <Image
+                  src={Icons.owneruniverse}
+                  alt="Owners Universe Logo"
+                  width={150}
+                  height={150}
+                
+                />
         <div className="flex items-center gap-2 sm:gap-3">
           <span className="text-xs sm:text-sm text-gray-700 hidden sm:block">
             Don't have an account?
@@ -105,25 +109,8 @@ export default function LoginPage() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
                   >
-                    <svg
-                      width="16"
-                      height="12"
-                      viewBox="0 0 22 18"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="w-3 h-3 sm:w-4 sm:h-4"
-                    >
-                      <path
-                        d="M2.27489 12.2957C1.42496 11.1915 1 10.6394 1 9C1 7.3606 1.42496 6.80853 2.27489 5.70433C3.97196 3.49956 6.81811 1 11 1C15.1819 1 18.028 3.49956 19.7251 5.70433C20.575 6.80853 21 7.3606 21 9C21 10.6394 20.575 11.1915 19.7251 12.2957C18.028 14.5004 15.1819 17 11 17C6.81811 17 3.97196 14.5004 2.27489 12.2957Z"
-                        stroke="#C9C8CD"
-                        strokeWidth="2"
-                      />
-                      <path
-                        d="M14 9C14 10.6569 12.6569 12 11 12C9.3431 12 8 10.6569 8 9C8 7.3431 9.3431 6 11 6C12.6569 6 14 7.3431 14 9Z"
-                        stroke="#C9C8CD"
-                        strokeWidth="2"
-                      />
-                    </svg>
+                   <Image src={Icons.view} alt="View Password" width={16} height={16} />
+                      
                   </button>
                 </div>
               </div>
@@ -173,20 +160,22 @@ export default function LoginPage() {
             {/* Social login buttons */}
             <div className="space-y-2 sm:space-y-5">
               <button className="cursor-pointer w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border border-[#C9C8CD] rounded-full hover:bg-gray-50 transition-colors">
-                <img
-                  src="https://api.builder.io/api/v1/image/assets/TEMP/dd3b649d040969f0c8d38d8d09939f56ff9ac765?width=48"
+                <Image
+                  src={Icons.google}
                   alt="Google"
-                  className="w-3 h-3 sm:w-4 sm:h-4"
+                  width={20}
+                  height={20}
                 />
                 <span className="text-xs sm:text-sm text-gray-900">
                   Continue with Google
                 </span>
               </button>
               <button className="cursor-pointer w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border border-[#C9C8CD] rounded-full hover:bg-gray-50 transition-colors">
-                <img
-                  src="https://api.builder.io/api/v1/image/assets/TEMP/d812f75e7b50b0dc62e53bde84d2928047908c47?width=48"
+                <Image
+                  src={Icons.microsoft}
                   alt="Microsoft"
-                  className="w-3 h-3 sm:w-4 sm:h-4"
+                  width={20}
+                  height={20}
                 />
                 <span className="text-xs sm:text-sm text-gray-900">
                   Continue with Microsoft
