@@ -1,11 +1,11 @@
 "use client";
 
-import { Bell, LogOut, Menu, Search, Settings, User, X } from "lucide-react";
+import {  Menu, X } from "lucide-react";
 import { use, useEffect, useRef, useState } from "react";
 import NotificationItem from "../pages/Notifications/NotificationItems";
 import { useRouter } from "next/navigation";
-
-
+import Image from "next/image";
+import { Icons } from "../utils/icons";
 
 /* ---------------------------------- */
 /* Types                              */
@@ -181,17 +181,17 @@ function ProfileMenu({
           className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
           
         >
-          <User className="w-5 h-5 text-gray-600" />
+          <Image src={Icons.profile} width={16} height={16} alt="Profile" className="w-5 h-5 text-gray-600" />
           <span className="text-base">Profile</span>
         </a>
 
-        <button className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
-          <Settings className="w-5 h-5 text-gray-600" />
+        <button className="w-full flex items-center gap-2 px-1 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
+          <Image src={Icons.settings} width={16} height={16} alt="Settings" className="w-8 h-8 text-gray-600" />
           <span className="text-base">Account settings</span>
         </button>
 
         <button onClick={() => router.push('/login')} className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
-          <LogOut className="w-5 h-5 text-gray-600" />
+          <Image src={Icons.logout} width={16} height={16} alt="Logout" className="w-5 h-5 text-gray-600" />
           <span  className="text-base">Log out</span>
         </button>
       </div>
@@ -286,7 +286,7 @@ export default function AppHeader({
           className="hidden lg:flex p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
           title="Toggle sidebar"
         >
-          <Menu className="w-5 h-5 text-gray-600" />
+          <Image src={Icons.hamburgerCompress} width={16} height={16} alt="Menu" className="w-5 h-5 text-gray-600" /> 
         </button>
 
         {/* Mobile Menu Toggle */}
@@ -299,7 +299,7 @@ export default function AppHeader({
 
         {/* Search Bar */}
         <div className="relative flex-1 max-w-lg">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <Image src={Icons.search} alt="Search" width={16} height={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
           <input
             type="text"
             placeholder="Search..."
@@ -318,7 +318,7 @@ export default function AppHeader({
             className="relative p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
             aria-label="Open notifications"
           >
-            <Bell className="w-6 h-6 text-gray-600" />
+            <Image src={Icons.notification} width={16} height={16} alt='notifications' className="w-6 h-6 text-gray-600" />
             {anyUnread && (
               <div className="absolute top-1 right-1 w-2 h-2 rounded-full" style={{ backgroundColor: "#D1202D" }} />
             )}
@@ -338,8 +338,8 @@ export default function AppHeader({
         </div>
 
         {/* Settings */}
-        <button onClick={handleSettingsClick} className="p-2 hover:bg-gray-50 rounded-lg cursor-pointer">
-          <Settings className="w-6 h-6 text-gray-600" />
+        <button onClick={handleSettingsClick} className="p-0 hover:bg-gray-50 rounded-lg cursor-pointer">
+          <Image src={Icons.settings} width={16} height={16} alt="Settings" className="w-8 h-8 text-gray-600" />
         </button>
 
         {/* Profile */}

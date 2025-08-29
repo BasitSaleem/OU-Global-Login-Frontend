@@ -1,6 +1,8 @@
 'use client';
 
+import Image from 'next/image';
 import React from 'react';
+import {Icons} from '@/components/utils/icons';
 
 type Org = {
   id: string;
@@ -51,10 +53,7 @@ export default function OrganizationGrid({
                 style={{ backgroundColor: 'rgba(121, 92, 245, 0.07)' }}
               >
                 <div className="mb-4">
-                  <svg width="71" height="71" viewBox="0 0 71 71" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M35.5 14.791V56.2077" stroke="#795CF5" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
-                    <path d="M14.7915 35.5H56.2082" stroke="#795CF5" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+                  <Image src={Icons.addNew} width={80} height={80} alt="Add New" />
                 </div>
                 <span className="text-base font-medium text-primary">Add New</span>
               </div>
@@ -99,7 +98,7 @@ export default function OrganizationGrid({
                           key={index}
                           src={avatarUrl}
                           alt={`Team member ${index + 1}`}
-                          className="w-6 h-6 rounded-full border-2 border-white"
+                          className="w-5 h-5 rounded-full border-2 border-white"
                         />
                       ))}
                     </div>

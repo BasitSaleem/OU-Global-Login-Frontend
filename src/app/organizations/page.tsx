@@ -4,6 +4,7 @@ import CreateOrgModal from "@/components/modals/CreateOrgModal";
 import DeclineModal from "@/components/modals/DeclineModal";
 import OrganizationGrid from "@/components/pages/Organizations/OrganizationGrid";
 import PendingInvitations from "@/components/pages/Organizations/PendingInvitation";
+import { Icons } from "@/components/utils/icons";
 import { Check, X } from "lucide-react";
 import { useState } from "react";
 
@@ -20,10 +21,10 @@ function OrganizationsContent() {
       backgroundColor: "#137F6A",
       members: 22,
       teamAvatars: [
-        "https://api.builder.io/api/v1/image/assets/TEMP/7fd2f890b4abf6aa5cd76445ffcc9957a83e42e3?width=45",
-        "https://api.builder.io/api/v1/image/assets/TEMP/eeba95fb24805ac80d3b36cb6a990d34b4176828?width=44",
-        "https://api.builder.io/api/v1/image/assets/TEMP/7000f111604e6213be239f655b1f14bf7339f909?width=44",
-        "https://api.builder.io/api/v1/image/assets/TEMP/584fddd84549d988e9433a787ad9fc197c0238e1?width=45",
+        Icons.owneruniverse,
+        Icons.ownerinventory,
+        Icons.ownerjungle,
+        Icons.ownermarketplace
       ],
     },
     {
@@ -33,9 +34,9 @@ function OrganizationsContent() {
       backgroundColor: "#F95C5B",
       members: 22,
       teamAvatars: [
-        "https://api.builder.io/api/v1/image/assets/TEMP/7fd2f890b4abf6aa5cd76445ffcc9957a83e42e3?width=45",
-        "https://api.builder.io/api/v1/image/assets/TEMP/eeba95fb24805ac80d3b36cb6a990d34b4176828?width=44",
-        "https://api.builder.io/api/v1/image/assets/TEMP/7000f111604e6213be239f655b1f14bf7339f909?width=44",
+        Icons.owneruniverse,
+        Icons.ownerinventory,
+        Icons.ownerjungle,
       ],
     },
     {
@@ -45,10 +46,10 @@ function OrganizationsContent() {
       backgroundColor: "#B11E67",
       members: 22,
       teamAvatars: [
-        "https://api.builder.io/api/v1/image/assets/TEMP/7fd2f890b4abf6aa5cd76445ffcc9957a83e42e3?width=45",
-        "https://api.builder.io/api/v1/image/assets/TEMP/eeba95fb24805ac80d3b36cb6a990d34b4176828?width=44",
-        "https://api.builder.io/api/v1/image/assets/TEMP/7000f111604e6213be239f655b1f14bf7339f909?width=44",
-        "https://api.builder.io/api/v1/image/assets/TEMP/584fddd84549d988e9433a787ad9fc197c0238e1?width=45",
+       Icons.owneruniverse,
+        Icons.ownerinventory,
+        Icons.ownerjungle,
+        Icons.ownermarketplace
       ],
     },
     {
@@ -58,9 +59,9 @@ function OrganizationsContent() {
       backgroundColor: "#1AD1B9",
       members: 22,
       teamAvatars: [
-        "https://api.builder.io/api/v1/image/assets/TEMP/7fd2f890b4abf6aa5cd76445ffcc9957a83e42e3?width=45",
-        "https://api.builder.io/api/v1/image/assets/TEMP/eeba95fb24805ac80d3b36cb6a990d34b4176828?width=44",
-        "https://api.builder.io/api/v1/image/assets/TEMP/7000f111604e6213be239f655b1f14bf7339f909?width=44",
+        Icons.owneruniverse,
+        Icons.ownerinventory,
+        Icons.ownerjungle,
       ],
     },
     {
@@ -70,10 +71,10 @@ function OrganizationsContent() {
       backgroundColor: "#795CF5",
       members: 22,
       teamAvatars: [
-        "https://api.builder.io/api/v1/image/assets/TEMP/7fd2f890b4abf6aa5cd76445ffcc9957a83e42e3?width=45",
-        "https://api.builder.io/api/v1/image/assets/TEMP/eeba95fb24805ac80d3b36cb6a990d34b4176828?width=44",
-        "https://api.builder.io/api/v1/image/assets/TEMP/7000f111604e6213be239f655b1f14bf7339f909?width=44",
-        "https://api.builder.io/api/v1/image/assets/TEMP/584fddd84549d988e9433a787ad9fc197c0238e1?width=45",
+         Icons.owneruniverse,
+        Icons.ownerinventory,
+        Icons.ownerjungle,
+        Icons.ownermarketplace
       ],
     },
     {
@@ -83,8 +84,8 @@ function OrganizationsContent() {
       backgroundColor: "#FF7C3B",
       members: 22,
       teamAvatars: [
-        "https://api.builder.io/api/v1/image/assets/TEMP/7fd2f890b4abf6aa5cd76445ffcc9957a83e42e3?width=45",
-        "https://api.builder.io/api/v1/image/assets/TEMP/eeba95fb24805ac80d3b36cb6a990d34b4176828?width=44",
+       Icons.owneruniverse,
+        Icons.ownerinventory,
       ],
     },
     {
@@ -94,7 +95,7 @@ function OrganizationsContent() {
       backgroundColor: "#137F6A",
       members: 22,
       teamAvatars: [
-        "https://api.builder.io/api/v1/image/assets/TEMP/7fd2f890b4abf6aa5cd76445ffcc9957a83e42e3?width=45",
+       Icons.owneruniverse,
       ],
     },
     {
@@ -104,10 +105,10 @@ function OrganizationsContent() {
       backgroundColor: "#795CF5",
       members: 22,
       teamAvatars: [
-        "https://api.builder.io/api/v1/image/assets/TEMP/7fd2f890b4abf6aa5cd76445ffcc9957a83e42e3?width=45",
-        "https://api.builder.io/api/v1/image/assets/TEMP/eeba95fb24805ac80d3b36cb6a990d34b4176828?width=44",
-        "https://api.builder.io/api/v1/image/assets/TEMP/7000f111604e6213be239f655b1f14bf7339f909?width=44",
-        "https://api.builder.io/api/v1/image/assets/TEMP/584fddd84549d988e9433a787ad9fc197c0238e1?width=45",
+        Icons.owneruniverse,
+        Icons.ownerinventory,
+        Icons.ownerjungle,
+        Icons.ownermarketplace
       ],
     },
   ];
