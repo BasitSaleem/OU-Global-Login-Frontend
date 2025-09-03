@@ -46,11 +46,11 @@ function NotificationsControlsRow({
   setUnreadOnly: (v: boolean) => void;
 }) {
   return (
-    <div className="flex items-center justify-between px-6 py-4">
+    <div className="flex items-center justify-between px-3 py-2">
       <button
         onClick={onMarkAllAsRead}
         disabled={!anyUnread}
-        className={`text-xs sm:text-base font-medium ${
+        className={`text-body-small font-medium ${
           anyUnread ? "text-primary hover:underline cursor-pointer " : "text-gray-400 cursor-not-allowed"
         }`}
       >
@@ -59,7 +59,7 @@ function NotificationsControlsRow({
 
       <div className="flex items-center gap-2">
         <span
-          className="text-gray-600 text-xs sm:text-base cursor-pointer hover:underline"
+          className="text-gray-600 text-body-small cursor-pointer hover:underline"
           onClick={() => setUnreadOnly(!unreadOnly)}
         >
           Only show unread
@@ -104,13 +104,13 @@ function NotificationsDropdown({
   onMarkOneAsRead: (idx: number) => void;
 }) {
   return (
-    <div className="absolute -right-32 sm:right-0 top-12 w-[300px] sm:w-[500px] md:w-[600px] bg-white border border-gray-200 rounded-xl shadow-lg z-50 max-h-[755px] overflow-hidden">
+    <div className="absolute -right-20 sm:right-0 top-10 w-[300px] max-[300px]:w-[200px] sm:w-[450px] md:w-[500px] bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-[600px] overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b border-gray-100">
-        <h2 className="text-sm sm:text-2xl font-bold text-black">Notifications</h2>
+      <div className="flex items-center justify-between p-3 border-b border-gray-100">
+        <h2 className="text-heading-2 font-bold text-black">Notifications</h2>
         <a
           href="/notifications"
-          className="text-sm text-primary sm:text-base font-medium underline hover:no-underline"
+          className="text-body-small text-primary font-medium underline hover:no-underline"
         >
           View All
         </a>
@@ -159,40 +159,40 @@ function ProfileMenu({
 
   const router = useRouter();
   return (
-    <div className="absolute -right-4 sm:right-0 top-12 w-72 sm:w-80 bg-white border border-gray-200 rounded-xl shadow-lg z-50">
+    <div className="absolute -right-4 sm:right-0 top-10 w-64 sm:w-72 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
       {/* User Info */}
-      <div className="flex items-center gap-4 p-4 border-b border-gray-200">
+      <div className="flex items-center gap-3 p-3 border-b border-gray-200">
         <div
-          className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center cursor-pointer"
+          className="w-7 h-7 rounded-full flex items-center justify-center cursor-pointer"
           style={{ backgroundColor: "#795CF5" }}
         >
-          <span className="text-white text-base font-medium">AR</span>
+          <span className="text-white text-body-small font-medium">AR</span>
         </div>
         <div>
-          <h3 className="text-base font-medium text-gray-900">Ali Raza</h3>
-          <p className="text-sm text-gray-500 truncate">dev.logoanimations@gmail.com</p>
+          <h3 className="text-body-medium-bold text-gray-900">Ali Raza</h3>
+          <p className="text-body-small text-gray-500 truncate">dev.logoanimations@gmail.com</p>
         </div>
       </div>
 
       {/* Menu Items */}
-      <div className="p-2">
+      <div className="p-1">
         <a
           onClick={() => router.push("/user-profile")}
-          className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
-          
+          className="w-full flex items-center gap-2 px-2 py-1.5 text-gray-700 hover:bg-gray-50 rounded transition-colors cursor-pointer"
+
         >
-          <Image src={Icons.profile} width={16} height={16} alt="Profile" className="w-5 h-5 text-gray-600" />
-          <span className="text-base">Profile</span>
+          <Image src={Icons.profile} width={14} height={14} alt="Profile" className="w-4 h-4 text-gray-600" />
+          <span className="text-body-medium">Profile</span>
         </a>
 
-        <button className="w-full flex items-center gap-2 px-1 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
-          <Image src={Icons.settings} width={16} height={16} alt="Settings" className="w-8 h-8 text-gray-600" />
-          <span className="text-base">Account settings</span>
+        <button className="w-full flex items-center gap-2 px-0.5 py-1.5 text-gray-700 hover:bg-gray-50 rounded transition-colors cursor-pointer">
+          <Image src={Icons.settings} width={14} height={14} alt="Settings" className="w-6 h-6 text-gray-600" />
+          <span className="text-body-medium">Account settings</span>
         </button>
 
-        <button onClick={() => router.push('/login')} className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
-          <Image src={Icons.logout} width={16} height={16} alt="Logout" className="w-5 h-5 text-gray-600" />
-          <span  className="text-base">Log out</span>
+        <button onClick={() => router.push('/login')} className="w-full flex items-center gap-2 px-2 py-1.5 text-gray-700 hover:bg-gray-50 rounded transition-colors cursor-pointer">
+          <Image src={Icons.logout} width={14} height={14} alt="Logout" className="w-4 h-4 text-gray-600" />
+          <span className="text-body-medium">Log out</span>
         </button>
       </div>
     </div>
@@ -277,50 +277,50 @@ export default function AppHeader({
   }, []);
 
   return (
-    <header className="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white">
+    <header className="h-12 border-b border-gray-200 flex items-center justify-between px-4 bg-white">
       {/* Left: Menu + Search */}
       <div className="flex items-center gap-4 flex-1 max-w-2xl">
         {/* Desktop Menu Toggle */}
         <button
           onClick={onToggleSidebar}
-          className="hidden lg:flex p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
+          className="hidden lg:flex p-1 hover:bg-gray-50 rounded transition-colors cursor-pointer"
           title="Toggle sidebar"
         >
-          <Image src={Icons.hamburgerCompress} width={16} height={16} alt="Menu" className="w-5 h-5 text-gray-600" /> 
+          <Image src={Icons.hamburgerCompress} width={14} height={14} alt="Menu" className="w-4 h-4 text-gray-600" />
         </button>
 
         {/* Mobile Menu Toggle */}
         <button
           onClick={onToggleMobileSidebar}
-          className="lg:hidden p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
+          className="lg:hidden p-1 hover:bg-gray-50 rounded transition-colors cursor-pointer"
         >
-          {mobileSidebarOpen ? <X className="w-5 h-5 text-gray-600" /> : <Menu className="w-5 h-5 text-gray-600" />}
+          {mobileSidebarOpen ? <X className="w-4 h-4 text-gray-600" /> : <Menu className="w-4 h-4 text-gray-600" />}
         </button>
 
         {/* Search Bar */}
         <div className="relative flex-1 max-w-lg">
-          <Image src={Icons.search} alt="Search" width={16} height={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <Image src={Icons.search} alt="Search" width={14} height={14} className="absolute left-2 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 text-gray-500" />
           <input
             type="text"
             placeholder="Search..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-lg border-0 text-base placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#795CF5]"
+            className="w-full pl-8 pr-3 py-1.5 rounded border-0 text-body-medium placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#795CF5]"
             style={{ backgroundColor: "rgba(121, 92, 245, 0.07)" }}
           />
         </div>
       </div>
 
       {/* Right: Actions */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
         {/* Notifications */}
         <div className="relative" ref={notificationsRef}>
           <button
             onClick={toggleNotifications}
-            className="relative p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
+            className="relative p-1 hover:bg-gray-50 rounded transition-colors cursor-pointer"
             aria-label="Open notifications"
           >
-            <Image src={Icons.notification} width={16} height={16} alt='notifications' className="w-6 h-6 text-gray-600" />
+            <Image src={Icons.notification} width={16} height={16} alt='notifications' className="w-4 h-4 text-gray-600" />
             {anyUnread && (
-              <div className="absolute top-1 right-1 w-2 h-2 rounded-full" style={{ backgroundColor: "#D1202D" }} />
+              <div className="absolute top-0 right-0 w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "#D1202D" }} />
             )}
           </button>
 
@@ -338,19 +338,19 @@ export default function AppHeader({
         </div>
 
         {/* Settings */}
-        <button onClick={handleSettingsClick} className="p-0 hover:bg-gray-50 rounded-lg cursor-pointer">
-          <Image src={Icons.settings} width={16} height={16} alt="Settings" className="w-8 h-8 text-gray-600" />
+        <button onClick={handleSettingsClick} className="p-1 hover:bg-gray-50 rounded cursor-pointer">
+          <Image src={Icons.settings} width={16} height={16} alt="Settings" className="w-6 h-6 text-gray-600" />
         </button>
 
         {/* Profile */}
         <div className="relative" ref={profileDropdownRef}>
           <button
             onClick={toggleProfileDropdown}
-            className="w-9 h-9 rounded-full flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer"
+            className="w-7 h-7 rounded-full flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer"
             style={{ backgroundColor: "#795CF5" }}
             aria-label="Open profile menu"
           >
-            <span className="text-white text-base font-medium">AR</span>
+            <span className="text-white text-body-small font-medium">AR</span>
           </button>
 
           {profileDropdownOpen && <ProfileMenu onClose={() => setProfileDropdownOpen(false)} />}

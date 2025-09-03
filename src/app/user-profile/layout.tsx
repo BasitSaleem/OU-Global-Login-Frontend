@@ -96,68 +96,68 @@ export default function UserProfileLayout({
       {/* Desktop Sidebar */}
       <div
         className={`${
-          sidebarCollapsed ? "w-[88px]" : "w-[280px]"
+          sidebarCollapsed ? "w-12" : "w-56"
         } transition-all duration-300 bg-white border-r border-gray-200 hidden md:flex flex-col`}
       >
         {/* Logo */}
         <div
-          className={`h-16 flex items-center justify-start border-b border-gray-200 ${
-            sidebarCollapsed ? "px-6" : "px-4"
+          className={`h-12 flex items-center justify-start border-b border-gray-200 ${
+            sidebarCollapsed ? "px-2" : "px-3"
           }`}
         >
           <a onClick={() => router.push("/")}>
             {sidebarCollapsed ? (
               <div
-                className="w-9 h-8 rounded flex items-center justify-center cursor-pointer"
+                className="w-8 h-8 rounded flex items-center justify-center cursor-pointer"
                 style={{ backgroundColor: "#795CF5" }}
               >
                 <Image
                   src={Icons.owneruniversecoll}
                   alt="Owners Universe Logo"
-                  width={24}
-                  height={24}
+                  width={16}
+                  height={16}
                 />
               </div>
             ) : (
               <Image
                 src={Icons.owneruniverse}
-                width={150}
-                height={150}
+                width={120}
+                height={120}
                 alt="Owners Universe Logo"
-                className="h-13 cursor-pointer "
+                className="h-8 cursor-pointer "
               />
             )}{" "}
           </a>
         </div>
 
         {/* Sidebar Content */}
-        <div className="flex-1 p-3">
-          <div className="space-y-1">
+        <div className="flex-1 p-2">
+          <div className="space-y-0.5">
             {profileNavItems.map((item) => (
               <a
                 key={item.href}
                 onClick={() => router.push(item.href)}
                 className={`
-                  flex cursor-pointer items-center 
-                  ${sidebarCollapsed ? "justify-center px-3" : "px-3"} 
-                  py-3 rounded-lg transition-colors
+                  flex cursor-pointer items-center
+                  ${sidebarCollapsed ? "justify-center px-0" : "px-2"}
+                  py-1.5 rounded transition-colors
                   ${
                     item.isActive
                       ? "text-white"
                       : "text-[#231F20] hover:bg-gray-50"
                   }
-                  gap-3
+                  gap-2
                 `}
                 style={item.isActive ? { backgroundColor: "#795CF5" } : {}}
                 title={sidebarCollapsed ? item.label : ""}
               >
                 {item.iconType === "image" ? (
-                  <img src={  item.isActive && item.activeIcon ? item.activeIcon : item.icon} alt={item.label} className="w-5 h-5" />
+                  <img src={  item.isActive && item.activeIcon ? item.activeIcon : item.icon} alt={item.label} className="w-4 h-4" />
                 ) : (
-                  <item.icon className="w-5 h-5 text-[#000000]" />
+                  <item.icon className="w-4 h-4 text-[#000000]" />
                 )}
                 {!sidebarCollapsed && (
-                  <span className=" text-base font-medium">{item.label}</span>
+                  <span className="text-body-medium font-medium">{item.label}</span>
                 )}
               </a>
             ))}
@@ -172,8 +172,8 @@ export default function UserProfileLayout({
             className="fixed inset-0 bg-black/40 z-30 md:hidden"
             onClick={toggleMobileSidebar}
           />
-          <div className="fixed inset-y-0 left-0 z-40 w-[280px] bg-white border-r border-gray-200 flex flex-col p-3 md:hidden">
-            <div className="h-16 flex items-center justify-between border-b border-gray-200 px-4">
+          <div className="fixed inset-y-0 left-0 z-40 w-56 bg-white border-r border-gray-200 flex flex-col p-2 md:hidden">
+            <div className="h-12 flex items-center justify-between border-b border-gray-200 px-3">
               <div
                 className="cursor-pointer"
                 onClick={() => {
@@ -184,18 +184,18 @@ export default function UserProfileLayout({
                 <img
                   src="/Icons/Home.svg"
                   alt="Owners Universe Logo"
-                  className="h-8"
+                  className="h-6"
                 />
               </div>
               <button
                 onClick={toggleMobileSidebar}
-                className="text-gray-600 cursor-pointer"
+                className="text-gray-600 cursor-pointer text-sm"
               >
                 ✕
               </button>
             </div>
 
-            <div className="flex-1 space-y-1 mt-4">
+            <div className="flex-1 space-y-0.5 mt-2">
               {profileNavItems.map((item) => (
                 <a
                   key={item.href}
@@ -203,18 +203,18 @@ export default function UserProfileLayout({
                     toggleMobileSidebar();
                     router.push(item.href);
                   }}
-                  className={`flex cursor-pointer items-center gap-3 px-3 py-3 rounded-lg transition-colors ${
+                  className={`flex cursor-pointer items-center gap-2 px-2 py-1.5 rounded transition-colors ${
                     item.isActive
                       ? "bg-[#795CF5] text-white"
                       : "text-gray-600 hover:bg-gray-50"
                   }`}
                 >
                   {item.iconType === "image" ? (
-                    <img src={item.icon} alt={item.label} className="w-5 h-5" />
+                    <img src={item.icon} alt={item.label} className="w-4 h-4" />
                   ) : (
-                    <item.icon className="w-5 h-5" />
+                    <item.icon className="w-4 h-4" />
                   )}
-                  <span className="text-base font-medium">{item.label}</span>
+                  <span className="text-body-medium font-medium">{item.label}</span>
                 </a>
               ))}
             </div>

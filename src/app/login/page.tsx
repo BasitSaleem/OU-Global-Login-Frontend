@@ -38,7 +38,7 @@ export default function LoginPage() {
                   alt="Owners Universe Logo"
                   width={150}
                   height={150}
-                
+
                 />
         <div className="flex items-center gap-2 sm:gap-3">
           <span className="text-xs sm:text-sm text-gray-700 hidden sm:block">
@@ -110,7 +110,7 @@ export default function LoginPage() {
                     className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
                   >
                    <Image src={Icons.view} alt="View Password" width={16} height={16} />
-                      
+
                   </button>
                 </div>
               </div>

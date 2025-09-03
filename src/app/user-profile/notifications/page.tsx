@@ -45,43 +45,43 @@ function NotificationSection({
   updateNestedSetting: (category: keyof NotificationSettings, type: 'inApp' | 'email', value: boolean) => void;
 }) {
   return (
-    <div className="bg-white border border-gray-300 rounded-xl p-6">
-      <div className="flex items-center gap-3 mb-6">
-         <Image src={Icon} alt={title} width={24} height={24} className="w-6 h-6" />
-        <h3 className="text-base sm:text-lg  font-medium text-black">{title}</h3>
+    <div className="bg-white border border-gray-300 rounded p-3">
+      <div className="flex items-center gap-2 mb-3">
+         <Image src={Icon} alt={title} width={20} height={20} className="w-5 h-5" />
+        <h3 className="text-body-medium-bold font-medium text-black">{title}</h3>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-1">
         {items.map((item) => (
           <div
             key={item.key as string}
-            className={`flex items-center justify-between px-3 py-3 rounded-lg ${
+            className={`flex items-center justify-between px-2 py-1.5 rounded ${
               item.highlighted ? 'bg-[rgba(121,92,245,0.07)]' : ''
             }`}
           >
             {/* Label text */}
-            <span className="flex-1 text-sm sm:text-base text-black">{item.label}</span>
+            <span className="flex-1 text-body-small text-black">{item.label}</span>
 
             {/* Checkboxes */}
-            <div className="flex items-center gap-4 shrink-0">
-              <label className="flex items-center gap-2 cursor-pointer">
+            <div className="flex items-center gap-3 shrink-0">
+              <label className="flex items-center gap-1 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={(settings[item.key] as any).inApp}
                   onChange={(e) => updateNestedSetting(item.key, 'inApp', e.target.checked)}
-                  className="w-4 h-4 rounded border-gray-300 cursor-pointer"
+                  className="w-3 h-3 rounded border-gray-300 cursor-pointer"
                 />
-                <span className="text-sm sm:text-base text-black">In App</span>
+                <span className="text-body-tiny text-black">In App</span>
               </label>
 
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex items-center gap-1 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={(settings[item.key] as any).email}
                   onChange={(e) => updateNestedSetting(item.key, 'email', e.target.checked)}
-                  className="w-4 h-4 rounded border-gray-300 cursor-pointer"
+                  className="w-3 h-3 rounded border-gray-300 cursor-pointer"
                 />
-                <span className="text-sm sm:text-base text-black">Email</span>
+                <span className="text-body-tiny text-black">Email</span>
               </label>
             </div>
           </div>
@@ -199,59 +199,59 @@ export default function NotificationPreferencesPage() {
   ];
 
   return (
-    <main className="p-4 sm:p-8">
+    <main className="p-3">
       <div className="max-w-7xl">
         {/* Header Section */}
-        <div className=" mb-6 gap-4">
+        <div className="mb-3 gap-2">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-black mb-2">
+            <h1 className="text-heading-1 font-bold text-black mb-1">
               Notification Preferences
             </h1>
-            <p className="text-sm sm:text-base text-gray-500">
+            <p className="text-body-small text-gray-500">
               Manage how you want to be notified about important updates
             </p>
           </div>
 
           {/* Owner Switcher */}
-          <div className="flex justify-center mt-5">
-            <div className="flex items-center gap-4">
+          <div className="flex justify-center mt-3">
+            <div className="flex items-center gap-2">
               {/* Inventory */}
               <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('inventory')}>
-                 <Image src={Icons.owneranalytics} alt="owner analytics" width={20} height={20} className={`w-9 h-9 sm:w-9 sm:h-9 rounded p-1 transition border ${
+                 <Image src={Icons.owneranalytics} alt="owner analytics" width={16} height={16} className={`w-7 h-7 rounded p-1 transition border ${
                     selectedOwner === 'inventory' ? 'border-[#795CF5] bg-[#795CF512]' : 'border-transparent'
                   }`} />
-               
-                <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-xs sm:text-sm font-medium rounded-md px-3 py-1 whitespace-nowrap z-10 shadow-sm">
+
+                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-body-tiny font-medium rounded px-2 py-0.5 whitespace-nowrap z-10 shadow-sm">
                   Owners Inventory
                 </div>
               </div>
 
               {/* Jungle */}
               <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('jungle')}>
-               <Image src={Icons.ownerjungle} alt="owner jungle" width={20} height={20} className={`w-9 h-9sm:w-9 sm:h-9 rounded p-1 transition border ${
+               <Image src={Icons.ownerjungle} alt="owner jungle" width={16} height={16} className={`w-7 h-7 rounded p-1 transition border ${
                     selectedOwner === 'jungle' ? 'border-[#795CF5] bg-[#795CF512]' : 'border-transparent'
                   }`} />
-                <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-xs sm:text-sm font-medium rounded-md px-3 py-1 whitespace-nowrap z-10 shadow-sm">
+                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-body-tiny font-medium rounded px-2 py-0.5 whitespace-nowrap z-10 shadow-sm">
                   Owners Jungle
                 </div>
               </div>
 
               {/* Marketplace */}
               <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('marketplace')}>
-               <Image src={Icons.ownermarketplace} alt="owner marketplace" width={20} height={20} className={`w-9 h-9 sm:w-9 sm:h-9 rounded p-1 transition border ${
+               <Image src={Icons.ownermarketplace} alt="owner marketplace" width={16} height={16} className={`w-7 h-7 rounded p-1 transition border ${
                     selectedOwner === 'marketplace' ? 'border-[#795CF5] bg-[#795CF512]' : 'border-transparent'
                   }`} />
-                <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-xs sm:text-sm font-medium rounded-md px-3 py-1 whitespace-nowrap z-10 shadow-sm">
+                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-body-tiny font-medium rounded px-2 py-0.5 whitespace-nowrap z-10 shadow-sm">
                   Owner Marketplace
                 </div>
               </div>
 
               {/* Analytics */}
               <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('analytics')}>
-               <Image src={Icons.owneranalytics} alt="owner analytics" width={20} height={20} className={`w-9 h-9sm:w-9 sm:h-9 rounded p-1 transition border ${
+               <Image src={Icons.owneranalytics} alt="owner analytics" width={16} height={16} className={`w-7 h-7 rounded p-1 transition border ${
                    selectedOwner === 'analytics' ? 'border-[#795CF5] bg-[#795CF512]' : 'border-transparent'
                  }`} />
-                <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-xs sm:text-sm font-medium rounded-md px-3 py-1 whitespace-nowrap z-10 shadow-sm">
+                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-body-tiny font-medium rounded px-2 py-0.5 whitespace-nowrap z-10 shadow-sm">
                   Analytics
                 </div>
               </div>
@@ -260,35 +260,35 @@ export default function NotificationPreferencesPage() {
         </div>
 
         {/* Notification Methods */}
-        <div className="bg-white border border-gray-300 rounded-lg p-4 sm:p-6 mb-6">
-          <h2 className="text-base sm:text-lg font-medium text-black mb-4">
+        <div className="bg-white border border-gray-300 rounded p-3 mb-3">
+          <h2 className="text-body-medium-bold font-medium text-black mb-2">
             Notification Methods
           </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             {/* In-App Notifications */}
-            <div className="flex items-center gap-4 p-4 border border-gray-300 rounded-lg">
-              <Image src={Icons.notificationblue} height={24} width={24} alt="Bell Icon" />
-              <span className="text-sm sm:text-base text-black">In-App Notifications</span>
+            <div className="flex items-center gap-2 p-2 border border-gray-300 rounded">
+              <Image src={Icons.notificationblue} height={16} width={16} alt="Bell Icon" />
+              <span className="text-body-small text-black">In-App Notifications</span>
               <div className="ml-auto">
                 <input
                   type="checkbox"
                   checked={notificationSettings[selectedOwner].inAppNotifications}
                   onChange={(e) => updateNotificationSetting('inAppNotifications', e.target.checked)}
-                  className="w-5 h-5 rounded border-gray-300 cursor-pointer"
+                  className="w-4 h-4 rounded border-gray-300 cursor-pointer"
                 />
               </div>
             </div>
 
             {/* Email Notifications */}
-            <div className="flex items-center gap-4 p-4 border border-gray-300 rounded-lg">
-              <Image src={Icons.emailblue} height={24} width={24} alt="Email Icon" />
-              <span className="text-sm sm:text-base text-black">Email Notifications</span>
+            <div className="flex items-center gap-2 p-2 border border-gray-300 rounded">
+              <Image src={Icons.emailblue} height={16} width={16} alt="Email Icon" />
+              <span className="text-body-small text-black">Email Notifications</span>
               <div className="ml-auto">
                 <input
                   type="checkbox"
                   checked={notificationSettings[selectedOwner].emailNotifications}
                   onChange={(e) => updateNotificationSetting('emailNotifications', e.target.checked)}
-                  className="w-5 h-5 rounded border-gray-300 cursor-pointer"
+                  className="w-4 h-4 rounded border-gray-300 cursor-pointer"
                 />
               </div>
             </div>
@@ -296,7 +296,7 @@ export default function NotificationPreferencesPage() {
         </div>
 
         {/* Notification Categories Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-4">
           {sections.map((section) => (
             <NotificationSection
               key={section.title}
@@ -312,7 +312,7 @@ export default function NotificationPreferencesPage() {
         {/* Save Button */}
         <div className="flex justify-end">
           <button
-            className="px-6 py-2.5 rounded-lg text-white text-sm sm:text-base font-medium transition-colors cursor-pointer bg-[#795CF5] hover:bg-[#7C3AED]"
+            className="px-3 py-1.5 rounded text-white text-body-medium font-medium transition-colors cursor-pointer bg-[#795CF5] hover:bg-[#7C3AED]"
           >
             Save Preferences
           </button>

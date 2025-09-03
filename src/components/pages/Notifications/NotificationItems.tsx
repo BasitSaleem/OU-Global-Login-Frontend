@@ -25,10 +25,10 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
   onMarkAsRead,
 }) => {
   return (
-    <div className="flex items-start gap-6 p-6 hover:bg-gray-50 transition-colors cursor-pointer">
+    <div className="flex items-start gap-3 p-3 hover:bg-gray-50 transition-colors cursor-pointer">
       {/* Avatar */}
       <div
-        className="w-6 h-6 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white text-xs sm:text-lg font-medium"
+        className="w-6 h-6 rounded-full flex items-center justify-center text-white text-body-tiny font-medium"
         style={{ backgroundColor: color }}
       >
         {initials}
@@ -36,24 +36,24 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
 
       {/* Content */}
       <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between mb-1 ">
-          <p className="text-xs sm:text-base text-black">
+        <div className="flex items-center justify-between mb-0.5 ">
+          <p className="text-body-small text-black">
             <span className="font-medium">{name}</span> {action}
           </p>
-          <div className="flex items-center gap-3">
-            <span className="text-xs sm:text-base text-gray-500">{time}</span>
+          <div className="flex items-center gap-2">
+            <span className="text-body-tiny text-gray-500">{time}</span>
 
             {/* Unread Dot */}
             {showDot && (
               <button
                 onClick={onMarkAsRead}
-                className="relative w-4 h-4 flex items-center justify-center group cursor-pointer"
+                className="relative w-3 h-3 flex items-center justify-center group cursor-pointer"
                 aria-label="Mark notification as read"
                 title="Mark as read"
               >
-                <span className="w-2 h-2 rounded-full bg-[#795CF5] block" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#795CF5] block" />
                 <span className="absolute -inset-[1px] rounded-full border-1 border-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <span className="absolute top-8 -left-[100%] -translate-x-1/2 whitespace-nowrap border border-gray-300 bg-white text-black text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity ">
+                <span className="absolute top-6 -left-[100%] -translate-x-1/2 whitespace-nowrap border border-gray-300 bg-white text-black text-body-tiny px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity ">
                   Mark as read
                 </span>
               </button>
@@ -61,11 +61,11 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
           </div>
         </div>
 
-        <h4 className="text-xs sm:text-base font-medium text-black mb-1">
+        <h4 className="text-body-small font-medium text-black mb-0.5">
           {title}
         </h4>
-        <p className="text-xs sm:text-sm text-gray-500 mb-2">{description}</p>
-        <p className="text-xs sm:text-sm font-bold text-gray-500">{updates}</p>
+        <p className="text-body-tiny text-gray-500 mb-1">{description}</p>
+        <p className="text-body-tiny font-bold text-gray-500">{updates}</p>
       </div>
     </div>
   );
