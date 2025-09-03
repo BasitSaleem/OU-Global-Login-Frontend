@@ -175,23 +175,23 @@ function ProfileMenu({
       </div>
 
       {/* Menu Items */}
-      <div className="p-1">
+      <div className="p-3">
         <a
           onClick={() => router.push("/user-profile")}
           className="w-full flex items-center gap-2 px-2 py-1.5 text-gray-700 hover:bg-gray-50 rounded transition-colors cursor-pointer"
 
         >
-          <Image src={Icons.profile} width={14} height={14} alt="Profile" className="w-4 h-4 text-gray-600" />
+          <Image src={Icons.profile} width={14} height={14} alt="Profile" className="w-6 h-6 text-gray-600" />
           <span className="text-body-medium">Profile</span>
         </a>
 
         <button className="w-full flex items-center gap-2 px-0.5 py-1.5 text-gray-700 hover:bg-gray-50 rounded transition-colors cursor-pointer">
-          <Image src={Icons.settings} width={14} height={14} alt="Settings" className="w-6 h-6 text-gray-600" />
+          <Image src={Icons.settings} width={14} height={14} alt="Settings" className="w-8 h-8 text-gray-600" />
           <span className="text-body-medium">Account settings</span>
         </button>
 
         <button onClick={() => router.push('/login')} className="w-full flex items-center gap-2 px-2 py-1.5 text-gray-700 hover:bg-gray-50 rounded transition-colors cursor-pointer">
-          <Image src={Icons.logout} width={14} height={14} alt="Logout" className="w-4 h-4 text-gray-600" />
+          <Image src={Icons.logout} width={14} height={14} alt="Logout" className="w-6 h-6 text-gray-600" />
           <span className="text-body-medium">Log out</span>
         </button>
       </div>
@@ -277,7 +277,7 @@ export default function AppHeader({
   }, []);
 
   return (
-    <header className="h-12 border-b border-gray-200 flex items-center justify-between px-4 bg-white">
+    <header className="h-14 border-b border-gray-200 flex items-center justify-between px-4 bg-white">
       {/* Left: Menu + Search */}
       <div className="flex items-center gap-4 flex-1 max-w-2xl">
         {/* Desktop Menu Toggle */}
@@ -286,7 +286,7 @@ export default function AppHeader({
           className="hidden lg:flex p-1 hover:bg-gray-50 rounded transition-colors cursor-pointer"
           title="Toggle sidebar"
         >
-          <Image src={Icons.hamburgerCompress} width={14} height={14} alt="Menu" className="w-4 h-4 text-gray-600" />
+          <Image src={Icons.hamburgerCompress} width={14} height={14} alt="Menu" className="w-5 h-5 text-gray-600" />
         </button>
 
         {/* Mobile Menu Toggle */}
@@ -299,7 +299,7 @@ export default function AppHeader({
 
         {/* Search Bar */}
         <div className="relative flex-1 max-w-lg">
-          <Image src={Icons.search} alt="Search" width={14} height={14} className="absolute left-2 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 text-gray-500" />
+          <Image src={Icons.search} alt="Search" width={16} height={16} className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
           <input
             type="text"
             placeholder="Search..."
@@ -318,7 +318,7 @@ export default function AppHeader({
             className="relative p-1 hover:bg-gray-50 rounded transition-colors cursor-pointer"
             aria-label="Open notifications"
           >
-            <Image src={Icons.notification} width={16} height={16} alt='notifications' className="w-4 h-4 text-gray-600" />
+            <Image src={Icons.notification} width={16} height={16} alt='notifications' className="w-6 h-6 text-gray-600" />
             {anyUnread && (
               <div className="absolute top-0 right-0 w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "#D1202D" }} />
             )}
@@ -339,7 +339,7 @@ export default function AppHeader({
 
         {/* Settings */}
         <button onClick={handleSettingsClick} className="p-1 hover:bg-gray-50 rounded cursor-pointer">
-          <Image src={Icons.settings} width={16} height={16} alt="Settings" className="w-6 h-6 text-gray-600" />
+          <Image src={Icons.settings} width={16} height={16} alt="Settings" className="w-8 h-8 text-gray-600" />
         </button>
 
         {/* Profile */}

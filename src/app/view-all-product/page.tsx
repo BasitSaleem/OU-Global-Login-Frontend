@@ -55,27 +55,27 @@ function ViewAllProductsPage() {
           {products.map((product) => (
             <div
               key={product.id}
-              className="bg-white border border-gray-200 rounded p-3 hover:shadow-sm transition-shadow cursor-pointer"
+              className="bg-white border border-gray-200 rounded p-4 hover:shadow-sm transition-shadow cursor-pointer"
             >
               <div className="flex items-start gap-3">
                 {/* Product Icon */}
                 <div
-                  className="w-8 h-8 rounded flex items-center justify-center flex-shrink-0"
+                  className="w-9 h-9 rounded flex items-center justify-center flex-shrink-0"
                   style={{ backgroundColor: product.backgroundColor }}
                 >
                   <img
                     src={product.icon}
                     alt={product.title}
-                    className="w-5 h-5"
+                    className="w-6 h-6"
                   />
                 </div>
 
                 {/* Product Info */}
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-heading-3 font-medium text-black mb-1">
+                  <h3 className="text-heading-3 font-medium text-black mb-2">
                     {product.title}
                   </h3>
-                  <p className="text-body-small text-gray-600 mb-2">
+                  <p className="text-body-small text-gray-600 mb-4">
                     {product.description}
                   </p>
 

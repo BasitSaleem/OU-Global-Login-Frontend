@@ -111,7 +111,7 @@ export default function Sidebar({
 
       <aside
         className={`
-          ${collapsed ? "w-12" : "w-56"}
+          ${collapsed ? "w-12" : "w-75"}
           ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
           border-r border-gray-200 flex-shrink-0 transition-all duration-300 ease-in-out
           fixed lg:relative inset-y-0 left-0 z-50 bg-white
@@ -119,7 +119,7 @@ export default function Sidebar({
       >
         {/* Logo */}
         <div
-          className={`h-12 flex items-center justify-start border-b border-gray-200 cursor-pointer ${
+          className={`h-14 flex items-center justify-start border-b border-gray-200 cursor-pointer ${
             collapsed ? "px-2" : "px-3"
           }`}
         >
@@ -131,8 +131,8 @@ export default function Sidebar({
               <Image
                 src={Icons.owneruniversecoll}
                 alt="Owners Universe Logo"
-                width={16}
-                height={16}
+                width={18}
+                height={18}
               />
             </div>
           ) : (
@@ -140,9 +140,9 @@ export default function Sidebar({
               <Image
                 src={Icons.owneruniverse}
                 alt="Owners Universe Logo"
-                width={120}
-                height={120}
-                className="h-8"
+                width={130}
+                height={130}
+                className="h-10"
                 onClick={() => router.push("/")}
               />
 
@@ -151,7 +151,7 @@ export default function Sidebar({
         </div>
 
         {/* Navigation */}
-        <nav className="px-2 py-2 space-y-0.5">
+        <nav className="px-2 py-2 space-y-3">
           {navigationItems.map((item) => (
             <a
               key={item.href}
@@ -201,7 +201,7 @@ export default function Sidebar({
                 )
               ) : (
                 <>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     {item.icon === "image" ? (
                       <img
                       src={
@@ -210,7 +210,7 @@ export default function Sidebar({
                         : item.image
                     }
                         alt={item.label}
-                        className="w-5 h-5"
+                        className="w-7 h-7"
                       />
                     ) : (
                       <div className={`${collapsed ? "px-0" : ""}`}>
@@ -221,8 +221,8 @@ export default function Sidebar({
                         : item.image
                     }
                         alt={item.label}
-                        width={16}
-                        height={16}
+                        width={24}
+                        height={24}
 
                       />
                       </div>
@@ -249,8 +249,8 @@ export default function Sidebar({
                     <Image
                       src={Icons.pie}
                       alt="time"
-                      width={12}
-                      height={12}
+                      width={14}
+                      height={14}
                     />
                   )}
                   {item.hasBadge && !item.isActive && (
@@ -275,7 +275,7 @@ export default function Sidebar({
               <a
                 onClick={() => router.push("/view-all-product")}
                 className={`
-                  flex items-center justify-center w-10 h-8 mx-0 rounded border-t transition-all cursor-pointer
+                  flex items-center justify-center w-10 h-10 mx-0 rounded border-t transition-all cursor-pointer
                   ${
                     currentPath === "/view-all-product"
                       ? "border-white shadow-md"
@@ -298,7 +298,7 @@ export default function Sidebar({
 
         {/* View All Products - expanded */}
         {!collapsed && (
-          <div className="px-2 mt-4 pt-3 border-t border-gray-200">
+          <div className="px-2 py-3 mt-4 pt-3 border-t border-gray-200">
             <a
               onClick={() => router.push("/view-all-product")}
               className={`
@@ -315,7 +315,7 @@ export default function Sidebar({
                   : {}
               }
             >
-              <span className="text-body-medium font-medium">View All Products</span>
+              <span className="text-body-medium font-medium p-1 ">View All Products</span>
               <Image
                 src={Icons.arrowRight}
                 alt="Arrow Right"

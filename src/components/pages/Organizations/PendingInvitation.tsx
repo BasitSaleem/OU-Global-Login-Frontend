@@ -24,18 +24,18 @@ export default function PendingInvitations({
 }) {
   return (
     <div>
-      <h2 className="text-heading-2 font-bold text-black mb-3">Pending Invitations</h2>
+      <h2 className="text-heading-2 font-bold text-black mb-4">Pending Invitations</h2>
 
-      <div className="space-y-2">
+      <div className="space-y-3">
         {invitations.map((invitation) => (
           <div
             key={invitation.id}
-            className="bg-white border border-gray-200 rounded p-2 sm:p-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 hover:shadow-sm transition-shadow"
+            className="bg-white border border-gray-200 rounded p-2 sm:p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 hover:shadow-sm transition-shadow"
           >
             {/* Left */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <div
-                className="w-7 h-7 rounded flex items-center justify-center text-white text-body-small font-medium flex-shrink-0"
+                className="w-8 h-8 rounded flex items-center justify-center text-white text-body-small font-medium flex-shrink-0"
                 style={{ backgroundColor: invitation.backgroundColor }}
               >
                 {invitation.abbreviation}
@@ -44,7 +44,7 @@ export default function PendingInvitations({
                 <h3 className="text-body-medium-bold text-black truncate">
                   {invitation.name}
                 </h3>
-                <p className="text-body-small text-gray-500">
+                <p className="text-body-small text-gray-500 pt-2">
                   Invited by {invitation.invitedBy} • {invitation.product} • {invitation.timeAgo}
                 </p>
               </div>
@@ -54,7 +54,7 @@ export default function PendingInvitations({
             <div className="flex items-center gap-1.5">
               <div className="flex items-center gap-1.5">
                 <button
-                  className="flex items-center gap-1 px-2 py-1 cursor-pointer text-white rounded hover:opacity-90 transition-opacity"
+                  className="flex items-center gap-2 px-3 py-2 cursor-pointer text-white rounded hover:opacity-90 transition-opacity"
                   style={{ backgroundColor: '#795CF5' }}
                   onClick={() => onAccept(invitation.id)}
                 >
@@ -62,7 +62,7 @@ export default function PendingInvitations({
                   <span className="text-body-small">Accept</span>
                 </button>
                 <button
-                  className="flex items-center gap-1 px-2 py-1 cursor-pointer text-gray-600 border border-gray-200 rounded hover:bg-gray-50 transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 cursor-pointer text-gray-600 border border-gray-200 rounded hover:bg-gray-50 transition-colors"
                   onClick={() => onDecline(invitation.id)}
                 >
                   <X className="w-3 h-3" />

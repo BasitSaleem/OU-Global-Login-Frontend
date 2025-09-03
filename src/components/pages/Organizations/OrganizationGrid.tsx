@@ -28,7 +28,7 @@ export default function OrganizationGrid({
         <div className="flex items-center gap-2">
           <h1 className="text-heading-1 font-bold text-black">Your Organizations</h1>
           <div
-            className="w-5 h-5 rounded-full flex items-center justify-center text-white text-body-tiny font-medium"
+            className="w-6 h-6 rounded-full flex items-center justify-center text-white text-body-tiny font-medium"
             style={{ backgroundColor: '#795CF5' }}
           >
             {Math.max(0, (organizations?.length || 0) - 1)}
@@ -59,17 +59,17 @@ export default function OrganizationGrid({
               </div>
             ) : (
               /* Organization Card */
-              <div className="flex flex-col h-full">
+              <div className="flex flex-col h-[100px]">
                 {/* Top section */}
-                <div className="flex items-start gap-2 mb-3">
+                <div className="flex items-start gap-3 mb-2">
                   <div
-                    className="w-8 h-8 rounded flex items-center justify-center text-white text-body-small font-medium"
+                    className="w-10 h-10 rounded flex items-center justify-center text-white text-body-small font-medium"
                     style={{ backgroundColor: org.backgroundColor }}
                   >
                     {org.abbreviation}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="truncate text-body-medium-bold text-black leading-tight">
+                    <h3 className="truncate text-body-medium-bold text-black leading-tight pt-3">
                       {org.name}
                     </h3>
                   </div>

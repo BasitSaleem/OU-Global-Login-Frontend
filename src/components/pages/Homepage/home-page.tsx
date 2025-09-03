@@ -27,7 +27,7 @@ export default function HomePage() {
     <div className="p-4">
       <div className="max-w-7xl mx-auto space-y-4">
         {/* Welcome Hero Section */}
-        <div className="rounded-lg p-4 relative overflow-hidden" style={{ backgroundColor: 'rgba(121, 92, 245, 0.07)' }}>
+        <div className="rounded-lg p-6 relative overflow-hidden" style={{ backgroundColor: 'rgba(121, 92, 245, 0.07)' }}>
           {/* Background Illustration */}
           <div className="absolute right-0 top-0 opacity-10">
             <img 
@@ -42,7 +42,7 @@ export default function HomePage() {
             <h1 className="text-heading-1 font-bold text-black mb-3">Hello, Alex</h1>
             
             {/* Quote Card */}
-            <div className="bg-white rounded p-3 max-w-xl">
+            <div className="bg-white rounded p-4 max-w-xl">
               <p className="text-body-medium text-gray-600 cursor-auto">
                 You don't have to be great to start, but you have to start to be great.{' '}
                 <span className="font-bold">Zig Ziglar</span>
@@ -64,7 +64,7 @@ export default function HomePage() {
         <div>
           <h2 className="text-heading-2 mb-3">Your Products</h2>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 cursor-pointer">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 cursor-pointer">
             {/* Owners Inventory Card */}
             <div className="bg-white border border-gray-200 rounded p-3 hover:shadow-md transition-shadow">
               <div className="flex items-start gap-3 ">
@@ -77,11 +77,11 @@ export default function HomePage() {
                 </div>
                 
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-heading-3 mb-1">Owners Inventory</h3>
+                  <h3 className="text-heading-3 mb-2">Owners Inventory</h3>
                   <p className="text-body-small text-gray-600 mb-2">Manage your inventory</p>
                   
                   {/* Team Avatars */}
-                  <div className="flex items-center gap-0.5">
+                  <div className="flex items-center gap-1">
                     <div className="w-5 h-5 rounded flex items-center justify-center" style={{ backgroundColor: '#B11E67' }}>
                       <span className="text-white text-body-tiny font-medium">AI</span>
                     </div>
@@ -108,7 +108,7 @@ export default function HomePage() {
         <div>
           <h2 className="text-heading-2 mb-2">Recent</h2>
 
-           <div className="space-y-1.5 cursor-pointer">
+           <div className="space-y-2 cursor-pointer">
       {orgs.map((org, i) => (
         <OrgCard key={i} {...org} />
       ))}
@@ -116,18 +116,18 @@ export default function HomePage() {
         </div>
 
         {/* What's New Section */}
-     <div className="bg-white border border-gray-200 rounded p-3">
+     <div className="bg-white border border-gray-200 rounded p-5">
   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
     {/* Left Side */}
     <div>
-      <h3 className="text-heading-3 font-bold text-black mb-0.5">What's New</h3>
+      <h3 className="text-heading-3 font-bold text-black mb-2">What's New</h3>
       <p className="text-body-small text-gray-600">
         Check out our latest updates and features
       </p>
     </div>
 
     {/* Right Side */}
-    <button className="w-full sm:w-auto text-white text-body-small px-3 py-1.5 rounded hover:opacity-90 transition-opacity cursor-pointer bg-[#795CF5]">
+    <button className="w-full sm:w-auto text-white text-body-small px-3 py-2 rounded hover:opacity-90 transition-opacity cursor-pointer bg-[#795CF5]">
       Explore All Products
     </button>
   </div>
