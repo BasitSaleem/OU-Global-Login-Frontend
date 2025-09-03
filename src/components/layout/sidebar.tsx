@@ -111,7 +111,7 @@ export default function Sidebar({
 
       <aside
         className={`
-          ${collapsed ? "w-12" : "w-75"}
+          ${collapsed ? "w-12" : "w-70"}
           ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
           border-r border-gray-200 flex-shrink-0 transition-all duration-300 ease-in-out
           fixed lg:relative inset-y-0 left-0 z-50 bg-white
@@ -151,7 +151,7 @@ export default function Sidebar({
         </div>
 
         {/* Navigation */}
-        <nav className="px-2 py-2 space-y-3">
+        <nav className="px-2 py-1 space-y-3">
           {navigationItems.map((item) => (
             <a
               key={item.href}
@@ -159,7 +159,7 @@ export default function Sidebar({
               className={`
                 flex cursor-pointer items-center
                 ${collapsed ? "justify-center px-0" : "px-2"}
-                py-1.5 rounded transition-colors
+                py-1 rounded transition-colors
                 ${
                   item.isActive
                     ? "text-white"
@@ -210,7 +210,7 @@ export default function Sidebar({
                         : item.image
                     }
                         alt={item.label}
-                        className="w-7 h-7"
+                        className="w-6 h-6"
                       />
                     ) : (
                       <div className={`${collapsed ? "px-0" : ""}`}>
