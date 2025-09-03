@@ -72,12 +72,12 @@ export default function HomePage() {
                   <img
                     src={Icons.ownerinventory}
                     alt="Owners Inventory"
-                    className="w-5 h-5"
+                    className="w-6 h-6"
                   />
                 </div>
                 
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-heading-3 mb-2">Owners Inventory</h3>
+                  <h3 className="text-heading-2 mb-2">Owners Inventory</h3>
                   <p className="text-body-small text-gray-600 mb-2">Manage your inventory</p>
                   
                   {/* Team Avatars */}
