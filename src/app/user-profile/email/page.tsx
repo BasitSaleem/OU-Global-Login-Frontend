@@ -5,42 +5,42 @@ import { Icons } from "@/components/utils/icons";
 
 export default function EmailSettingsPage() {
   return (
-    <main className="p-4 sm:p-8">
+    <main className="p-5">
       <div className="w-full max-w-4xl ">
         {/* Email Settings Card */}
         <div
-          className="w-full p-4 sm:p-6 lg:p-8 border rounded-xl bg-white shadow-sm space-y-6"
+          className="w-full p-5 border rounded bg-white shadow-sm space-y-3"
           style={{ borderColor: 'rgba(121, 92, 245, 0.07)' }}
         >
           {/* Header */}
-          <h1 className="text-xl sm:text-2xl font-bold text-black">Email Settings</h1>
+          <h1 className="text-heading-1 font-bold text-black">Email Settings</h1>
 
           {/* Current Email */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-black">Current Email</label>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4 border border-gray-300 rounded-lg">
-              <span className="text-sm sm:text-base text-black break-all">
+          <div className="space-y-1">
+            <label className="text-body-small font-medium text-black">Current Email</label>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-2 border border-gray-300 rounded">
+              <span className="text-body-medium text-black break-all">
                 dev.logoanimations@gmail.com
               </span>
-              <button className="self-end sm:self-auto p-0 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
+              <button className="self-end sm:self-auto p-0 hover:bg-gray-50 rounded transition-colors cursor-pointer">
               <Image
                   src={Icons.files}
                   alt="Edit"
-                  width={30}
-                  height={30}
+                  width={20}
+                  height={20}
                 />
               </button>
             </div>
           </div>
 
           {/* Connected Accounts */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-black">Connected Accounts</label>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4 border border-gray-300 rounded-lg">
-              <div className="flex items-center gap-3">
+          <div className="space-y-1">
+            <label className="text-body-small font-medium text-black">Connected Accounts</label>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-2 border border-gray-300 rounded">
+              <div className="flex items-center gap-2">
                 <svg
-                  width="20"
-                  height="20"
+                  width="16"
+                  height="16"
                   viewBox="0 0 20 20"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -57,34 +57,34 @@ export default function EmailSettingsPage() {
                     </clipPath>
                   </defs>
                 </svg>
-                <span className="text-sm sm:text-base text-black">
+                <span className="text-body-medium text-black">
                   Google Account Connected
                 </span>
               </div>
-              <button className="text-sm text-primary hover:text-[#795CF5] cursor-pointer self-end sm:self-auto hover:underline bg-transparent">Manage</button>
+              <button className="text-body-small text-primary hover:text-[#795CF5] cursor-pointer self-end sm:self-auto hover:underline bg-transparent">Manage</button>
             </div>
           </div>
 
           {/* New Email Address */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-black">New Email Address</label>
+          <div className="space-y-1">
+            <label className="text-body-small font-medium text-black">New Email Address</label>
             <div className="relative">
               <input
                 type="email"
                 defaultValue="zaid.hq95@gmail.com"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm sm:text-base"
+                className="w-full px-2 py-1.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent text-body-medium"
               />
             </div>
           </div>
 
           {/* Warning Message */}
           <div
-            className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-4 rounded-lg"
+            className="flex flex-col sm:flex-row items-start sm:items-center gap-2 p-2 rounded"
             style={{ backgroundColor: 'rgba(121, 92, 245, 0.07)' }}
           >
             <svg
-              width="20"
-              height="20"
+              width="16"
+              height="16"
               viewBox="0 0 20 20"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -107,7 +107,7 @@ export default function EmailSettingsPage() {
                 fill="#4B5563"
               />
             </svg>
-            <p className="text-xs sm:text-sm font-medium text-black leading-5 sm:leading-6">
+            <p className="text-body-small font-medium text-black">
               Changing your email will disconnect your Google account. You'll need
               to reconnect it after confirming the new email address.
             </p>
@@ -116,7 +116,7 @@ export default function EmailSettingsPage() {
           {/* Update Button */}
           <div className="flex justify-end">
             <button
-              className="px-5 sm:px-6 py-2.5 rounded-lg text-white text-sm sm:text-base font-medium transition-colors cursor-pointer transition-normal bg-[#795CF5] hover:bg-[#7C3AED]"
+              className="px-3 py-1.5 rounded text-white text-body-medium font-medium transition-colors cursor-pointer bg-[#795CF5] hover:bg-[#7C3AED]"
             >
               Update Email Address
             </button>

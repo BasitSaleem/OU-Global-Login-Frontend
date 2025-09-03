@@ -130,23 +130,42 @@ const config: Config = {
         ],
       },
       
-      // Brand Typography System - Exact specifications from guidelines
+      // Professional Typography System - Jira-like compact sizes
       fontSize: {
         // Heading Typography (Inter)
-        'heading-1': ['24px', { lineHeight: '32px', fontWeight: '600' }],
-        'heading-2': ['20px', { lineHeight: '28px', fontWeight: '600' }],
-        'heading-3': ['18px', { lineHeight: '26px', fontWeight: '600' }],
-        
+        'heading-1': ['16px', { lineHeight: '20px', fontWeight: '600' }],
+        'heading-2': ['14px', { lineHeight: '18px', fontWeight: '600' }],
+        'heading-3': ['13px', { lineHeight: '16px', fontWeight: '600' }],
+
         // Body Typography (Inter)
-        'body-medium-bold': ['16px', { lineHeight: '24px', fontWeight: '500' }],
-        'body-medium': ['16px', { lineHeight: '24px', fontWeight: '400' }],
-        'body-normal-bold': ['16px', { lineHeight: '24px', fontWeight: '500' }],
-        'body-normal': ['16px', { lineHeight: '24px', fontWeight: '400' }],
-        'body-small-bold': ['14px', { lineHeight: '20px', fontWeight: '500' }],
-        'body-small': ['14px', { lineHeight: '20px', fontWeight: '400' }],
+        'body-large': ['14px', { lineHeight: '20px', fontWeight: '400' }],
+        'body-large-bold': ['14px', { lineHeight: '20px', fontWeight: '500' }],
+        'body-medium': ['13px', { lineHeight: '18px', fontWeight: '400' }],
+        'body-medium-bold': ['13px', { lineHeight: '18px', fontWeight: '500' }],
+        'body-small': ['12px', { lineHeight: '16px', fontWeight: '400' }],
+        'body-small-bold': ['12px', { lineHeight: '16px', fontWeight: '500' }],
+        'body-tiny': ['11px', { lineHeight: '14px', fontWeight: '400' }],
+
+        // Override default Tailwind sizes
+        'xs': ['11px', { lineHeight: '14px' }],
+        'sm': ['12px', { lineHeight: '16px' }],
+        'base': ['13px', { lineHeight: '18px' }],
+        'lg': ['14px', { lineHeight: '20px' }],
+        'xl': ['16px', { lineHeight: '20px' }],
+        '2xl': ['18px', { lineHeight: '22px' }],
       },
       
       spacing: {
+        '0.5': '0.125rem', // 2px
+        '1.5': '0.375rem', // 6px
+        '2.5': '0.625rem', // 10px
+        '3.5': '0.875rem', // 14px
+        '4.5': '1.125rem', // 18px
+        '5.5': '1.375rem', // 22px
+        '6.5': '1.625rem', // 26px
+        '7.5': '1.875rem', // 30px
+        '8.5': '2.125rem', // 34px
+        '9.5': '2.375rem', // 38px
         '18': '4.5rem',
         '72': '18rem',
         '84': '21rem',

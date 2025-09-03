@@ -165,8 +165,8 @@ function NotificationsPage() {
 
         {/* Feed stays inline with your NotificationItem */}
         <div className="flex-1 overflow-y-auto">
-          <div className="p-1 sm:p-8 pt-6">
-            <div className="space-y-2">
+          <div className="p-1 sm:p-3 pt-2">
+            <div className="space-y-1">
               {filteredNotifications.length > 0 ? (
                 filteredNotifications.map((n) => (
                   <NotificationItem
@@ -190,7 +190,7 @@ function NotificationsPage() {
                   />
                 ))
               ) : (
-                <p className="text-gray-500 text-center py-10">
+                <p className="text-gray-500 text-body-medium text-center py-4">
                   No notifications found for this filter.
                 </p>
               )}
@@ -206,14 +206,14 @@ function NotificationsPage() {
 function NotificationsSkeleton() {
   return (
     <div className="flex flex-1 items-center justify-center min-h-screen">
-      <div className="text-center space-y-4 animate-pulse">
-        <div className="h-6 w-48 bg-gray-200 rounded mx-auto" />
-        <div className="h-4 w-72 bg-gray-200 rounded mx-auto" />
-        <div className="space-y-2">
+      <div className="text-center space-y-2 animate-pulse">
+        <div className="h-4 w-32 bg-gray-200 rounded mx-auto" />
+        <div className="h-3 w-48 bg-gray-200 rounded mx-auto" />
+        <div className="space-y-1">
           {[...Array(4)].map((_, i) => (
             <div
               key={i}
-              className="h-20 w-[500px] max-w-full bg-gray-200 rounded"
+              className="h-12 w-[400px] max-w-full bg-gray-200 rounded"
             />
           ))}
         </div>
@@ -231,5 +231,3 @@ export default function Page() {
     </DashboardLayout>
   );
 }
-
-

@@ -22,7 +22,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     disabled,
     ...props
   }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
+    const baseStyles = 'inline-flex items-center justify-center gap-1.5 rounded font-medium transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-offset-1 disabled:pointer-events-none disabled:opacity-50';
     
     const variants = {
       primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600',
@@ -33,10 +33,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     };
     
     const sizes = {
-      sm: 'h-8 px-3 text-sm',
-      md: 'h-10 px-4 text-sm',
-      lg: 'h-12 px-6 text-base',
-      xl: 'h-14 px-8 text-lg'
+      sm: 'h-6 px-2 text-body-small',
+      md: 'h-7 px-3 text-body-medium',
+      lg: 'h-8 px-4 text-body-medium',
+      xl: 'h-9 px-5 text-body-large'
     };
 
     return (
@@ -52,7 +52,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {isLoading ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
+          <Loader2 className="h-3 w-3 animate-spin" />
         ) : leftIcon ? (
           leftIcon
         ) : null}

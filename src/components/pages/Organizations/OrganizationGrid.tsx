@@ -24,11 +24,11 @@ export default function OrganizationGrid({
   return (
     <div>
       {/* Header with count */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold text-black">Your Organizations</h1>
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <h1 className="text-heading-1 font-bold text-black">Your Organizations</h1>
           <div
-            className="w-6 h-6 rounded-full flex items-center justify-center text-white text-sm font-medium"
+            className="w-5 h-5 rounded-full flex items-center justify-center text-white text-body-tiny font-medium"
             style={{ backgroundColor: '#795CF5' }}
           >
             {Math.max(0, (organizations?.length || 0) - 1)}
@@ -37,39 +37,39 @@ export default function OrganizationGrid({
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {organizations.map((org) => (
           <div
             key={org.id}
             onClick={() => org.isAddNew && onAddNew()}
             className={`relative group ${
               org.isAddNew ? '' : 'bg-white border border-gray-200'
-            } rounded-lg ${org.isAddNew ? '' : 'p-6'} hover:shadow-sm transition-shadow cursor-pointer`}
+            } rounded ${org.isAddNew ? '' : 'p-3'} hover:shadow-sm transition-shadow cursor-pointer`}
           >
             {org.isAddNew ? (
               /* Add New Card */
               <div
-                className="flex flex-col items-center justify-center text-center h-full rounded-lg"
+                className="flex flex-col items-center justify-center text-center h-full rounded"
                 style={{ backgroundColor: 'rgba(121, 92, 245, 0.07)' }}
               >
-                <div className="mb-4">
-                  <Image src={Icons.addNew} width={80} height={80} alt="Add New" />
+                <div className="mb-2">
+                  <Image src={Icons.addNew} width={40} height={40} alt="Add New" />
                 </div>
-                <span className="text-base font-medium text-primary">Add New</span>
+                <span className="text-body-medium font-medium text-primary">Add New</span>
               </div>
             ) : (
               /* Organization Card */
               <div className="flex flex-col h-full">
                 {/* Top section */}
-                <div className="flex items-start gap-4 mb-6">
+                <div className="flex items-start gap-2 mb-3">
                   <div
-                    className="w-12 h-12 rounded-lg flex items-center justify-center text-white text-lg font-medium"
+                    className="w-8 h-8 rounded flex items-center justify-center text-white text-body-small font-medium"
                     style={{ backgroundColor: org.backgroundColor }}
                   >
                     {org.abbreviation}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="truncate text-base font-bold text-black leading-tight">
+                    <h3 className="truncate text-body-medium-bold text-black leading-tight">
                       {org.name}
                     </h3>
                   </div>
@@ -86,19 +86,19 @@ export default function OrganizationGrid({
                 {/* Bottom purple section */}
                 <div className="mt-auto">
                   <div
-                    className="flex items-center justify-between px-4 py-2 rounded-lg"
+                    className="flex items-center justify-between px-2 py-1.5 rounded"
                     style={{ backgroundColor: 'rgba(121, 92, 245, 0.07)' }}
                   >
-                    <span className="text-base font-medium text-primary">
+                    <span className="text-body-small font-medium text-primary">
                       {org.members} members
                     </span>
-                    <div className="flex items-center -space-x-1">
+                    <div className="flex items-center -space-x-0.5">
                       {org.teamAvatars?.map((avatarUrl, index) => (
                         <img
                           key={index}
                           src={avatarUrl}
                           alt={`Team member ${index + 1}`}
-                          className="w-5 h-5 rounded-full border-2 border-white"
+                          className="w-4 h-4 rounded-full border border-white"
                         />
                       ))}
                     </div>
@@ -109,10 +109,10 @@ export default function OrganizationGrid({
 
             {/* Tooltip */}
             {!org.isAddNew && (
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block">
-                <div className="relative bg-white border border-gray-200 shadow-md rounded-md px-3 py-1 text-xs text-gray-800 whitespace-nowrap">
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block">
+                <div className="relative bg-white border border-gray-200 shadow-md rounded px-2 py-0.5 text-body-tiny text-gray-800 whitespace-nowrap">
                   {org.name}
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-white border-l border-t border-gray-200 rotate-45"></div>
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-white border-l border-t border-gray-200 rotate-45"></div>
                 </div>
               </div>
             )}
@@ -121,8 +121,8 @@ export default function OrganizationGrid({
       </div>
 
       {/* View More */}
-      <div className="mt-10 flex justify-end">
-        <button className="text-[#795CF5] font-medium hover:underline cursor-pointer">
+      <div className="mt-4 flex justify-end">
+        <button className="text-[#795CF5] text-body-medium font-medium hover:underline cursor-pointer">
           View More
         </button>
       </div>

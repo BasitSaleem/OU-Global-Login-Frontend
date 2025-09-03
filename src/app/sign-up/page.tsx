@@ -38,7 +38,7 @@ export default function SignUpPage() {
           alt="Owners Universe Logo"
           width={150}
           height={150}
-        
+
         />
         <div className="flex items-center gap-2 sm:gap-3">
           <span className="text-xs sm:text-sm text-gray-700 hidden sm:block">

@@ -1,5 +1,3 @@
-
-
 type organizations = {
     initials: string;
     color: string;
@@ -9,20 +7,20 @@ type organizations = {
 
 const OrgCard: React.FC<organizations> = ({ initials, color, title, subtitle }) => {
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-      <div className="flex items-center gap-4">
+    <div className="bg-white border border-gray-200 rounded p-2 hover:shadow-md transition-shadow">
+      <div className="flex items-center gap-2">
         {/* Icon */}
         <div
-          className="w-10 h-10 rounded-lg flex items-center justify-center"
+          className="w-7 h-7 rounded flex items-center justify-center"
           style={{ backgroundColor: color }}
         >
-          <span className="text-white text-base font-medium">{initials}</span>
+          <span className="text-white text-body-small font-medium">{initials}</span>
         </div>
 
         {/* Info */}
         <div>
-          <h4 className="text-base font-medium">{title}</h4>
-          <p className="text-sm text-gray-600">{subtitle}</p>
+          <h4 className="text-body-medium-bold">{title}</h4>
+          <p className="text-body-small text-gray-600">{subtitle}</p>
         </div>
       </div>
     </div>
@@ -30,6 +28,3 @@ const OrgCard: React.FC<organizations> = ({ initials, color, title, subtitle }) 
 };
 
 export default OrgCard;
-
-
-

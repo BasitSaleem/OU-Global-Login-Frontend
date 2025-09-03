@@ -43,89 +43,93 @@ export const BRAND_TYPOGRAPHY = {
     primary: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     inter: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
   },
-  
-  // Brand Typography System - Based on Design Guidelines
+
+  // Professional Typography System - Jira-like compact sizes
   headings: {
     h1: {
-      fontSize: '24px',
-      lineHeight: '32px',
+      fontSize: '16px',
+      lineHeight: '20px',
       fontWeight: '600',
-      usage: 'Main page/popup titles',
+      usage: 'Main page titles',
       className: 'text-heading-1',
     },
     h2: {
-      fontSize: '20px',
-      lineHeight: '28px',
+      fontSize: '14px',
+      lineHeight: '18px',
       fontWeight: '600',
       usage: 'Section headers',
       className: 'text-heading-2',
     },
     h3: {
-      fontSize: '18px',
-      lineHeight: '26px',
+      fontSize: '13px',
+      lineHeight: '16px',
       fontWeight: '600',
       usage: 'Subsection headers',
       className: 'text-heading-3',
     },
   },
-  
+
   body: {
-    mediumBold: {
-      fontSize: '16px',
-      lineHeight: '24px',
+    large: {
+      fontSize: '14px',
+      lineHeight: '20px',
+      fontWeight: '400',
+      usage: 'Large body text',
+      className: 'text-body-large',
+    },
+    largeBold: {
+      fontSize: '14px',
+      lineHeight: '20px',
       fontWeight: '500',
-      usage: 'General body text (emphasis)',
-      className: 'text-body-medium-bold',
+      usage: 'Large body text (emphasis)',
+      className: 'text-body-large-bold',
     },
     medium: {
-      fontSize: '16px',
-      lineHeight: '24px',
+      fontSize: '13px',
+      lineHeight: '18px',
       fontWeight: '400',
-      usage: 'General body text',
+      usage: 'Regular body text',
       className: 'text-body-medium',
     },
-    normalBold: {
-      fontSize: '16px',
-      lineHeight: '24px',
+    mediumBold: {
+      fontSize: '13px',
+      lineHeight: '18px',
       fontWeight: '500',
-      usage: 'General body text (emphasis)',
-      className: 'text-body-normal-bold',
-    },
-    normal: {
-      fontSize: '16px',
-      lineHeight: '24px',
-      fontWeight: '400',
-      usage: 'General body text',
-      className: 'text-body-normal',
-    },
-    smallBold: {
-      fontSize: '14px',
-      lineHeight: '20px',
-      fontWeight: '500',
-      usage: 'Form labels, inline emphasis',
-      className: 'text-body-small-bold',
+      usage: 'Regular body text (emphasis)',
+      className: 'text-body-medium-bold',
     },
     small: {
-      fontSize: '14px',
-      lineHeight: '20px',
+      fontSize: '12px',
+      lineHeight: '16px',
       fontWeight: '400',
-      usage: 'Form labels, captions',
+      usage: 'Small text, captions',
       className: 'text-body-small',
+    },
+    smallBold: {
+      fontSize: '12px',
+      lineHeight: '16px',
+      fontWeight: '500',
+      usage: 'Small text (emphasis)',
+      className: 'text-body-small-bold',
+    },
+    tiny: {
+      fontSize: '11px',
+      lineHeight: '14px',
+      fontWeight: '400',
+      usage: 'Tiny text, metadata',
+      className: 'text-body-tiny',
     },
   },
   
-  // Legacy font size references
+  // Professional font size system
   fontSize: {
-    xs: '12px',     // 12px
-    sm: '14px',     // 14px - Small Text
-    base: '16px',   // 16px - Normal/Medium Text
-    lg: '18px',     // 18px - Heading 3
-    xl: '20px',     // 20px - Heading 2
-    '2xl': '24px',  // 24px - Heading 1
-    '3xl': '30px',  // 30px
-    '4xl': '36px',  // 36px
-    '5xl': '48px',  // 48px
-    '6xl': '60px',  // 60px
+    xs: '11px',     // Tiny text
+    sm: '12px',     // Small text
+    base: '13px',   // Regular text (default)
+    md: '14px',     // Large body text
+    lg: '16px',     // Page titles
+    xl: '18px',     // Large titles (rare use)
+    '2xl': '20px',  // Modal/dialog titles
   },
   
   fontWeight: {
@@ -145,16 +149,37 @@ export const BRAND_TYPOGRAPHY = {
 } as const;
 
 export const BRAND_SPACING = {
-  xs: '0.25rem',   // 4px
-  sm: '0.5rem',    // 8px
-  md: '1rem',      // 16px
-  lg: '1.5rem',    // 24px
-  xl: '2rem',      // 32px
-  '2xl': '2.5rem', // 40px
-  '3xl': '3rem',   // 48px
-  '4xl': '4rem',   // 64px
-  '5xl': '5rem',   // 80px
-  '6xl': '6rem',   // 96px
+  none: '0',       // 0px
+  xs: '0.125rem',  // 2px - Tiny gaps
+  sm: '0.25rem',   // 4px - Small gaps
+  md: '0.5rem',    // 8px - Regular gaps
+  lg: '0.75rem',   // 12px - Medium gaps
+  xl: '1rem',      // 16px - Large gaps
+  '2xl': '1.25rem', // 20px - Section spacing
+  '3xl': '1.5rem',  // 24px - Component spacing
+  '4xl': '2rem',    // 32px - Layout spacing
+  '5xl': '2.5rem',  // 40px - Page spacing
+  '6xl': '3rem',    // 48px - Large sections
+} as const;
+
+// Professional spacing tokens
+export const SPACING = {
+  // Component internal spacing
+  component: {
+    xs: '2px',   // Icon margins
+    sm: '4px',   // Button padding
+    md: '8px',   // Card padding
+    lg: '12px',  // Panel padding
+    xl: '16px',  // Section padding
+  },
+  // Layout spacing
+  layout: {
+    xs: '8px',   // Between related items
+    sm: '12px',  // Between components
+    md: '16px',  // Between sections
+    lg: '20px',  // Between major sections
+    xl: '24px',  // Page margins
+  },
 } as const;
 
 export const BRAND_RADIUS = {

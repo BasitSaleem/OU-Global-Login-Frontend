@@ -89,158 +89,158 @@ export default function UserProfilePage() {
     <div className="min-h-screen w-full bg-white flex font-inter">
         {/* Page Content */}
         <main className="flex-1">
-         <div className="flex flex-col sm:flex-row items-start gap-6 p-5">
+         <div className="flex flex-col sm:flex-row items-start gap-3 p-3">
 
             {/* Left Panel - User Info */}
-             <div className="flex flex-col items-start mx-auto gap-6 p-6 border border-gray-200 rounded-lg bg-white shadow-sm">
+             <div className="flex flex-col items-start mx-auto gap-3 p-3 border border-gray-200 rounded bg-white shadow-sm">
               {/* Profile Photo */}
-              <div className="flex flex-col items-center gap-9">
-                <div 
-                  className="w-[108px] h-[108px] rounded-full flex items-center justify-center"
+              <div className="flex flex-col items-center gap-4">
+                <div
+                  className="w-20 h-20 rounded-full flex items-center justify-center"
                   style={{ backgroundColor: 'rgba(121, 92, 245, 0.07)' }}
                 >
-                  <svg width="35" height="35" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg width="24" height="24" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M3.78125 9.71875C3.78125 7.64768 5.46018 5.96875 7.53125 5.96875H28.4688C30.5398 5.96875 32.2188 7.64768 32.2188 9.71875V26.2813C32.2188 28.3523 30.5398 30.0312 28.4687 30.0312H7.53125C5.46018 30.0312 3.78125 28.3523 3.78125 26.2813V9.71875Z" stroke="#4B5563" strokeWidth="2.5" strokeLinejoin="round"/>
                     <circle cx="23.4688" cy="12.5312" r="2.1875" stroke="#4B5563" strokeWidth="2.5"/>
                     <path d="M21.2812 23.4554L15.0838 17.2696C14.6745 16.8603 14.1805 16.6471 13.602 16.63C13.0234 16.6129 12.5177 16.7964 12.0849 17.1807L3.78125 24.5635M15.8125 30.0323L24.2439 21.6008C24.6435 21.2004 25.1259 20.9871 25.6909 20.9609C26.256 20.9347 26.756 21.1024 27.1909 21.4641L32.2188 25.6573" stroke="#4B5563" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </div>
                 
-                <button className="px-14 py-2 border border-[#795CF5] rounded-md text-[#795CF5] font-medium hover:bg-purple-50 transition-colors cursor-pointer">
+                <button className="px-14 py-1 border border-[#795CF5] rounded text-[#795CF5] text-body-small font-medium hover:bg-purple-50 transition-colors cursor-pointer">
                   Change Photo
                 </button>
               </div>
               
               {/* User Details */}
-              <div className="space-y-4 w-full">
+              <div className="space-y-2 w-full">
                 <div>
-                  <label className="text-sm text-gray-500">Name</label>
-                  <p className="text-base font-medium text-black">John Doe</p>
+                  <label className="text-body-small text-gray-500">Name</label>
+                  <p className="text-body-medium-bold text-black">John Doe</p>
                 </div>
                 <div>
-                  <label className="text-sm text-gray-500">Email</label>
-                  <p className="text-base font-medium text-black">john@example.com</p>
+                  <label className="text-body-small text-gray-500">Email</label>
+                  <p className="text-body-medium-bold text-black">john@example.com</p>
                 </div>
                 <div>
-                  <label className="text-sm text-gray-500">Contact</label>
-                  <p className="text-base font-medium text-black">+1 234 567 890</p>
+                  <label className="text-body-small text-gray-500">Contact</label>
+                  <p className="text-body-medium-bold text-black">+1 234 567 890</p>
                 </div>
               </div>
             </div>
 
             {/* Right Panel - Profile Form */}
-            <div className="flex-1 border border-gray-200 rounded-lg w-full bg-white shadow-sm">
+            <div className="flex-1 border border-gray-200 rounded w-full bg-white shadow-sm">
               {/* Header */}
-              <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                <h1 className="text-2xl font-bold text-black">Profile Information</h1>
+              <div className="flex items-center justify-between p-3 border-b border-gray-200">
+                <h1 className="text-heading-1 font-bold text-black">Profile Information</h1>
               </div>
               
               {/* Form Content */}
-              <div className="p-6 space-y-8">
+              <div className="p-3 space-y-4">
                 {/* Basic Information */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-black mb-2">
+                    <label className="block text-body-small font-medium text-black mb-1">
                       First Name<span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full px-2 py-1.5 border border-gray-300 rounded text-body-medium focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent"
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-black mb-2">
+                    <label className="block text-body-small font-medium text-black mb-1">
                       Last Name<span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full px-2 py-1.5 border border-gray-300 rounded text-body-medium focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent"
                     />
                   </div>
-                  
+
                   <div>
-                    <label className="block text-sm font-medium text-black mb-2">
+                    <label className="block text-body-small font-medium text-black mb-1">
                       Email<span className="text-red-500">*</span>
                     </label>
                     <input
                       type="email"
-                      className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full px-2 py-1.5 border border-gray-300 rounded text-body-medium focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent"
                     />
                   </div>
-                  
+
                   <div>
-                    <label className="block text-sm font-medium text-black mb-2">
+                    <label className="block text-body-small font-medium text-black mb-1">
                       Contact
                     </label>
                     <input
                       type="tel"
-                      className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full px-2 py-1.5 border border-gray-300 rounded text-body-medium focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent"
                     />
                   </div>
                 </div>
 
                 {/* Address Information */}
                 <div>
-                  <h2 className="text-xl font-bold text-black mb-4">Address Information</h2>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <h2 className="text-heading-2 font-bold text-black mb-2">Address Information</h2>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-medium text-black mb-2">
+                      <label className="block text-body-small font-medium text-black mb-1">
                         Street Address
                       </label>
                       <input
                         type="text"
-                        className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="w-full px-2 py-1.5 border border-gray-300 rounded text-body-medium focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent"
                       />
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-black mb-2">
+                      <label className="block text-body-small font-medium text-black mb-1">
                         City
                       </label>
                       <input
                         type="text"
-                        className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="w-full px-2 py-1.5 border border-gray-300 rounded text-body-medium focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent"
                       />
                     </div>
-                    
+
                     <div>
-                      <label className="block text-sm font-medium text-black mb-2">
+                      <label className="block text-body-small font-medium text-black mb-1">
                         State
                       </label>
                       <input
                         type="text"
-                        className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="w-full px-2 py-1.5 border border-gray-300 rounded text-body-medium focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent"
                       />
                     </div>
-                    
+
                     <div>
-                      <label className="block text-sm font-medium text-black mb-2">
+                      <label className="block text-body-small font-medium text-black mb-1">
                         Zip Code
                       </label>
                       <input
                         type="text"
-                        className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="w-full px-2 py-1.5 border border-gray-300 rounded text-body-medium focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent"
                       />
                     </div>
-                    
+
                     <div>
-                      <label className="block text-sm font-medium text-black mb-2">
+                      <label className="block text-body-small font-medium text-black mb-1">
                         Country
                       </label>
                       <input
                         type="text"
-                        className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="w-full px-2 py-1.5 border border-gray-300 rounded text-body-medium focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent"
                       />
                     </div>
-                    
+
                     <div>
-                      <label className="block text-sm font-medium text-black mb-2">
+                      <label className="block text-body-small font-medium text-black mb-1">
                         Tax/VAT Number
                       </label>
                       <input
                         type="text"
-                        className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="w-full px-2 py-1.5 border border-gray-300 rounded text-body-medium focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent"
                       />
                     </div>
                   </div>
@@ -248,25 +248,25 @@ export default function UserProfilePage() {
 
                 {/* Emergency Contact */}
                 <div>
-                  <h2 className="text-xl font-bold text-black mb-4">Emergency Contact</h2>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <h2 className="text-heading-2 font-bold text-black mb-2">Emergency Contact</h2>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-medium text-black mb-2">
+                      <label className="block text-body-small font-medium text-black mb-1">
                         Emergency Contact Name
                       </label>
                       <input
                         type="text"
-                        className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="w-full px-2 py-1.5 border border-gray-300 rounded text-body-medium focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent"
                       />
                     </div>
-                    
+
                     <div>
-                      <label className="block text-sm font-medium text-black mb-2">
+                      <label className="block text-body-small font-medium text-black mb-1">
                         Emergency Contact Number
                       </label>
                       <input
                         type="tel"
-                        className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="w-full px-2 py-1.5 border border-gray-300 rounded text-body-medium focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent"
                       />
                     </div>
                   </div>
@@ -274,8 +274,8 @@ export default function UserProfilePage() {
 
                 {/* Save Button */}
                 <div className="flex justify-end">
-                  <button 
-                    className="px-6 py-2.5 rounded-md text-white bg-[#795CF5] hover:bg-[#7C3AED] text-base cursor-pointer font-medium transition-colors"
+                  <button
+                    className="px-3 py-1.5 rounded text-white bg-[#795CF5] hover:bg-[#7C3AED] text-body-medium cursor-pointer font-medium transition-colors"
                   >
                     Save Changes
                   </button>

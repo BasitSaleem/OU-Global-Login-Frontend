@@ -44,5 +44,6 @@ export const Icons = {
   notificationwhite: "/Icons/Notificationwhite.svg",
   emailwhite: "/Icons/Emailwhite.svg",
   changePasswordwhite: "/Icons/Change Passwordwhite.svg",
+  homepageimage: "/Icons/Welcome-cuate.svg"
 
 } as const;

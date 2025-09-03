@@ -111,7 +111,7 @@ export default function Sidebar({
 
       <aside
         className={`
-          ${collapsed ? "w-20" : "w-72"}
+          ${collapsed ? "w-12" : "w-56"}
           ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
           border-r border-gray-200 flex-shrink-0 transition-all duration-300 ease-in-out
           fixed lg:relative inset-y-0 left-0 z-50 bg-white
@@ -119,20 +119,20 @@ export default function Sidebar({
       >
         {/* Logo */}
         <div
-          className={`h-16 flex items-center justify-start border-b border-gray-200 cursor-pointer ${
-            collapsed ? "px-5" : "px-4"
+          className={`h-12 flex items-center justify-start border-b border-gray-200 cursor-pointer ${
+            collapsed ? "px-2" : "px-3"
           }`}
         >
           {collapsed ? (
             <div
-              className="w-9 h-8 rounded flex items-center justify-center"
+              className="w-8 h-8 rounded flex items-center justify-center"
               style={{ backgroundColor: "#795CF5" }}
             >
               <Image
                 src={Icons.owneruniversecoll}
                 alt="Owners Universe Logo"
-                width={20}
-                height={20}
+                width={16}
+                height={16}
               />
             </div>
           ) : (
@@ -140,32 +140,32 @@ export default function Sidebar({
               <Image
                 src={Icons.owneruniverse}
                 alt="Owners Universe Logo"
-                width={150}
-                height={150}
-                className="h-13"
+                width={120}
+                height={120}
+                className="h-8"
                 onClick={() => router.push("/")}
               />
-           
-             </div> 
+
+             </div>
           )}
         </div>
 
         {/* Navigation */}
-        <nav className="px-3 py-4 space-y-1">
+        <nav className="px-2 py-2 space-y-0.5">
           {navigationItems.map((item) => (
             <a
               key={item.href}
               onClick={(e) => handleItemClick(item, e)}
               className={`
                 flex cursor-pointer items-center
-                ${collapsed ? "justify-center px-0" : "px-3"}
-                py-3 rounded-lg transition-colors
+                ${collapsed ? "justify-center px-0" : "px-2"}
+                py-1.5 rounded transition-colors
                 ${
                   item.isActive
                     ? "text-white"
                     : "text-gray-600 hover:bg-gray-50"
                 }
-                ${!collapsed && !item.isActive ? "gap-3" : ""}
+                ${!collapsed && !item.isActive ? "gap-2" : ""}
                 ${
                   !collapsed &&
                   (item.hasExternal || item.hasTime || item.hasBadge)
@@ -179,21 +179,29 @@ export default function Sidebar({
               {collapsed ? (
                 item.icon === "image" ? (
                   <img
-                    src={item.image}
+                   src={
+        item.isActive && item.activeImage
+          ? item.activeImage
+          : item.image
+      }
                     alt={item.label}
-                    className="w-8 h-8 cursor-pointer"
+                    className="w-5 h-5 cursor-pointer"
                   />
                 ) : (
                   <Image
-                    src={item.image}
+                    src={
+        item.isActive && item.activeImage
+          ? item.activeImage
+          : item.image
+      }
                     alt={item.label}
-                    width={24}
-                    height={24}
+                    width={16}
+                    height={16}
                   />
                 )
               ) : (
                 <>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                     {item.icon === "image" ? (
                       <img
                       src={
@@ -202,10 +210,10 @@ export default function Sidebar({
                         : item.image
                     }
                         alt={item.label}
-                        className="w-8 h-8"
+                        className="w-5 h-5"
                       />
                     ) : (
-                      <div className={`${collapsed ? "px-0" : "px-1"}`}>
+                      <div className={`${collapsed ? "px-0" : ""}`}>
                       <Image
                       src={
                       item.isActive && item.activeImage
@@ -213,14 +221,14 @@ export default function Sidebar({
                         : item.image
                     }
                         alt={item.label}
-                        width={24}
-                        height={24}
-                      
+                        width={16}
+                        height={16}
+
                       />
                       </div>
                     )}
                     <span
-                      className={`text-base ${
+                      className={`text-body-medium ${
                         item.isActive ? "font-medium" : ""
                       }`}
                     >
@@ -233,21 +241,21 @@ export default function Sidebar({
                     <Image
                       src={Icons.expand}
                       alt="external"
-                      width={16}
-                      height={16}
+                      width={12}
+                      height={12}
                     />
                   )}
                   {item.hasTime && (
                     <Image
                       src={Icons.pie}
                       alt="time"
-                      width={16}
-                      height={16}
+                      width={12}
+                      height={12}
                     />
                   )}
                   {item.hasBadge && !item.isActive && (
                     <span
-                      className="text-xs font-medium px-2 py-1 rounded-full"
+                      className="text-body-tiny font-medium px-1.5 py-0.5 rounded-full"
                       style={{
                         backgroundColor: "rgba(121, 92, 245, 0.07)",
                         color: "#795CF5",
@@ -263,11 +271,11 @@ export default function Sidebar({
 
           {/* View All Products - collapsed */}
           {collapsed && (
-            <div className="px-1 mt-1">
+            <div className="px-0 -ml-1 mt-2">
               <a
                 onClick={() => router.push("/view-all-product")}
                 className={`
-                  flex items-center justify-center w-12 h-13 mx-0 rounded-lg border-t transition-all cursor-pointer
+                  flex items-center justify-center w-10 h-8 mx-0 rounded border-t transition-all cursor-pointer
                   ${
                     currentPath === "/view-all-product"
                       ? "border-white shadow-md"
@@ -280,8 +288,8 @@ export default function Sidebar({
                 <Image
                   src={Icons.allProducts}
                   alt="View All Products"
-                  width={23}
-                  height={23}
+                  width={16}
+                  height={16}
                 />
               </a>
             </div>
@@ -290,11 +298,11 @@ export default function Sidebar({
 
         {/* View All Products - expanded */}
         {!collapsed && (
-          <div className="px-3 mt-8 pt-6 border-t border-gray-200">
+          <div className="px-2 mt-4 pt-3 border-t border-gray-200">
             <a
               onClick={() => router.push("/view-all-product")}
               className={`
-                flex items-center justify-between w-full px-3 py-4 rounded-lg transition-colors cursor-pointer
+                flex items-center justify-between w-full px-2 py-1.5 rounded transition-colors cursor-pointer
                 ${
                   currentPath === "/view-all-product"
                     ? "text-white"
@@ -307,12 +315,12 @@ export default function Sidebar({
                   : {}
               }
             >
-              <span className="text-base font-medium">View All Products</span>
+              <span className="text-body-medium font-medium">View All Products</span>
               <Image
                 src={Icons.arrowRight}
                 alt="Arrow Right"
-                width={20}
-                height={20}
+                width={14}
+                height={14}
               />
             </a>
           </div>
