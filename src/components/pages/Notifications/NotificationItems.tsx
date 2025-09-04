@@ -28,7 +28,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
     <div className="flex items-start gap-3 p-3 hover:bg-gray-50 transition-colors cursor-pointer">
       {/* Avatar */}
       <div
-        className="w-6 h-6 rounded-full flex items-center justify-center text-white text-body-tiny font-medium"
+        className="w-8 h-8 rounded-full flex items-center justify-center text-white text-body-tiny font-medium"
         style={{ backgroundColor: color }}
       >
         {initials}
@@ -36,11 +36,11 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
 
       {/* Content */}
       <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between mb-0.5 ">
+        <div className="flex items-center justify-between mb-1 ">
           <p className="text-body-small text-black">
-            <span className="font-medium">{name}</span> {action}
+            <span className="font-medium mr-1">{name}</span> {action}
           </p>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <span className="text-body-tiny text-gray-500">{time}</span>
 
             {/* Unread Dot */}
@@ -61,7 +61,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
           </div>
         </div>
 
-        <h4 className="text-body-small font-medium text-black mb-0.5">
+        <h4 className="text-body-small font-medium text-black mb-2 mt-2">
           {title}
         </h4>
         <p className="text-body-tiny text-gray-500 mb-1">{description}</p>

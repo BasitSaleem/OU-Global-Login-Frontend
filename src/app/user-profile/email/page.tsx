@@ -9,7 +9,7 @@ export default function EmailSettingsPage() {
       <div className="w-full max-w-4xl ">
         {/* Email Settings Card */}
         <div
-          className="w-full p-5 border rounded bg-white shadow-sm space-y-3"
+          className="w-full p-7 border rounded bg-white shadow-sm space-y-5"
           style={{ borderColor: 'rgba(121, 92, 245, 0.07)' }}
         >
           {/* Header */}

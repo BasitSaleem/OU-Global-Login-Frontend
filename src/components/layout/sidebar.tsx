@@ -87,12 +87,7 @@ export default function Sidebar({
             className="w-[40px] h-[40px]"
           />
         ) : (
-          <Image
-            src={item.image}
-            alt={item.label}
-            width={40}
-            height={40}
-          />
+          <Image src={item.image} alt={item.label} width={40} height={40} />
         );
       onShowModal(iconNode);
     } else {
@@ -111,7 +106,7 @@ export default function Sidebar({
 
       <aside
         className={`
-          ${collapsed ? "w-12" : "w-70"}
+          ${collapsed ? "w-17" : "w-70"}
           ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
           border-r border-gray-200 flex-shrink-0 transition-all duration-300 ease-in-out
           fixed lg:relative inset-y-0 left-0 z-50 bg-white
@@ -120,12 +115,12 @@ export default function Sidebar({
         {/* Logo */}
         <div
           className={`h-14 flex items-center justify-start border-b border-gray-200 cursor-pointer ${
-            collapsed ? "px-2" : "px-3"
+            collapsed ? "px-3" : "px-3"
           }`}
         >
           {collapsed ? (
             <div
-              className="w-8 h-8 rounded flex items-center justify-center"
+              className="w-9 h-9 rounded flex items-center justify-center"
               style={{ backgroundColor: "#795CF5" }}
             >
               <Image
@@ -145,13 +140,12 @@ export default function Sidebar({
                 className="h-10"
                 onClick={() => router.push("/")}
               />
-
-             </div>
+            </div>
           )}
         </div>
 
         {/* Navigation */}
-        <nav className="px-2 py-1 space-y-3">
+        <nav className="px-3 py-1.5 space-y-1">
           {navigationItems.map((item) => (
             <a
               key={item.href}
@@ -179,24 +173,24 @@ export default function Sidebar({
               {collapsed ? (
                 item.icon === "image" ? (
                   <img
-                   src={
-        item.isActive && item.activeImage
-          ? item.activeImage
-          : item.image
-      }
+                    src={
+                      item.isActive && item.activeImage
+                        ? item.activeImage
+                        : item.image
+                    }
                     alt={item.label}
-                    className="w-5 h-5 cursor-pointer"
+                    className="w-6 h-6 cursor-pointer"
                   />
                 ) : (
                   <Image
                     src={
-        item.isActive && item.activeImage
-          ? item.activeImage
-          : item.image
-      }
+                      item.isActive && item.activeImage
+                        ? item.activeImage
+                        : item.image
+                    }
                     alt={item.label}
-                    width={16}
-                    height={16}
+                    width={24}
+                    height={24}
                   />
                 )
               ) : (
@@ -204,27 +198,26 @@ export default function Sidebar({
                   <div className="flex items-center gap-3">
                     {item.icon === "image" ? (
                       <img
-                      src={
-                      item.isActive && item.activeImage
-                        ? item.activeImage
-                        : item.image
-                    }
+                        src={
+                          item.isActive && item.activeImage
+                            ? item.activeImage
+                            : item.image
+                        }
                         alt={item.label}
                         className="w-6 h-6"
                       />
                     ) : (
                       <div className={`${collapsed ? "px-0" : ""}`}>
-                      <Image
-                      src={
-                      item.isActive && item.activeImage
-                        ? item.activeImage
-                        : item.image
-                    }
-                        alt={item.label}
-                        width={24}
-                        height={24}
-
-                      />
+                        <Image
+                          src={
+                            item.isActive && item.activeImage
+                              ? item.activeImage
+                              : item.image
+                          }
+                          alt={item.label}
+                          width={24}
+                          height={24}
+                        />
                       </div>
                     )}
                     <span
@@ -246,12 +239,7 @@ export default function Sidebar({
                     />
                   )}
                   {item.hasTime && (
-                    <Image
-                      src={Icons.pie}
-                      alt="time"
-                      width={14}
-                      height={14}
-                    />
+                    <Image src={Icons.pie} alt="time" width={14} height={14} />
                   )}
                   {item.hasBadge && !item.isActive && (
                     <span
@@ -271,7 +259,7 @@ export default function Sidebar({
 
           {/* View All Products - collapsed */}
           {collapsed && (
-            <div className="px-0 -ml-1 mt-2">
+            <div className="px-2 -ml-1 mt-2">
               <a
                 onClick={() => router.push("/view-all-product")}
                 className={`
@@ -315,7 +303,9 @@ export default function Sidebar({
                   : {}
               }
             >
-              <span className="text-body-medium font-medium p-1 ">View All Products</span>
+              <span className="text-body-medium font-medium p-1 ">
+                View All Products
+              </span>
               <Image
                 src={Icons.arrowRight}
                 alt="Arrow Right"

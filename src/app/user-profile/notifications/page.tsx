@@ -45,13 +45,13 @@ function NotificationSection({
   updateNestedSetting: (category: keyof NotificationSettings, type: 'inApp' | 'email', value: boolean) => void;
 }) {
   return (
-    <div className="bg-white border border-gray-300 rounded p-3">
+    <div className="bg-white border border-gray-300 rounded p-4">
       <div className="flex items-center gap-2 mb-3">
-         <Image src={Icon} alt={title} width={20} height={20} className="w-5 h-5" />
-        <h3 className="text-body-medium-bold font-medium text-black">{title}</h3>
+         <Image src={Icon} alt={title} width={20} height={20} className="w-6 h-6" />
+        <h3 className="text-body-medium-bold font-medium text-black pb-2">{title}</h3>
       </div>
 
-      <div className="space-y-1">
+      <div className="space-y-3">
         {items.map((item) => (
           <div
             key={item.key as string}
@@ -217,7 +217,7 @@ export default function NotificationPreferencesPage() {
             <div className="flex items-center gap-2">
               {/* Inventory */}
               <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('inventory')}>
-                 <Image src={Icons.owneranalytics} alt="owner analytics" width={16} height={16} className={`w-7 h-7 rounded p-1 transition border ${
+                 <Image src={Icons.owneranalytics} alt="owner analytics" width={16} height={16} className={`w-8 h-8 rounded p-1 transition border ${
                     selectedOwner === 'inventory' ? 'border-[#795CF5] bg-[#795CF512]' : 'border-transparent'
                   }`} />
 
@@ -228,7 +228,7 @@ export default function NotificationPreferencesPage() {
 
               {/* Jungle */}
               <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('jungle')}>
-               <Image src={Icons.ownerjungle} alt="owner jungle" width={16} height={16} className={`w-7 h-7 rounded p-1 transition border ${
+               <Image src={Icons.ownerjungle} alt="owner jungle" width={20} height={20} className={`w-8 h-8 rounded p-1 transition border ${
                     selectedOwner === 'jungle' ? 'border-[#795CF5] bg-[#795CF512]' : 'border-transparent'
                   }`} />
                 <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-body-tiny font-medium rounded px-2 py-0.5 whitespace-nowrap z-10 shadow-sm">
@@ -238,7 +238,7 @@ export default function NotificationPreferencesPage() {
 
               {/* Marketplace */}
               <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('marketplace')}>
-               <Image src={Icons.ownermarketplace} alt="owner marketplace" width={16} height={16} className={`w-7 h-7 rounded p-1 transition border ${
+               <Image src={Icons.ownermarketplace} alt="owner marketplace" width={16} height={16} className={`w-8 h-8 rounded p-1 transition border ${
                     selectedOwner === 'marketplace' ? 'border-[#795CF5] bg-[#795CF512]' : 'border-transparent'
                   }`} />
                 <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-body-tiny font-medium rounded px-2 py-0.5 whitespace-nowrap z-10 shadow-sm">
@@ -248,7 +248,7 @@ export default function NotificationPreferencesPage() {
 
               {/* Analytics */}
               <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('analytics')}>
-               <Image src={Icons.owneranalytics} alt="owner analytics" width={16} height={16} className={`w-7 h-7 rounded p-1 transition border ${
+               <Image src={Icons.owneranalytics} alt="owner analytics" width={16} height={16} className={`w-8 h-8 rounded p-1 transition border ${
                    selectedOwner === 'analytics' ? 'border-[#795CF5] bg-[#795CF512]' : 'border-transparent'
                  }`} />
                 <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-body-tiny font-medium rounded px-2 py-0.5 whitespace-nowrap z-10 shadow-sm">
@@ -260,14 +260,14 @@ export default function NotificationPreferencesPage() {
         </div>
 
         {/* Notification Methods */}
-        <div className="bg-white border border-gray-300 rounded p-3 mb-3">
+        <div className="bg-white border border-gray-300 rounded p-5 mb-5">
           <h2 className="text-body-medium-bold font-medium text-black mb-2">
             Notification Methods
           </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {/* In-App Notifications */}
-            <div className="flex items-center gap-2 p-2 border border-gray-300 rounded">
-              <Image src={Icons.notificationblue} height={16} width={16} alt="Bell Icon" />
+            <div className="flex items-center gap-2 p-3 border border-gray-300 rounded">
+              <Image src={Icons.notificationblue} height={20} width={20} alt="Bell Icon" />
               <span className="text-body-small text-black">In-App Notifications</span>
               <div className="ml-auto">
                 <input
@@ -280,8 +280,8 @@ export default function NotificationPreferencesPage() {
             </div>
 
             {/* Email Notifications */}
-            <div className="flex items-center gap-2 p-2 border border-gray-300 rounded">
-              <Image src={Icons.emailblue} height={16} width={16} alt="Email Icon" />
+            <div className="flex items-center gap-2 p-3 border border-gray-300 rounded">
+              <Image src={Icons.emailblue} height={20} width={20} alt="Email Icon" />
               <span className="text-body-small text-black">Email Notifications</span>
               <div className="ml-auto">
                 <input
@@ -312,7 +312,7 @@ export default function NotificationPreferencesPage() {
         {/* Save Button */}
         <div className="flex justify-end">
           <button
-            className="px-3 py-1.5 rounded text-white text-body-medium font-medium transition-colors cursor-pointer bg-[#795CF5] hover:bg-[#7C3AED]"
+            className="px-3 py-2 rounded text-white text-body-medium font-medium transition-colors cursor-pointer bg-[#795CF5] hover:bg-[#7C3AED]"
           >
             Save Preferences
           </button>

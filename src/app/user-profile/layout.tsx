@@ -96,12 +96,12 @@ export default function UserProfileLayout({
       {/* Desktop Sidebar */}
       <div
         className={`${
-          sidebarCollapsed ? "w-12" : "w-56"
+          sidebarCollapsed ? "w-17" : "w-70"
         } transition-all duration-300 bg-white border-r border-gray-200 hidden md:flex flex-col`}
       >
         {/* Logo */}
         <div
-          className={`h-12 flex items-center justify-start border-b border-gray-200 ${
+          className={`h-14 flex items-center justify-start border-b border-gray-200 ${
             sidebarCollapsed ? "px-2" : "px-3"
           }`}
         >
@@ -121,10 +121,10 @@ export default function UserProfileLayout({
             ) : (
               <Image
                 src={Icons.owneruniverse}
-                width={120}
-                height={120}
+                width={130}
+                height={130}
                 alt="Owners Universe Logo"
-                className="h-8 cursor-pointer "
+                className="h-12 cursor-pointer "
               />
             )}{" "}
           </a>
@@ -140,7 +140,7 @@ export default function UserProfileLayout({
                 className={`
                   flex cursor-pointer items-center
                   ${sidebarCollapsed ? "justify-center px-0" : "px-2"}
-                  py-1.5 rounded transition-colors
+                  py-2 rounded transition-colors
                   ${
                     item.isActive
                       ? "text-white"
@@ -152,9 +152,9 @@ export default function UserProfileLayout({
                 title={sidebarCollapsed ? item.label : ""}
               >
                 {item.iconType === "image" ? (
-                  <img src={  item.isActive && item.activeIcon ? item.activeIcon : item.icon} alt={item.label} className="w-4 h-4" />
+                  <img src={  item.isActive && item.activeIcon ? item.activeIcon : item.icon} alt={item.label} className="w-6 h-6" />
                 ) : (
-                  <item.icon className="w-4 h-4 text-[#000000]" />
+                  <item.icon className="w-6 h-6 text-[#000000]" />
                 )}
                 {!sidebarCollapsed && (
                   <span className="text-body-medium font-medium">{item.label}</span>

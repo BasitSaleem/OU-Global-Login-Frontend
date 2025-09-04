@@ -96,7 +96,7 @@ export default function UserProfilePage() {
               {/* Profile Photo */}
               <div className="flex flex-col items-center gap-4">
                 <div
-                  className="w-20 h-20 rounded-full flex items-center justify-center"
+                  className="w-23 h-23 rounded-full flex items-center justify-center"
                   style={{ backgroundColor: 'rgba(121, 92, 245, 0.07)' }}
                 >
                   <svg width="24" height="24" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -106,7 +106,7 @@ export default function UserProfilePage() {
                   </svg>
                 </div>
                 
-                <button className="px-14 py-1 border border-[#795CF5] rounded text-[#795CF5] text-body-small font-medium hover:bg-purple-50 transition-colors cursor-pointer">
+                <button className="px-14 py-2  border border-[#795CF5] rounded text-[#795CF5] text-body-small font-medium hover:bg-purple-50 transition-colors cursor-pointer">
                   Change Photo
                 </button>
               </div>
@@ -115,11 +115,11 @@ export default function UserProfilePage() {
               <div className="space-y-2 w-full">
                 <div>
                   <label className="text-body-small text-gray-500">Name</label>
-                  <p className="text-body-medium-bold text-black">John Doe</p>
+                  <p className="text-body-medium-bold text-black">Basit Saleem</p>
                 </div>
                 <div>
                   <label className="text-body-small text-gray-500">Email</label>
-                  <p className="text-body-medium-bold text-black">john@example.com</p>
+                  <p className="text-body-medium-bold text-black">basit@example.com</p>
                 </div>
                 <div>
                   <label className="text-body-small text-gray-500">Contact</label>
@@ -131,12 +131,12 @@ export default function UserProfilePage() {
             {/* Right Panel - Profile Form */}
             <div className="flex-1 border border-gray-200 rounded w-full bg-white shadow-sm">
               {/* Header */}
-              <div className="flex items-center justify-between p-3 border-b border-gray-200">
+              <div className="flex items-center justify-between p-5 border-b border-gray-200">
                 <h1 className="text-heading-1 font-bold text-black">Profile Information</h1>
               </div>
               
               {/* Form Content */}
-              <div className="p-3 space-y-4">
+              <div className="p-4 space-y-8">
                 {/* Basic Information */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                   <div>

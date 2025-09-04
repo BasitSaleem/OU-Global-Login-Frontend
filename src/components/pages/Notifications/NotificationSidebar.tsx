@@ -65,13 +65,13 @@ export default function NotificationsSidebar({
 
           {/* Products */}
           <div>
-            <h3 className="text-body-small font-medium text-black mb-1">PRODUCTS</h3>
-            <div className="space-y-0.5">
+            <h3 className="text-body-small font-medium text-black mb-2">PRODUCTS</h3>
+            <div className="space-y-1">
               {productFilters.map((product) => (
                 <button
                   key={product.id}
                   onClick={() => setActiveProductFilter(product.id)}
-                  className={`w-full text-left px-2 py-1 rounded text-body-medium transition-colors cursor-pointer ${
+                  className={`w-full text-left px-2 py-2 rounded text-body-medium transition-colors cursor-pointer ${
                     activeProductFilter === product.id ? 'text-primary' : 'text-black hover:bg-gray-50'
                   }`}
                   style={

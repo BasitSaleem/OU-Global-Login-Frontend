@@ -15,18 +15,18 @@ return (
       <div className="flex flex-col lg:flex-row w-full max-w-6xl lg:p-10">
         {/* Left Panel */}
         <div
-          className="w-full lg:w-[420px] flex flex-col items-center p-6 rounded-t lg:rounded-l lg:rounded-tr-none lg:h-[490px]"
+          className="w-full lg:w-[420px] flex flex-col items-center p-6 rounded-t lg:rounded-l lg:rounded-tr-none lg:h-[550px]"
           style={{ backgroundColor: "rgba(121, 92, 245, 0.07)" }}
         >
           <div className="flex flex-col items-center text-center space-y-4">
             <Image
               src={Icons.security}
               alt="Security Shield Icon"
-              width={80}
-              height={80}
+              width={100}
+              height={100}
             />
-            <h2 className="text-heading-2 mt-9 font-bold text-black">Password Security</h2>
-            <ul className="space-y-1 text-body-small text-black">
+            <h2 className="text-heading-1 mt-10 font-bold text-black">Password Security</h2>
+            <ul className="mt-5 space-y-3 text-body-small text-black">
               <li>• At least 8 characters</li>
               <li>• Include numbers and symbols</li>
               <li>• Mix uppercase & lowercase</li>
