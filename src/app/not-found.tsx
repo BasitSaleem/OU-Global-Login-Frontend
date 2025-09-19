@@ -34,7 +34,7 @@ export default function NotFound() {
       <div className="flex items-center justify-center px-4 sm:px-6 pb-4 sm:pb-6 pt-1 sm:pt-2">
         {/* Main 404 card */}
         <div className="relative z-10 w-full max-w-xs sm:max-w-sm">
-          <div className="bg-white rounded-2xl sm:rounded-[30px] shadow-[0_0_20px_0_rgba(0,0,0,0.06)] px-4 sm:px-5 py-4 sm:py-5 text-center">
+          <div className="bg-white rounded-2xl sm:rounded-[20px] shadow-[0_0_20px_0_rgba(0,0,0,0.06)] px-4 sm:px-5 py-4 sm:py-5 text-center">
             {/* 404 Icon/Number */}
             <div className="mb-3 sm:mb-4">
               <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-purple-100 rounded-full mb-2 sm:mb-3">
@@ -64,7 +64,7 @@ export default function NotFound() {
 
               <button
                 onClick={() => window.history.back()}
-                className="w-full h-8 sm:h-9 border border-[#795CF5] text-[#795CF5] hover:bg-purple-50 text-xs sm:text-sm font-bold rounded-full transition-colors flex items-center justify-center"
+                className="w-full cursor-pointer h-8 sm:h-9 border border-[#795CF5] text-[#795CF5] hover:bg-purple-50 text-xs sm:text-sm font-bold rounded-full transition-colors flex items-center justify-center"
               >
                 Go back
               </button>
