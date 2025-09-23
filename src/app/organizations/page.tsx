@@ -5,7 +5,6 @@ import DeclineModal from "@/components/modals/DeclineModal";
 import OrganizationGrid from "@/components/pages/Organizations/OrganizationGrid";
 import PendingInvitations from "@/components/pages/Organizations/PendingInvitation";
 import { Icons } from "@/components/utils/icons";
-import { Check, X } from "lucide-react";
 import { useState } from "react";
 
 function OrganizationsContent() {

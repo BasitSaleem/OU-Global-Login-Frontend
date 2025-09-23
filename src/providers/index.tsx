@@ -4,8 +4,8 @@ import { ReactNode } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from 'next-themes';
-import { store } from '@/store';
-
+import ToastProvider from '@/components/providers/toast-provider';
+import { store } from '@/redux/store';
 interface ProvidersProps {
   children: ReactNode;
 }
@@ -29,7 +29,9 @@ export function Providers({ children }: ProvidersProps) {
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <ToastProvider>
+            {children}
+          </ToastProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </ReduxProvider>

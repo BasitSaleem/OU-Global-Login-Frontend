@@ -181,9 +181,11 @@ function NotificationsPage() {
                     description={n.subtitle}
                     updates={n.updates}
                     onMarkAsRead={() =>
-                      setNotifications(prev =>
-                        prev.map(notif =>
-                          notif.id === n.id ? { ...notif, hasUnreadDot: false } : notif
+                      setNotifications((prev) =>
+                        prev.map((notif) =>
+                          notif.id === n.id
+                            ? { ...notif, hasUnreadDot: false }
+                            : notif
                         )
                       )
                     }
@@ -225,7 +227,7 @@ function NotificationsSkeleton() {
 export default function Page() {
   return (
     <DashboardLayout>
-         <Suspense fallback={<NotificationsSkeleton />}>
+      <Suspense fallback={<NotificationsSkeleton />}>
         <NotificationsPage />
       </Suspense>
     </DashboardLayout>

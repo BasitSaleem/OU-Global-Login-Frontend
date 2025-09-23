@@ -1,7 +1,7 @@
-import { forwardRef, InputHTMLAttributes } from 'react';
-import { cn } from '@/utils/helpers';
-import { Eye, EyeOff } from 'lucide-react';
-import { useState } from 'react';
+import { forwardRef, InputHTMLAttributes } from "react";
+import { cn } from "@/utils/helpers";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -13,25 +13,31 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({
-    className,
-    type,
-    label,
-    error,
-    helperText,
-    leftIcon,
-    rightIcon,
-    isPassword = false,
-    ...props
-  }, ref) => {
+  (
+    {
+      className,
+      type,
+      label,
+      error,
+      helperText,
+      leftIcon,
+      rightIcon,
+      isPassword = false,
+      ...props
+    },
+    ref
+  ) => {
     const [showPassword, setShowPassword] = useState(false);
-    const inputType = isPassword ? (showPassword ? 'text' : 'password') : type;
+    const inputType = isPassword ? (showPassword ? "text" : "password") : type;
 
-    const baseStyles = 'flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-400 dark:focus:ring-blue-400';
-    
-    const errorStyles = error ? 'border-red-500 focus:ring-red-500 dark:border-red-400' : '';
-    
-    const withIconStyles = leftIcon || rightIcon || isPassword ? 'pl-10' : '';
+    // const baseStyles =
+    //   "flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-200 dark:text-gray-100 dark:placeholder:text-gray-400 dark:focus:ring-blue-400";
+
+    const errorStyles = error
+      ? "border-red-500 focus:ring-red-500 dark:border-red-400"
+      : "";
+
+    const withIconStyles = leftIcon || rightIcon || isPassword ? "pl-10" : "";
 
     return (
       <div className="space-y-2">
@@ -49,10 +55,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           <input
             type={inputType}
             className={cn(
-              baseStyles,
-              errorStyles,
-              leftIcon && 'pl-10',
-              (rightIcon || isPassword) && 'pr-10',
+              // baseStyles,
+              // errorStyles,
+              leftIcon && "pl-10",
+              (rightIcon || isPassword) && "pr-10",
               className
             )}
             ref={ref}
@@ -81,13 +87,15 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
         )}
         {helperText && !error && (
-          <p className="text-sm text-gray-500 dark:text-gray-400">{helperText}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {helperText}
+          </p>
         )}
       </div>
     );
   }
 );
 
-Input.displayName = 'Input';
+Input.displayName = "Input";
 
 export { Input };

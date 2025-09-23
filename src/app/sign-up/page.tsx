@@ -5,19 +5,30 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Icons } from "@/components/utils/icons";
 import Image from "next/image";
+import { useSignUp } from "@/apiHooks.ts/auth/authApi.hooks";
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signUpSchema } from "@/schems/auth.schemas";
+import { Input } from "@/components/ui";
+import { signUpData } from "@/apiHooks.ts/auth/auth.types";
 
 export default function SignUpPage() {
   const router = useRouter();
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const methods = useForm({
+    resolver: zodResolver(signUpSchema),
+  });
+  const { handleSubmit } = methods;
+  const { mutate: signUp, isPending, error } = useSignUp();
+  const onSubmit = async (data: signUpData) => {
+    signUp(
+      { firstName:data. },
+      {
+        onSuccess: () => {
+          router.push("/");
+        },
+      }
+    );
     // Simple redirect to home page - no authentication logic for now
-    router.push("/");
   };
 
   return (
@@ -38,7 +49,6 @@ export default function SignUpPage() {
           alt="Owners Universe Logo"
           width={150}
           height={150}
-
         />
         <div className="flex items-center gap-2 sm:gap-3">
           <span className="text-xs sm:text-sm text-gray-700 hidden sm:block">
@@ -64,113 +74,94 @@ export default function SignUpPage() {
                 Sign up to get started
               </h1>
             </div>
-
-            {/* Sign up form */}
-            <form onSubmit={handleSubmit} className="space-y-2 sm:space-y-3">
-              {/* Name fields row */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
-                {/* First Name field */}
-                <div>
-                  <label
-                    htmlFor="firstName"
-                    className="block text-xs sm:text-sm font-medium text-gray-900 mb-1"
-                  >
-                    First Name
-                  </label>
-                  <input
+            <FormProvider {...methods}>
+              {/* Sign up form */}
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="space-y-2 sm:space-y-3"
+              >
+                {/* Name fields row */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
+                  {/* First Name field */}
+                  <Input
+                    className="w-full h-8 sm:h-9 px-3 bg-gray-100 border-0 rounded-lg text-xs sm:text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#795CF5] transition-all"
                     type="text"
+                    label="First Name"
                     id="firstName"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
                     placeholder="Enter First Name"
-                    className="w-full h-8 sm:h-9 px-3 bg-gray-100 border-0 rounded-lg text-xs sm:text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#795CF5] transition-all"
-                    required
+                    {...methods.register("firstName", {
+                      required: "first name is required",
+                    })}
+                    error={
+                      methods.formState.errors.firstName?.message as string
+                    }
                   />
-                </div>
-
-                {/* Last Name field */}
-                <div>
-                  <label
-                    htmlFor="lastName"
-                    className="block text-xs sm:text-sm font-medium text-gray-900 mb-1"
-                  >
-                    Last Name
-                  </label>
-                  <input
+                  {/* Last Name field */}
+                  <Input
+                    className="w-full h-8 sm:h-9 px-3 bg-gray-100 border-0 rounded-lg text-xs sm:text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#795CF5] transition-all"
                     type="text"
-                    id="lastName"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
+                    label="Last Name"
+                    id="lastname"
                     placeholder="Enter Last Name"
-                    className="w-full h-8 sm:h-9 px-3 bg-gray-100 border-0 rounded-lg text-xs sm:text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#795CF5] transition-all"
-                    required
+                    {...methods.register("lastName", {
+                      required: "last name is required",
+                    })}
+                    error={methods.formState.errors.lastName?.message as string}
                   />
                 </div>
-              </div>
 
-              {/* Email field */}
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-xs sm:text-sm font-medium text-gray-900 mb-1"
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter Email"
+                {/* Email field */}
+                <Input
                   className="w-full h-8 sm:h-9 px-3 bg-gray-100 border-0 rounded-lg text-xs sm:text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#795CF5] transition-all"
-                  required
+                  id="email"
+                  label="Email"
+                  type="email"
+                  placeholder="Enter Email"
+                  {...methods.register("email", {
+                    required: "Email is required",
+                  })}
+                  error={methods.formState.errors.email?.message as string}
                 />
-              </div>
 
-              {/* Password field */}
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block text-xs sm:text-sm font-medium text-gray-900 mb-1"
-                >
-                  Password
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter Password"
-                    className="w-full h-8 sm:h-9 px-3 bg-gray-100 border-0 rounded-lg text-xs sm:text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#795CF5] transition-all pr-9"
-                    required
-                  />
+                {/* Password field */}
+                <Input
+                  className="w-full h-8 sm:h-9 px-3 bg-gray-100  border-0 rounded-lg text-xs sm:text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#795CF5] transition-all"
+                  id="password"
+                  label="Password"
+                  type="password"
+                  placeholder="Enter Password"
+                  isPassword={true}
+                  {...methods.register("password", {
+                    required: "Password is required",
+                  })} // Register input
+                  error={methods.formState.errors.password?.message as string}
+                />
+                <Input
+                  className="w-full h-8 sm:h-9 px-3 bg-gray-100  border-0 rounded-lg text-xs sm:text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#795CF5] transition-all"
+                  id="confirmPassword"
+                  label="Confirm Password"
+                  type="confirmPassword"
+                  placeholder="Confirm Password"
+                  isPassword={true}
+                  {...methods.register("confirmPassword", {
+                    required: "confirm password is required",
+                  })} // Register input
+                  error={
+                    methods.formState.errors.confirmPassword?.message as string
+                  }
+                />
+
+                {/* Sign Up button */}
+                <div className="pt-2 sm:pt-3 sm:mt-5">
                   <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
+                    type="submit"
+                    className="w-full h-8 sm:h-9 bg-[#795CF5] hover:bg-[#7C3AED] text-white text-xs sm:text-sm font-bold rounded-full transition-colors cursor-pointer"
                   >
-                    <Image
-                      src={Icons.view}
-                      alt="View Password"
-                      width={16}
-                      height={16}
-                    />
+                    Sign Up
                   </button>
                 </div>
-              </div>
-
-              {/* Sign Up button */}
-              <div className="pt-2 sm:pt-3 sm:mt-5">
-                <button
-                  type="submit"
-                  className="w-full h-8 sm:h-9 bg-[#795CF5] hover:bg-[#7C3AED] text-white text-xs sm:text-sm font-bold rounded-full transition-colors cursor-pointer"
-                >
-                  Sign Up
-                </button>
-              </div>
-            </form>
-
+              </form>
+            </FormProvider>
             {/* Divider */}
             <div className="my-3 sm:my-7 flex items-center">
               <div className="flex-1 border-t border-[#C9C8CD]"></div>
