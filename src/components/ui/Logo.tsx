@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Icons } from '../utils/icons';
+import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 
 interface LogoProps {
   /**
@@ -36,6 +37,7 @@ interface LogoProps {
    * Custom onClick handler
    */
   onClick?: () => void;
+  Icon?: string | StaticImport ;
 }
 
 const Logo: React.FC<LogoProps> = ({
@@ -45,7 +47,8 @@ const Logo: React.FC<LogoProps> = ({
   className = "",
   isClickable = false,
   priority = true,
-  onClick
+  onClick,
+  Icon,
 }) => {
   const logoContent = (
     <div 
@@ -53,7 +56,7 @@ const Logo: React.FC<LogoProps> = ({
       onClick={onClick}
     >
       <Image
-        src={Icons.owneruniverse}
+        src={Icon}
         alt={alt}
         width={width}
         height={height}

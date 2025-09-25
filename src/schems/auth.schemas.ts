@@ -10,8 +10,8 @@ export const loginSchema = z.object({
 });
 export const signUpSchema = z
   .object({
-    firstName: z.string().nonempty("First name is required"),
-    lastName: z.string().nonempty("Last name is required"),
+    first_name: z.string().nonempty("First name is required"),
+    last_name: z.string().nonempty("Last name is required"),
     email: z
       .string()
       .nonempty("Email is required")

@@ -81,12 +81,12 @@ const CustomToast: React.FC<CustomToastProps> = ({
     <div className={`
       relative flex items-start gap-3 p-4 rounded-lg border-l-4 shadow-lg
       ${styles.borderColor} ${styles.bgColor}
-      animate-toast-slide-in
+      animate-toast-slide-in w-[inherit]
     `}>
       {/* Logo */}
-      <div className="flex-shrink-0 mt-0.5">
+      {/* <div className="flex-shrink-0 mt-0.5">
         {logo || <DefaultLogo />}
-      </div>
+      </div> */}
 
       {/* Content */}
       <div className="flex-1 min-w-0">
@@ -136,10 +136,7 @@ const defaultToastConfig: ToastOptions = {
     background: 'transparent',
     boxShadow: 'none',
   },
-  bodyStyle: {
-    padding: 0,
-    margin: 0,
-  },
+
   closeButton: false, // We'll use our custom close button
 };
 

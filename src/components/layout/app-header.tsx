@@ -6,6 +6,7 @@ import NotificationItem from "../pages/Notifications/NotificationItems";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Icons } from "../utils/icons";
+import { useLogout } from "@/apiHooks.ts/auth/authApi.hooks";
 
 /* ---------------------------------- */
 /* Types                              */
@@ -157,6 +158,21 @@ function ProfileMenu({
   onClose: () => void;
 }) {
 
+  const { mutate: logout } = useLogout();
+
+  const handleLogout = () => {
+    logout(undefined, {
+      onSuccess: () => {
+        onClose();
+        // Redirect to login page or homepage after logout
+        router.push("/login");
+      },
+      onError: (error) => {
+        console.error("Logout failed:", error);
+      }
+    });
+  };
+
   const router = useRouter();
   return (
     <div className="absolute -right-4 sm:right-0 top-10 w-64 sm:w-72 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
@@ -190,7 +206,7 @@ function ProfileMenu({
           <span className="text-body-medium">Account settings</span>
         </button>
 
-        <button onClick={() => router.push('/login')} className="w-full flex items-center gap-2 px-2 py-1.5 text-gray-700 hover:bg-gray-50 rounded transition-colors cursor-pointer">
+        <button onClick={() => handleLogout()} className="w-full flex items-center gap-2 px-2 py-1.5 text-gray-700 hover:bg-gray-50 rounded transition-colors cursor-pointer">
           <Image src={Icons.logout} width={14} height={14} alt="Logout" className="w-6 h-6 text-gray-600" />
           <span className="text-body-medium">Log out</span>
         </button>

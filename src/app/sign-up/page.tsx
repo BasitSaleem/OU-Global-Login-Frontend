@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Icons } from "@/components/utils/icons";
 import Image from "next/image";
@@ -9,7 +9,7 @@ import { useSignUp } from "@/apiHooks.ts/auth/authApi.hooks";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema } from "@/schems/auth.schemas";
-import { Input } from "@/components/ui";
+import { Input, Logo } from "@/components/ui";
 import { signUpData } from "@/apiHooks.ts/auth/auth.types";
 
 export default function SignUpPage() {
@@ -19,12 +19,29 @@ export default function SignUpPage() {
   });
   const { handleSubmit } = methods;
   const { mutate: signUp, isPending, error } = useSignUp();
+
+
+  // Handle app query param
+    const searchParams = useSearchParams();
+    const app = searchParams.get("app") || "OG"; // 👈 fallback to OG
+  
+    // Redirect to add default app param if missing
+      useEffect(() => {
+      const app = searchParams.get("app");
+      if (!app) {
+        // Redirect with default param
+        router.replace("/sign-up?app=OG");
+      }
+    }, [router, searchParams]);
+
+
+    // Form submission handler
   const onSubmit = async (data: signUpData) => {
     signUp(
-      { firstName:data. },
+      { first_name:data.first_name,last_name:data.last_name,email: data.email, password: data.password } as signUpData,
       {
         onSuccess: () => {
-          router.push("/");
+          router.push("/create-organization");
         },
       }
     );
@@ -44,18 +61,13 @@ export default function SignUpPage() {
 
       {/* Header with logo and sign in */}
       <div className="relative z-10 flex items-center justify-between p-4 sm:p-4 lg:p-6">
-        <Image
-          src={Icons.owneruniverse}
-          alt="Owners Universe Logo"
-          width={150}
-          height={150}
-        />
+        <Logo Icon={app === "OI" ? Icons.OI : Icons.owneruniverse} />
         <div className="flex items-center gap-2 sm:gap-3">
           <span className="text-xs sm:text-sm text-gray-700 hidden sm:block">
             Already have an account?
           </span>
           <Link
-            href="/login"
+            href={`/login?app=${app}`}
             className="bg-[#795CF5] hover:bg-[#7C3AED] text-white text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition-colors"
           >
             Sign In
@@ -87,13 +99,13 @@ export default function SignUpPage() {
                     className="w-full h-8 sm:h-9 px-3 bg-gray-100 border-0 rounded-lg text-xs sm:text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#795CF5] transition-all"
                     type="text"
                     label="First Name"
-                    id="firstName"
+                    id="first_name"
                     placeholder="Enter First Name"
-                    {...methods.register("firstName", {
+                    {...methods.register("first_name", {
                       required: "first name is required",
                     })}
                     error={
-                      methods.formState.errors.firstName?.message as string
+                      methods.formState.errors.first_name?.message as string
                     }
                   />
                   {/* Last Name field */}
@@ -101,12 +113,12 @@ export default function SignUpPage() {
                     className="w-full h-8 sm:h-9 px-3 bg-gray-100 border-0 rounded-lg text-xs sm:text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#795CF5] transition-all"
                     type="text"
                     label="Last Name"
-                    id="lastname"
+                    id="last_name"
                     placeholder="Enter Last Name"
-                    {...methods.register("lastName", {
+                    {...methods.register("last_name", {
                       required: "last name is required",
                     })}
-                    error={methods.formState.errors.lastName?.message as string}
+                    error={methods.formState.errors.last_name?.message as string}
                   />
                 </div>
 
@@ -198,7 +210,7 @@ export default function SignUpPage() {
                 Already have an account{" "}
               </span>
               <Link
-                href="/login"
+                href={`/login?app=${app}`}
                 className="text-xs sm:text-sm font-bold text-[#795CF5] hover:underline underline"
               >
                 Sign In
