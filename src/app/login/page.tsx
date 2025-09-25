@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useForm, FormProvider } from "react-hook-form";
 import { Icons } from "@/components/utils/icons";
@@ -9,10 +9,23 @@ import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/schems/auth.schemas";
 import { useLogin } from "@/apiHooks.ts/auth/authApi.hooks";
+import { useEffect } from "react";
 export default function LoginPage() {
   const { mutate: login, isPending, error } = useLogin();
+  const searchParams = useSearchParams();
+  const app = searchParams.get("app") || "OG"; // 👈 fallback to OG
+  console.log("App from query params:", app); // Debugging line
+    const router = useRouter();
 
-  const router = useRouter();
+
+    useEffect(() => {
+    const app = searchParams.get("app");
+    if (!app) {
+      // Redirect with default param
+      router.replace("/login?app=OG");
+    }
+  }, [router, searchParams]);
+
   const methods = useForm({
     resolver: zodResolver(loginSchema),
   });
@@ -37,13 +50,13 @@ export default function LoginPage() {
         />
       </div>
       <div className="relative z-10 flex items-center justify-between p-4 sm:p-6 lg:p-8">
-        <Logo />
+        <Logo Icon={app === "OI" ? Icons.OI : Icons.owneruniverse} />
         <div className="flex items-center gap-2 sm:gap-3">
           <span className="text-xs sm:text-sm text-gray-700 hidden sm:block">
             Don't have an account?
           </span>
           <Link
-            href="/sign-up"
+            href={`/sign-up?app=${app}`}
             className="bg-[#795CF5] hover:bg-[#7C3AED] text-white text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition-colors"
           >
             Sign Up
@@ -158,7 +171,7 @@ export default function LoginPage() {
                 Don't have an account{" "}
               </span>
               <Link
-                href="/sign-up"
+                href={`/sign-up?app=${app}`}
                 className="underline text-xs sm:text-sm font-bold text-[#795CF5] hover:underline"
               >
                 Sign Up
