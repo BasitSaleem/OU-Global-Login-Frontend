@@ -13,7 +13,7 @@ interface ProvidersProps {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 60 * 1000, // 1 minute
+      staleTime: 60 * 1000, 
       retry: 1,
     },
   },
