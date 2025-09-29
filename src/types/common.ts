@@ -35,3 +35,13 @@ export interface SEOProps {
   url?: string;
   type?: 'website' | 'article' | 'profile';
 }
+
+export type Invitation = {
+  id: string;
+  name: string;
+  abbreviation: string;
+  backgroundColor: string;
+  invitedBy: string;
+  product: string;
+  timeAgo: string;
+};
