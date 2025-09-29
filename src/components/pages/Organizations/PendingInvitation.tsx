@@ -1,17 +1,7 @@
 'use client';
 
-import React from 'react';
+import { Invitation } from '@/types/common';
 import { Check, X } from 'lucide-react';
-
-type Invitation = {
-  id: string;
-  name: string;
-  abbreviation: string;
-  backgroundColor: string;
-  invitedBy: string;
-  product: string;
-  timeAgo: string;
-};
 
 export default function PendingInvitations({
   invitations,
@@ -27,6 +17,11 @@ export default function PendingInvitations({
       <h2 className="text-heading-2 font-bold text-black mb-4">Pending Invitations</h2>
 
       <div className="space-y-3">
+        {invitations.length === 0 && (
+          <>
+          <p className='flex justify-center align-middle'>No Pending Inviations</p>
+          </>
+        )}
         {invitations.map((invitation) => (
           <div
             key={invitation.id}

@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import {
-  useCreateOrganization,
   useCheckOrganizationNameAvailability,
   useCheckSubDomainAvailability,
+  useCreateOrganization,
 } from "@/apiHooks.ts/organization/organization.api";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function CreateOrgPage() {
   const [companyName, setCompanyName] = useState("");
@@ -20,7 +20,7 @@ export default function CreateOrgPage() {
 
   const { data: isNameAvailable, isFetching: checkingName } =
     useCheckOrganizationNameAvailability(debouncedCompanyName);
-  console.log(isNameAvailable, ">..............");
+
   const { data: isSubAvailable, isFetching: checkingSub } =
     useCheckSubDomainAvailability(
       selectedProduct === "OI" ? debouncedSubDomain : ""
@@ -31,24 +31,28 @@ export default function CreateOrgPage() {
       id: "inventory",
       name: "OI",
       fullname: "Owners Inventory",
+      isDisabled: false,
       icon: "https://api.builder.io/api/v1/image/assets/TEMP/3c4327f1dd595491744f2af966536dd987ec0a0a?width=66",
     },
     {
       id: "marketplace",
       name: "OM",
       fullname: "Owners Marketplace",
+      isDisabled: true,
       icon: "https://api.builder.io/api/v1/image/assets/TEMP/df8a47bf275bccdb600fe4495f3d4bead9cb844f?width=64",
     },
     {
       id: "analytics",
       name: "OA",
       fullname: "Owners Analytics",
+      isDisabled: true,
       icon: "https://api.builder.io/api/v1/image/assets/TEMP/72b1ea421112224fa1bea68adcd733be5aa8666b?width=76",
     },
     {
       id: "jungle",
       name: "OJ",
       fullname: "Owners Jungle",
+      isDisabled: true,
       icon: "https://api.builder.io/api/v1/image/assets/TEMP/78407e1c15d2b695844d30eed5f5358ca8da09f8?width=64",
     },
   ];
@@ -68,7 +72,7 @@ export default function CreateOrgPage() {
     const payload = {
       name: companyName,
       subDomainName: subDomain,
-      product: selectedProduct,
+      product: [selectedProduct],
     };
 
     createOrgMutation.mutate(payload, {
@@ -116,12 +120,13 @@ export default function CreateOrgPage() {
               <button
                 key={product.id}
                 type="button"
+                disabled={product.isDisabled}
                 onClick={() => setSelectedProduct(product.name)}
-                className={`flex items-center gap-2 border rounded-lg px-3 py-3 text-base font-medium cursor-pointer transition ${
+                className={`flex items-center gap-2 border rounded-lg px-3 py-3 text-base font-medium transition ${
                   selectedProduct === product.name
                     ? "border-[#795CF5] bg-[#795CF512] text-[#795CF5]"
                     : "border-gray-200 text-gray-700 bg-gray-100 hover:bg-gray-200"
-                }`}
+                } ${product.isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 <img
                   src={product.icon}

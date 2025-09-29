@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/components/ui/toast";
 import { request } from "@/utils/requestFunction";
-import { useDebounce } from "@/hooks/useDebounce";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   CreateOrganizationData,
   Organization,
@@ -12,7 +11,7 @@ import {
 //ENDPOINTS
 const ENDPOINTS = {
   create: "/organization",
-  getAll: "/organization",
+  getAll: `/organization`,
   getDetails: (id: string) => `/organization/${id}`,
   update: (id: string) => `/organization/${id}`,
   checkName: (name: string) =>
@@ -52,13 +51,11 @@ export const useCreateOrganization = () => {
 
 // 2. GET ALL ORGANIZATIONS
 export const useOrganizations = () => {
-  const queryClient = useQueryClient();
-
   return useQuery({
     queryKey: ["organizations"],
     queryFn: () =>
       request<{ organizations: Organization[] }>(ENDPOINTS.getAll, "GET"),
-    select: (data) => data.organizations,
+    // select: (response) => response.organizations
   });
 };
 
