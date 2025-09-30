@@ -5,11 +5,32 @@ import CreateOrgModal from "@/components/modals/CreateOrgModal";
 import DeclineModal from "@/components/modals/DeclineModal";
 import OrganizationGrid from "@/components/pages/Organizations/OrganizationGrid";
 import PendingInvitations from "@/components/pages/Organizations/PendingInvitation";
-import { Invitation } from "@/types/common";
+import { Invitation } from '@/types/common';
 import { useEffect, useState } from "react";
 
 function OrganizationsContent() {
-  const pendingInvitations: Invitation[] = [
+  const organizationsList = [
+    {
+      id: "add-new",
+      isAddNew: true,
+    },
+    // {
+    //   id: "post-purchase",
+    //   name: "Post Purchase Management App",
+    //   abbreviation: "PP",
+    //   backgroundColor: "#137F6A",
+    //   members: 22,
+    //   teamAvatars: [
+    //     Icons.owneruniverse,
+    //     Icons.ownerinventory,
+    //     Icons.ownerjungle,
+    //     Icons.ownermarketplace
+    //   ],
+    // },
+    
+  ];
+
+  const pendingInvitations : Invitation[] = [
     // {
     //   id: "al-asif-exteriors",
     //   name: "Al-Asif Exteriors",
@@ -40,19 +61,15 @@ function OrganizationsContent() {
   ];
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [organizations, setOrganizations] = useState<any>(organizationsList);
   const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
-  const {
-    data: userOrgs,
-    status: orgStatus,
-    isPending: isOrgPending,
-    error: orgError,
-  } = useGetOrganizations();
-  const [organizations, setOrganizations] = useState<any>([]);
+  const { data: userOrgs, status: orgStatus, isPending: isOrgPending, error: orgError } = useGetOrganizations();
+
   useEffect(() => {
-    if (orgStatus === "success") {
-      setOrganizations((prev: any) => [...prev, userOrgs?.organizations]);
+    if(orgStatus === "success") {
+      setOrganizations((prev: any) => [...prev, ...userOrgs?.organizations])
     }
-  }, [orgStatus]);
+  }, [orgStatus])
 
   const handleCreateOrg = (data: {
     companyName: string;
@@ -62,17 +79,14 @@ function OrganizationsContent() {
     console.log("New Organization Data:", data);
   };
   const handleDecline = () => setIsDeclineModalOpen(false);
-console.log(organizations,"?///////////////////i");
 
   return (
     <div className="p-2 sm:p-8">
       <div className="max-w-xs sm:max-w-7xl mx-auto space-y-8">
-        {!isOrgPending  &&  (
-          <OrganizationGrid
-            organizations={organizations}
-            onAddNew={() => setIsCreateModalOpen(true)}
-          />
-        )}
+        <OrganizationGrid
+          organizations={organizations}
+          onAddNew={() => setIsCreateModalOpen(true)}
+        />
 
         <PendingInvitations
           invitations={pendingInvitations}

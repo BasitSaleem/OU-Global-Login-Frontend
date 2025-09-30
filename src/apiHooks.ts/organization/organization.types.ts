@@ -1,3 +1,5 @@
+import { OgOrgMembership } from "../membership/membership.types";
+
 type products = "OI" | "OG" | "OA" | "OJ";
 export interface Organization {
   name: string;
@@ -41,10 +43,12 @@ export enum OrgStatus {
 
 export interface OgOrganization {
   id: string;
-  status: "ACTIVE" | "PENDING" | "BLOCKED" | "SUSPENDED";
+  status?: "ACTIVE" | "PENDING" | "BLOCKED" | "SUSPENDED";
   name: string;
+  isAddNew?: boolean
   remarks?: string | null;
   created_at: string;
+  memberships: OgOrgMembership[]
   updated_at: string;
   is_blocked: boolean;
   ogUserId: string;
@@ -60,6 +64,6 @@ export interface OgOrgResponse {
   data: {
     totalCounts: number;
     organizations: OgOrganization[];
-    message:string,
+    message: string,
   };
 }

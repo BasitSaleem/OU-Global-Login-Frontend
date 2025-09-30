@@ -3,25 +3,27 @@
 import Image from "next/image";
 import React from "react";
 import { Icons } from "@/components/utils/icons";
+import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
 
-type Org = {
-  id: string;
-  isAddNew?: boolean;
-  name?: string;
-  abbreviation?: string;
-  backgroundColor?: string;
-  members?: number;
-  teamAvatars?: string[];
-};
+// interface Org {
+//   id: string;
+//   isAddNew?: boolean;
+//   name?: string;
+//   abbreviation?: string;
+//   backgroundColor?: string;
+//   memberships?: number[];
+//   teamAvatars?: string[];
+// };
 
 export default function OrganizationGrid({
   organizations = [],
   onAddNew,
 }: {
-  organizations: Org[];
+  organizations: OgOrganization[];
   onAddNew: () => void;
 }) {
-  console.log(organizations, "?////dddddddddddddd/////////////");
+  console.log(
+    organizations, "?//////////////");
   return (
     <div>
       {/* Header with count */}
@@ -34,7 +36,7 @@ export default function OrganizationGrid({
             className="w-6 h-6 rounded-full flex items-center justify-center text-white text-body-tiny font-medium"
             style={{ backgroundColor: "#795CF5" }}
           >
-            {Math.max(organizations?.length || 0)}
+            {Math.max((organizations?.length || 0)) - 1}
           </div>
         </div>
       </div>
@@ -45,11 +47,9 @@ export default function OrganizationGrid({
           <div
             key={org?.id}
             onClick={() => org?.isAddNew && onAddNew()}
-            className={`relative group ${
-              org?.isAddNew ? "" : "bg-white border border-gray-200"
-            } rounded ${
-              org?.isAddNew ? "" : "p-3"
-            } hover:shadow-sm transition-shadow cursor-pointer`}
+            className={`relative group ${org?.isAddNew ? "" : "bg-white border border-gray-200"
+              } rounded ${org?.isAddNew ? "" : "p-3"
+              } hover:shadow-sm transition-shadow cursor-pointer`}
           >
             {org?.isAddNew ? (
               /* Add New Card */
@@ -76,7 +76,7 @@ export default function OrganizationGrid({
                 <div className="flex items-start gap-3 mb-2">
                   <div
                     className="w-10 h-10 rounded flex items-center justify-center text-white text-body-small font-medium"
-                    style={{ backgroundColor: org?.backgroundColor }}
+                    style={{ backgroundColor: "#137F6A" }}
                   >
                     {org?.abbreviation}
                   </div>
@@ -108,10 +108,10 @@ export default function OrganizationGrid({
                     style={{ backgroundColor: "rgba(121, 92, 245, 0.07)" }}
                   >
                     <span className="text-body-small font-medium text-primary">
-                      {org?.members} members
+                      {org?.memberships.length} members
                     </span>
                     <div className="flex items-center -space-x-0.5">
-                      {org?.teamAvatars?.map((avatarUrl, index) => (
+                      {org?.products?.map((avatarUrl, index) => (
                         <img
                           key={index}
                           src={avatarUrl}
