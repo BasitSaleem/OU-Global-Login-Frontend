@@ -1,119 +1,15 @@
 "use client";
-import { useOrganizations } from "@/apiHooks.ts/Organization/organization.api";
+import { useGetOrganizations } from "@/apiHooks.ts/organization/organization.api";
 import DashboardLayout from "@/components/layout/dashboard-layout";
 import CreateOrgModal from "@/components/modals/CreateOrgModal";
 import DeclineModal from "@/components/modals/DeclineModal";
 import OrganizationGrid from "@/components/pages/Organizations/OrganizationGrid";
 import PendingInvitations from "@/components/pages/Organizations/PendingInvitation";
-import { Invitation } from '@/types/common';
+import { Invitation } from "@/types/common";
 import { useEffect, useState } from "react";
 
 function OrganizationsContent() {
-  const organizationsList = [
-    {
-      id: "add-new",
-      isAddNew: true,
-    },
-    // {
-    //   id: "post-purchase",
-    //   name: "Post Purchase Management App",
-    //   abbreviation: "PP",
-    //   backgroundColor: "#137F6A",
-    //   members: 22,
-    //   teamAvatars: [
-    //     Icons.owneruniverse,
-    //     Icons.ownerinventory,
-    //     Icons.ownerjungle,
-    //     Icons.ownermarketplace
-    //   ],
-    // },
-    // {
-    //   id: "marketing",
-    //   name: "Marketing",
-    //   abbreviation: "M",
-    //   backgroundColor: "#F95C5B",
-    //   members: 22,
-    //   teamAvatars: [
-    //     Icons.owneruniverse,
-    //     Icons.ownerinventory,
-    //     Icons.ownerjungle,
-    //   ],
-    // },
-    // {
-    //   id: "al-asif",
-    //   name: "Al-Asif Interiors",
-    //   abbreviation: "AI",
-    //   backgroundColor: "#B11E67",
-    //   members: 22,
-    //   teamAvatars: [
-    //    Icons.owneruniverse,
-    //     Icons.ownerinventory,
-    //     Icons.ownerjungle,
-    //     Icons.ownermarketplace
-    //   ],
-    // },
-    // {
-    //   id: "operations",
-    //   name: "Operations",
-    //   abbreviation: "O",
-    //   backgroundColor: "#1AD1B9",
-    //   members: 22,
-    //   teamAvatars: [
-    //     Icons.owneruniverse,
-    //     Icons.ownerinventory,
-    //     Icons.ownerjungle,
-    //   ],
-    // },
-    // {
-    //   id: "spotify",
-    //   name: "Spotify",
-    //   abbreviation: "S",
-    //   backgroundColor: "#795CF5",
-    //   members: 22,
-    //   teamAvatars: [
-    //      Icons.owneruniverse,
-    //     Icons.ownerinventory,
-    //     Icons.ownerjungle,
-    //     Icons.ownermarketplace
-    //   ],
-    // },
-    // {
-    //   id: "brandscope",
-    //   name: "Brandscope",
-    //   abbreviation: "B",
-    //   backgroundColor: "#FF7C3B",
-    //   members: 22,
-    //   teamAvatars: [
-    //    Icons.owneruniverse,
-    //     Icons.ownerinventory,
-    //   ],
-    // },
-    // {
-    //   id: "red-star",
-    //   name: "Red Star Technologies",
-    //   abbreviation: "RS",
-    //   backgroundColor: "#137F6A",
-    //   members: 22,
-    //   teamAvatars: [
-    //    Icons.owneruniverse,
-    //   ],
-    // },
-    // {
-    //   id: "wallace",
-    //   name: "Wallace Willer McLeod Project Management Web...",
-    //   abbreviation: "WW",
-    //   backgroundColor: "#795CF5",
-    //   members: 22,
-    //   teamAvatars: [
-    //     Icons.owneruniverse,
-    //     Icons.ownerinventory,
-    //     Icons.ownerjungle,
-    //     Icons.ownermarketplace
-    //   ],
-    // },
-  ];
-
-  const pendingInvitations : Invitation[] = [
+  const pendingInvitations: Invitation[] = [
     // {
     //   id: "al-asif-exteriors",
     //   name: "Al-Asif Exteriors",
@@ -144,15 +40,19 @@ function OrganizationsContent() {
   ];
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [organizations, setOrganizations] = useState<any>(organizationsList);
   const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
-  const { data: userOrgs, status: orgStatus, isPending: isOrgPending, error: orgError } = useOrganizations();
-
+  const {
+    data: userOrgs,
+    status: orgStatus,
+    isPending: isOrgPending,
+    error: orgError,
+  } = useGetOrganizations();
+  const [organizations, setOrganizations] = useState<any>([]);
   useEffect(() => {
-    if(orgStatus === "success") {
-      setOrganizations((prev: any) => [...prev, userOrgs.data?.organizations])
+    if (orgStatus === "success") {
+      setOrganizations((prev: any) => [...prev, userOrgs?.organizations]);
     }
-  }, [orgStatus])
+  }, [orgStatus]);
 
   const handleCreateOrg = (data: {
     companyName: string;
@@ -162,14 +62,17 @@ function OrganizationsContent() {
     console.log("New Organization Data:", data);
   };
   const handleDecline = () => setIsDeclineModalOpen(false);
+console.log(organizations,"?///////////////////i");
 
   return (
     <div className="p-2 sm:p-8">
       <div className="max-w-xs sm:max-w-7xl mx-auto space-y-8">
-        <OrganizationGrid
-          organizations={organizations}
-          onAddNew={() => setIsCreateModalOpen(true)}
-        />
+        {!isOrgPending  &&  (
+          <OrganizationGrid
+            organizations={organizations}
+            onAddNew={() => setIsCreateModalOpen(true)}
+          />
+        )}
 
         <PendingInvitations
           invitations={pendingInvitations}

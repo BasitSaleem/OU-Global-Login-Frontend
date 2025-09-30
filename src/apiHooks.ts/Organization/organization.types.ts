@@ -1,4 +1,4 @@
-type products = "OI" | "OG" | "OA" | "OJ"; 
+type products = "OI" | "OG" | "OA" | "OJ";
 export interface Organization {
   name: string;
   product: products;
@@ -29,4 +29,37 @@ export interface UpdateOrganizationData {
   name?: string;
   address?: string;
   [key: string]: any;
+}
+
+// Match your Prisma enum
+export enum OrgStatus {
+  ACTIVE = "ACTIVE",
+  PENDING = "PENDING",
+  BLOCKED = "BLOCKED",
+  SUSPENDED = "SUSPENDED",
+}
+
+export interface OgOrganization {
+  id: string;
+  status: "ACTIVE" | "PENDING" | "BLOCKED" | "SUSPENDED";
+  name: string;
+  remarks?: string | null;
+  created_at: string;
+  updated_at: string;
+  is_blocked: boolean;
+  ogUserId: string;
+  products: OgProduct[];
+}
+
+export interface OgProduct {
+  id: string;
+  name: string;
+}
+
+export interface OgOrgResponse {
+  data: {
+    totalCounts: number;
+    organizations: OgOrganization[];
+    message:string,
+  };
 }

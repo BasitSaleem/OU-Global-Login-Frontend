@@ -1,12 +1,14 @@
 "use client";
 
-import {  Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { use, useEffect, useRef, useState } from "react";
 import NotificationItem from "../pages/Notifications/NotificationItems";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Icons } from "../utils/icons";
-import { useLogout } from "@/apiHooks.ts/auth/authApi.hooks";
+import { useLogout } from "@/apiHooks.ts/auth/auth.api";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { clearAuth } from "@/redux/slices/auth.slice";
 
 /* ---------------------------------- */
 /* Types                              */
@@ -52,7 +54,9 @@ function NotificationsControlsRow({
         onClick={onMarkAllAsRead}
         disabled={!anyUnread}
         className={`text-body-small font-medium ${
-          anyUnread ? "text-primary hover:underline cursor-pointer " : "text-gray-400 cursor-not-allowed"
+          anyUnread
+            ? "text-primary hover:underline cursor-pointer "
+            : "text-gray-400 cursor-not-allowed"
         }`}
       >
         Mark all as read
@@ -129,19 +133,26 @@ function NotificationsDropdown({
       <div className="max-h-[600px] overflow-y-auto cursor-pointer">
         {filteredNotifications.length === 0 ? (
           <div className="p-6 text-sm text-gray-500">
-            {unreadOnly ? "You're all caught up! No unread notifications." : "No notifications to show."}
+            {unreadOnly
+              ? "You're all caught up! No unread notifications."
+              : "No notifications to show."}
           </div>
         ) : (
           filteredNotifications.map((item, index) => {
             // map index back to original list index for per-item mark-as-read
             const originalIndex = notifications.findIndex(
-              (n) => n.initials === item.initials && n.time === item.time && n.title === item.title
+              (n) =>
+                n.initials === item.initials &&
+                n.time === item.time &&
+                n.title === item.title
             );
             return (
               <NotificationItem
                 key={`${item.title}-${item.time}-${index}`}
                 {...item}
-                onMarkAsRead={() => onMarkOneAsRead(originalIndex >= 0 ? originalIndex : index)}
+                onMarkAsRead={() =>
+                  onMarkOneAsRead(originalIndex >= 0 ? originalIndex : index)
+                }
               />
             );
           })
@@ -152,24 +163,20 @@ function NotificationsDropdown({
 }
 
 // Profile dropdown menu
-function ProfileMenu({
-  onClose,
-}: {
-  onClose: () => void;
-}) {
-
+function ProfileMenu({ onClose }: { onClose: () => void }) {
+  const { user } = useAppSelector((s) => s.auth);
   const { mutate: logout } = useLogout();
-
+  const dispatch = useAppDispatch();
   const handleLogout = () => {
     logout(undefined, {
       onSuccess: () => {
         onClose();
-        // Redirect to login page or homepage after logout
+        dispatch(clearAuth());
         router.push("/login");
       },
       onError: (error) => {
         console.error("Logout failed:", error);
-      }
+      },
     });
   };
 
@@ -182,11 +189,17 @@ function ProfileMenu({
           className="w-7 h-7 rounded-full flex items-center justify-center cursor-pointer"
           style={{ backgroundColor: "#795CF5" }}
         >
-          <span className="text-white text-body-small font-medium">AR</span>
+          <span className="text-white text-body-small font-medium">
+            {`${user?.first_name?.charAt(0) ?? ""}${
+              user?.last_name?.charAt(0) ?? ""
+            }`.toUpperCase()}
+          </span>
         </div>
         <div>
-          <h3 className="text-body-medium-bold text-gray-900">Ali Raza</h3>
-          <p className="text-body-small text-gray-500 truncate">dev.logoanimations@gmail.com</p>
+          <h3 className="text-body-medium-bold text-gray-900"></h3>
+          <p className="text-body-small text-gray-500 truncate">
+            {user?.email}
+          </p>
         </div>
       </div>
 
@@ -195,19 +208,39 @@ function ProfileMenu({
         <a
           onClick={() => router.push("/user-profile")}
           className="w-full flex items-center gap-2 px-2 py-1.5 text-gray-700 hover:bg-gray-50 rounded transition-colors cursor-pointer"
-
         >
-          <Image src={Icons.profile} width={14} height={14} alt="Profile" className="w-6 h-6 text-gray-600" />
+          <Image
+            src={Icons.profile}
+            width={14}
+            height={14}
+            alt="Profile"
+            className="w-6 h-6 text-gray-600"
+          />
           <span className="text-body-medium">Profile</span>
         </a>
 
         <button className="w-full flex items-center gap-2 px-0.5 py-1.5 text-gray-700 hover:bg-gray-50 rounded transition-colors cursor-pointer">
-          <Image src={Icons.settings} width={14} height={14} alt="Settings" className="w-8 h-8 text-gray-600" />
+          <Image
+            src={Icons.settings}
+            width={14}
+            height={14}
+            alt="Settings"
+            className="w-8 h-8 text-gray-600"
+          />
           <span className="text-body-medium">Account settings</span>
         </button>
 
-        <button onClick={() => handleLogout()} className="w-full flex items-center gap-2 px-2 py-1.5 text-gray-700 hover:bg-gray-50 rounded transition-colors cursor-pointer">
-          <Image src={Icons.logout} width={14} height={14} alt="Logout" className="w-6 h-6 text-gray-600" />
+        <button
+          onClick={() => handleLogout()}
+          className="w-full flex items-center gap-2 px-2 py-1.5 text-gray-700 hover:bg-gray-50 rounded transition-colors cursor-pointer"
+        >
+          <Image
+            src={Icons.logout}
+            width={14}
+            height={14}
+            alt="Logout"
+            className="w-6 h-6 text-gray-600"
+          />
           <span className="text-body-medium">Log out</span>
         </button>
       </div>
@@ -228,7 +261,7 @@ export default function AppHeader({
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [unreadOnly, setUnreadOnly] = useState(false);
   const router = useRouter();
-
+  const { user } = useAppSelector((s) => s.auth);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
 
@@ -237,11 +270,61 @@ export default function AppHeader({
 
   // Notifications in state
   const [notifications, setNotifications] = useState<NotificationItemProps[]>([
-    { initials: "BS", color: "#137F6A", name: "Basit Saleem", action: "updated a page", time: "Just now",    showDot: true,  title: "Owners AI Bot",     description: "RS-Owners-Inventory",    updates: "+3 updates from Basit Saleem" },
-    { initials: "JS", color: "#B11E67", name: "John Smith",   action: "updated a page", time: "2 mins ago",  showDot: true,  title: "Editors AI Bot",     description: "RS-Editors-Inventory",    updates: "+2 updates from John Smith" },
-    { initials: "AS", color: "#1AD1B9", name: "Alice Sanders",action: "updated a page", time: "1 day ago",   showDot: false, title: "Managers AI Bot",    description: "RS-Managers-Inventory",  updates: "+1 update from Alice Sanders" },
-    { initials: "TH", color: "#FF7C3B", name: "Tom Hanks",    action: "updated a page", time: "1 week ago",  showDot: false, title: "Admins AI Bot",      description: "RS-Admins-Inventory",    updates: "+5 updates from Tom Hanks" },
-    { initials: "DS", color: "#F95C5B", name: "David Smith",  action: "updated a page", time: "2 weeks ago", showDot: true,  title: "Supervisors AI Bot", description: "RS-Supervisors-Inventory", updates: "+4 updates from David Smith" },
+    {
+      initials: "BS",
+      color: "#137F6A",
+      name: "Basit Saleem",
+      action: "updated a page",
+      time: "Just now",
+      showDot: true,
+      title: "Owners AI Bot",
+      description: "RS-Owners-Inventory",
+      updates: "+3 updates from Basit Saleem",
+    },
+    {
+      initials: "JS",
+      color: "#B11E67",
+      name: "John Smith",
+      action: "updated a page",
+      time: "2 mins ago",
+      showDot: true,
+      title: "Editors AI Bot",
+      description: "RS-Editors-Inventory",
+      updates: "+2 updates from John Smith",
+    },
+    {
+      initials: "AS",
+      color: "#1AD1B9",
+      name: "Alice Sanders",
+      action: "updated a page",
+      time: "1 day ago",
+      showDot: false,
+      title: "Managers AI Bot",
+      description: "RS-Managers-Inventory",
+      updates: "+1 update from Alice Sanders",
+    },
+    {
+      initials: "TH",
+      color: "#FF7C3B",
+      name: "Tom Hanks",
+      action: "updated a page",
+      time: "1 week ago",
+      showDot: false,
+      title: "Admins AI Bot",
+      description: "RS-Admins-Inventory",
+      updates: "+5 updates from Tom Hanks",
+    },
+    {
+      initials: "DS",
+      color: "#F95C5B",
+      name: "David Smith",
+      action: "updated a page",
+      time: "2 weeks ago",
+      showDot: true,
+      title: "Supervisors AI Bot",
+      description: "RS-Supervisors-Inventory",
+      updates: "+4 updates from David Smith",
+    },
   ]);
 
   const anyUnread = notifications.some((n) => n.showDot);
@@ -257,17 +340,17 @@ export default function AppHeader({
     );
   };
 
-    const [err, setErr] = useState<Error | null>(null);
-   // ⬇️ IMPORTANT: if we have an error, throw it during render so the boundary catches it
+  const [err, setErr] = useState<Error | null>(null);
+  // ⬇️ IMPORTANT: if we have an error, throw it during render so the boundary catches it
   if (err) {
     throw err;
   }
 
   // ⬇️ CHANGE THIS: don’t throw in the event handler
-  const handleSettingsClick = () => {    
+  const handleSettingsClick = () => {
     try {
       // whatever risky work...
-      throw new Error('Settings page is under development');
+      throw new Error("Settings page is under development");
     } catch (e) {
       setErr(e as Error); // triggers a re-render; boundary will catch on next render
     }
@@ -280,10 +363,16 @@ export default function AppHeader({
   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+      if (
+        profileDropdownRef.current &&
+        !profileDropdownRef.current.contains(event.target as Node)
+      ) {
         setProfileDropdownOpen(false);
       }
-      if (notificationsRef.current && !notificationsRef.current.contains(event.target as Node)) {
+      if (
+        notificationsRef.current &&
+        !notificationsRef.current.contains(event.target as Node)
+      ) {
         setNotificationsOpen(false);
       }
     };
@@ -302,7 +391,13 @@ export default function AppHeader({
           className="hidden lg:flex p-1 hover:bg-gray-50 rounded transition-colors cursor-pointer"
           title="Toggle sidebar"
         >
-          <Image src={Icons.hamburgerCompress} width={14} height={14} alt="Menu" className="w-5 h-5 text-gray-600" />
+          <Image
+            src={Icons.hamburgerCompress}
+            width={14}
+            height={14}
+            alt="Menu"
+            className="w-5 h-5 text-gray-600"
+          />
         </button>
 
         {/* Mobile Menu Toggle */}
@@ -310,12 +405,22 @@ export default function AppHeader({
           onClick={onToggleMobileSidebar}
           className="lg:hidden p-1 hover:bg-gray-50 rounded transition-colors cursor-pointer"
         >
-          {mobileSidebarOpen ? <X className="w-4 h-4 text-gray-600" /> : <Menu className="w-4 h-4 text-gray-600" />}
+          {mobileSidebarOpen ? (
+            <X className="w-4 h-4 text-gray-600" />
+          ) : (
+            <Menu className="w-4 h-4 text-gray-600" />
+          )}
         </button>
 
         {/* Search Bar */}
         <div className="relative flex-1 max-w-lg">
-          <Image src={Icons.search} alt="Search" width={16} height={16} className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <Image
+            src={Icons.search}
+            alt="Search"
+            width={16}
+            height={16}
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500"
+          />
           <input
             type="text"
             placeholder="Search..."
@@ -334,9 +439,18 @@ export default function AppHeader({
             className="relative p-1 hover:bg-gray-50 rounded transition-colors cursor-pointer"
             aria-label="Open notifications"
           >
-            <Image src={Icons.notification} width={16} height={16} alt='notifications' className="w-6 h-6 text-gray-600" />
+            <Image
+              src={Icons.notification}
+              width={16}
+              height={16}
+              alt="notifications"
+              className="w-6 h-6 text-gray-600"
+            />
             {anyUnread && (
-              <div className="absolute top-0 right-0 w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "#D1202D" }} />
+              <div
+                className="absolute top-0 right-0 w-1.5 h-1.5 rounded-full"
+                style={{ backgroundColor: "#D1202D" }}
+              />
             )}
           </button>
 
@@ -349,13 +463,22 @@ export default function AppHeader({
               notifications={notifications}
               onMarkAllAsRead={handleMarkAllAsRead}
               onMarkOneAsRead={handleMarkOneAsRead}
-            />
+                          />
           )}
         </div>
 
         {/* Settings */}
-        <button onClick={handleSettingsClick} className="p-1 hover:bg-gray-50 rounded cursor-pointer">
-          <Image src={Icons.settings} width={16} height={16} alt="Settings" className="w-8 h-8 text-gray-600" />
+        <button
+          onClick={handleSettingsClick}
+          className="p-1 hover:bg-gray-50 rounded cursor-pointer"
+        >
+          <Image
+            src={Icons.settings}
+            width={16}
+            height={16}
+            alt="Settings"
+            className="w-8 h-8 text-gray-600"
+          />
         </button>
 
         {/* Profile */}
@@ -366,10 +489,17 @@ export default function AppHeader({
             style={{ backgroundColor: "#795CF5" }}
             aria-label="Open profile menu"
           >
-            <span className="text-white text-body-small font-medium">AR</span>
+            <span className="text-white text-body-small font-medium">
+              {" "}
+              {`${user?.first_name?.charAt(0) ?? ""}${
+                user?.last_name?.charAt(0) ?? ""
+              }`.toUpperCase()}
+            </span>
           </button>
 
-          {profileDropdownOpen && <ProfileMenu onClose={() => setProfileDropdownOpen(false)} />}
+          {profileDropdownOpen && (
+            <ProfileMenu onClose={() => setProfileDropdownOpen(false)} />
+          )}
         </div>
       </div>
     </header>

@@ -4,6 +4,7 @@ import { request } from "@/utils/requestFunction";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   CreateOrganizationData,
+  OgOrgResponse,
   Organization,
   UpdateOrganizationData,
 } from "./organization.types";
@@ -50,12 +51,11 @@ export const useCreateOrganization = () => {
 };
 
 // 2. GET ALL ORGANIZATIONS
-export const useOrganizations = () => {
+export const useGetOrganizations = () => {
   return useQuery({
     queryKey: ["organizations"],
-    queryFn: () =>
-      request<{ organizations: Organization[] }>(ENDPOINTS.getAll, "GET"),
-    // select: (response) => response.organizations
+    queryFn: () => request<OgOrgResponse>(ENDPOINTS.getAll, "GET"),
+    select: (response) => response.data,
   });
 };
 

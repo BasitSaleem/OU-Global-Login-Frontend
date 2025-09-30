@@ -43,7 +43,10 @@ export const useSignUp = () => {
       ),
     onSuccess: (user) => {
       queryClient.setQueryData(["user", user.id], user);
-      toast.success("Account created!", "Welcome to Owners Universe! Your account has been created successfully.");
+      toast.success(
+        "Account created!",
+        "Welcome to Owners Universe! Your account has been created successfully."
+      );
     },
     onError: (error: any) => {
       const message = (error as Error)?.message || "Signup failed";

@@ -8,17 +8,18 @@ import { Button, Input, Logo } from "@/components/ui";
 import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/schems/auth.schemas";
-import { useLogin } from "@/apiHooks.ts/auth/authApi.hooks";
+import { useLogin } from "@/apiHooks.ts/auth/auth.api";
 import { useEffect } from "react";
+import { useAppDispatch } from "@/redux/store";
+import { setAuth } from "@/redux/slices/auth.slice";
 export default function LoginPage() {
   const { mutate: login, isPending, error } = useLogin();
   const searchParams = useSearchParams();
   const app = searchParams.get("app") || "OG"; // 👈 fallback to OG
   console.log("App from query params:", app); // Debugging line
-    const router = useRouter();
-
-
-    useEffect(() => {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  useEffect(() => {
     const app = searchParams.get("app");
     if (!app) {
       // Redirect with default param
@@ -33,7 +34,9 @@ export default function LoginPage() {
 
   const onSubmit = async (data: any) => {
     login(data, {
-      onSuccess: () => {
+      onSuccess: (response) => {
+        console.log(response.data.user, "this is responseI");
+        dispatch(setAuth(response.data.user));
         router.push("/");
       },
     });
