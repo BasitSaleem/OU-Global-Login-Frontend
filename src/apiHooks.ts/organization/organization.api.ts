@@ -21,6 +21,7 @@ const ENDPOINTS = {
     `/organization/check-subdomain/availability?subDomain=${encodeURIComponent(
       subDomain
     )}`,
+  toggleFavorite: "/organization/favorite",
 };
 
 // 1. CREATE ORGANIATION
@@ -104,6 +105,30 @@ export const useCheckOrganizationNameAvailability = (name: string) => {
     enabled: !!name,
     select: (data) => data?.data.isAvailable,
     retry: false,
+  });
+};
+export const useIsFavorite = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: { userId: string; orgId: string }) =>
+      request<{ updatedUser: any }>(
+        ENDPOINTS.toggleFavorite,
+        "POST",
+        {},
+        payload
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["organizations"] });
+      toast.success(
+        "Favorites updated",
+        "Your favorite organizations list has been updated"
+      );
+    },
+    onError: (error: any) => {
+      const message = (error as Error)?.message || "Failed to update favorites";
+      toast.error("Error", message);
+    },
   });
 };
 

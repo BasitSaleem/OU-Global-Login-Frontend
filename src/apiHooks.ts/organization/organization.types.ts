@@ -1,4 +1,4 @@
-import { OgOrgMembership } from "../membership/membership.types";
+import { OgOrgMembership, OgUser } from "../membership/membership.types";
 
 type products = "OI" | "OG" | "OA" | "OJ";
 export interface Organization {
@@ -51,6 +51,7 @@ export interface OgOrganization {
   memberships: OgOrgMembership[]
   updated_at: string;
   is_blocked: boolean;
+  favorites: OgUser[]
   ogUserId: string;
   products: OgProduct[];
 }

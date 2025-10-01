@@ -22,8 +22,8 @@ export const AUTH_CONFIG = {
 
 export const ROUTES = {
   HOME: '/',
-  LOGIN: '/auth/login',
-  REGISTER: '/auth/register',
+  LOGIN: '/login',
+  REGISTER: '/sign-up',
   FORGOT_PASSWORD: '/auth/forgot-password',
   RESET_PASSWORD: '/auth/reset-password',
   DASHBOARD: '/dashboard',

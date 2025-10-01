@@ -8,11 +8,11 @@ interface LoadingProps {
   className?: string;
 }
 
-export function Loading({ 
-  size = 'md', 
-  text, 
+export function Loading({
+  size = 'md',
+  text,
   fullScreen = false,
-  className 
+  className
 }: LoadingProps) {
   const sizes = {
     sm: 'h-4 w-4',
@@ -57,6 +57,11 @@ export function LoadingSkeleton({ className }: { className?: string }) {
 
 export function LoadingSpinner({ className }: { className?: string }) {
   return (
-    <Loader2 className={cn('h-4 w-4 animate-spin', className)} />
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#795CF5] mx-auto"></div>
+        <p className="mt-4 text-gray-600">Loading...</p>
+      </div>
+    </div>
   );
 }

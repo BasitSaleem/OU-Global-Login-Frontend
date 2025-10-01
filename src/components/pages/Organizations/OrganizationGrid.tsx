@@ -4,6 +4,8 @@ import Image from "next/image";
 import React from "react";
 import { Icons } from "@/components/utils/icons";
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
+import { useIsFavorite } from "@/apiHooks.ts/organization/organization.api";
+import { useAppSelector } from "@/redux/store";
 
 // interface Org {
 //   id: string;
@@ -22,8 +24,14 @@ export default function OrganizationGrid({
   organizations: OgOrganization[];
   onAddNew: () => void;
 }) {
-  console.log(
-    organizations, "?//////////////");
+  const { user } = useAppSelector((s) => s.auth)
+  const { mutate: toggleFavorite, isPending } = useIsFavorite()
+  const handleFavoriteClick = (orgId: string) => {
+    if (!user?.id) return;
+    toggleFavorite({ userId: user.id, orgId });
+    console.log(user);
+
+  };
   return (
     <div>
       {/* Header with count */}
@@ -78,7 +86,7 @@ export default function OrganizationGrid({
                     className="w-10 h-10 rounded flex items-center justify-center text-white text-body-small font-medium"
                     style={{ backgroundColor: "#137F6A" }}
                   >
-                    {org?.abbreviation}
+                    {/* {org?.abbreviation} */}
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="truncate text-body-medium-bold text-black leading-tight pt-3">
@@ -86,18 +94,26 @@ export default function OrganizationGrid({
                     </h3>
                   </div>
                   <div className="flex-shrink-0">
-                    <svg
-                      width="16"
-                      height="15"
-                      viewBox="0 0 16 15"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
+                    <button
+                      className=" z-40 hover:bg-amber-400 "
+                      disabled={isPending}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleFavoriteClick(org.id);
+                      }}
                     >
-                      <path
-                        d="M7.04894 0.92705C7.3483 0.00573924 8.6517 0.00573965 8.95106 0.92705L10.0206 4.21885C10.1545 4.63087 10.5385 4.90983 10.9717 4.90983H14.4329C15.4016 4.90983 15.8044 6.14945 15.0207 6.71885L12.2205 8.75329C11.87 9.00793 11.7234 9.4593 11.8572 9.87132L12.9268 13.1631C13.2261 14.0844 12.1717 14.8506 11.388 14.2812L8.58779 12.2467C8.2373 11.9921 7.7627 11.9921 7.41221 12.2467L4.61204 14.2812C3.82833 14.8506 2.77385 14.0844 3.0732 13.1631L4.14277 9.87132C4.27665 9.4593 4.12999 9.00793 3.7795 8.75329L0.979333 6.71885C0.195619 6.14945 0.598395 4.90983 1.56712 4.90983H5.02832C5.46154 4.90983 5.8455 4.63087 5.97937 4.21885L7.04894 0.92705Z"
-                        fill="#795CF5"
-                      />
-                    </svg>
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        fill={org?.favorites?.some((fUser) => fUser.id === user?.id) ? "#FFD700" : "none"}
+                        stroke="#795CF5"
+                        strokeWidth="1.5"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M9.04907 2.92705C9.34843 2.00574 10.6518 2.00574 10.9511 2.92705L12.0207 6.21885C12.1546 6.63087 12.5386 6.90983 12.9718 6.90983H16.433C17.4017 6.90983 17.8045 8.14945 17.0208 8.71885L14.2206 10.7533C13.8701 11.0079 13.7235 11.4593 13.8573 11.8713L14.9269 15.1631C15.2263 16.0844 14.1718 16.8506 13.3881 16.2812L10.5879 14.2467C10.2374 13.9921 9.76279 13.9921 9.4123 14.2467L6.61213 16.2812C5.82842 16.8506 4.77394 16.0844 5.07329 15.1631L6.14286 11.8713C6.27673 11.4593 6.13007 11.0079 5.77958 10.7533L2.97941 8.71885C2.19569 8.14945 2.59847 6.90983 3.56719 6.90983H7.02839C7.46161 6.90983 7.84557 6.63087 7.97944 6.21885L9.04907 2.92705Z" />
+                      </svg>
+                    </button>
                   </div>
                 </div>
 
@@ -108,7 +124,7 @@ export default function OrganizationGrid({
                     style={{ backgroundColor: "rgba(121, 92, 245, 0.07)" }}
                   >
                     <span className="text-body-small font-medium text-primary">
-                      {org?.memberships.length} members
+                      {org?.memberships?.length} members
                     </span>
                     <div className="flex items-center -space-x-0.5">
                       {org?.products?.map((avatarUrl, index) => (

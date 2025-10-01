@@ -12,11 +12,12 @@ import { useLogin } from "@/apiHooks.ts/auth/auth.api";
 import { useEffect } from "react";
 import { useAppDispatch } from "@/redux/store";
 import { setAuth } from "@/redux/slices/auth.slice";
+import { PublicRoute } from "@/components/guards/public-route";
 export default function LoginPage() {
   const { mutate: login, isPending, error } = useLogin();
   const searchParams = useSearchParams();
-  const app = searchParams.get("app") || "OG"; // 👈 fallback to OG
-  console.log("App from query params:", app); // Debugging line
+  const app = searchParams.get("app") || "OG";
+  console.log("App from query params:", app);
   const router = useRouter();
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -35,7 +36,6 @@ export default function LoginPage() {
   const onSubmit = async (data: any) => {
     login(data, {
       onSuccess: (response) => {
-        console.log(response.data.user, "this is responseI");
         dispatch(setAuth(response.data.user));
         router.push("/");
       },
@@ -44,7 +44,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 relative overflow-hidden">
+    <PublicRoute>
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 relative overflow-hidden">
       <div className="absolute inset-0 opacity-40">
         <img
           src="https://api.builder.io/api/v1/image/assets/TEMP/c50393b05848b5d4a774880c9a82dc541689594f?width=3660"
@@ -189,6 +190,7 @@ export default function LoginPage() {
           ©2025 Owners Inventory - All rights reserved
         </p>
       </div>
-    </div>
+      </div>
+    </PublicRoute>
   );
 }
