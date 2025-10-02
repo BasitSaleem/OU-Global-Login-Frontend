@@ -86,6 +86,7 @@ function OrganizationsContent() {
         <OrganizationGrid
           organizations={organizations}
           onAddNew={() => setIsCreateModalOpen(true)}
+          loading={isOrgPending}
         />
 
         <PendingInvitations

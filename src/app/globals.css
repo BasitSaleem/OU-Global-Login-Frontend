@@ -162,4 +162,9 @@
     -webkit-text-fill-color: #000000 !important;
     caret-color: #000000 !important;
   }
+  button,
+  [type="button"],
+  [role="button"] {
+    cursor: pointer;
+  }
 }

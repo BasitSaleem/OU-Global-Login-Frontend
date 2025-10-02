@@ -51,7 +51,10 @@ export interface OgOrganization {
   memberships: OgOrgMembership[]
   updated_at: string;
   is_blocked: boolean;
-  favorites: OgUser[]
+  favorites: {
+    userId: string,
+    organizationId: string
+  }[]
   ogUserId: string;
   products: OgProduct[];
 }

@@ -13,27 +13,24 @@ import { RootState } from "@/redux/store";
 
 //ENDPOINTS
 const ENDPOINTS = {
-  create: "/organization",
-  getAll: `/organization`,
-  getDetails: (id: string) => `/organization/${id}`,
-  update: (id: string) => `/organization/${id}`,
-  checkName: (name: string) =>
+  ORGANIZATIONS: `/organization`,
+  ORGANIZATION_ID: (id: string) => `/organization/${id}`,
+  CHECK_NAME: (name: string) =>
     `/organization/check-name/availability?name=${encodeURIComponent(name)}`,
-  checkSubdomain: (subDomain: string) =>
+  CHECK_SUBDOMAIN: (subDomain: string) =>
     `/organization/check-subdomain/availability?subDomain=${encodeURIComponent(
       subDomain
     )}`,
-  toggleFavorite: "/organization/favorite",
+  TOGGLE_FAVORITE: "/organization/favorite",
 };
 
-// 1. CREATE ORGANIATION
+// 1. CREATE ORGANIZATION
 export const useCreateOrganization = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: (data: CreateOrganizationData) =>
       request<{ organization: Organization }>(
-        ENDPOINTS.create,
+        ENDPOINTS.ORGANIZATIONS,
         "POST",
         {},
         data
@@ -52,27 +49,17 @@ export const useCreateOrganization = () => {
     },
   });
 };
-
 // 2. GET ALL ORGANIZATIONS
-// export const useGetOrganizations = () => {
-//   return useQuery({
-//     queryKey: ["organizations"],
-//     queryFn: () => request<OgOrgResponse>(ENDPOINTS.getAll, "GET"),
-//     select: (response) => response.data,
-//   });
-// };
 export const useGetOrganizations = (page = 1, limit = 10) => {
   const ownerUserId = useSelector((state: RootState) => state.auth.user?.id);
 
   return useQuery({
-    queryKey: ["organizations", ownerUserId, page, limit],
+    // queryKey: ["organizations", page, limit],
     queryFn: () => {
-      if (!ownerUserId) return Promise.resolve({ data: [] });
-      const url = `${ENDPOINTS.getAll}?ownerUserId=${ownerUserId}&page=${page}&limit=${limit}`;
+      const url = `${ENDPOINTS.ORGANIZATIONS}?page=${page}&limit=${limit}`;
       return request<OgOrgResponse>(url, "GET");
     },
-    select: (response) => response.data,
-    enabled: !!ownerUserId, // tabhi run hoga jab ownerUserId exist kare
+    select: (res) => res.data,
   });
 };
 // 3. GET ORGANIZATION DETAILS
@@ -80,7 +67,7 @@ export const useOrganizationDetails = (id: string) => {
   return useQuery({
     queryKey: ["organization", id],
     queryFn: () =>
-      request<{ organization: Organization }>(ENDPOINTS.getDetails(id), "GET"),
+      request<{ organization: Organization }>(ENDPOINTS.ORGANIZATION_ID(id), "GET"),
     select: (data) => data.organization,
     enabled: !!id,
   });
@@ -89,16 +76,15 @@ export const useOrganizationDetails = (id: string) => {
 // 4. UPDATE ORGANIZATION
 export const useUpdateOrganization = (id: string) => {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: (data: UpdateOrganizationData) =>
       request<{ organization: Organization }>(
-        ENDPOINTS.update(id),
+        ENDPOINTS.ORGANIZATION_ID(id),
         "PUT",
         {},
         { organizationData: data }
       ),
-    onSuccess: (result) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["organization", id] });
       queryClient.invalidateQueries({ queryKey: ["organizations"] });
       toast.success(
@@ -112,45 +98,99 @@ export const useUpdateOrganization = (id: string) => {
     },
   });
 };
-
+// 5. CHECK ORGANIZATION NAME AVAILABILITY
 export const useCheckOrganizationNameAvailability = (name: string) => {
   return useQuery({
     queryKey: ["organizationNameAvailability", name],
-    queryFn: () => request(ENDPOINTS.checkName(name), "GET"),
+    queryFn: () => request(ENDPOINTS.CHECK_NAME(name), "GET"),
     enabled: !!name,
     select: (data) => data?.data.isAvailable,
     retry: false,
   });
 };
+// 6. TOGGLE FAVORITE
 export const useIsFavorite = () => {
   const queryClient = useQueryClient();
+  const toggleOneList = (
+    listData: any,
+    userId: string,
+    orgId: string
+  ) => {
+    if (!listData) return listData;
+    if (Array.isArray(listData)) {
+      return listData.map((org: any) => {
+        if (org.id !== orgId) return org;
+        const had = org.favorites?.some((f: any) => f.userId === userId);
+        const nextFavs = had
+          ? (org.favorites || []).filter((f: any) => f.userId !== userId)
+          : [...(org.favorites || []), { userId }];
+        return { ...org, favorites: nextFavs };
+      });
+    }
+
+    if (Array.isArray(listData.items)) {
+      return {
+        ...listData,
+        items: listData.items.map((org: any) => {
+          if (org.id !== orgId) return org;
+          const had = org.favorites?.some((f: any) => f.userId === userId);
+          const nextFavs = had
+            ? (org.favorites || []).filter((f: any) => f.userId !== userId)
+            : [...(org.favorites || []), { userId }];
+          return { ...org, favorites: nextFavs };
+        }),
+      };
+    }
+
+    return listData;
+  };
 
   return useMutation({
     mutationFn: (payload: { userId: string; orgId: string }) =>
-      request<{ updatedUser: any }>(
-        ENDPOINTS.toggleFavorite,
+      request<{ favorited: boolean; favoriteCount: number }>(
+        "/organization/favorite",
         "POST",
         {},
         payload
       ),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["organizations"] });
-      toast.success(
-        "Favorites updated",
-        "Your favorite organizations list has been updated"
-      );
+
+    onMutate: async ({ userId, orgId }) => {
+      await queryClient.cancelQueries({ queryKey: ["organizations"] });
+
+      // take a snapshot of every cached page for rollback
+      const all = queryClient.getQueriesData({ queryKey: ["organizations"] });
+      const prev = all.map(([key, data]) => [key, data] as const);
+
+      // update every cached page
+      all.forEach(([key, data]) => {
+        queryClient.setQueryData(key, (old: any) =>
+          toggleOneList(old, userId, orgId)
+        );
+      });
+
+      return { prev };
     },
-    onError: (error: any) => {
-      const message = (error as Error)?.message || "Failed to update favorites";
-      toast.error("Error", message);
+
+    onError: (_err, _vars, ctx) => {
+      if (!ctx?.prev) return;
+      // rollback every page
+      ctx.prev.forEach(([key, data]: any) => {
+        queryClient.setQueryData(key, data);
+      });
+    },
+
+    onSettled: () => {
+      // refetch every page to be safe
+      queryClient.invalidateQueries({ queryKey: ["organizations"] });
     },
   });
 };
 
+
 export const useCheckSubDomainAvailability = (subDomain: string) => {
   return useQuery({
     queryKey: ["subDomainAvailability", subDomain],
-    queryFn: () => request(ENDPOINTS.checkSubdomain(subDomain), "GET"),
+    queryFn: () => request(ENDPOINTS.CHECK_SUBDOMAIN(subDomain), "GET"),
     enabled: !!subDomain,
     select: (data) => data.data.isAvailable,
     retry: false,
