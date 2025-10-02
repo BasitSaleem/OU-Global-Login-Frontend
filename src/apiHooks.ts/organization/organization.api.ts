@@ -8,6 +8,8 @@ import {
   Organization,
   UpdateOrganizationData,
 } from "./organization.types";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 //ENDPOINTS
 const ENDPOINTS = {
@@ -52,14 +54,27 @@ export const useCreateOrganization = () => {
 };
 
 // 2. GET ALL ORGANIZATIONS
-export const useGetOrganizations = () => {
+// export const useGetOrganizations = () => {
+//   return useQuery({
+//     queryKey: ["organizations"],
+//     queryFn: () => request<OgOrgResponse>(ENDPOINTS.getAll, "GET"),
+//     select: (response) => response.data,
+//   });
+// };
+export const useGetOrganizations = (page = 1, limit = 10) => {
+  const ownerUserId = useSelector((state: RootState) => state.auth.user?.id);
+
   return useQuery({
-    queryKey: ["organizations"],
-    queryFn: () => request<OgOrgResponse>(ENDPOINTS.getAll, "GET"),
+    queryKey: ["organizations", ownerUserId, page, limit],
+    queryFn: () => {
+      if (!ownerUserId) return Promise.resolve({ data: [] });
+      const url = `${ENDPOINTS.getAll}?ownerUserId=${ownerUserId}&page=${page}&limit=${limit}`;
+      return request<OgOrgResponse>(url, "GET");
+    },
     select: (response) => response.data,
+    enabled: !!ownerUserId, // tabhi run hoga jab ownerUserId exist kare
   });
 };
-
 // 3. GET ORGANIZATION DETAILS
 export const useOrganizationDetails = (id: string) => {
   return useQuery({

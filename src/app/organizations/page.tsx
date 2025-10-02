@@ -27,10 +27,10 @@ function OrganizationsContent() {
     //     Icons.ownermarketplace
     //   ],
     // },
-    
+
   ];
 
-  const pendingInvitations : Invitation[] = [
+  const pendingInvitations: Invitation[] = [
     // {
     //   id: "al-asif-exteriors",
     //   name: "Al-Asif Exteriors",
@@ -66,7 +66,7 @@ function OrganizationsContent() {
   const { data: userOrgs, status: orgStatus, isPending: isOrgPending, error: orgError } = useGetOrganizations();
 
   useEffect(() => {
-    if(orgStatus === "success") {
+    if (orgStatus === "success") {
       setOrganizations((prev: any) => [...prev, ...userOrgs?.organizations])
     }
   }, [orgStatus])
