@@ -37,7 +37,7 @@ interface LogoProps {
    * Custom onClick handler
    */
   onClick?: () => void;
-  Icon?: string | StaticImport ;
+  Icon?: string | StaticImport;
 }
 
 const Logo: React.FC<LogoProps> = ({
@@ -51,12 +51,12 @@ const Logo: React.FC<LogoProps> = ({
   Icon,
 }) => {
   const logoContent = (
-    <div 
+    <div
       className={`relative inline-block ${isClickable ? 'cursor-pointer transition-opacity hover:opacity-80' : ''} ${className}`}
       onClick={onClick}
     >
       <Image
-        src={Icon}
+        src={Icon ?? ""}
         alt={alt}
         width={width}
         height={height}

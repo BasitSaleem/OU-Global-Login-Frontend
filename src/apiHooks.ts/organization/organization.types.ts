@@ -59,6 +59,7 @@ export interface OgOrganization {
 export interface OgProduct {
   id: string;
   name: string;
+  imageUrl?: string;
 }
 
 export interface OgOrgResponse {

@@ -127,12 +127,12 @@ export default function OrganizationGrid({
                       {org?.memberships?.length} members
                     </span>
                     <div className="flex items-center -space-x-0.5">
-                      {org?.products?.map((avatarUrl, index) => (
+                      {org?.products?.map((product, index) => (
                         <img
                           key={index}
-                          src={avatarUrl}
-                          alt={`Team member ${index + 1}`}
-                          className="w-4 h-4 rounded-full border border-white"
+                          src={product.imageUrl ?? "/placeholder.png"} // fallback if missing
+                          alt={product.name}
+                          className="w-6 h-6 rounded-full border border-white"
                         />
                       ))}
                     </div>

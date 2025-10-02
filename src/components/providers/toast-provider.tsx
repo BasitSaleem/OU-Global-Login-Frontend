@@ -26,14 +26,13 @@ const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
         limit={5} // Maximum number of toasts to display
         className="toast-container"
         toastClassName="toast-item"
-        bodyClassName="toast-body"
-        progressClassName="toast-progress"
+
         style={{
           '--toastify-toast-width': '420px',
           '--toastify-toast-min-height': '64px',
         } as React.CSSProperties}
       />
-      
+
       {/* Custom CSS for animations and styling */}
       <style jsx global>{`
         .toast-container {
