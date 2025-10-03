@@ -7,7 +7,7 @@ export const APP_CONFIG = {
 };
 
 export const API_CONFIG = {
-  baseUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api',
+  baseUrl: process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_API_URL : process.env.NEXT_PUBLIC_API_PROD_URL,
   timeout: 10000,
   retryAttempts: 3
 };
