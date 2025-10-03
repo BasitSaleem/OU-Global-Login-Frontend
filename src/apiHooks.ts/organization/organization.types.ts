@@ -1,11 +1,10 @@
 import { OgOrgMembership, OgUser } from "../membership/membership.types";
 
-type products = "OI" | "OG" | "OA" | "OJ";
+export type products = "OI" | "OG" | "OA" | "OJ";
 export interface Organization {
   name: string;
   product: products;
   subDomainName: string;
-
   [key: string]: any;
 }
 
@@ -44,25 +43,31 @@ export enum OrgStatus {
 export interface OgOrganization {
   id: string;
   status?: "ACTIVE" | "PENDING" | "BLOCKED" | "SUSPENDED";
-  name: string;
-  isAddNew?: boolean
+  name?: string; // Made optional to support "Add New" items
+  isAddNew?: boolean;
   remarks?: string | null;
-  created_at: string;
-  memberships: OgOrgMembership[]
-  updated_at: string;
-  is_blocked: boolean;
-  favorites: {
+  created_at?: string; // Made optional to support "Add New" items
+  memberships?: OgOrgMembership[]; // Made optional to support "Add New" items
+  updated_at?: string; // Made optional to support "Add New" items
+  is_blocked?: boolean; // Made optional to support "Add New" items
+  favorites?: {
     userId: string,
     organizationId: string
-  }[]
-  ogUserId: string;
-  products: OgProduct[];
+  }[]; // Made optional to support "Add New" items
+  ogUserId?: string; // Made optional to support "Add New" items
+  products?: OgProduct[]; // Made optional to support "Add New" items
 }
 
 export interface OgProduct {
   id: string;
-  name: string;
-  imageUrl?: string;
+  organization_id: string;
+  product_name?: string;
+  oi_sub_domain?: string;
+  is_blocked?: boolean;
+  provisioning_status?: string;
+  external_tenant_ref?: string;
+  plan?: string;
+  seats?: number;
 }
 
 export interface OgOrgResponse {

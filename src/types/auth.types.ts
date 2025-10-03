@@ -1,3 +1,5 @@
+import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
+
 export interface User {
   id: string;
   first_name?: string;
@@ -59,10 +61,10 @@ export interface RegisterCredentials {
 export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
-  isLoading: boolean;
-  error: string | null;
-  token: string | null;
-  refreshToken: string | null;
+  isLoading?: boolean;
+  error?: string | null;
+  refreshToken?: string | null;
+  organization: OgOrganization|null
 }
 
 export enum UserRole {

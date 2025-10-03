@@ -2,27 +2,30 @@
 import { Icons } from "@/components/utils/icons";
 import OrgCard from "../Organizations/organizations";
 import { useAppSelector } from "@/redux/store";
+import { useGetOrganizationProducts, useGetOrganizations } from "@/apiHooks.ts/organization/organization.api";
+import OrganizationProductCard from "../Organizations/OrganizationProductCard";
+import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
 export default function HomePage() {
-  const orgs = [
-    {
-      initials: "RS",
-      color: "#F95C5B",
-      title: "Marketing",
-      subtitle: "Organization",
-    },
-    {
-      initials: "S",
-      color: "#795CF5",
-      title: "Spotify",
-      subtitle: "Organization",
-    },
-    {
-      initials: "RS",
-      color: "#B11E67",
-      title: "Al-Asif Interiors",
-      subtitle: "Organization",
-    },
-  ];
+  // const orgs: any = [
+  //   // {
+  //   //   initials: "RS",
+  //   //   color: "#F95C5B",
+  //   //   title: "Marketing",
+  //   //   subtitle: "Organization",
+  //   // },
+  //   // {
+  //   //   initials: "S",
+  //   //   color: "#795CF5",
+  //   //   title: "Spotify",
+  //   //   subtitle: "Organization",
+  //   // },
+  //   // {
+  //   //   initials: "RS",
+  //   //   color: "#B11E67",
+  //   //   title: "Al-Asif Interiors",
+  //   //   subtitle: "Organization",
+  //   // },
+  // ];
   const { user } = useAppSelector((s) => s.auth);
   return (
     <div className="p-4">
@@ -69,87 +72,23 @@ export default function HomePage() {
         </div>
 
         {/* Your Products Section */}
-        <div>
-          <h2 className="text-heading-2 mb-3">Your Products</h2>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 cursor-pointer">
-            {/* Owners Inventory Card */}
-            <div className="bg-white border border-gray-200 rounded p-3 hover:shadow-md transition-shadow">
-              <div className="flex items-start gap-3 ">
-                <div
-                  className="w-8 h-8 rounded flex items-center justify-center flex-shrink-0"
-                  style={{ backgroundColor: "rgba(121, 92, 245, 0.07)" }}
-                >
-                  <img
-                    src={Icons.ownerinventory}
-                    alt="Owners Inventory"
-                    className="w-6 h-6"
-                  />
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-heading-2 mb-2">Owners Inventory</h3>
-                  <p className="text-body-small text-gray-600 mb-2">
-                    Manage your inventory
-                  </p>
-
-                  {/* Team Avatars */}
-                  <div className="flex items-center gap-1">
-                    <div
-                      className="w-5 h-5 rounded flex items-center justify-center"
-                      style={{ backgroundColor: "#B11E67" }}
-                    >
-                      <span className="text-white text-body-tiny font-medium">
-                        AI
-                      </span>
-                    </div>
-                    <div
-                      className="w-5 h-5 rounded flex items-center justify-center"
-                      style={{ backgroundColor: "#137F6A" }}
-                    >
-                      <span className="text-white text-body-tiny font-medium">
-                        PP
-                      </span>
-                    </div>
-                    <div
-                      className="w-5 h-5 rounded flex items-center justify-center"
-                      style={{ backgroundColor: "#F95C5B" }}
-                    >
-                      <span className="text-white text-body-tiny font-medium">
-                        M
-                      </span>
-                    </div>
-                    <div
-                      className="w-5 h-5 rounded flex items-center justify-center"
-                      style={{ backgroundColor: "#795CF5" }}
-                    >
-                      <span className="text-white text-body-tiny font-medium">
-                        S
-                      </span>
-                    </div>
-                    <div
-                      className="w-5 h-5 rounded flex items-center justify-center"
-                      style={{ backgroundColor: "#1AD1B9" }}
-                    >
-                      <span className="text-white text-body-tiny font-medium">
-                        O
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
+        <OrganizationProductCard />
         {/* Recent Section */}
         <div>
           <h2 className="text-heading-2 mb-2">Recent</h2>
 
           <div className="space-y-2 cursor-pointer">
-            {orgs.map((org, i) => (
+            {/* {
+              orgs.length === 0 && (
+                <>
+                  <p className='flex justify-center align-middle'>No Recent Activity</p>
+                </>
+              )
+            } */}
+            {/* Will Make this Dynamic Once Recent Is Implemented */}
+            {/* {orgs.map((org: any, i)= => (
               <OrgCard key={i} {...org} />
-            ))}
+            ))} */}
           </div>
         </div>
 
@@ -167,7 +106,9 @@ export default function HomePage() {
             </div>
 
             {/* Right Side */}
-            <button className="w-full sm:w-auto text-white text-body-small px-3 py-2 rounded hover:opacity-90 transition-opacity cursor-pointer bg-[#795CF5]">
+            <button onClick={() => {
+              window.location.href = '/view-all-product'
+            }} className="w-full sm:w-auto text-white text-body-small px-3 py-2 rounded hover:opacity-90 transition-opacity cursor-pointer bg-[#795CF5]">
               Explore All Products
             </button>
           </div>
@@ -176,3 +117,4 @@ export default function HomePage() {
     </div>
   );
 }
+

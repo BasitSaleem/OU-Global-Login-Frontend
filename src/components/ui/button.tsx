@@ -42,7 +42,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         className={cn(
-          baseStyles,
+          // baseStyles,
           variants[variant],
           sizes[size],
           className
@@ -52,7 +52,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {isLoading ? (
-          <Loader2 className="h-3 w-3 animate-spin" />
+          <Loader2 className="h-3 w-3 mr-2 animate-spin" />
         ) : leftIcon ? (
           leftIcon
         ) : null}

@@ -19,7 +19,7 @@ export default function PendingInvitations({
       <div className="space-y-3">
         {invitations.length === 0 && (
           <>
-          <p className='flex justify-center align-middle'>No Pending Inviations</p>
+          <p className='flex justify-center align-middle'>No Pending Invitations</p>
           </>
         )}
         {invitations.map((invitation) => (

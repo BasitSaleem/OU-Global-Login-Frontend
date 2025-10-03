@@ -7,6 +7,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
   helperText?: string;
+  isRequired?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   isPassword?: boolean;
@@ -18,8 +19,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       className,
       type,
       label,
+      
       error,
       helperText,
+      isRequired,
       leftIcon,
       rightIcon,
       isPassword = false,
@@ -43,7 +46,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       <div className="space-y-2">
         {label && (
           <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            {label}
+            {isRequired ? `${label} *` : label}
           </label>
         )}
         <div className="relative">
@@ -56,7 +59,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             type={inputType}
             className={cn(
               // baseStyles,
-              // errorStyles,
+              errorStyles,
               leftIcon && "pl-10",
               (rightIcon || isPassword) && "pr-10",
               className
@@ -83,9 +86,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             </div>
           )}
         </div>
-        {error && (
+        {/* {error && (
           <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-        )}
+        )} */}
         {helperText && !error && (
           <p className="text-sm text-gray-500 dark:text-gray-400">
             {helperText}

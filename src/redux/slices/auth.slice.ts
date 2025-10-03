@@ -10,13 +10,13 @@ const initialState: AuthState = {
     email: "",
     role_id: "",
     status: "",
-    role:null,
+    role: null,
     profile_url: "",
   },
   isAuthenticated: false,
+  organization: null,
   isLoading: false,
   error: null,
-  token: null,
   refreshToken: null,
 };
 
@@ -24,14 +24,15 @@ const authSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setAuth: (state, action: PayloadAction<User>) => {
-      state.user = action.payload;
+    setAuth: (state, action: PayloadAction<AuthState>) => {
+      state.user = action.payload.user;
+      state.organization = action.payload.organization;
       state.isAuthenticated = true;
+      state.refreshToken = action.payload.refreshToken;
     },
     clearAuth: (state) => {
       state.user = null;
       state.isAuthenticated = false;
-      state.token = null;
       state.error = null;
     },
     initializeAuth: (state) => {
@@ -41,7 +42,6 @@ const authSlice = createSlice({
       if (token && userData) {
         try {
           state.user = JSON.parse(userData);
-          state.token = token;
           state.isAuthenticated = true;
         } catch (error) {
           localStorage.removeItem(AUTH_CONFIG.tokenKey);

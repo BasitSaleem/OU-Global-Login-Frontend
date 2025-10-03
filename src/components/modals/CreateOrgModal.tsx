@@ -1,7 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { Modal } from './GenericModal';
+import { Input } from '../ui';
+import { PRODUCTS } from '@/constants';
+import { useCheckOrganizationNameAvailability, useCheckSubDomainAvailability, useCreateOrganization, useGetOrganizations } from '@/apiHooks.ts/organization/organization.api';
+import { useDebounce } from '@/hooks/useDebounce';
+import { toast } from 'react-toastify';
 
 interface CreateOrgModalProps {
   isOpen: boolean;
@@ -12,20 +17,49 @@ interface CreateOrgModalProps {
 export default function CreateOrgModal({ isOpen, onClose, onSubmit }: CreateOrgModalProps) {
   const [companyName, setCompanyName] = useState('');
   const [subDomain, setSubDomain] = useState('');
-  const [selectedProduct, setSelectedProduct] = useState('Owners Inventory');
+  const [selectedProduct, setSelectedProduct] = useState('OI');
+  const debouncedCompanyName = useDebounce(companyName, 2000);
+  const debouncedSubDomain = useDebounce(subDomain, 2000);
+  const { mutate: createOrg } = useCreateOrganization()
+  const { data, refetch } = useGetOrganizations();
 
-  const products = [
-    { id: 'inventory', name: 'Owners Inventory', icon: 'https://api.builder.io/api/v1/image/assets/TEMP/3c4327f1dd595491744f2af966536dd987ec0a0a?width=66' },
-    { id: 'marketplace', name: 'Owners Marketplace', icon: 'https://api.builder.io/api/v1/image/assets/TEMP/df8a47bf275bccdb600fe4495f3d4bead9cb844f?width=64' },
-    { id: 'analytics', name: 'Owners Analytics', icon: 'https://api.builder.io/api/v1/image/assets/TEMP/72b1ea421112224fa1bea68adcd733be5aa8666b?width=76' },
-    { id: 'jungle', name: 'Owners Jungle', icon: 'https://api.builder.io/api/v1/image/assets/TEMP/78407e1c15d2b695844d30eed5f5358ca8da09f8?width=64' },
-  ];
+  const { data: isNameAvailable, isFetching: checkingName } =
+    useCheckOrganizationNameAvailability(debouncedCompanyName);
 
+  const { data: isSubAvailable, isFetching: checkingSub } =
+    useCheckSubDomainAvailability(
+      selectedProduct === "OI" ? debouncedSubDomain : ""
+    );
+
+
+  useEffect(() => {
+  }, [data?.organizations.length])
+  const fetchOrganizations = () => {
+    refetch()
+  }
   const handleSubmit = () => {
-    if (companyName && subDomain && selectedProduct) {
-      onSubmit({ companyName, subDomain, product: selectedProduct });
-      onClose();
+    if (!companyName || (selectedProduct === "OI" && !subDomain)) return;
+
+    if (isNameAvailable === false) {
+      toast.error("Organization name is already taken");
+      return;
     }
+    if (selectedProduct === "OI" && isSubAvailable === false) {
+      toast.error("Subdomain is already taken");
+      return;
+    }
+    const payload = {
+      name: companyName,
+      subDomainName: subDomain,
+      product: [selectedProduct],
+    };
+
+    createOrg(payload, {
+      onSuccess: () => {
+        onClose()
+        fetchOrganizations()
+      },
+    });
   };
 
   return (
@@ -33,58 +67,68 @@ export default function CreateOrgModal({ isOpen, onClose, onSubmit }: CreateOrgM
       <Modal.Title className="mb-2 text-heading-2">Create an Organization</Modal.Title>
 
       <Modal.Body>
-        {/* Company Name */}
-        <label className="block text-body-small font-medium mb-0.5">Company Name</label>
-        <input
+        <Input
+          label='Company Name'
+          error={checkingName && !isNameAvailable ? 'Name is taken' : ''}
+          // helperText={debouncedCompanyName !== companyName
+          //   ? "Checking availability..."
+          //   : isNameAvailable
+          //     ? " Name available"
+
+          //     : " Name already taken"}
           type="text"
           value={companyName}
           onChange={(e) => setCompanyName(e.target.value)}
           className="w-full border rounded px-2 py-1.5 mb-2 text-body-medium focus:outline-none focus:ring-1 focus:ring-[#795CF5]"
-        />
 
-        {/* Products */}
+        />
+        {companyName && (
+          <p className="text-sm mt-1">
+            {debouncedCompanyName !== companyName
+              ? "Checking availability..."
+              : isNameAvailable
+                ? " Name available"
+                : " Name already taken"}
+          </p>
+        )}
         <label className="block text-body-small font-medium mb-1">Products</label>
         <div className="grid grid-cols-2 gap-1 mb-2">
-          {products.map((product) => (
+          {PRODUCTS.map((product) => (
             <button
               key={product.id}
+              disabled={product.isDisabled}
               type="button"
               onClick={() => setSelectedProduct(product.name)}
-              className={`flex items-center gap-1.5 border rounded px-1.5 py-1.5 text-body-small font-medium cursor-pointer ${
-                selectedProduct === product.name
-                  ? 'border-[#795CF5] bg-[#795CF512] text-[#795CF5]'
-                  : 'border-gray-200 text-gray-700 bg-gray-100'
-              }`}
+              className={`flex items-center gap-2 border rounded-lg px-3 py-3 text-base font-medium transition ${selectedProduct === product.name
+                ? "border-[#795CF5] bg-[#795CF512] text-[#795CF5]"
+                : "border-gray-200 text-gray-700 bg-gray-100 hover:bg-gray-200"
+                } ${product.isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
             >
               <img src={product.icon} alt={product.name} className="w-4 h-4" />
-              {product.name}
+              {product.fullname}
             </button>
           ))}
         </div>
 
-        {/* Sub-Domain */}
-        <div className="flex items-center gap-1.5 mb-0.5">
-          <label className="block text-body-small font-medium">Sub-Domain Name</label>
-          <div className="relative group">
-            <span className="cursor-pointer text-white hover:text-[#795CF5] bg-gray-500 rounded-full w-4 h-4 flex items-center justify-center text-body-tiny">
-              i
-            </span>
-            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block">
-              <div className="bg-gray-800 text-white text-body-tiny rounded py-0.5 px-1.5 shadow-lg whitespace-nowrap">
-                Sub-domain is for Owners Inventory only
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <input
+        <Input
+          label='Sub-Domain'
+          error={checkingSub && !isSubAvailable ? 'Subdomain is taken' : ''}
+          isRequired
           type="text"
           value={subDomain}
           onChange={(e) => setSubDomain(e.target.value)}
           className="w-full border rounded px-2 py-1.5 mb-1.5 text-body-medium focus:outline-none focus:ring-1 focus:ring-[#795CF5]"
         />
       </Modal.Body>
-
+      {selectedProduct === "OI" && subDomain && (
+        <p className="text-sm mt-1">
+          {debouncedSubDomain !== subDomain
+            ? "Checking availability..."
+            : isSubAvailable
+              ? "Sub-domain available"
+              : "Sub-domain already taken"}
+        </p>
+      )}
       <Modal.Footer>
         <button
           onClick={onClose}

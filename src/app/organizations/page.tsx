@@ -1,7 +1,7 @@
 "use client";
 import { useGetOrganizations } from "@/apiHooks.ts/organization/organization.api";
 import DashboardLayout from "@/components/layout/dashboard-layout";
-import CreateOrgModal from "@/components/modals/CreateOrgModal";
+import  CreateOrgModal  from "@/components/modals/CreateOrgModal";
 import DeclineModal from "@/components/modals/DeclineModal";
 import OrganizationGrid from "@/components/pages/Organizations/OrganizationGrid";
 import PendingInvitations from "@/components/pages/Organizations/PendingInvitation";

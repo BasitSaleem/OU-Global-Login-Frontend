@@ -22,6 +22,7 @@ const ENDPOINTS = {
       subDomain
     )}`,
   TOGGLE_FAVORITE: "/organization/favorite",
+  ORGANIZATION_PRODUCTS: (id: string) => `/organization/products/${id}`
 };
 
 // 1. CREATE ORGANIZATION
@@ -51,10 +52,8 @@ export const useCreateOrganization = () => {
 };
 // 2. GET ALL ORGANIZATIONS
 export const useGetOrganizations = (page = 1, limit = 10) => {
-  const ownerUserId = useSelector((state: RootState) => state.auth.user?.id);
-
   return useQuery({
-    // queryKey: ["organizations", page, limit],
+    queryKey: ["organizations", page, limit],
     queryFn: () => {
       const url = `${ENDPOINTS.ORGANIZATIONS}?page=${page}&limit=${limit}`;
       return request<OgOrgResponse>(url, "GET");
@@ -111,40 +110,6 @@ export const useCheckOrganizationNameAvailability = (name: string) => {
 // 6. TOGGLE FAVORITE
 export const useIsFavorite = () => {
   const queryClient = useQueryClient();
-  const toggleOneList = (
-    listData: any,
-    userId: string,
-    orgId: string
-  ) => {
-    if (!listData) return listData;
-    if (Array.isArray(listData)) {
-      return listData.map((org: any) => {
-        if (org.id !== orgId) return org;
-        const had = org.favorites?.some((f: any) => f.userId === userId);
-        const nextFavs = had
-          ? (org.favorites || []).filter((f: any) => f.userId !== userId)
-          : [...(org.favorites || []), { userId }];
-        return { ...org, favorites: nextFavs };
-      });
-    }
-
-    if (Array.isArray(listData.items)) {
-      return {
-        ...listData,
-        items: listData.items.map((org: any) => {
-          if (org.id !== orgId) return org;
-          const had = org.favorites?.some((f: any) => f.userId === userId);
-          const nextFavs = had
-            ? (org.favorites || []).filter((f: any) => f.userId !== userId)
-            : [...(org.favorites || []), { userId }];
-          return { ...org, favorites: nextFavs };
-        }),
-      };
-    }
-
-    return listData;
-  };
-
   return useMutation({
     mutationFn: (payload: { userId: string; orgId: string }) =>
       request<{ favorited: boolean; favoriteCount: number }>(
@@ -153,40 +118,54 @@ export const useIsFavorite = () => {
         {},
         payload
       ),
-
-    onMutate: async ({ userId, orgId }) => {
-      await queryClient.cancelQueries({ queryKey: ["organizations"] });
-
-      // take a snapshot of every cached page for rollback
-      const all = queryClient.getQueriesData({ queryKey: ["organizations"] });
-      const prev = all.map(([key, data]) => [key, data] as const);
-
-      // update every cached page
-      all.forEach(([key, data]) => {
-        queryClient.setQueryData(key, (old: any) =>
-          toggleOneList(old, userId, orgId)
-        );
-      });
-
-      return { prev };
-    },
-
-    onError: (_err, _vars, ctx) => {
-      if (!ctx?.prev) return;
-      // rollback every page
-      ctx.prev.forEach(([key, data]: any) => {
-        queryClient.setQueryData(key, data);
-      });
-    },
-
     onSettled: () => {
-      // refetch every page to be safe
       queryClient.invalidateQueries({ queryKey: ["organizations"] });
     },
   });
 };
+// 7. DELETE ORGANIZATION BY ID
+// export const useDeleteOrganization = () => {
+//   const queryClient = useQueryClient();
+//   return useMutation({
+    
+//  mutationFn: (id: string) => {
+//       // Log the id here to check if it's being passed correctly
+//       console.log("Mutation function called with id:", id);
+//       return request(ENDPOINTS.ORGANIZATION_ID(id), "DELETE");
+//     },    onSuccess: () => {
+//       queryClient.invalidateQueries({ queryKey: ["organizations"] });
+//       toast.success("Organization deleted", "The organization was deleted");
+//     },
+//     onError: (error: any) => {
+//       const message = (error as Error)?.message || "Delete failed";
+//       toast.error("Failed to delete organization", message);
+//     },
+//   });
+// };
+
+export const useDeleteOrganization = (onFinish?: () => void) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => {
+      console.log("Deleting org id:", id);
+      return request(ENDPOINTS.ORGANIZATION_ID(id), "DELETE");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["organizations"] });
+      toast.success("Organization deleted", "The organization was deleted");
+    },
+    onError: (error: any) => {
+      const message = (error as Error)?.message || "Delete failed";
+      toast.error("Failed to delete organization", message);
+    },
+    onSettled: () => {
+      if (onFinish) onFinish(); // success ya fail dono case me chalega
+    }
+  });
+};
 
 
+// 8. CHECK SUBDOMAIN AVAILABILITY
 export const useCheckSubDomainAvailability = (subDomain: string) => {
   return useQuery({
     queryKey: ["subDomainAvailability", subDomain],
@@ -195,4 +174,14 @@ export const useCheckSubDomainAvailability = (subDomain: string) => {
     select: (data) => data.data.isAvailable,
     retry: false,
   });
+};
+//9. GET ALL PRODUCTS OF ORGANIZATION
+export const useGetOrganizationProducts = (id: string) => {
+  return useQuery({
+    queryKey: ["organizationProducts", id],
+    queryFn: () => request(ENDPOINTS.ORGANIZATION_PRODUCTS(id), "GET"),
+    enabled: !!id,
+    select: (data) => data.data,
+  });
+
 };
