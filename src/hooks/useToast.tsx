@@ -8,6 +8,8 @@ import {
     useState,
 } from "react";
 import { CheckCircle2, Info, XCircle } from "lucide-react";
+import Image from "next/image";
+import { Logo } from "@/components/ui";
 
 type ToastType = "success" | "info" | "error";
 
@@ -35,7 +37,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             // Limit to 5 toasts maximum
             return newToasts.slice(-5);
         });
-        const duration = t.duration ?? 5000; // Changed default to 5000
+        const duration = t.duration ?? 6000; // Changed default to 5000
         setTimeout(() => {
             setToasts((prev) => prev.filter((x) => x.id !== toast.id));
         }, duration);
@@ -58,7 +60,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         <ToastContext.Provider value={value}>
             {children}
             {/* Toast Container - positioned top-right to match toastify config */}
-            <div className="pointer-events-none fixed top-4 right-4 z-[9999] flex w-full max-w-[420px] flex-col gap-3">
+            <div className="pointer-events-none fixed bottom-4 right-4 z-[9999] flex w-full max-w-[420px] flex-col gap-3">
                 {toasts.map((t) => {
                     const Icon =
                         t.type === "success"
@@ -86,7 +88,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                             aria-live="polite"
                         >
                             <div className="flex items-start gap-3">
-                                <Icon className={`mt-0.5 h-5 w-5 ${color} flex-shrink-0`} />
+                                <Logo className="mt-0.5 h-5 w-5 flex-shrink-0" />
                                 <div className="flex-1 min-w-0">
                                     <div className="text-sm font-semibold text-slate-900 truncate">
                                         {t.title}
@@ -98,15 +100,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                                     )}
                                 </div>
                             </div>
-                            {/* Progress bar */}
-                            <div className="absolute bottom-0 left-0 h-[3px] w-full overflow-hidden rounded-b-lg">
-                                <div
-                                    className="h-full bg-gradient-to-r from-purple-600 to-pink-500 animate-progress-bar"
-                                    style={{
-                                        animation: `progress-bar ${t.duration ?? 5000}ms linear forwards`
-                                    }}
-                                />
-                            </div>
+
                         </div>
                     );
                 })}
@@ -199,7 +193,6 @@ export function useToast() {
     return ctx;
 }
 
-// Create a simple toast object similar to react-toastify API
 export const toast = {
     success: (title: string, description?: string, duration?: number) => {
         if (typeof window !== 'undefined') {

@@ -29,20 +29,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
 
     <div className="min-h-screen bg-white flex font-inter">
-      {/* Sidebar */}
       <Sidebar
         collapsed={sidebarCollapsed}
         mobileOpen={mobileSidebarOpen}
         onToggleCollapse={toggleSidebar}
         onToggleMobile={toggleMobileSidebar}
         currentPath={pathname}
-         onShowModal={(icon) => { 
+        onShowModal={(icon) => {
           setModalIcon(icon);
           setIsModalOpen(true);
         }}
       />
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Header */}
         <AppHeader
@@ -51,17 +49,16 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           mobileSidebarOpen={mobileSidebarOpen}
         />
 
-        {/* Page Content */}
         <main className="flex-1">
           {children}
         </main>
 
-           <ComingSoonModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        icon={modalIcon}
-        title="Coming Soon!"
-      />
+        <ComingSoonModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          icon={modalIcon}
+          title="Coming Soon!"
+        />
       </div>
     </div>
   );

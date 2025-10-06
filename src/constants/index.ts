@@ -26,7 +26,7 @@ export const ROUTES = {
   REGISTER: '/sign-up',
   FORGOT_PASSWORD: '/auth/forgot-password',
   RESET_PASSWORD: '/auth/reset-password',
-  DASHBOARD: '/dashboard',
+  DASHBOARD: '/',
   PROFILE: '/profile',
   SETTINGS: '/settings'
 } as const;

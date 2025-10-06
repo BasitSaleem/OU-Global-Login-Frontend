@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { toast } from "@/components/ui/toast";
 import { request } from "@/utils/requestFunction";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -8,8 +7,7 @@ import {
   Organization,
   UpdateOrganizationData,
 } from "./organization.types";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import { toast } from "@/hooks/useToast";
 
 //ENDPOINTS
 const ENDPOINTS = {
@@ -61,6 +59,7 @@ export const useGetOrganizations = (page = 1, limit = 10) => {
     select: (res) => res.data,
   });
 };
+
 // 3. GET ORGANIZATION DETAILS
 export const useOrganizationDetails = (id: string) => {
   return useQuery({
@@ -71,6 +70,7 @@ export const useOrganizationDetails = (id: string) => {
     enabled: !!id,
   });
 };
+
 
 // 4. UPDATE ORGANIZATION
 export const useUpdateOrganization = (id: string) => {
@@ -123,31 +123,12 @@ export const useIsFavorite = () => {
     },
   });
 };
-// 7. DELETE ORGANIZATION BY ID
-// export const useDeleteOrganization = () => {
-//   const queryClient = useQueryClient();
-//   return useMutation({
-    
-//  mutationFn: (id: string) => {
-//       // Log the id here to check if it's being passed correctly
-//       console.log("Mutation function called with id:", id);
-//       return request(ENDPOINTS.ORGANIZATION_ID(id), "DELETE");
-//     },    onSuccess: () => {
-//       queryClient.invalidateQueries({ queryKey: ["organizations"] });
-//       toast.success("Organization deleted", "The organization was deleted");
-//     },
-//     onError: (error: any) => {
-//       const message = (error as Error)?.message || "Delete failed";
-//       toast.error("Failed to delete organization", message);
-//     },
-//   });
-// };
 
+// 7. DELETE ORGANIZATION BY ID
 export const useDeleteOrganization = (onFinish?: () => void) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => {
-      console.log("Deleting org id:", id);
       return request(ENDPOINTS.ORGANIZATION_ID(id), "DELETE");
     },
     onSuccess: () => {
@@ -159,11 +140,10 @@ export const useDeleteOrganization = (onFinish?: () => void) => {
       toast.error("Failed to delete organization", message);
     },
     onSettled: () => {
-      if (onFinish) onFinish(); // success ya fail dono case me chalega
+      if (onFinish) onFinish();
     }
   });
 };
-
 
 // 8. CHECK SUBDOMAIN AVAILABILITY
 export const useCheckSubDomainAvailability = (subDomain: string) => {

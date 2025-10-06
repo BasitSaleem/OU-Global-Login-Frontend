@@ -1,7 +1,7 @@
 "use client";
 
 import { Menu, X } from "lucide-react";
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import NotificationItem from "../pages/Notifications/NotificationItems";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -9,6 +9,7 @@ import { Icons } from "../utils/icons";
 import { useLogout } from "@/apiHooks.ts/auth/auth.api";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { clearAuth } from "@/redux/slices/auth.slice";
+import { GlobalLoading, LoadingSpinner } from "../ui/loading";
 
 /* ---------------------------------- */
 /* Types                              */
@@ -53,11 +54,10 @@ function NotificationsControlsRow({
       <button
         onClick={onMarkAllAsRead}
         disabled={!anyUnread}
-        className={`text-body-small font-medium ${
-          anyUnread
-            ? "text-primary hover:underline cursor-pointer "
-            : "text-gray-400 cursor-not-allowed"
-        }`}
+        className={`text-body-small font-medium ${anyUnread
+          ? "text-primary hover:underline cursor-pointer "
+          : "text-gray-400 cursor-not-allowed"
+          }`}
       >
         Mark all as read
       </button>
@@ -73,16 +73,14 @@ function NotificationsControlsRow({
         {/* Pill toggle (hidden on xs to save space) */}
         <button
           onClick={() => setUnreadOnly(!unreadOnly)}
-          className={`w-12 h-6 rounded-full cursor-pointer p-1 hidden sm:flex items-center transition-colors ${
-            unreadOnly ? "bg-[#795CF5]" : "bg-gray-200"
-          }`}
+          className={`w-12 h-6 rounded-full cursor-pointer p-1 hidden sm:flex items-center transition-colors ${unreadOnly ? "bg-[#795CF5]" : "bg-gray-200"
+            }`}
           aria-pressed={unreadOnly}
           aria-label="Toggle only show unread"
         >
           <span
-            className={`w-4 h-4 bg-white rounded-full transition-transform ${
-              unreadOnly ? "translate-x-6" : "translate-x-0"
-            }`}
+            className={`w-4 h-4 bg-white rounded-full transition-transform ${unreadOnly ? "translate-x-6" : "translate-x-0"
+              }`}
           />
         </button>
       </div>
@@ -165,7 +163,7 @@ function NotificationsDropdown({
 // Profile dropdown menu
 function ProfileMenu({ onClose }: { onClose: () => void }) {
   const { user } = useAppSelector((s) => s.auth);
-  const { mutate: logout } = useLogout();
+  const { mutate: logout, isPending } = useLogout();
   const dispatch = useAppDispatch();
   const handleLogout = () => {
     logout(undefined, {
@@ -183,6 +181,10 @@ function ProfileMenu({ onClose }: { onClose: () => void }) {
   const router = useRouter();
   return (
     <div className="absolute -right-4 sm:right-0 top-10 w-64 sm:w-72 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+      {isPending && (
+        <GlobalLoading text="Logging out" />
+      )}
+
       {/* User Info */}
       <div className="flex items-center gap-3 p-3 border-b border-gray-200">
         <div
@@ -190,9 +192,8 @@ function ProfileMenu({ onClose }: { onClose: () => void }) {
           style={{ backgroundColor: "#795CF5" }}
         >
           <span className="text-white text-body-small font-medium">
-            {`${user?.first_name?.charAt(0) ?? ""}${
-              user?.last_name?.charAt(0) ?? ""
-            }`.toUpperCase()}
+            {`${user?.first_name?.charAt(0) ?? ""}${user?.last_name?.charAt(0) ?? ""
+              }`.toUpperCase()}
           </span>
         </div>
         <div>
@@ -463,7 +464,7 @@ export default function AppHeader({
               notifications={notifications}
               onMarkAllAsRead={handleMarkAllAsRead}
               onMarkOneAsRead={handleMarkOneAsRead}
-                          />
+            />
           )}
         </div>
 
@@ -491,9 +492,8 @@ export default function AppHeader({
           >
             <span className="text-white text-body-small font-medium">
               {" "}
-              {`${user?.first_name?.charAt(0) ?? ""}${
-                user?.last_name?.charAt(0) ?? ""
-              }`.toUpperCase()}
+              {`${user?.first_name?.charAt(0) ?? ""}${user?.last_name?.charAt(0) ?? ""
+                }`.toUpperCase()}
             </span>
           </button>
 

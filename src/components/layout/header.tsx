@@ -20,8 +20,6 @@ export function Header({ isAuthenticated = false, user, onLogout }: HeaderProps)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
-
-  // Prevent hydration mismatch with theme
   useEffect(() => {
     setMounted(true);
   }, []);

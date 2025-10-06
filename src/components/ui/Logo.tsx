@@ -1,8 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import { Icons } from '../utils/icons';
 import { StaticImport } from 'next/dist/shared/lib/get-img-props';
-
 interface LogoProps {
   /**
    * Width of the logo in pixels
@@ -56,7 +54,7 @@ const Logo: React.FC<LogoProps> = ({
       onClick={onClick}
     >
       <Image
-        src={Icon ?? ""}
+        src={Icon ?? "/Icons/Owners Universe coll.svg"}
         alt={alt}
         width={width}
         height={height}
