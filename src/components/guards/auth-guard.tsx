@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/redux/store';
 import { ROUTES } from '@/constants';
-import { LoadingSpinner } from '../ui';
+import { GlobalLoading } from '../ui/loading';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -13,7 +13,7 @@ interface AuthGuardProps {
 
 export function AuthGuard({ children, fallback }: AuthGuardProps) {
   const router = useRouter();
-  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
 
   if (isChecking) {
     return fallback || (
-      <LoadingSpinner />
+      <GlobalLoading bg={true} />
     );
   }
 

@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "@/components/ui/toast";
 import { signinData, signUpData } from "./auth.types";
 import { request } from "@/utils/requestFunction";
+import { toast } from "@/hooks/useToast";
 const ENDPOINTS = {
-  signin: "/auth/sign-in",
-  signUp: "/auth/sign-up",
-  logout: "/auth/logout",
+  SIGN_IN: "/auth/sign-in",
+  SIGN_UP: "/auth/sign-up",
+  LOG_OUT: "/auth/logout",
 };
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: signinData) =>
-      request<{ id: string; [key: string]: any }>(
-        ENDPOINTS.signin,
+      request<{ id: string;[key: string]: any }>(
+        ENDPOINTS.SIGN_IN,
         "POST",
         {},
         data
@@ -35,8 +35,8 @@ export const useSignUp = () => {
 
   return useMutation({
     mutationFn: (data: signUpData) =>
-      request<{ id: string; [key: string]: any }>(
-        ENDPOINTS.signUp,
+      request<{ id: string;[key: string]: any }>(
+        ENDPOINTS.SIGN_UP,
         "POST",
         {},
         data
@@ -59,7 +59,7 @@ export const useLogout = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: () => request(ENDPOINTS.logout, "GET"),
+    mutationFn: () => request(ENDPOINTS.LOG_OUT, "GET"),
     onSuccess: () => {
       queryClient.removeQueries({ queryKey: ["user"] });
       toast.success("Logged out", "You have been logged out successfully");

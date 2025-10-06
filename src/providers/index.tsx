@@ -4,11 +4,11 @@ import { ReactNode } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from 'next-themes';
-import ToastProvider from '@/components/providers/toast-provider';
+import { ToastProvider } from '@/hooks/useToast';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistor, store } from '@/redux/store';
-import { LoadingSpinner } from '@/components/ui';
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { GlobalLoading } from '@/components/ui/loading';
 
 interface ProvidersProps {
   children: ReactNode;
@@ -26,9 +26,9 @@ const queryClient = new QueryClient({
 export function Providers({ children }: ProvidersProps) {
   return (
     <ReduxProvider store={store}>
-      <PersistGate loading={<LoadingSpinner />} persistor={persistor}>
+      <PersistGate loading={<GlobalLoading bg={true} />} persistor={persistor}>
         <QueryClientProvider client={queryClient}>
-        <ReactQueryDevtools initialIsOpen={false} />
+          <ReactQueryDevtools initialIsOpen={false} />
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -41,7 +41,6 @@ export function Providers({ children }: ProvidersProps) {
           </ThemeProvider>
         </QueryClientProvider>
       </PersistGate>
-
     </ReduxProvider>
   );
 }

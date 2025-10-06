@@ -12,7 +12,7 @@ import { useLogin } from "@/apiHooks.ts/auth/auth.api";
 import { useEffect } from "react";
 import { useAppDispatch } from "@/redux/store";
 import { setAuth } from "@/redux/slices/auth.slice";
-import { PublicRoute } from "@/components/guards/public-route";
+import { PublicRoute } from "@/components/guards/publicRoute.guard";
 export default function LoginPage() {
   const { mutate: login, isPending, error } = useLogin();
   const searchParams = useSearchParams();

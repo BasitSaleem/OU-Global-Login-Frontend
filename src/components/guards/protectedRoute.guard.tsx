@@ -23,7 +23,7 @@ export function ProtectedRoute({
 }: ProtectedRouteProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, user, } = useAppSelector((state) => state.auth);
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {

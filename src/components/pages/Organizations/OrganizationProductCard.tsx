@@ -1,58 +1,85 @@
-import { useGetOrganizationProducts } from "@/apiHooks.ts/organization/organization.api";
-import { OgProduct } from "@/apiHooks.ts/organization/organization.types";
-import { useAppSelector } from "@/redux/store";
+import { useGetOrganizations } from "@/apiHooks.ts/organization/organization.api";
+import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
+import { getColorFromId } from "@/utils/getRandomColors";
 import Link from "next/link";
-const OrganizationProductCard = () => {
-    const { organization } = useAppSelector((s) => s.auth)
-    const { data: ogProducts } = useGetOrganizationProducts(organization?.id!)
-    console.log(ogProducts, "?///////////////PRODUCTS ASS");
-    console.log(organization, "?///////////////ORGANIZATION");
 
-    return <div>
-        <h2 className="text-heading-2 mb-3">Your Products</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {ogProducts?.products?.map((product: OgProduct) => (
-                
-            <div key={product.id} className="bg-white border border-gray-200 rounded p-3 hover:shadow-md transition-shadow">
-                <div className="flex items-start gap-3 ">
-                    <div
-                        className="w-8 h-8 rounded flex items-center justify-center flex-shrink-0"
-                        style={{ backgroundColor: "rgba(121, 92, 245, 0.07)" }}
-                    >
-                        <img
-                            src={`/Icons/${product.product_name}_LOGO.svg`}
-                            alt="Owners Inventory"
-                            className="w-6 h-6" />
-                    </div>
+interface CardProps {
+    code: "OI" | "OJ" | "OM" | "OA";
+    organizations: OgOrganization[] | undefined;
+}
 
-                    <div className="flex-1 min-w-0">
-                        <h3 className="text-heading-2 mb-2">Owners Inventory</h3>
-                        <p className="text-body-small text-gray-600 mb-2">
-                            Manage your inventory
-                        </p>
+const OrganizationProductCard = ({ code, organizations }: CardProps) => {
+    const PRODUCT_NAME_MAP: Record<string, string> = {
+        OI: "Owners Inventory",
+        OJ: "Owners Jungle",
+        OM: "Owners Marketplace",
+        OA: "Owners Analytics",
+    };
 
-                        <div className="flex items-center gap-1">
-                            <div
-                                className="w-5 h-5 rounded flex items-center justify-center"
-                                style={{ backgroundColor: "#B11E67" }}
-                            >
+    const getProductDisplayName = (code: string): string => {
+        return PRODUCT_NAME_MAP[code] || code;
+    };
+
+    const filteredOrganizations = filterOrganizationsByProduct(organizations, code);
+    if (filteredOrganizations.length === 0) return null;
+    return (
+        <div className="bg-white border border-gray-200 rounded p-3 hover:shadow-md transition-shadow">
+            <div className="flex items-start gap-3">
+                <div
+                    className="w-8 h-8 rounded flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: "rgba(121, 92, 245, 0.07)" }}
+                >
+                    <img
+                        src={`/Icons/${code}_LOGO.svg`}
+                        alt={getProductDisplayName(code)}
+                        className="w-6 h-6"
+                    />
+                </div>
+
+                <div className="flex-1 min-w-0">
+                    <h3 className="text-heading-2 mb-2">{getProductDisplayName(code)}</h3>
+                    <p className="text-body-small text-gray-600 mb-2">
+                        Manage your inventory
+                    </p>
+
+                    <div className="flex flex-wrap items-center gap-2 mt-3">
+                        {filteredOrganizations.map((org) => {
+                            const bgColor = getColorFromId(org.id ?? "");
+                            return (
                                 <Link
-                                    href={`http://${product.oi_sub_domain}.ownersanalytics.com`}
+                                    key={org.id}
+                                    href={`http://${org.products?.[0]?.oi_sub_domain || org.name}.ownersanalytics.com`}
                                     target="_blank"
+                                    className="group"
                                 >
-                                <span className="text-white text-body-tiny font-medium">
-                                    {product.product_name}
-                                </span>
+                                    <div
+                                        className="w-7 h-7 rounded-md flex items-center justify-center text-white font-semibold text-sm hover:scale-110 transition-transform duration-300 cursor-pointer"
+                                        style={{ backgroundColor: bgColor }}
+                                        title={org.name}
+                                    >
+                                        {org.name
+                                            ? org.name.charAt(0).toUpperCase() +
+                                            (org.name.charAt(1)?.toUpperCase() || "")
+                                            : ""}
+                                    </div>
                                 </Link>
-                            </div>
-
-                        </div>
+                            );
+                        })}
                     </div>
                 </div>
             </div>
-            ))}
         </div>
-    </div>;
-}
+    );
+};
 
-export default OrganizationProductCard
+export default OrganizationProductCard;
+
+export function filterOrganizationsByProduct(
+    organizations: OgOrganization[] | undefined,
+    productName: string
+): OgOrganization[] {
+    if (!Array.isArray(organizations)) return [];
+    return organizations.filter((org) =>
+        org.products?.some((product) => product.product_name === productName)
+    );
+}

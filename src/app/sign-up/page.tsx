@@ -9,7 +9,7 @@ import { useSignUp } from "@/apiHooks.ts/auth/auth.api";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema } from "@/schems/auth.schemas";
-import { Input, Logo } from "@/components/ui";
+import { Button, Input, LoadingSpinner, Logo } from "@/components/ui";
 import { signUpData } from "@/apiHooks.ts/auth/auth.types";
 
 export default function SignUpPage() {
@@ -21,31 +21,26 @@ export default function SignUpPage() {
   const { mutate: signUp, isPending, error } = useSignUp();
 
 
-  // Handle app query param
-    const searchParams = useSearchParams();
-    const app = searchParams.get("app") || "OG"; // 👈 fallback to OG
-  
-    // Redirect to add default app param if missing
-      useEffect(() => {
-      const app = searchParams.get("app");
-      if (!app) {
-        // Redirect with default param
-        router.replace("/sign-up?app=OG");
-      }
-    }, [router, searchParams]);
+  const searchParams = useSearchParams();
+  const app = searchParams.get("app") || "OG";
+
+  useEffect(() => {
+    const app = searchParams.get("app");
+    if (!app) {
+      router.replace("/sign-up?app=OG");
+    }
+  }, [router, searchParams]);
 
 
-    // Form submission handler
   const onSubmit = async (data: signUpData) => {
     signUp(
-      { first_name:data.first_name,last_name:data.last_name,email: data.email, password: data.password } as signUpData,
+      { first_name: data.first_name, last_name: data.last_name, email: data.email, password: data.password } as signUpData,
       {
         onSuccess: () => {
           router.push("/create-organization");
         },
       }
     );
-    // Simple redirect to home page - no authentication logic for now
   };
 
   return (
@@ -108,7 +103,6 @@ export default function SignUpPage() {
                       methods.formState.errors.first_name?.message as string
                     }
                   />
-                  {/* Last Name field */}
                   <Input
                     className="w-full h-8 sm:h-9 px-3 bg-gray-100 border-0 rounded-lg text-xs sm:text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#795CF5] transition-all"
                     type="text"
@@ -122,7 +116,6 @@ export default function SignUpPage() {
                   />
                 </div>
 
-                {/* Email field */}
                 <Input
                   className="w-full h-8 sm:h-9 px-3 bg-gray-100 border-0 rounded-lg text-xs sm:text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#795CF5] transition-all"
                   id="email"
@@ -135,7 +128,6 @@ export default function SignUpPage() {
                   error={methods.formState.errors.email?.message as string}
                 />
 
-                {/* Password field */}
                 <Input
                   className="w-full h-8 sm:h-9 px-3 bg-gray-100  border-0 rounded-lg text-xs sm:text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#795CF5] transition-all"
                   id="password"
@@ -145,7 +137,7 @@ export default function SignUpPage() {
                   isPassword={true}
                   {...methods.register("password", {
                     required: "Password is required",
-                  })} // Register input
+                  })}
                   error={methods.formState.errors.password?.message as string}
                 />
                 <Input
@@ -157,7 +149,7 @@ export default function SignUpPage() {
                   isPassword={true}
                   {...methods.register("confirmPassword", {
                     required: "confirm password is required",
-                  })} // Register input
+                  })}
                   error={
                     methods.formState.errors.confirmPassword?.message as string
                   }
@@ -165,12 +157,15 @@ export default function SignUpPage() {
 
                 {/* Sign Up button */}
                 <div className="pt-2 sm:pt-3 sm:mt-5">
-                  <button
+                  <Button
                     type="submit"
-                    className="w-full h-8 sm:h-9 bg-[#795CF5] hover:bg-[#7C3AED] text-white text-xs sm:text-sm font-bold rounded-full transition-colors cursor-pointer"
+                    isLoading={isPending}
+                    disabled={isPending}
+                    variant="primary"
+                    className="w-full h-8 sm:h-9 dark:bg-[#795CF5] dark:hover:bg-[#7C3AED] text-white text-xs sm:text-sm font-bold rounded-full transition-colors cursor-pointer flex items-center justify-center"
                   >
-                    Sign Up
-                  </button>
+                    {isPending ? "Signing up .." : "Sign up"}
+                  </Button>
                 </div>
               </form>
             </FormProvider>

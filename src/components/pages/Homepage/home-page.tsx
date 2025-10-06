@@ -1,35 +1,21 @@
-"use client"
+"use client";
+
 import { Icons } from "@/components/utils/icons";
-import OrgCard from "../Organizations/organizations";
 import { useAppSelector } from "@/redux/store";
-import { useGetOrganizationProducts, useGetOrganizations } from "@/apiHooks.ts/organization/organization.api";
 import OrganizationProductCard from "../Organizations/OrganizationProductCard";
-import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
+import { useGetOrganizations } from "@/apiHooks.ts/organization/organization.api";
+import { LoadingSpinner } from "@/components/ui";
+import { Skeleton } from "@/components/ui/skeletion";
+
 export default function HomePage() {
-  // const orgs: any = [
-  //   // {
-  //   //   initials: "RS",
-  //   //   color: "#F95C5B",
-  //   //   title: "Marketing",
-  //   //   subtitle: "Organization",
-  //   // },
-  //   // {
-  //   //   initials: "S",
-  //   //   color: "#795CF5",
-  //   //   title: "Spotify",
-  //   //   subtitle: "Organization",
-  //   // },
-  //   // {
-  //   //   initials: "RS",
-  //   //   color: "#B11E67",
-  //   //   title: "Al-Asif Interiors",
-  //   //   subtitle: "Organization",
-  //   // },
-  // ];
   const { user } = useAppSelector((s) => s.auth);
+  const { data, isPending: loadingOrganizations } = useGetOrganizations();
+
+  const productCodes = ["OI", "OJ", "OM", "OA"];
+
   return (
     <div className="p-4">
-      <div className="max-w-7xl mx-auto space-y-4">
+      <div className="max-w-7xl mx-auto space-y-6">
         {/* Welcome Hero Section */}
         <div
           className="rounded-lg p-6 relative overflow-hidden"
@@ -46,7 +32,11 @@ export default function HomePage() {
 
           <div className="relative z-10 max-w-2xl">
             <p className="text-body-small text-gray-500 mb-1">
-              Thursday, July 31
+              {new Date().toLocaleDateString("en-US", {
+                weekday: "long",
+                month: "long",
+                day: "numeric",
+              })}
             </p>
             <h1 className="text-heading-1 font-bold text-black mb-3">
               Hello, {user?.first_name} {user?.last_name}
@@ -71,28 +61,52 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Your Products Section */}
-        <OrganizationProductCard />
-        {/* Recent Section */}
+        {/* Products Section */}
         <div>
-          <h2 className="text-heading-2 mb-2">Recent</h2>
-
-          <div className="space-y-2 cursor-pointer">
-            {/* {
-              orgs.length === 0 && (
-                <>
-                  <p className='flex justify-center align-middle'>No Recent Activity</p>
-                </>
-              )
-            } */}
-            {/* Will Make this Dynamic Once Recent Is Implemented */}
-            {/* {orgs.map((org: any, i)= => (
-              <OrgCard key={i} {...org} />
-            ))} */}
+          <h2 className="text-heading-2 mb-3 flex items-center gap-2">
+            {loadingOrganizations ? (
+              <>
+                <span>Loading your products</span>
+                <LoadingSpinner size={4} />
+              </>
+            ) : (
+              "Your Products"
+            )}
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {loadingOrganizations ? Array.from({ length: 6 }).map((_, idx) => (
+              <div key={idx} className="bg-white p-2 rounded border border-gray-200">
+                <div className="flex items-start gap-3 mb-2">
+                  <Skeleton width="30px" height="30px" />
+                  <div className="flex-1 min-w-0 space-y-2">
+                    <Skeleton width="60%" height="16px" />
+                    <Skeleton width="40%" height="12px" />
+                  </div>
+                </div>
+                <div className="mt-auto flex items-center justify-between px-2 py-1.5">
+                  <div className="flex ml-8 space-x-1">
+                    <Skeleton width="25px" height="25px" count={3} />
+                  </div>
+                </div>
+              </div>
+            )) :
+              (productCodes.map((code) => (
+                <OrganizationProductCard organizations={data?.organizations} key={code} code={code as any} />
+              )))
+            }
           </div>
         </div>
 
-        {/* What's New Section */}
+        {/* Recent Section */}
+        <div>
+          <h2 className="text-heading-2 mb-2">Recent</h2>
+          <div className="space-y-2 cursor-pointer">
+            <p className="text-gray-500 text-center text-sm">
+              No recent activity yet.
+            </p>
+          </div>
+        </div>
+
         <div className="bg-white border border-gray-200 rounded p-5">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             {/* Left Side */}
@@ -106,9 +120,10 @@ export default function HomePage() {
             </div>
 
             {/* Right Side */}
-            <button onClick={() => {
-              window.location.href = '/view-all-product'
-            }} className="w-full sm:w-auto text-white text-body-small px-3 py-2 rounded hover:opacity-90 transition-opacity cursor-pointer bg-[#795CF5]">
+            <button
+              onClick={() => (window.location.href = "/view-all-product")}
+              className="w-full sm:w-auto text-white text-body-small px-3 py-2 rounded hover:opacity-90 transition-opacity cursor-pointer bg-[#795CF5]"
+            >
               Explore All Products
             </button>
           </div>
@@ -117,4 +132,3 @@ export default function HomePage() {
     </div>
   );
 }
-

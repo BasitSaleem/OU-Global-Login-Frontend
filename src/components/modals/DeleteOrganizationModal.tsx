@@ -58,15 +58,14 @@ export const DeleteOrganizationModal: React.FC<DeleteOrganizationModalProps> = (
                             variant="secondary"
                             onClick={onClose}
                             disabled={isDeleting}
-                            className={`bg-gray-100 text-gray-700 hover:bg-gray-200 ${isDeleting && "cursor-not-allowed"}`}
                         >
                             Cancel
                         </Button>
                         <Button
                             variant="destructive"
                             onClick={onConfirm}
+                            isLoading={isDeleting}
                             disabled={isDeleting}
-                            className={`bg-red-600 text-white hover:bg-red-700 ${isDeleting && "cursor-not-allowed"}`}
                         >
                             {isDeleting ? "Deleting..." : "Delete"}
                         </Button>

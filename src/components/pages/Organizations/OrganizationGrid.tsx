@@ -6,50 +6,57 @@ import { Icons } from "@/components/utils/icons";
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
 import { useDeleteOrganization, useIsFavorite } from "@/apiHooks.ts/organization/organization.api";
 import { useAppSelector } from "@/redux/store";
-import { Trash } from "lucide-react";
 import { DeleteOrganizationModal } from "@/components/modals/DeleteOrganizationModal";
 import { Skeleton } from "@/components/ui/skeletion";
 import { OrganizationGridComponent } from "./OrganizationGridComponent";
-import { toast } from "react-toastify";
+import { toast } from "@/hooks/useToast";
+import { LoadingSpinner } from "@/components/ui";
 
-export default function OrganizationGrid({
-  organizations = [],
-  onAddNew,
-  loading
-}: {
+export interface OrganizationGridProps {
   organizations: OgOrganization[];
   onAddNew: () => void;
-  loading?: boolean
-}) {
+  loading?: boolean;
+}
+
+export default function OrganizationGrid({
+  organizations,
+  onAddNew,
+  loading
+}: OrganizationGridProps) {
   const { user, organization } = useAppSelector((s) => s.auth)
   const { mutate: toggleFavorite, isPending } = useIsFavorite()
-  // Access the mutation function from the hook
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedOrg, setSelectedOrg] = useState<any | null>(null);
+  console.log(organizations, "organizations");
+
+  // DELETE API HOOK
   const { mutate: deleteOrg, isPending: deleteLoading } = useDeleteOrganization(() => {
-    setIsModalOpen(false); // loader band hote hi modal close
+    setIsModalOpen(false);
     setSelectedOrg(null);
-  }); const handleFavoriteClick = (e: React.MouseEvent, orgId: string) => {
+  });
+
+  //1.TOGGLE FAVORITE
+  const handleFavoriteClick = (e: React.MouseEvent, orgId: string) => {
     e.stopPropagation();
     if (!user?.id) return;
     toggleFavorite({ userId: user.id, orgId });
   };
-
-  const [selectedOrg, setSelectedOrg] = useState<any | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  //2.DELETE
   const handleDeleteClick = (org: any) => {
-    if(org.id === organization?.id) {
+    if (org.id === organization?.id) {
       toast.error('You cannot delete your current organization');
       return
     }
     setSelectedOrg(org);
     setIsModalOpen(true);
   };
+  //3.CONFIRM DELETE
   const handleConfirmDelete = () => {
-    console.log("delete org id", selectedOrg);
     if (!selectedOrg) return;
-    // Call the mutation function with the selected organization ID
-    deleteOrg(selectedOrg.id); // sirf id pass karni hai
+    deleteOrg(selectedOrg.id);
 
   };
+
   return (
     <>
       <div>
@@ -57,14 +64,13 @@ export default function OrganizationGrid({
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <h1 className="text-heading-1 font-bold text-black">
-              Your Organizations
+              {loading ? "Loading Organizations" : "Your Organizations"}
             </h1>
-            <div
-              className="w-6 h-6 rounded-full flex items-center justify-center text-white text-body-tiny font-medium"
-              style={{ backgroundColor: "#795CF5" }}
+            {!loading ? <div
+              className="w-6 h-6 rounded-full flex items-center justify-center text-white text-body-tiny font-medium bg-[#795CF5]"
             >
               {Math.max((organizations?.length || 0)) - 1}
-            </div>
+            </div> : <LoadingSpinner size={4} />}
           </div>
         </div>
 
@@ -97,10 +103,8 @@ export default function OrganizationGrid({
                     } hover:shadow-sm transition-shadow cursor-pointer`}
                 >
                   {org?.isAddNew ? (
-                    /* Add New Card */
                     <div
-                      className="flex flex-col items-center justify-center text-center h-full rounded"
-                      style={{ backgroundColor: "rgba(121, 92, 245, 0.07)" }}
+                      className="flex flex-col items-center justify-center text-center h-full rounded bg-[#795CF511]"
                     >
                       <div className="mb-2">
                         <Image
@@ -151,7 +155,7 @@ export default function OrganizationGrid({
           onClose={() => setIsModalOpen(false)}
           onConfirm={handleConfirmDelete}
           organizationName={selectedOrg.name}
-          extraDetails={`${selectedOrg.memberships?.length || 0} members • ${selectedOrg.products?.length || 0} products`}
+          extraDetails={`${selectedOrg.memberships?.length || 0} member${selectedOrg?.memberships?.length === 1 ? "" : "s"} • ${selectedOrg.products?.length || 0} product${selectedOrg.products?.length === 1 ? "" : "s"}`}
           isDeleting={deleteLoading}
         />
       )}

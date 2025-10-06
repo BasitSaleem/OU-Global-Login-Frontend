@@ -4,6 +4,7 @@ import { Loader2 } from 'lucide-react';
 interface LoadingProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
   text?: string;
+  bg?: boolean
   fullScreen?: boolean;
   className?: string;
 }
@@ -55,12 +56,36 @@ export function LoadingSkeleton({ className }: { className?: string }) {
   );
 }
 
-export function LoadingSpinner({ className }: { className?: string }) {
+export function LoadingSpinner({ size = 5, className }: { size?: number, className?: string }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="text-center flex flex-col items-center">
+      <div className={cn(`animate-spin rounded-full h-${size} w-${size} border-b-2 border-[#795CF5] mx-auto`, className)}></div>
+    </div >
+  );
+}
+
+
+export function GlobalLoading({
+  text = "Loading...",
+  bg = false,
+  className
+}: LoadingProps) {
+  return (
+    <div
+      className={cn(
+        `fixed inset-0 z-50 flex items-center justify-center pointer-events-none ${bg ? "bg-white" : "bg-black/85"} `,
+        className
+      )}
+    >
       <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#795CF5] mx-auto"></div>
-        <p className="mt-4 text-gray-600">Loading...</p>
+        <div
+          className=
+          "animate-spin rounded-full h-12 w-12 border-b-2 border-[#795CF5] mx-auto" />
+        {text && (
+          <p className="mt-4 text-gray-700 dark:text-gray-300 text-sm font-medium">
+            {text}
+          </p>
+        )}
       </div>
     </div>
   );

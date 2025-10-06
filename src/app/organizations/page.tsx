@@ -1,7 +1,7 @@
 "use client";
 import { useGetOrganizations } from "@/apiHooks.ts/organization/organization.api";
 import DashboardLayout from "@/components/layout/dashboard-layout";
-import  CreateOrgModal  from "@/components/modals/CreateOrgModal";
+import CreateOrgModal from "@/components/modals/CreateOrgModal";
 import DeclineModal from "@/components/modals/DeclineModal";
 import OrganizationGrid from "@/components/pages/Organizations/OrganizationGrid";
 import PendingInvitations from "@/components/pages/Organizations/PendingInvitation";
@@ -14,41 +14,9 @@ function OrganizationsContent() {
       id: "add-new",
       isAddNew: true,
     },
-    // {
-    //   id: "post-purchase",
-    //   name: "Post Purchase Management App",
-    //   abbreviation: "PP",
-    //   backgroundColor: "#137F6A",
-    //   members: 22,
-    //   teamAvatars: [
-    //     Icons.owneruniverse,
-    //     Icons.ownerinventory,
-    //     Icons.ownerjungle,
-    //     Icons.ownermarketplace
-    //   ],
-    // },
-
   ];
 
   const pendingInvitations: Invitation[] = [
-    // {
-    //   id: "al-asif-exteriors",
-    //   name: "Al-Asif Exteriors",
-    //   abbreviation: "AE",
-    //   backgroundColor: "#B11E67",
-    //   invitedBy: "Sarah Chen",
-    //   product: "Owners Inventory",
-    //   timeAgo: "2 hours ago",
-    // },
-    // {
-    //   id: "sales-dept",
-    //   name: "Sales Department",
-    //   abbreviation: "SD",
-    //   backgroundColor: "#1AD1B9",
-    //   invitedBy: "Mike Wilson",
-    //   product: "Owners Marketplace",
-    //   timeAgo: "2 hours ago",
-    // },
     // {
     //   id: "space-group",
     //   name: "Space Group",
@@ -66,17 +34,16 @@ function OrganizationsContent() {
   const { data: userOrgs, status: orgStatus, isPending: isOrgPending, error: orgError } = useGetOrganizations();
 
   useEffect(() => {
-    if (orgStatus === "success") {
-      setOrganizations((prev: any) => [...prev, ...userOrgs?.organizations])
+    if (orgStatus === "success" && userOrgs?.organizations) {
+      setOrganizations([{ id: "add-new", isAddNew: true }, ...userOrgs.organizations]);
     }
-  }, [orgStatus])
+  }, [orgStatus, userOrgs]);
 
   const handleCreateOrg = (data: {
     companyName: string;
     subDomain: string;
     product: string;
   }) => {
-    console.log("New Organization Data:", data);
   };
   const handleDecline = () => setIsDeclineModalOpen(false);
 
