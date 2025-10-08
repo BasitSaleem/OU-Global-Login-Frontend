@@ -24,13 +24,21 @@ export default function HomePage() {
     },
   ];
   const { user } = useAppSelector((s) => s.auth);
+  const { isDarkMode } = useAppSelector((s) => s.darkMode);
+  console.log("IS DARK MODE", isDarkMode);
+
+
+
   return (
-    <div className="p-4">
+    <div className="p-4 bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto space-y-4">
         {/* Welcome Hero Section */}
         <div
           className="rounded-lg p-6 relative overflow-hidden"
-          style={{ backgroundColor: "rgba(121, 92, 245, 0.07)" }}
+          // For hero background, use a neutral in light and darker in dark
+          style={{
+            backgroundColor: 'rgba(121, 92, 245, 0.07)',
+          }}
         >
           {/* Background Illustration */}
           <div className="absolute right-0 top-0 opacity-10">
@@ -42,16 +50,16 @@ export default function HomePage() {
           </div>
 
           <div className="relative z-10 max-w-2xl">
-            <p className="text-body-small text-gray-500 mb-1">
+            <p className="text-body-small text-gray-500 dark:text-gray-400 mb-1">
               Thursday, July 31
             </p>
-            <h1 className="text-heading-1 font-bold text-black mb-3">
+            <h1 className="text-heading-1 font-bold text-black dark:!text-white mb-3">
               Hello, {user?.first_name} {user?.last_name}
             </h1>
 
             {/* Quote Card */}
-            <div className="bg-white rounded p-4 max-w-xl">
-              <p className="text-body-medium text-gray-600 cursor-auto">
+            <div className="bg-white dark:bg-gray-800 dark:text-gray-100 rounded p-4 max-w-xl">
+              <p className="text-body-medium text-gray-600 dark:text-gray-300 cursor-auto">
                 You don't have to be great to start, but you have to start to be
                 great. <span className="font-bold">Zig Ziglar</span>
               </p>
@@ -70,15 +78,19 @@ export default function HomePage() {
 
         {/* Your Products Section */}
         <div>
-          <h2 className="text-heading-2 mb-3">Your Products</h2>
+          <h2 className="text-heading-2 mb-3 text-black dark:!text-white">
+            Your Products
+          </h2>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 cursor-pointer">
             {/* Owners Inventory Card */}
-            <div className="bg-white border border-gray-200 rounded p-3 hover:shadow-md transition-shadow">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded p-3 hover:shadow-md transition-shadow">
               <div className="flex items-start gap-3 ">
                 <div
                   className="w-8 h-8 rounded flex items-center justify-center flex-shrink-0"
-                  style={{ backgroundColor: "rgba(121, 92, 245, 0.07)" }}
+                  style={{
+                    backgroundColor: 'rgba(121, 92, 245, 0.07)',
+                  }}
                 >
                   <img
                     src={Icons.ownerinventory}
@@ -88,8 +100,10 @@ export default function HomePage() {
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-heading-2 mb-2">Owners Inventory</h3>
-                  <p className="text-body-small text-gray-600 mb-2">
+                  <h3 className="text-heading-2 mb-2 text-black dark:!text-white">
+                    Owners Inventory
+                  </h3>
+                  <p className="text-body-small text-gray-600 dark:text-gray-300 mb-2">
                     Manage your inventory
                   </p>
 
@@ -97,7 +111,7 @@ export default function HomePage() {
                   <div className="flex items-center gap-1">
                     <div
                       className="w-5 h-5 rounded flex items-center justify-center"
-                      style={{ backgroundColor: "#B11E67" }}
+                      style={{ backgroundColor: '#B11E67' }}
                     >
                       <span className="text-white text-body-tiny font-medium">
                         AI
@@ -105,7 +119,7 @@ export default function HomePage() {
                     </div>
                     <div
                       className="w-5 h-5 rounded flex items-center justify-center"
-                      style={{ backgroundColor: "#137F6A" }}
+                      style={{ backgroundColor: '#137F6A' }}
                     >
                       <span className="text-white text-body-tiny font-medium">
                         PP
@@ -113,7 +127,7 @@ export default function HomePage() {
                     </div>
                     <div
                       className="w-5 h-5 rounded flex items-center justify-center"
-                      style={{ backgroundColor: "#F95C5B" }}
+                      style={{ backgroundColor: '#F95C5B' }}
                     >
                       <span className="text-white text-body-tiny font-medium">
                         M
@@ -121,7 +135,7 @@ export default function HomePage() {
                     </div>
                     <div
                       className="w-5 h-5 rounded flex items-center justify-center"
-                      style={{ backgroundColor: "#795CF5" }}
+                      style={{ backgroundColor: '#795CF5' }}
                     >
                       <span className="text-white text-body-tiny font-medium">
                         S
@@ -129,7 +143,7 @@ export default function HomePage() {
                     </div>
                     <div
                       className="w-5 h-5 rounded flex items-center justify-center"
-                      style={{ backgroundColor: "#1AD1B9" }}
+                      style={{ backgroundColor: '#1AD1B9' }}
                     >
                       <span className="text-white text-body-tiny font-medium">
                         O
@@ -144,7 +158,7 @@ export default function HomePage() {
 
         {/* Recent Section */}
         <div>
-          <h2 className="text-heading-2 mb-2">Recent</h2>
+          <h2 className="text-heading-2 mb-2 text-black dark:!text-white ">Recent</h2>
 
           <div className="space-y-2 cursor-pointer">
             {orgs.map((org, i) => (
@@ -154,14 +168,14 @@ export default function HomePage() {
         </div>
 
         {/* What's New Section */}
-        <div className="bg-white border border-gray-200 rounded p-5">
+        <div className="bg-white dark:!bg-gray-800 border border-gray-200 dark:!border-gray-700 rounded p-5">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             {/* Left Side */}
             <div>
-              <h3 className="text-heading-3 font-bold text-black mb-2">
+              <h3 className="text-heading-3 font-bold text-black dark:!text-white mb-2">
                 What's New
               </h3>
-              <p className="text-body-small text-gray-600">
+              <p className="text-body-small text-gray-600 dark:text-gray-300">
                 Check out our latest updates and features
               </p>
             </div>
@@ -174,5 +188,9 @@ export default function HomePage() {
         </div>
       </div>
     </div>
+
   );
 }
+
+
+

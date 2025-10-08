@@ -83,15 +83,15 @@ export default function CreateOrgPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 p-4 sm:p-8">
-      <div className="bg-white rounded-xl shadow-lg p-6 sm:p-12 w-full max-w-2xl">
-        <h1 className="mb-8 text-2xl sm:text-3xl font-bold text-center text-gray-900">
+    <div className="min-h-screen w-full dark:!bg-gray-800 dark:!border-gray-700 flex items-center justify-center bg-gray-50 p-4 sm:p-8">
+      <div className="bg-white  rounded-xl shadow-lg p-6 sm:p-12 w-full max-w-2xl">
+        <h1 className="mb-8 text-2xl sm:text-3xl font-bold text-center text-gray-900 dark:!text-white">
           Create an Organization
         </h1>
 
         {/* Company Name */}
         <div className="mb-6">
-          <label className="block text-base font-medium mb-2">
+          <label className="block text-base font-medium mb-2 dark:!text-white">
             Company Name
           </label>
           <input
@@ -106,8 +106,8 @@ export default function CreateOrgPage() {
               {debouncedCompanyName !== companyName
                 ? "Checking availability..."
                 : isNameAvailable
-                ? " Name available"
-                : " Name already taken"}
+                  ? " Name available"
+                  : " Name already taken"}
             </p>
           )}
         </div>
@@ -122,11 +122,10 @@ export default function CreateOrgPage() {
                 type="button"
                 disabled={product.isDisabled}
                 onClick={() => setSelectedProduct(product.name)}
-                className={`flex items-center gap-2 border rounded-lg px-3 py-3 text-base font-medium transition ${
-                  selectedProduct === product.name
-                    ? "border-[#795CF5] bg-[#795CF512] text-[#795CF5]"
-                    : "border-gray-200 text-gray-700 bg-gray-100 hover:bg-gray-200"
-                } ${product.isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                className={`flex items-center gap-2 border rounded-lg px-3 py-3 text-base font-medium transition ${selectedProduct === product.name
+                  ? "border-[#795CF5] bg-[#795CF512] text-[#795CF5]"
+                  : "border-gray-200 text-gray-700 bg-gray-100 hover:bg-gray-200"
+                  } ${product.isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 <img
                   src={product.icon}
@@ -160,11 +159,10 @@ export default function CreateOrgPage() {
           <input
             type="text"
             value={subDomain}
-          onChange={(e) => setSubDomain(e.target.value)}
+            onChange={(e) => setSubDomain(e.target.value)}
             disabled={selectedProduct !== "OI"}
-            className={`w-full border rounded px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-[#795CF5] ${
-              selectedProduct !== "OI" ? "bg-gray-100 cursor-not-allowed" : ""
-            }`}
+            className={`w-full border rounded px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-[#795CF5] ${selectedProduct !== "OI" ? "bg-gray-100 cursor-not-allowed" : ""
+              }`}
             placeholder="Enter sub-domain"
           />
           {selectedProduct === "OI" && subDomain && (
@@ -172,8 +170,8 @@ export default function CreateOrgPage() {
               {debouncedSubDomain !== subDomain
                 ? "Checking availability..."
                 : isSubAvailable
-                ? "Sub-domain available"
-                : "Sub-domain already taken"}
+                  ? "Sub-domain available"
+                  : "Sub-domain already taken"}
             </p>
           )}
         </div>

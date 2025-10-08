@@ -45,20 +45,20 @@ function ModalRoot({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#00000080] p-3"
+      className="fixed inset-0 z-50 flex items-center justify-center  bg-[#00000080] p-3"
       onClick={closeOnOverlay ? onClose : undefined}
       role="dialog"
       aria-modal="true"
       aria-label={ariaLabel}
     >
       <div
-        className={`bg-white rounded-xl shadow-lg relative ${sizeClasses[size]} max-w-[95vw] p-6 ${className}`}
+        className={`bg-white dark:!bg-gray-800 dark:!border-gray-700 dark:!text-white rounded-xl shadow-lg relative ${sizeClasses[size]} max-w-[95vw] p-6 ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
         {showCloseButton && (
           <button
             onClick={onClose}
-            className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 bg-[#795CF512] rounded-2xl p-1 cursor-pointer"
+            className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 bg-[#795CF512] dark:bg-white dark:text-gray-800 rounded-2xl p-1 cursor-pointer"
             aria-label="Close"
           >
             <X className="w-5 h-5" />

@@ -14,12 +14,12 @@ export default function PendingInvitations({
 }) {
   return (
     <div>
-      <h2 className="text-heading-2 font-bold text-black mb-4">Pending Invitations</h2>
+      <h2 className="text-heading-2 font-bold text-black mb-4 dark:!text-white">Pending Invitations</h2>
 
       <div className="space-y-3">
         {invitations.length === 0 && (
           <>
-          <p className='flex justify-center align-middle'>No Pending Inviations</p>
+            <p className='flex justify-center align-middle'>No Pending Inviations</p>
           </>
         )}
         {invitations.map((invitation) => (

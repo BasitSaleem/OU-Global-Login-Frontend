@@ -14,7 +14,6 @@ export default function Page() {
       <ErrorBoundary>
         <DashboardLayout>
           <Suspense fallback={<HomePageSkeleton />}>
-            {/* If HomePage is an async Server Component, you can keep this comment to silence TS: */}
             <HomePage />
           </Suspense>
         </DashboardLayout>

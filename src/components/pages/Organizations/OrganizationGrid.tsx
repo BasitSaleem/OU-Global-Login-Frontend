@@ -33,11 +33,11 @@ export default function OrganizationGrid({
 
   };
   return (
-    <div>
+    <div className="">
       {/* Header with count */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between mb-3 ">
         <div className="flex items-center gap-2">
-          <h1 className="text-heading-1 font-bold text-black">
+          <h1 className="text-heading-1 font-bold text-black dark:!text-white">
             Your Organizations
           </h1>
           <div
@@ -55,7 +55,7 @@ export default function OrganizationGrid({
           <div
             key={org?.id}
             onClick={() => org?.isAddNew && onAddNew()}
-            className={`relative group ${org?.isAddNew ? "" : "bg-white border border-gray-200"
+            className={`relative group ${org?.isAddNew ? "" : "bg-white border border-gray-200 dark:!border-gray-700"
               } rounded ${org?.isAddNew ? "" : "p-3"
               } hover:shadow-sm transition-shadow cursor-pointer`}
           >

@@ -9,6 +9,7 @@ import { Icons } from "../utils/icons";
 import { useLogout } from "@/apiHooks.ts/auth/auth.api";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { clearAuth } from "@/redux/slices/auth.slice";
+import DarkToggle from "../ui/darkToggle";
 
 /* ---------------------------------- */
 /* Types                              */
@@ -49,22 +50,21 @@ function NotificationsControlsRow({
   setUnreadOnly: (v: boolean) => void;
 }) {
   return (
-    <div className="flex items-center justify-between px-3 py-2">
+    <div className="flex items-center justify-between px-3 py-2 ">
       <button
         onClick={onMarkAllAsRead}
         disabled={!anyUnread}
-        className={`text-body-small font-medium ${
-          anyUnread
-            ? "text-primary hover:underline cursor-pointer "
-            : "text-gray-400 cursor-not-allowed"
-        }`}
+        className={`text-body-small dark:!text-white font-medium ${anyUnread
+          ? "text-primary hover:underline cursor-pointer "
+          : "text-gray-400 cursor-not-allowed"
+          }`}
       >
         Mark all as read
       </button>
 
       <div className="flex items-center gap-2">
         <span
-          className="text-gray-600 text-body-small cursor-pointer hover:underline"
+          className="text-gray-600 dark:!text-white text-body-small cursor-pointer hover:underline"
           onClick={() => setUnreadOnly(!unreadOnly)}
         >
           Only show unread
@@ -73,16 +73,14 @@ function NotificationsControlsRow({
         {/* Pill toggle (hidden on xs to save space) */}
         <button
           onClick={() => setUnreadOnly(!unreadOnly)}
-          className={`w-12 h-6 rounded-full cursor-pointer p-1 hidden sm:flex items-center transition-colors ${
-            unreadOnly ? "bg-[#795CF5]" : "bg-gray-200"
-          }`}
+          className={`w-12 h-6 rounded-full cursor-pointer p-1 hidden sm:flex items-center transition-colors ${unreadOnly ? "bg-[#795CF5]" : "bg-gray-200"
+            }`}
           aria-pressed={unreadOnly}
           aria-label="Toggle only show unread"
         >
           <span
-            className={`w-4 h-4 bg-white rounded-full transition-transform ${
-              unreadOnly ? "translate-x-6" : "translate-x-0"
-            }`}
+            className={`w-4 h-4 bg-white rounded-full transition-transform ${unreadOnly ? "translate-x-6" : "translate-x-0"
+              }`}
           />
         </button>
       </div>
@@ -109,13 +107,13 @@ function NotificationsDropdown({
   onMarkOneAsRead: (idx: number) => void;
 }) {
   return (
-    <div className="absolute -right-20 sm:right-0 top-10 w-[300px] max-[300px]:w-[200px] sm:w-[450px] md:w-[500px] bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-[600px] overflow-hidden">
+    <div className="absolute -right-20 sm:right-0 top-10 dark:!bg-gray-800 dark:!border-gray-700 w-[300px] max-[300px]:w-[200px] sm:w-[450px] md:w-[500px] bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-[600px] overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between p-3 border-b border-gray-100">
-        <h2 className="text-heading-2 font-bold text-black">Notifications</h2>
+        <h2 className="text-heading-2 font-bold text-black dark:!text-white">Notifications</h2>
         <a
           href="/notifications"
-          className="text-body-small text-primary font-medium underline hover:no-underline"
+          className="text-body-small text-primary font-medium underline hover:no-underline dark:!text-white"
         >
           View All
         </a>
@@ -190,9 +188,8 @@ function ProfileMenu({ onClose }: { onClose: () => void }) {
           style={{ backgroundColor: "#795CF5" }}
         >
           <span className="text-white text-body-small font-medium">
-            {`${user?.first_name?.charAt(0) ?? ""}${
-              user?.last_name?.charAt(0) ?? ""
-            }`.toUpperCase()}
+            {`${user?.first_name?.charAt(0) ?? ""}${user?.last_name?.charAt(0) ?? ""
+              }`.toUpperCase()}
           </span>
         </div>
         <div>
@@ -382,7 +379,7 @@ export default function AppHeader({
   }, []);
 
   return (
-    <header className="h-14 border-b border-gray-200 flex items-center justify-between px-4 bg-white">
+    <header className="h-14 border-b border-gray-200 flex items-center justify-between px-4 bg-white dark:bg-gray-900 dark:border-gray-700">
       {/* Left: Menu + Search */}
       <div className="flex items-center gap-4 flex-1 max-w-2xl">
         {/* Desktop Menu Toggle */}
@@ -432,6 +429,8 @@ export default function AppHeader({
 
       {/* Right: Actions */}
       <div className="flex items-center gap-2">
+        <DarkToggle />
+
         {/* Notifications */}
         <div className="relative" ref={notificationsRef}>
           <button
@@ -453,7 +452,6 @@ export default function AppHeader({
               />
             )}
           </button>
-
           {notificationsOpen && (
             <NotificationsDropdown
               anyUnread={anyUnread}
@@ -463,7 +461,7 @@ export default function AppHeader({
               notifications={notifications}
               onMarkAllAsRead={handleMarkAllAsRead}
               onMarkOneAsRead={handleMarkOneAsRead}
-                          />
+            />
           )}
         </div>
 
@@ -491,9 +489,8 @@ export default function AppHeader({
           >
             <span className="text-white text-body-small font-medium">
               {" "}
-              {`${user?.first_name?.charAt(0) ?? ""}${
-                user?.last_name?.charAt(0) ?? ""
-              }`.toUpperCase()}
+              {`${user?.first_name?.charAt(0) ?? ""}${user?.last_name?.charAt(0) ?? ""
+                }`.toUpperCase()}
             </span>
           </button>
 

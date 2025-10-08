@@ -143,7 +143,7 @@ function NotificationsPage() {
   });
 
   return (
-    <div className="flex bg-white">
+    <div className="flex bg-white dark:!bg-gray-800 dark:!border-gray-700">
       <NotificationsSidebar
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
@@ -155,7 +155,7 @@ function NotificationsPage() {
         setActiveProductFilter={setActiveProductFilter}
       />
 
-      <div className="flex-1 flex flex-col min-h-screen">
+      <div className="flex-1 flex flex-col min-h-screen ">
         <NotificationsHeaderControls
           setSidebarOpen={setSidebarOpen}
           onMarkAllAsRead={markAllAsRead}
@@ -164,7 +164,7 @@ function NotificationsPage() {
         />
 
         {/* Feed stays inline with your NotificationItem */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto ">
           <div className="p-1 sm:p-3 pt-2">
             <div className="space-y-1">
               {filteredNotifications.length > 0 ? (

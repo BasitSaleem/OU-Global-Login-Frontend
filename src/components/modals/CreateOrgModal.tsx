@@ -30,31 +30,30 @@ export default function CreateOrgModal({ isOpen, onClose, onSubmit }: CreateOrgM
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg" ariaLabel="Create organization">
-      <Modal.Title className="mb-2 text-heading-2">Create an Organization</Modal.Title>
+      <Modal.Title className="mb-2 text-heading-2 dark:!text-white">Create an Organization</Modal.Title>
 
       <Modal.Body>
         {/* Company Name */}
-        <label className="block text-body-small font-medium mb-0.5">Company Name</label>
+        <label className="block text-body-small font-medium mb-1 dark:!text-white">Company Name</label>
         <input
           type="text"
           value={companyName}
           onChange={(e) => setCompanyName(e.target.value)}
-          className="w-full border rounded px-2 py-1.5 mb-2 text-body-medium focus:outline-none focus:ring-1 focus:ring-[#795CF5]"
+          className="w-full border rounded dark:bg-gray-700 dark:border-gray-600 px-2 py-1.5 mb-2 text-body-medium focus:outline-none focus:ring-1 focus:ring-[#795CF5]"
         />
 
         {/* Products */}
-        <label className="block text-body-small font-medium mb-1">Products</label>
-        <div className="grid grid-cols-2 gap-1 mb-2">
+        <label className="block text-body-small font-medium mb-1.5 dark:!text-white mt-2 ">Products</label>
+        <div className="grid grid-cols-2 gap-2  mb-2">
           {products.map((product) => (
             <button
               key={product.id}
               type="button"
               onClick={() => setSelectedProduct(product.name)}
-              className={`flex items-center gap-1.5 border rounded px-1.5 py-1.5 text-body-small font-medium cursor-pointer ${
-                selectedProduct === product.name
-                  ? 'border-[#795CF5] bg-[#795CF512] text-[#795CF5]'
-                  : 'border-gray-200 text-gray-700 bg-gray-100'
-              }`}
+              className={`flex items-center gap-1.5 border rounded px-1.5 py-1.5 text-body-small font-medium cursor-pointer ${selectedProduct === product.name
+                ? 'border-[#795CF5] bg-[#795CF512] text-[#795CF5]'
+                : 'border-gray-200 text-gray-700 bg-gray-100'
+                }`}
             >
               <img src={product.icon} alt={product.name} className="w-4 h-4" />
               {product.name}
@@ -63,8 +62,8 @@ export default function CreateOrgModal({ isOpen, onClose, onSubmit }: CreateOrgM
         </div>
 
         {/* Sub-Domain */}
-        <div className="flex items-center gap-1.5 mb-0.5">
-          <label className="block text-body-small font-medium">Sub-Domain Name</label>
+        <div className="flex items-center gap-1.5 mb-2 mt-2">
+          <label className="block text-body-small font-medium dark:!text-white">Sub-Domain Name</label>
           <div className="relative group">
             <span className="cursor-pointer text-white hover:text-[#795CF5] bg-gray-500 rounded-full w-4 h-4 flex items-center justify-center text-body-tiny">
               i
@@ -81,7 +80,7 @@ export default function CreateOrgModal({ isOpen, onClose, onSubmit }: CreateOrgM
           type="text"
           value={subDomain}
           onChange={(e) => setSubDomain(e.target.value)}
-          className="w-full border rounded px-2 py-1.5 mb-1.5 text-body-medium focus:outline-none focus:ring-1 focus:ring-[#795CF5]"
+          className="w-full border rounded dark:bg-gray-700 dark:border-gray-600 px-2 py-1.5 mb-1.5 text-body-medium focus:outline-none focus:ring-1 focus:ring-[#795CF5]"
         />
       </Modal.Body>
 

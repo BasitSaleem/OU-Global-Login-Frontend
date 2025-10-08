@@ -81,7 +81,7 @@ function OrganizationsContent() {
   const handleDecline = () => setIsDeclineModalOpen(false);
 
   return (
-    <div className="p-2 sm:p-8">
+    <div className="p-2 sm:p-8 h-full dark:!text-white dark:!bg-gray-900">
       <div className="max-w-xs sm:max-w-7xl mx-auto space-y-8">
         <OrganizationGrid
           organizations={organizations}

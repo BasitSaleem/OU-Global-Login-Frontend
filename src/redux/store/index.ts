@@ -1,6 +1,7 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import authReducer from '../slices/auth.slice';
+import darkModeReducer from '../slices/darkMode.slice';
 import createWebStorage from 'redux-persist/es/storage/createWebStorage';
 import { persistReducer, persistStore } from 'redux-persist';
 function createNoopStorage() {
@@ -24,12 +25,13 @@ const storageEngine = isServer
 
 
 const rootReducer = combineReducers({
-  auth: authReducer
+  auth: authReducer,
+  darkMode: darkModeReducer
 });
 const persistConfig = {
   key: "root",
   storage: storageEngine,
-  whitelist: ["auth"],
+  whitelist: ["auth", "darkMode"],
 };
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
