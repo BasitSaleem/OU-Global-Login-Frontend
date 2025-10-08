@@ -1,7 +1,11 @@
 import type { Config } from 'tailwindcss';
 
 const config: Config = {
+  important: true,
+  darkMode: "class",
   content: [
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./index.html",
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
@@ -24,7 +28,7 @@ const config: Config = {
           900: '#4C1D95',
           light: '#F5F3FF',
         },
-        
+
         // Portal/Brand Accent Colors
         accent: {
           pink: '#B11E67',
@@ -34,7 +38,7 @@ const config: Config = {
           teal: '#137F6A',
           cyan: '#1AD1B9',
         },
-        
+
         // State Colors
         info: {
           DEFAULT: '#007BFF',
@@ -49,7 +53,7 @@ const config: Config = {
           800: '#003366',
           900: '#001933',
         },
-        
+
         success: {
           DEFAULT: '#28A745',
           50: '#F0F9F3',
@@ -63,7 +67,7 @@ const config: Config = {
           800: '#155724',
           900: '#0F4419',
         },
-        
+
         warning: {
           DEFAULT: '#FF7C3B',
           50: '#FFF4F0',
@@ -77,7 +81,7 @@ const config: Config = {
           800: '#BF360C',
           900: '#8D2F00',
         },
-        
+
         error: {
           DEFAULT: '#D1202D',
           50: '#FEF2F2',
@@ -91,7 +95,7 @@ const config: Config = {
           800: '#991B1B',
           900: '#7F1D1D',
         },
-        
+
         // Override default gray with our brand gray
         gray: {
           50: '#F9FAFB',
@@ -105,12 +109,12 @@ const config: Config = {
           800: '#1F2937',
           900: '#111827',
         },
-        
+
         // Black and White
         black: '#000000',
         white: '#FFFFFF',
       },
-      
+
       fontFamily: {
         sans: [
           'Inter',
@@ -129,7 +133,7 @@ const config: Config = {
           'sans-serif',
         ],
       },
-      
+
       // Professional Typography System - Jira-like compact sizes
       fontSize: {
         // Heading Typography (Inter)
@@ -154,7 +158,7 @@ const config: Config = {
         'xl': ['16px', { lineHeight: '20px' }],
         '2xl': ['18px', { lineHeight: '22px' }],
       },
-      
+
       spacing: {
         '0.5': '0.125rem', // 2px
         '1.5': '0.375rem', // 6px
@@ -171,7 +175,7 @@ const config: Config = {
         '84': '21rem',
         '96': '24rem',
       },
-      
+
       borderRadius: {
         'none': '0',
         'sm': '0.125rem',
@@ -189,3 +193,8 @@ const config: Config = {
 } satisfies Config;
 
 export default config;
+
+
+//bgcolor: bg-gray-900
+//bg card: bg-gray-800
+//bg card border: bg-gray-700

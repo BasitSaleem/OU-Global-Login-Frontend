@@ -109,14 +109,13 @@ export default function Sidebar({
           ${collapsed ? "w-17" : "w-70"}
           ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
           border-r border-gray-200 flex-shrink-0 transition-all duration-300 ease-in-out
-          fixed lg:relative inset-y-0 left-0 z-50 bg-white
+          fixed lg:relative inset-y-0 left-0 z-50 bg-white dark:bg-gray-900 dark:border-gray-700
         `}
       >
         {/* Logo */}
         <div
-          className={`h-14 flex items-center justify-start border-b border-gray-200 cursor-pointer ${
-            collapsed ? "px-3" : "px-3"
-          }`}
+          className={`h-14 flex items-center dark:border-b-gray-700 justify-start border-b border-gray-200 cursor-pointer ${collapsed ? "px-3" : "px-3"
+            }`}
         >
           {collapsed ? (
             <div
@@ -153,18 +152,16 @@ export default function Sidebar({
               className={`
                 flex cursor-pointer items-center
                 ${collapsed ? "justify-center px-0" : "px-2"}
-                py-1 rounded transition-colors
-                ${
-                  item.isActive
-                    ? "text-white"
-                    : "text-gray-600 hover:bg-gray-50"
+                py-1 rounded transition-colors dark:!text-white dark:hover:!text-gray-900
+                ${item.isActive
+                  ? "text-white"
+                  : "text-gray-600 hover:bg-gray-50 "
                 }
                 ${!collapsed && !item.isActive ? "gap-2" : ""}
-                ${
-                  !collapsed &&
+                ${!collapsed &&
                   (item.hasExternal || item.hasTime || item.hasBadge)
-                    ? "justify-between"
-                    : ""
+                  ? "justify-between"
+                  : ""
                 }
               `}
               style={item.isActive ? { backgroundColor: "#795CF5" } : {}}
@@ -221,9 +218,8 @@ export default function Sidebar({
                       </div>
                     )}
                     <span
-                      className={`text-body-medium ${
-                        item.isActive ? "font-medium" : ""
-                      }`}
+                      className={`text-body-medium ${item.isActive ? "font-medium" : ""
+                        }`}
                     >
                       {item.label}
                     </span>
@@ -263,11 +259,10 @@ export default function Sidebar({
               <a
                 onClick={() => router.push("/view-all-product")}
                 className={`
-                  flex items-center justify-center w-10 h-10 mx-0 rounded border-t transition-all cursor-pointer
-                  ${
-                    currentPath === "/view-all-product"
-                      ? "border-white shadow-md"
-                      : "border-white hover:shadow-sm"
+                  flex items-center  dark:border-gray-700 justify-center w-10 h-10 mx-0 rounded border-t transition-all cursor-pointer
+                  ${currentPath === "/view-all-product"
+                    ? "border-white shadow-md"
+                    : "border-white hover:shadow-sm"
                   }
                 `}
                 style={{ backgroundColor: "#795CF5" }}
@@ -290,11 +285,10 @@ export default function Sidebar({
             <a
               onClick={() => router.push("/view-all-product")}
               className={`
-                flex items-center justify-between w-full px-2 py-1.5 rounded transition-colors cursor-pointer
-                ${
-                  currentPath === "/view-all-product"
-                    ? "text-white"
-                    : "text-gray-600 hover:bg-gray-50"
+                flex items-center justify-between w-full dark:!text-white dark:hover:!text-gray-900 px-2 py-1.5 rounded transition-colors cursor-pointer
+                ${currentPath === "/view-all-product"
+                  ? "text-white"
+                  : "text-gray-600 hover:bg-gray-50"
                 }
               `}
               style={

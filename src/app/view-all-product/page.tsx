@@ -43,11 +43,11 @@ function ViewAllProductsPage() {
   ];
 
   return (
-    <div className="p-4">
+    <div className="p-4 dark:!bg-gray-900 h-screen dark:!text-white">
       <div className="max-w-7xl mx-auto">
         {/* Page Header */}
         <div className="mb-3">
-          <h1 className="text-heading-1 font-bold text-black">All Products</h1>
+          <h1 className="text-heading-1 font-bold text-black dark:!text-white">All Products</h1>
         </div>
 
         {/* Products Grid */}
@@ -55,7 +55,7 @@ function ViewAllProductsPage() {
           {products.map((product) => (
             <div
               key={product.id}
-              className="bg-white border border-gray-200 rounded p-4 hover:shadow-sm transition-shadow cursor-pointer"
+              className="bg-white border dark:bg-gray-800 dark:border-gray-700  border-gray-200 rounded p-4 hover:shadow-sm transition-shadow cursor-pointer"
             >
               <div className="flex items-start gap-3">
                 {/* Product Icon */}
@@ -72,10 +72,10 @@ function ViewAllProductsPage() {
 
                 {/* Product Info */}
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-heading-3 font-medium text-black mb-2">
+                  <h3 className="text-heading-3 font-medium text-black mb-2 dark:!text-white">
                     {product.title}
                   </h3>
-                  <p className="text-body-small text-gray-600 mb-4">
+                  <p className="text-body-small text-gray-600 mb-4 dark:!text-white">
                     {product.description}
                   </p>
 

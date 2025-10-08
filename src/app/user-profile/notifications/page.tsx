@@ -47,7 +47,7 @@ function NotificationSection({
   return (
     <div className="bg-white border border-gray-300 rounded p-4">
       <div className="flex items-center gap-2 mb-3">
-         <Image src={Icon} alt={title} width={20} height={20} className="w-6 h-6" />
+        <Image src={Icon} alt={title} width={20} height={20} className="w-6 h-6" />
         <h3 className="text-body-medium-bold font-medium text-black pb-2">{title}</h3>
       </div>
 
@@ -55,9 +55,8 @@ function NotificationSection({
         {items.map((item) => (
           <div
             key={item.key as string}
-            className={`flex items-center justify-between px-2 py-1.5 rounded ${
-              item.highlighted ? 'bg-[rgba(121,92,245,0.07)]' : ''
-            }`}
+            className={`flex items-center justify-between px-2 py-1.5 rounded ${item.highlighted ? 'bg-[rgba(121,92,245,0.07)]' : ''
+              }`}
           >
             {/* Label text */}
             <span className="flex-1 text-body-small text-black">{item.label}</span>
@@ -153,11 +152,11 @@ export default function NotificationPreferencesPage() {
   };
 
   // config objects
-   type Section = {
-  icon: any;
-  title: string;
-  items: { key: keyof NotificationSettings; label: string; highlighted?: boolean }[];
-};
+  type Section = {
+    icon: any;
+    title: string;
+    items: { key: keyof NotificationSettings; label: string; highlighted?: boolean }[];
+  };
 
   const sections: Section[] = [
     {
@@ -199,7 +198,7 @@ export default function NotificationPreferencesPage() {
   ];
 
   return (
-    <main className="p-3">
+    <main className="p-3 ">
       <div className="max-w-7xl">
         {/* Header Section */}
         <div className="mb-3 gap-2">
@@ -217,8 +216,7 @@ export default function NotificationPreferencesPage() {
             <div className="flex items-center gap-2">
               {/* Inventory */}
               <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('inventory')}>
-                 <Image src={Icons.owneranalytics} alt="owner analytics" width={16} height={16} className={`w-8 h-8 rounded p-1 transition border ${
-                    selectedOwner === 'inventory' ? 'border-[#795CF5] bg-[#795CF512]' : 'border-transparent'
+                <Image src={Icons.owneranalytics} alt="owner analytics" width={16} height={16} className={`w-8 h-8 rounded p-1 transition border ${selectedOwner === 'inventory' ? 'border-[#795CF5] bg-[#795CF512]' : 'border-transparent'
                   }`} />
 
                 <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-body-tiny font-medium rounded px-2 py-0.5 whitespace-nowrap z-10 shadow-sm">
@@ -228,8 +226,7 @@ export default function NotificationPreferencesPage() {
 
               {/* Jungle */}
               <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('jungle')}>
-               <Image src={Icons.ownerjungle} alt="owner jungle" width={20} height={20} className={`w-8 h-8 rounded p-1 transition border ${
-                    selectedOwner === 'jungle' ? 'border-[#795CF5] bg-[#795CF512]' : 'border-transparent'
+                <Image src={Icons.ownerjungle} alt="owner jungle" width={20} height={20} className={`w-8 h-8 rounded p-1 transition border ${selectedOwner === 'jungle' ? 'border-[#795CF5] bg-[#795CF512]' : 'border-transparent'
                   }`} />
                 <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-body-tiny font-medium rounded px-2 py-0.5 whitespace-nowrap z-10 shadow-sm">
                   Owners Jungle
@@ -238,8 +235,7 @@ export default function NotificationPreferencesPage() {
 
               {/* Marketplace */}
               <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('marketplace')}>
-               <Image src={Icons.ownermarketplace} alt="owner marketplace" width={16} height={16} className={`w-8 h-8 rounded p-1 transition border ${
-                    selectedOwner === 'marketplace' ? 'border-[#795CF5] bg-[#795CF512]' : 'border-transparent'
+                <Image src={Icons.ownermarketplace} alt="owner marketplace" width={16} height={16} className={`w-8 h-8 rounded p-1 transition border ${selectedOwner === 'marketplace' ? 'border-[#795CF5] bg-[#795CF512]' : 'border-transparent'
                   }`} />
                 <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-body-tiny font-medium rounded px-2 py-0.5 whitespace-nowrap z-10 shadow-sm">
                   Owner Marketplace
@@ -248,9 +244,8 @@ export default function NotificationPreferencesPage() {
 
               {/* Analytics */}
               <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('analytics')}>
-               <Image src={Icons.owneranalytics} alt="owner analytics" width={16} height={16} className={`w-8 h-8 rounded p-1 transition border ${
-                   selectedOwner === 'analytics' ? 'border-[#795CF5] bg-[#795CF512]' : 'border-transparent'
-                 }`} />
+                <Image src={Icons.owneranalytics} alt="owner analytics" width={16} height={16} className={`w-8 h-8 rounded p-1 transition border ${selectedOwner === 'analytics' ? 'border-[#795CF5] bg-[#795CF512]' : 'border-transparent'
+                  }`} />
                 <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white border border-[#E5E7EB] text-black text-body-tiny font-medium rounded px-2 py-0.5 whitespace-nowrap z-10 shadow-sm">
                   Analytics
                 </div>

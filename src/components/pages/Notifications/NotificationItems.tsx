@@ -25,23 +25,23 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
   onMarkAsRead,
 }) => {
   return (
-    <div className="flex items-start gap-3 p-3 hover:bg-gray-50 transition-colors cursor-pointer">
+    <div className="flex items-start gap-3 p-3 hover:bg-gray-50 transition-colors cursor-pointer dark:!bg-gray-800  ">
       {/* Avatar */}
       <div
-        className="w-8 h-8 rounded-full flex items-center justify-center text-white text-body-tiny font-medium"
+        className="w-8 h-8 rounded-full flex  items-center justify-center text-white text-body-tiny font-medium"
         style={{ backgroundColor: color }}
       >
         {initials}
       </div>
 
       {/* Content */}
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 " >
         <div className="flex items-center justify-between mb-1 ">
-          <p className="text-body-small text-black">
-            <span className="font-medium mr-1">{name}</span> {action}
+          <p className="text-body-small text-black dark:!text-white">
+            <span className="font-medium mr-1 dark:!text-white">{name}</span> {action}
           </p>
           <div className="flex items-center gap-1">
-            <span className="text-body-tiny text-gray-500">{time}</span>
+            <span className="text-body-tiny text-gray-500 dark:!text-white">{time}</span>
 
             {/* Unread Dot */}
             {showDot && (
@@ -61,11 +61,11 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
           </div>
         </div>
 
-        <h4 className="text-body-small font-medium text-black mb-2 mt-2">
+        <h4 className="text-body-small font-medium text-black mb-2 mt-2 dark:!text-white">
           {title}
         </h4>
-        <p className="text-body-tiny text-gray-500 mb-1">{description}</p>
-        <p className="text-body-tiny font-bold text-gray-500">{updates}</p>
+        <p className="text-body-tiny text-gray-500 mb-1 dark:!text-white">{description}</p>
+        <p className="text-body-tiny font-bold text-gray-500 dark:!text-white">{updates}</p>
       </div>
     </div>
   );

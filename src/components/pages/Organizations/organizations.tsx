@@ -1,13 +1,13 @@
 type organizations = {
-    initials: string;
-    color: string;
-    title: string;
-    subtitle: string;
+  initials: string;
+  color: string;
+  title: string;
+  subtitle: string;
 }
 
 const OrgCard: React.FC<organizations> = ({ initials, color, title, subtitle }) => {
   return (
-    <div className="bg-white border border-gray-200 rounded p-4 hover:shadow-md transition-shadow">
+    <div className="bg-white dark:text-white dark:bg-gray-800 dark:border-gray-700 border border-gray-200 rounded p-4 hover:shadow-md transition-shadow">
       <div className="flex items-center gap-2">
         {/* Icon */}
         <div
@@ -20,7 +20,7 @@ const OrgCard: React.FC<organizations> = ({ initials, color, title, subtitle }) 
         {/* Info */}
         <div>
           <h4 className="text-body-medium-bold">{title}</h4>
-          <p className="text-body-small text-gray-600">{subtitle}</p>
+          <p className="text-body-small text-gray-600 dark:text-white">{subtitle}</p>
         </div>
       </div>
     </div>
