@@ -9,7 +9,7 @@ import { Icons } from "../utils/icons";
 import { useLogout } from "@/apiHooks.ts/auth/auth.api";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { clearAuth } from "@/redux/slices/auth.slice";
-import { GlobalLoading, LoadingSpinner } from "../ui/loading";
+import { GlobalLoading, } from "../ui/loading";
 
 /* ---------------------------------- */
 /* Types                              */
@@ -347,11 +347,12 @@ export default function AppHeader({
     throw err;
   }
 
-  // ⬇️ CHANGE THIS: don’t throw in the event handler
   const handleSettingsClick = () => {
     try {
+      console.log("under development");
+
       // whatever risky work...
-      throw new Error("Settings page is under development");
+      // throw new Error("Settings page is under development");
     } catch (e) {
       setErr(e as Error); // triggers a re-render; boundary will catch on next render
     }

@@ -6,10 +6,11 @@ import OrganizationProductCard from "../Organizations/OrganizationProductCard";
 import { useGetOrganizations } from "@/apiHooks.ts/organization/organization.api";
 import { LoadingSpinner } from "@/components/ui";
 import { Skeleton } from "@/components/ui/skeletion";
+import Link from "next/link";
 
 export default function HomePage() {
   const { user } = useAppSelector((s) => s.auth);
-  const { data, isPending: loadingOrganizations } = useGetOrganizations();
+  const { data, isPending: loadingOrganizations } = useGetOrganizations(1, 20);
 
   const productCodes = ["OI", "OJ", "OM", "OA"];
 
@@ -63,38 +64,47 @@ export default function HomePage() {
 
         {/* Products Section */}
         <div>
-          <h2 className="text-heading-2 mb-3 flex items-center gap-2">
-            {loadingOrganizations ? (
-              <>
-                <span>Loading your products</span>
-                <LoadingSpinner size={4} />
-              </>
-            ) : (
-              "Your Products"
-            )}
-          </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {loadingOrganizations ? Array.from({ length: 6 }).map((_, idx) => (
-              <div key={idx} className="bg-white p-2 rounded border border-gray-200">
-                <div className="flex items-start gap-3 mb-2">
-                  <Skeleton width="30px" height="30px" />
-                  <div className="flex-1 min-w-0 space-y-2">
-                    <Skeleton width="60%" height="16px" />
-                    <Skeleton width="40%" height="12px" />
+          {data?.organization.length === 0 ? <h2 className="text-heading-2 mb-3 flex items-center gap-2">You Don't have any products </h2> : (
+            <h2 className="text-heading-2 mb-3 flex items-center gap-2">
+              {loadingOrganizations ? (
+                <>
+                  <span>Loading your products</span>
+                  <LoadingSpinner size={4} />
+                </>
+              ) : (
+                "Your Products"
+              )}
+            </h2>
+          )}
+          <>{data?.organization.length === 0 ? <div className="flex items-center gap-2 mt-4">
+            <Link href="/organizations">
+              <h2 className="text-blue-600 hover:underline">Create a new organization</h2>
+            </Link>
+          </div> :
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {loadingOrganizations ? Array.from({ length: 6 }).map((_, idx) => (
+                <div key={idx} className="bg-white p-2 rounded border border-gray-200">
+                  <div className="flex items-start gap-3 mb-2">
+                    <Skeleton width="30px" height="30px" />
+                    <div className="flex-1 min-w-0 space-y-2">
+                      <Skeleton width="60%" height="16px" />
+                      <Skeleton width="40%" height="12px" />
+                    </div>
+                  </div>
+                  <div className="mt-auto flex items-center justify-between px-2 py-1.5">
+                    <div className="flex ml-8 space-x-1">
+                      <Skeleton width="25px" height="25px" count={3} />
+                    </div>
                   </div>
                 </div>
-                <div className="mt-auto flex items-center justify-between px-2 py-1.5">
-                  <div className="flex ml-8 space-x-1">
-                    <Skeleton width="25px" height="25px" count={3} />
-                  </div>
-                </div>
-              </div>
-            )) :
-              (productCodes.map((code) => (
-                <OrganizationProductCard organizations={data?.organizations} key={code} code={code as any} />
-              )))
-            }
-          </div>
+              )) :
+                (productCodes.map((code) => (
+                  <OrganizationProductCard organizations={data?.organization} key={code} code={code as any} />
+                )))
+              }
+            </div>
+          }
+          </>
         </div>
 
         {/* Recent Section */}

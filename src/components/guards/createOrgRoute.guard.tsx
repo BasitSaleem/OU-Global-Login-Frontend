@@ -21,6 +21,7 @@ export function CreateOrganizationGuard({
   const router = useRouter();
   const { user, organization } = useAppSelector((state) => state.auth);
   const [isLoading, setIsLoading] = useState(true);
+  console.log(organization?.id, user, "/DATAAAA");
 
   useEffect(() => {
     if (!requireAuth || !user) {

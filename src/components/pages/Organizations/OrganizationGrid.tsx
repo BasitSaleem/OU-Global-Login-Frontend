@@ -27,7 +27,6 @@ export default function OrganizationGrid({
   const { mutate: toggleFavorite, isPending } = useIsFavorite()
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrg, setSelectedOrg] = useState<any | null>(null);
-  console.log(organizations, "organizations");
 
   // DELETE API HOOK
   const { mutate: deleteOrg, isPending: deleteLoading } = useDeleteOrganization(() => {
@@ -143,11 +142,7 @@ export default function OrganizationGrid({
         </div>
 
         {/* View More */}
-        <div className="mt-4 flex justify-end">
-          <button className="text-[#795CF5] text-body-medium font-medium hover:underline cursor-pointer">
-            View More
-          </button>
-        </div>
+        
       </div>
       {selectedOrg && (
         <DeleteOrganizationModal

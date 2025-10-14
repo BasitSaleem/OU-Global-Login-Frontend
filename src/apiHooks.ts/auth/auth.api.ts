@@ -61,7 +61,10 @@ export const useLogout = () => {
   return useMutation({
     mutationFn: () => request(ENDPOINTS.LOG_OUT, "GET"),
     onSuccess: () => {
-      queryClient.removeQueries({ queryKey: ["user"] });
+      queryClient.clear();
+      document.cookie = "";
+      localStorage.clear();
+      sessionStorage.clear();
       toast.success("Logged out", "You have been logged out successfully");
     },
     onError: (error: any) => {

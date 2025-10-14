@@ -1,6 +1,5 @@
 import { forwardRef, ButtonHTMLAttributes } from 'react';
 import { cn } from '@/utils/helpers';
-import { Loader2 } from 'lucide-react';
 import { LoadingSpinner } from './loading';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {

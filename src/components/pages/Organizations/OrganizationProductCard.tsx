@@ -1,4 +1,3 @@
-import { useGetOrganizations } from "@/apiHooks.ts/organization/organization.api";
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
 import { getColorFromId } from "@/utils/getRandomColors";
 import Link from "next/link";
@@ -22,6 +21,8 @@ const OrganizationProductCard = ({ code, organizations }: CardProps) => {
 
     const filteredOrganizations = filterOrganizationsByProduct(organizations, code);
     if (filteredOrganizations.length === 0) return null;
+    console.log(code, filteredOrganizations, "/////");
+
     return (
         <div className="bg-white border border-gray-200 rounded p-3 hover:shadow-md transition-shadow">
             <div className="flex items-start gap-3">

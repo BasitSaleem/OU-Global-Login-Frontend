@@ -38,5 +38,5 @@ export const request = async <T = any>(
       "Something went wrong";
     throw new Error(message);
   }
-  return (await responseBody) as T;
+  return responseBody as T;
 };

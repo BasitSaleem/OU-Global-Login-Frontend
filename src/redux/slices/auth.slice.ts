@@ -34,6 +34,8 @@ const authSlice = createSlice({
       state.user = null;
       state.isAuthenticated = false;
       state.error = null;
+      state.organization = null
+      state.refreshToken = null
     },
     initializeAuth: (state) => {
       const token = localStorage.getItem(AUTH_CONFIG.tokenKey);

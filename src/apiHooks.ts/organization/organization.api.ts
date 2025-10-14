@@ -6,6 +6,8 @@ import {
   OgOrgResponse,
   Organization,
   UpdateOrganizationData,
+  CreateOrganizationResponse,
+  OgOrgDetailResponse,
 } from "./organization.types";
 import { toast } from "@/hooks/useToast";
 
@@ -27,20 +29,23 @@ const ENDPOINTS = {
 export const useCreateOrganization = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreateOrganizationData) =>
-      request<{ organization: Organization }>(
+    mutationFn: async (data: CreateOrganizationData) => {
+      const res = await request<CreateOrganizationResponse>(
         ENDPOINTS.ORGANIZATIONS,
         "POST",
         {},
         data
-      ),
+      )
+      return res.data
+    },
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ["organizations"] });
       toast.success(
         "Organization created",
-        "The organization and lead were created successfully"
+        "The organization has been created and lead registration is processing in the background."
       );
     },
+    retry: false,
     onError: (error: any) => {
       const message =
         (error as Error)?.message || "Organization creation failed";
@@ -49,14 +54,18 @@ export const useCreateOrganization = () => {
   });
 };
 // 2. GET ALL ORGANIZATIONS
-export const useGetOrganizations = (page = 1, limit = 10) => {
+export const useGetOrganizations = (page: number, limit: number) => {
   return useQuery({
     queryKey: ["organizations", page, limit],
-    queryFn: () => {
+    queryFn: async () => {
       const url = `${ENDPOINTS.ORGANIZATIONS}?page=${page}&limit=${limit}`;
-      return request<OgOrgResponse>(url, "GET");
+      const res = await request<OgOrgResponse>(url, "GET");
+      return res.data
     },
-    select: (res) => res.data,
+    select: (data) => ({
+      totalCount: data.totalCounts,
+      organization: data.organizations
+    })
   });
 };
 
@@ -64,8 +73,10 @@ export const useGetOrganizations = (page = 1, limit = 10) => {
 export const useOrganizationDetails = (id: string) => {
   return useQuery({
     queryKey: ["organization", id],
-    queryFn: () =>
-      request<{ organization: Organization }>(ENDPOINTS.ORGANIZATION_ID(id), "GET"),
+    queryFn: async () => {
+      const res = await request<OgOrgDetailResponse>(ENDPOINTS.ORGANIZATION_ID(id), "GET")
+      return res.data
+    },
     select: (data) => data.organization,
     enabled: !!id,
   });

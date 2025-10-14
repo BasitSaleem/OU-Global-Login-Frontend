@@ -1,5 +1,6 @@
 "use client";
 import { useGetOrganizations } from "@/apiHooks.ts/organization/organization.api";
+import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
 import DashboardLayout from "@/components/layout/dashboard-layout";
 import CreateOrgModal from "@/components/modals/CreateOrgModal";
 import DeclineModal from "@/components/modals/DeclineModal";
@@ -31,13 +32,21 @@ function OrganizationsContent() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [organizations, setOrganizations] = useState<any>(organizationsList);
   const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
-  const { data: userOrgs, status: orgStatus, isPending: isOrgPending, error: orgError } = useGetOrganizations();
+  const [page, setPage] = useState(1)
 
+  const { data: userOrgs, status: orgStatus, isPending: isOrgPending, error: orgError } = useGetOrganizations(page, 10);
   useEffect(() => {
-    if (orgStatus === "success" && userOrgs?.organizations) {
-      setOrganizations([{ id: "add-new", isAddNew: true }, ...userOrgs.organizations]);
+    if (orgStatus === "success" && userOrgs) {
+      setOrganizations((prev: any) => {
+        const base = page === 1 ? [{ id: "add-new", isAddNew: true }] : prev;
+        const merged = [...base, ...userOrgs.organization];
+        const unique = merged.filter(
+          (org, i, arr) => i === arr.findIndex(o => o.id === org.id)
+        );
+        return unique;
+      });
     }
-  }, [orgStatus, userOrgs]);
+  }, [orgStatus, userOrgs, page]);
 
   const handleCreateOrg = (data: {
     companyName: string;
@@ -55,6 +64,13 @@ function OrganizationsContent() {
           onAddNew={() => setIsCreateModalOpen(true)}
           loading={isOrgPending}
         />
+        <div className="mt-4 flex justify-end">
+          <button onClick={() => {
+            setPage((prev) => prev + 1)
+          }} className="text-[#795CF5] text-body-medium font-medium hover:underline cursor-pointer">
+            View More
+          </button>
+        </div>
 
         <PendingInvitations
           invitations={pendingInvitations}
@@ -69,10 +85,12 @@ function OrganizationsContent() {
         onConfirm={handleDecline}
       />
       <CreateOrgModal
+        isLoading={isOrgPending}
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateOrg}
       />
+
     </div>
   );
 }

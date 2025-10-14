@@ -36,7 +36,7 @@ export const Icons = {
   owneruniverse: "/Icons/Owners Universe.svg",
   ownerjungle: "/Icons/Owners Jungle.svg",
   owneranalytics: "/Icons/Owners Analytics.svg",
-  ownerinventory: "/Icons/Owners Inventory.svg",
+  ownerinventory: "/Icons/OI.svg",
   ownermarketplace: "/Icons/Owners Marketplace.svg",
   owneruniversecoll: "/Icons/Owners Universe coll.svg",
   homewhite: "/Icons/Homewhite.svg",
