@@ -6,17 +6,24 @@ export const request = async <T = any>(
   url: string,
   method: RequestMethod,
   headers?: Record<string, string>,
-  data?: unknown,
+  data?: any,
   isFormData?: boolean
 ): Promise<T> => {
-  const fetchOptions: any = {
+  const raw = new URL(`${BASE_URL}${url}`);
+  let params = {};
+  if(data?.client_id) {
+    const { client_id, redirect_uri, scope, state, nonce, code_challenge, code_challenge_method, response_type  } = data;
+    if(!client_id || !redirect_uri || !scope || !state || !nonce || !code_challenge || !code_challenge_method || !response_type ) {
+      params = { client_id, redirect_uri, scope, state, nonce, code_challenge, code_challenge_method, response_type  };
+    }
+  }
+  const fetchOptions: any = { 
     method,
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
       ...(headers ?? {}),
     },
-
     body:
       data !== undefined && method.toUpperCase() !== "GET"
         ? isFormData
@@ -25,11 +32,13 @@ export const request = async <T = any>(
         : undefined,
   };
 
+  raw.search = new URLSearchParams(params).toString();
+
   if (isFormData) {
     delete (fetchOptions.headers as Record<string, string>)["Content-Type"];
   }
 
-  const response = await fetch(`${BASE_URL}${url}`, fetchOptions);
+  const response = await fetch(raw, fetchOptions);
   const responseBody = await response.json();
   if (!response.ok) {
     const message =

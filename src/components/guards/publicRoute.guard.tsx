@@ -32,6 +32,8 @@ export function PublicRoute({
     if (!isChecking && isAuthenticated) {
       const returnUrl = searchParams.get('returnUrl');
       const destination = returnUrl ? decodeURIComponent(returnUrl) : redirectTo;
+      console.log('Destination:: ', destination);
+      
       router.push(destination);
     }
   }, [isAuthenticated, isChecking, router, searchParams, redirectTo]);

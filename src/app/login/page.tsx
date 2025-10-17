@@ -9,7 +9,7 @@ import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/schems/auth.schemas";
 import { useLogin } from "@/apiHooks.ts/auth/auth.api";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch } from "@/redux/store";
 import { setAuth } from "@/redux/slices/auth.slice";
 import { PublicRoute } from "@/components/guards/publicRoute.guard";
@@ -17,11 +17,24 @@ export default function LoginPage() {
   const { mutate: login, isPending, error } = useLogin();
   const searchParams = useSearchParams();
   const app = searchParams.get("app") || "OG";
-  console.log("App from query params:", app);
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const [params, setParams] = useState<any>({});
   useEffect(() => {
     const app = searchParams.get("app");
+    if(searchParams.get('client_id') !== '') {
+      const data = {
+        client_id: searchParams.get('client_id'),
+        redirect_uri: searchParams.get('redirect_uri'),
+        scope: searchParams.get('scope'),
+        state: searchParams.get('state'),
+        nonce: searchParams.get('nonce'),
+        response_type: searchParams.get('response_type'),
+        code_challenge: searchParams.get('code_challenge'),
+        code_challenge_method: searchParams.get('code_challenge_method'),
+      }
+      setParams(data);
+    }
     if (!app) {
       // Redirect with default param
       router.replace("/login?app=OG");
@@ -33,10 +46,21 @@ export default function LoginPage() {
   });
   const { handleSubmit } = methods;
 
+  const createOnSubmitData = (formData: any) => {
+    const data = {
+      ...formData,
+      ...params,
+    }
+
+    console.log('Data Sending: ', data);
+
+    return data;
+  }
+
   const onSubmit = async (data: any) => {
-    login(data, {
+    login(createOnSubmitData(data), {
       onSuccess: (response) => {
-        const { user, accessToken, refreshToken } = response.data;
+        const { user, accessToken, refreshToken, redirect_url } = response.data;
         const organization = user.organizations?.[0] ?? null;
 
         dispatch(
@@ -50,14 +74,14 @@ export default function LoginPage() {
           })
         );
 
-        router.push("/");
+        setParams(redirect_url);
       },
     });
   };
 
 
   return (
-    <PublicRoute>
+    <PublicRoute redirectTo={typeof params === 'string' && params.length > 0 ? params : "/"}>
       <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 relative overflow-hidden">
         <div className="absolute inset-0 opacity-40">
           <img
