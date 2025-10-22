@@ -15,7 +15,7 @@ import { CreateOrganizationGuard } from "@/components/guards/createOrgRoute.guar
 import ProgressModal from "@/components/ui/ProgressModal";
 import { CheckCircle, XCircle } from "lucide-react";
 import { Button, Input, LoadingSpinner } from "@/components/ui";
-import { ThemeToggle } from "@/components/ThemeToggle";
+
 
 interface AvailabilityStatusProps {
   isLoading: boolean;
@@ -79,8 +79,8 @@ export default function CreateOrgPage() {
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [organizationData, setOrganizationData] = useState<CreateOrganizationResponse | null>(null);
 
-  const debouncedCompanyName = useDebounce(companyName.trim(), 800);
-  const debouncedSubDomain = useDebounce(subDomain.trim(), 800);
+  const debouncedCompanyName = useDebounce(companyName.trim(), 1500);
+  const debouncedSubDomain = useDebounce(subDomain.trim(), 1500);
 
   // Check if we're still debouncing
   const isNameDebouncing = companyName.trim() !== debouncedCompanyName && companyName.trim().length > 0;
@@ -252,8 +252,6 @@ export default function CreateOrgPage() {
 
             {/* Sub-Domain */}
             <div className="mb-2">
-              <ThemeToggle />
-
               <Input
                 isRequired
                 type="text"

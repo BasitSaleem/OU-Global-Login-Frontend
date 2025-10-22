@@ -9,7 +9,8 @@ export const request = async <T = any>(
   data?: any,
   isFormData?: boolean
 ): Promise<T> => {
-  const raw = new URL(`${BASE_URL}${url}`);
+  const raw = data?.client_id ? new URL(`${BASE_URL}${url}`) : `${BASE_URL}${url}`;
+  
   let params = {};
   if(data?.client_id) {
     const { client_id, redirect_uri, scope, state, nonce, code_challenge, code_challenge_method, response_type, subdomain  } = data;
@@ -32,7 +33,9 @@ export const request = async <T = any>(
         : undefined,
   };
 
-  raw.search = new URLSearchParams(params).toString();
+  if(data?.client_id) {
+    raw.search = new URLSearchParams(params).toString();
+  }
 
   if (isFormData) {
     delete (fetchOptions.headers as Record<string, string>)["Content-Type"];
