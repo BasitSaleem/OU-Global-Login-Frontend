@@ -12,9 +12,9 @@ export const request = async <T = any>(
   const raw = new URL(`${BASE_URL}${url}`);
   let params = {};
   if(data?.client_id) {
-    const { client_id, redirect_uri, scope, state, nonce, code_challenge, code_challenge_method, response_type  } = data;
-    if(!client_id || !redirect_uri || !scope || !state || !nonce || !code_challenge || !code_challenge_method || !response_type ) {
-      params = { client_id, redirect_uri, scope, state, nonce, code_challenge, code_challenge_method, response_type  };
+    const { client_id, redirect_uri, scope, state, nonce, code_challenge, code_challenge_method, response_type, subdomain  } = data;
+    if(!client_id || !redirect_uri || !scope || !state || !nonce || !code_challenge || !code_challenge_method || !response_type || !subdomain ) {
+      params = { client_id, redirect_uri, scope, state, nonce, code_challenge, code_challenge_method, response_type, subdomain  };
     }
   }
   const fetchOptions: any = { 

@@ -32,6 +32,7 @@ export default function LoginPage() {
         response_type: searchParams.get('response_type'),
         code_challenge: searchParams.get('code_challenge'),
         code_challenge_method: searchParams.get('code_challenge_method'),
+        subdomain: searchParams.get('subdomain')
       }
       setParams(data);
     }
