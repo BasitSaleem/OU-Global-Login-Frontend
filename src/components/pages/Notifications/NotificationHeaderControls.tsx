@@ -14,18 +14,18 @@ export default function NotificationsHeaderControls({
   setOnlyUnread: (v: boolean) => void;
 }) {
   return (
-    <div className="p-2 md:p-3 pb-3 border-b border-gray-100 bg-white flex-shrink-0 flex items-center justify-between">
+    <div className="p-2 md:p-3 pb-3 border-b bg-bg-secondary flex-shrink-0 flex items-center justify-between">
       <div className="flex items-center gap-2">
-        <button onClick={() => setSidebarOpen(true)} className="text-gray-600 cursor-pointer hover:text-black md:hidden">
+        <button onClick={() => setSidebarOpen(true)} className=" cursor-pointer hover:text-black md:hidden">
           <HiMenu size={16} />
         </button>
-        <h2 className="text-body-medium-bold text-black">Latest</h2>
+        <h2 className="text-body-medium-bold">Latest</h2>
       </div>
 
       <div className="flex items-center gap-1 sm:gap-2">
         <button
           onClick={onMarkAllAsRead}
-          className="text-primary text-body-small text-[#795CF5] font-medium hover:underline cursor-pointer"
+          className="text-primary text-body-small  font-medium hover:underline cursor-pointer"
         >
           Mark all as read
         </button>

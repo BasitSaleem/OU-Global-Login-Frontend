@@ -1,97 +1,205 @@
 'use client';
 
-import React, { use, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal } from './GenericModal';
-import { Input, LoadingSpinner } from '../ui';
+import { Button, Input } from '../ui';
 import { PRODUCTS } from '@/constants';
-import { useCheckOrganizationNameAvailability, useCheckSubDomainAvailability, useCreateOrganization, useGetOrganizations } from '@/apiHooks.ts/organization/organization.api';
+import { useCheckOrganizationNameAvailability, useCheckSubDomainAvailability } from '@/apiHooks.ts/organization/organization.api';
 import { useDebounce } from '@/hooks/useDebounce';
 import { toast } from '@/hooks/useToast';
-import { GlobalLoading } from '../ui/loading';
+import { GlobalLoading, LoadingSpinner } from '../ui/loading';
+import { CreateOrganizationData } from '@/apiHooks.ts/organization/organization.types';
+import { CheckCircle, XCircle, } from 'lucide-react';
 
 interface CreateOrgModalProps {
   isOpen: boolean;
+  isLoading: boolean;
   onClose: () => void;
-  onSubmit: (data: { companyName: string; subDomain: string; product: string }) => void;
+  onSubmit: (data: CreateOrganizationData) => void;
 }
 
+interface AvailabilityStatusProps {
+  isLoading: boolean;
+  isAvailable?: boolean;
+  isDebouncing: boolean;
+  fieldName: string;
+  value: string;
+}
 
-export default function CreateOrgModal({ isOpen, onClose }: CreateOrgModalProps) {
+const AvailabilityStatus: React.FC<AvailabilityStatusProps> = ({
+  isLoading,
+  isAvailable,
+  isDebouncing,
+  fieldName,
+  value
+}) => {
+  if (!value) return null;
+
+  if (isDebouncing) {
+    return (
+      <div className="flex items-center text-text gap-2 mt-2 text-sm">
+        <LoadingSpinner size={4} className='' />
+        <span>Checking {fieldName} availability...</span>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center gap-2 mt-2 text-sm text-blue-600">
+        <LoadingSpinner size={4} className='border-blue-600' />
+        <span>Verifying {fieldName}...</span>
+      </div>
+    );
+  }
+
+  if (isAvailable === true) {
+    return (
+      <div className="flex items-center gap-2 mt-2 text-sm text-green-600">
+        <CheckCircle className="w-4 h-4" />
+        <span>{fieldName} is available</span>
+      </div>
+    );
+  }
+
+  if (isAvailable === false) {
+    return (
+      <div className="flex items-center gap-2 mt-2 text-sm text-red-600">
+        <XCircle className="w-4 h-4" />
+        <span>{fieldName} is already taken</span>
+      </div>
+    );
+  }
+
+  return null;
+};
+
+export default function CreateOrgModal({
+  isOpen,
+  isLoading,
+  onClose,
+  onSubmit
+}: CreateOrgModalProps) {
   const [companyName, setCompanyName] = useState('');
   const [subDomain, setSubDomain] = useState('');
   const [selectedProduct, setSelectedProduct] = useState('OI');
 
-  const debouncedCompanyName = useDebounce(companyName, 2000);
-  const debouncedSubDomain = useDebounce(subDomain, 2000);
+  const debouncedCompanyName = useDebounce(companyName.trim(), 800);
+  const debouncedSubDomain = useDebounce(subDomain.trim(), 800);
 
-  const { mutate: createOrg, isPending: creatingOrg } = useCreateOrganization();
-  const { refetch } = useGetOrganizations();
+  // Check if we're still debouncing
+  const isNameDebouncing = companyName.trim() !== debouncedCompanyName && companyName.trim().length > 0;
+  const isSubDomainDebouncing = subDomain.trim() !== debouncedSubDomain && subDomain.trim().length > 0;
 
-  const { data: isNameAvailable, isFetching: checkingName } =
+  const { data: isNameAvailable, isFetching: checkingName, isError: nameError } =
     useCheckOrganizationNameAvailability(debouncedCompanyName);
 
-  const { data: isSubAvailable, isFetching: checkingSub } =
-    useCheckSubDomainAvailability(selectedProduct === "OI" ? debouncedSubDomain : "");
+  const { data: isSubAvailable, isFetching: checkingSub, isError: subError } =
+    useCheckSubDomainAvailability(selectedProduct === 'OI' ? debouncedSubDomain : '');
+
+  // Determine if we can submit
+  const canSubmit = () => {
+    if (!companyName.trim()) return false;
+    if (selectedProduct === 'OI' && !subDomain.trim()) return false;
+    if (isNameDebouncing || checkingName) return false;
+    if (selectedProduct === 'OI' && (isSubDomainDebouncing || checkingSub)) return false;
+    if (isNameAvailable === false) return false;
+    if (selectedProduct === 'OI' && isSubAvailable === false) return false;
+    return true;
+  };
 
   const handleSubmit = () => {
-    if (!companyName || (selectedProduct === "OI" && !subDomain)) return;
+    const trimmedName = companyName.trim();
+    const trimmedSubDomain = subDomain.trim();
+
+    if (!trimmedName) {
+      toast.error('Please enter a company name');
+      return;
+    }
+
+    if (selectedProduct === 'OI' && !trimmedSubDomain) {
+      toast.error('Please enter a sub-domain');
+      return;
+    }
+
+    if (isNameDebouncing || checkingName) {
+      toast.error('Please wait while we verify the organization name');
+      return;
+    }
+
+    if (selectedProduct === 'OI' && (isSubDomainDebouncing || checkingSub)) {
+      toast.error('Please wait while we verify the sub-domain');
+      return;
+    }
 
     if (isNameAvailable === false) {
-      toast.error("Organization name is already taken");
-      return;
-    }
-    if (selectedProduct === "OI" && isSubAvailable === false) {
-      toast.error("Subdomain is already taken");
+      toast.error('Organization name is already taken. Please choose a different name.');
       return;
     }
 
-    const payload = {
-      name: companyName,
-      subDomainName: subDomain,
+    if (selectedProduct === 'OI' && isSubAvailable === false) {
+      toast.error('Sub-domain is already taken. Please choose a different sub-domain.');
+      return;
+    }
+
+    if (nameError) {
+      toast.error('Unable to verify organization name. Please try again.');
+      return;
+    }
+
+    if (selectedProduct === 'OI' && subError) {
+      toast.error('Unable to verify sub-domain. Please try again.');
+      return;
+    }
+
+    const payload: CreateOrganizationData = {
+      name: trimmedName,
+      subDomainName: trimmedSubDomain,
       product: [selectedProduct],
     };
 
-    createOrg(payload, {
-      onSuccess: () => {
-        refetch();    // latest org fetch
-        onClose();    // modal close
-      },
-    });
+    onSubmit(payload);
   };
-  console.log("Creating org", creatingOrg);
+
+  // Reset state when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setCompanyName('');
+      setSubDomain('');
+      setSelectedProduct('OI');
+    }
+  }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg" ariaLabel="Create organization">
-
-
-      {/* Loader overlay */}
-      {creatingOrg && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white/30 z-50">
+      {/* Overlay loader */}
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-bg-secondary z-50">
           <GlobalLoading />
         </div>
       )}
 
       <Modal.Title className="mb-2 text-heading-2">Create an Organization</Modal.Title>
       <Modal.Body>
-        <Input
-          label="Company Name"
-          value={companyName}
-          onChange={(e) => setCompanyName(e.target.value)}
-          error={checkingName && !isNameAvailable ? "Name is taken" : ""}
-          className="w-full border rounded px-2 py-1.5 mb-2 text-body-medium focus:outline-none focus:ring-1 focus:ring-[#795CF5]"
-        />
-        {companyName && (
-          <p className="text-sm mt-1">
-            {debouncedCompanyName !== companyName
-              ? "Checking availability..."
-              : isNameAvailable
-                ? " Name available"
-                : " Name already taken"}
-          </p>
-        )}
+        {/* Company Name Input */}
+        <div className="mb-4">
+          <Input
+            label="Company Name"
+            isRequired
+            value={companyName}
+            onChange={(e) => setCompanyName(e.target.value.toLocaleLowerCase())}
+          />
+          <AvailabilityStatus
+            isLoading={checkingName}
+            isAvailable={isNameAvailable}
+            isDebouncing={isNameDebouncing}
+            fieldName="Organization name"
+            value={companyName}
+          />
+        </div>
 
-        {/* Products */}
-        <label className="block text-body-small font-medium mb-1">Products</label>
+        {/* Product selection */}
+        <label className="block text-body-small font-medium mb-2 ml-1">Products</label>
         <div className="grid grid-cols-2 gap-1 mb-2">
           {PRODUCTS.map((product) => (
             <button
@@ -99,10 +207,10 @@ export default function CreateOrgModal({ isOpen, onClose }: CreateOrgModalProps)
               type="button"
               onClick={() => setSelectedProduct(product.name)}
               disabled={product.isDisabled}
-              className={`flex items-center gap-2 border rounded-lg px-3 py-3 text-base font-medium transition ${selectedProduct === product.name
-                  ? "border-[#795CF5] bg-[#795CF512] text-[#795CF5]"
-                  : "border-gray-200 text-gray-700 bg-gray-100 hover:bg-gray-200"
-                } ${product.isDisabled ? "cursor-not-allowed" : "cursor-pointer"}`}
+              className={`flex items-center gap-2 border rounded-lg px-3 py-3 text-base font-medium transition mb-1 ${selectedProduct === product.name
+                ? 'border-primary bg-bg-secondary text-primary'
+                : 'border text-text bg-bg-secondary hover:bg-primary/10'
+                } ${product.isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
             >
               <img src={product.icon} alt={product.name} className="w-4 h-4" />
               {product.fullname}
@@ -110,37 +218,42 @@ export default function CreateOrgModal({ isOpen, onClose }: CreateOrgModalProps)
           ))}
         </div>
 
-        <Input
-          label="Sub-Domain"
-          value={subDomain}
-          onChange={(e) => setSubDomain(e.target.value)}
-          error={checkingSub && !isSubAvailable ? "Subdomain is taken" : ""}
-          className="w-full border rounded px-2 py-1.5 mb-1.5 text-body-medium focus:outline-none focus:ring-1 focus:ring-[#795CF5]"
-        />
-        {selectedProduct === "OI" && subDomain && (
-          <p className="text-sm mt-1">
-            {debouncedSubDomain !== subDomain
-              ? "Checking availability..."
-              : isSubAvailable
-                ? "Sub-domain available"
-                : "Sub-domain already taken"}
-          </p>
+        {/* Subdomain input */}
+        {selectedProduct === 'OI' && (
+          <div className="mb-4">
+            <Input
+              label="Sub-Domain"
+              isRequired
+              value={subDomain}
+              onChange={(e) => setSubDomain(e.target.value.toLocaleLowerCase())}
+            />
+            <AvailabilityStatus
+              isLoading={checkingSub}
+              isAvailable={isSubAvailable}
+              isDebouncing={isSubDomainDebouncing}
+              fieldName="Sub-domain"
+              value={subDomain}
+            />
+          </div>
         )}
       </Modal.Body>
+
       <Modal.Footer>
-        <button
+        <Button
           onClick={onClose}
-          className="px-3 py-1.5 rounded border border-[#795CF5] text-[#795CF5] text-body-small hover:bg-[#795CF507] cursor-pointer"
+          variant="secondary"
+          className="px-3"
         >
           Cancel
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={handleSubmit}
-          disabled={creatingOrg}
-          className="px-3 py-1.5 rounded text-white text-body-small cursor-pointer bg-[#795CF5] hover:bg-[#7C3AED]"
+          isLoading={isLoading}
+          disabled={isLoading || !canSubmit()}
+          className="px-3"
         >
           Continue
-        </button>
+        </Button>
       </Modal.Footer>
     </Modal>
   );

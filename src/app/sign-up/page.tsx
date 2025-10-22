@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema } from "@/schems/auth.schemas";
 import { Button, Input, LoadingSpinner, Logo } from "@/components/ui";
 import { signUpData } from "@/apiHooks.ts/auth/auth.types";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -44,26 +45,22 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 relative overflow-hidden">
+    <div className="min-h-screen bg-card relative overflow-hidden">
       {/* Background decorative image */}
       <div className="absolute inset-0 opacity-40">
-        <img
-          src="https://api.builder.io/api/v1/image/assets/TEMP/7d84dae638c9d28ed83d25c88312020e516778bd?width=3660"
-          alt=""
-          className="w-full h-full object-cover"
-        />
       </div>
+      <ThemeToggle />
 
       {/* Header with logo and sign in */}
       <div className="relative z-10 flex items-center justify-between p-4 sm:p-4 lg:p-6">
         <Logo Icon={app === "OI" ? Icons.OI : Icons.owneruniverse} />
         <div className="flex items-center gap-2 sm:gap-3">
-          <span className="text-xs sm:text-sm text-gray-700 hidden sm:block">
+          <span className="text-xs sm:text-sm hidden sm:block">
             Already have an account?
           </span>
           <Link
             href={`/login?app=${app}`}
-            className="bg-[#795CF5] hover:bg-[#7C3AED] text-white text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition-colors"
+            className="bg-primary border hover:bg-primary/80 text-text text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition-colors"
           >
             Sign In
           </Link>
@@ -74,10 +71,10 @@ export default function SignUpPage() {
       <div className="flex items-center justify-center px-6 sm:px-6 pb-4 sm:pb-6 pt-0 sm:pt-2">
         {/* Main sign up card */}
         <div className="relative z-10 w-full max-w-xs sm:max-w-md">
-          <div className="bg-white rounded-2xl sm:rounded-[15px] shadow-[0_0_20px_0_rgba(0,0,0,0.06)] px-4 sm:px-14 py-3 sm:py-4">
+          <div className="bg-bg-secondary rounded-2xl sm:rounded-[15px] shadow-[0_0_20px_0_rgba(0,0,0,0.06)] px-4 sm:px-14 py-3 sm:py-4">
             {/* Welcome heading */}
             <div className="text-center mb-3 mt-2 sm:mb-4">
-              <h1 className="text-base sm:text-lg font-bold text-gray-900">
+              <h1 className="text-base sm:text-lg font-bold text-text">
                 Sign up to get started
               </h1>
             </div>
@@ -91,7 +88,6 @@ export default function SignUpPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
                   {/* First Name field */}
                   <Input
-                    className="w-full h-8 sm:h-9 px-3 bg-gray-100 border-0 rounded-lg text-xs sm:text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#795CF5] transition-all"
                     type="text"
                     label="First Name"
                     id="first_name"
@@ -104,7 +100,6 @@ export default function SignUpPage() {
                     }
                   />
                   <Input
-                    className="w-full h-8 sm:h-9 px-3 bg-gray-100 border-0 rounded-lg text-xs sm:text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#795CF5] transition-all"
                     type="text"
                     label="Last Name"
                     id="last_name"
@@ -117,7 +112,6 @@ export default function SignUpPage() {
                 </div>
 
                 <Input
-                  className="w-full h-8 sm:h-9 px-3 bg-gray-100 border-0 rounded-lg text-xs sm:text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#795CF5] transition-all"
                   id="email"
                   label="Email"
                   type="email"
@@ -129,10 +123,8 @@ export default function SignUpPage() {
                 />
 
                 <Input
-                  className="w-full h-8 sm:h-9 px-3 bg-gray-100  border-0 rounded-lg text-xs sm:text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#795CF5] transition-all"
                   id="password"
                   label="Password"
-                  type="password"
                   placeholder="Enter Password"
                   isPassword={true}
                   {...methods.register("password", {
@@ -141,10 +133,9 @@ export default function SignUpPage() {
                   error={methods.formState.errors.password?.message as string}
                 />
                 <Input
-                  className="w-full h-8 sm:h-9 px-3 bg-gray-100  border-0 rounded-lg text-xs sm:text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#795CF5] transition-all"
                   id="confirmPassword"
                   label="Confirm Password"
-                  type="confirmPassword"
+                  type="password"
                   placeholder="Confirm Password"
                   isPassword={true}
                   {...methods.register("confirmPassword", {
@@ -160,9 +151,10 @@ export default function SignUpPage() {
                   <Button
                     type="submit"
                     isLoading={isPending}
-                    disabled={isPending}
+                    disabled={isPending || Object.keys(methods.formState.errors).length > 0}
                     variant="primary"
-                    className="w-full h-8 sm:h-9 dark:bg-[#795CF5] dark:hover:bg-[#7C3AED] text-white text-xs sm:text-sm font-bold rounded-full transition-colors cursor-pointer flex items-center justify-center"
+                    className="w-full h-8 sm:h-9 text-white text-xs sm:text-sm font-bold rounded-full  cursor-pointer"
+
                   >
                     {isPending ? "Signing up .." : "Sign up"}
                   </Button>
@@ -171,29 +163,29 @@ export default function SignUpPage() {
             </FormProvider>
             {/* Divider */}
             <div className="my-3 sm:my-7 flex items-center">
-              <div className="flex-1 border-t border-[#C9C8CD]"></div>
-              <span className="px-2 sm:px-3 text-xs sm:text-sm text-gray-900">
+              <div className="flex-1 border-t "></div>
+              <span className="px-2 sm:px-3 text-xs sm:text-sm">
                 Or
               </span>
-              <div className="flex-1 border-t border-[#C9C8CD]"></div>
+              <div className="flex-1 border-t"></div>
             </div>
 
             {/* Social login buttons */}
             <div className="space-y-2 sm:space-y-5">
-              <button className="cursor-pointer w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border border-[#C9C8CD] rounded-full hover:bg-gray-50 transition-colors">
+              <button className="cursor-pointer w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border  rounded-full hover:bg-primary/80 transition-colors">
                 <Image src={Icons.google} alt="Google" width={20} height={20} />
-                <span className="text-xs sm:text-sm text-gray-900">
+                <span className="text-xs sm:text-sm">
                   Continue with Google
                 </span>
               </button>
-              <button className="cursor-pointer w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border border-[#C9C8CD] rounded-full hover:bg-gray-50 transition-colors">
+              <button className="cursor-pointer w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border  rounded-full hover:bg-primary/80 transition-colors">
                 <Image
                   src={Icons.microsoft}
                   alt="Microsoft"
                   width={20}
                   height={20}
                 />
-                <span className="text-xs sm:text-sm text-gray-900">
+                <span className="text-xs sm:text-sm">
                   Continue with Microsoft
                 </span>
               </button>
@@ -201,12 +193,12 @@ export default function SignUpPage() {
 
             {/* Sign in link */}
             <div className="mt-3 sm:mt-4 text-center">
-              <span className="text-xs sm:text-sm text-gray-900">
+              <span className="text-xs sm:text-sm">
                 Already have an account{" "}
               </span>
               <Link
                 href={`/login?app=${app}`}
-                className="text-xs sm:text-sm font-bold text-[#795CF5] hover:underline underline"
+                className="text-xs sm:text-sm font-bold text-primary hover:underline underline"
               >
                 Sign In
               </Link>
@@ -217,7 +209,7 @@ export default function SignUpPage() {
 
       {/* Footer */}
       <div className="text-center relative z-10 pb-2 sm:pb-0">
-        <p className="text-xs text-gray-700">
+        <p className="text-xs ">
           ©2025 Owners Inventory - All rights reserved
         </p>
       </div>

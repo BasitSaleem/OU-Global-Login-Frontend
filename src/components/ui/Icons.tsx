@@ -1,4 +1,4 @@
-// src/constants/icons.ts
+// src/constants/icons.tsx
 
 export const Icons = {
   addNew: "/Icons/Add New.svg",
@@ -18,7 +18,7 @@ export const Icons = {
   home: "/Icons/Home.svg",
   logout: "/Icons/Logout.svg",
   notification: "/Icons/Notification.svg",
-  notificationblue :"/Icons/Notificationblue.svg",
+  notificationblue: "/Icons/Notificationblue.svg",
   organization: "/Icons/Organization.svg",
   pie: "/Icons/Pie.svg",
   production: "/Icons/Production.svg",
@@ -34,10 +34,10 @@ export const Icons = {
   microsoft: "/Icons/microsoft-logo-svgrepo-com.svg",
   google: "/Icons/GoogleIcon.svg",
   owneruniverse: "/Icons/Owners Universe.svg",
-  ownerjungle: "/Icons/OJ_LOGO.svg",
-  owneranalytics: "/Icons/OA_LOGO.svg",
+  ownerjungle: "/Icons/Owners Jungle.svg",
+  owneranalytics: "/Icons/Owners Analytics.svg",
   ownerinventory: "/Icons/OI.svg",
-  ownermarketplace: "/Icons/OM_LOGO.svg",
+  ownermarketplace: "/Icons/Owners Marketplace.svg",
   owneruniversecoll: "/Icons/Owners Universe coll.svg",
   homewhite: "/Icons/Homewhite.svg",
   organizationwhite: "/Icons/Organizationwhite.svg",
@@ -46,5 +46,27 @@ export const Icons = {
   changePasswordwhite: "/Icons/Change Passwordwhite.svg",
   homepageimage: "/Icons/Welcome-cuate.svg",
   OI: "/Icons/OI.svg",
-
 } as const;
+
+export type IconName = keyof typeof Icons;
+
+export function IconComponent({
+  name,
+  className,
+  ...props
+}: {
+  name: IconName;
+  className?: string;
+} & React.ImgHTMLAttributes<HTMLImageElement>) {
+  const iconPath = Icons[name];
+  if (!iconPath) return null;
+  
+  return (
+    <img 
+      src={iconPath} 
+      alt={name} 
+      className={className} 
+      {...props}
+    />
+  );
+}

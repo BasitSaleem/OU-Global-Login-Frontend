@@ -32,7 +32,7 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
 
   if (isChecking) {
     return fallback || (
-      <GlobalLoading bg={true} />
+      <GlobalLoading />
     );
   }
 

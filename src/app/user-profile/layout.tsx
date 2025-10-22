@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import AppHeader from "../../components/layout/app-header";
-import { Bell, Home, Icon } from "lucide-react";
+import AppHeader from "../../components/layout/Header/Header";
 import { Icons } from "@/components/utils/icons";
-import Image from "next/image";
+import { IconName, SvgIcon } from "@/components/ui/SvgIcon";
+import Link from "next/link";
 
 interface UserProfileLayoutProps {
   children: React.ReactNode;
@@ -25,18 +25,16 @@ export default function UserProfileLayout({
   type ImageNavItem = {
     label: string;
     href: string;
-    icon: string; // ✅ path from /public
-    iconType: "image";
-     activeIcon?: string; // 👈 white version
+    icon: IconName
+    activeIcon?: string;
     isActive: boolean;
   };
 
   type ComponentNavItem = {
     label: string;
     href: string;
-    icon: React.ComponentType<{ className?: string }>; // ✅ Lucide or custom component
-     activeIcon?: React.ComponentType<{ className?: string }>;
-    iconType: "component";
+    icon: IconName
+    activeIcon?: React.ComponentType<{ className?: string }>;
     isActive: boolean;
   };
 
@@ -46,33 +44,29 @@ export default function UserProfileLayout({
     {
       label: "Profile",
       href: "/user-profile",
-      icon: Icons.home, // custom svg
-      activeIcon: Icons.homewhite, // 👈 white version
-      iconType: "image",
+      icon: "home", // custom svg
+      activeIcon: Icons.homewhite,
       isActive: pathname === "/user-profile",
     },
     {
       label: "Email",
       href: "/user-profile/email",
-      icon: Icons.email, // custom svg
-      activeIcon: Icons.emailwhite, // 👈 white version
-      iconType: "image",
+      icon: "email",
+      activeIcon: Icons.emailwhite,
       isActive: pathname === "/user-profile/email",
     },
     {
       label: "Change Password",
       href: "/user-profile/change-password",
-      icon: Icons.changePassword, // custom svg
-       activeIcon: Icons.changePasswordwhite, // 👈 white version
-      iconType: "image",
+      icon: "changePassword",
+      activeIcon: Icons.changePasswordwhite,
       isActive: pathname === "/user-profile/change-password",
     },
     {
       label: "Notifications",
       href: "/user-profile/notifications",
-      icon: Icons.notification, // lucide-react
-      iconType: "image",
-      activeIcon: Icons.notificationwhite, // 👈 (replace with white bell if you have it, else fallback same)
+      icon: "notification",
+      activeIcon: Icons.notificationwhite,
       isActive: pathname === "/user-profile/notifications",
     },
   ];
@@ -92,40 +86,33 @@ export default function UserProfileLayout({
   }, []);
 
   return (
-    <div className="min-h-screen bg-white flex font-inter">
+    <div className="min-h-screen bg-background flex font-inter">
       {/* Desktop Sidebar */}
       <div
-        className={`${
-          sidebarCollapsed ? "w-17" : "w-70"
-        } transition-all duration-300 bg-white border-r border-gray-200 hidden md:flex flex-col`}
+        className={`${sidebarCollapsed ? "w-17" : "w-70"
+          } transition-all duration-300 bg-bg-secondary border-r  hidden md:flex flex-col`}
       >
         {/* Logo */}
         <div
-          className={`h-14 flex items-center justify-start border-b border-gray-200 ${
-            sidebarCollapsed ? "px-2" : "px-3"
-          }`}
+          className={`h-14 flex items-center justify-start border-b  ${sidebarCollapsed ? "px-4" : "px-3"
+            }`}
         >
           <a onClick={() => router.push("/")}>
             {sidebarCollapsed ? (
               <div
-                className="w-8 h-8 rounded flex items-center justify-center cursor-pointer"
-                style={{ backgroundColor: "#795CF5" }}
+                className="w-8 h-8 rounded-lg flex items-center  justify-center cursor-pointer bg-primary"
               >
-                <Image
-                  src={Icons.owneruniversecoll}
-                  alt="Owners Universe Logo"
-                  width={16}
-                  height={16}
-                />
+                <SvgIcon name="ownersUniverseColl" className=" w-[16px] h-[16px]" />
+
               </div>
             ) : (
-              <Image
-                src={Icons.owneruniverse}
+              <SvgIcon
+                name="ownersUniverse"
+                className="text-foreground cursor-pointer"
                 width={130}
                 height={130}
-                alt="Owners Universe Logo"
-                className="h-12 cursor-pointer "
               />
+
             )}{" "}
           </a>
         </div>
@@ -138,26 +125,21 @@ export default function UserProfileLayout({
                 key={item.href}
                 onClick={() => router.push(item.href)}
                 className={`
-                  flex cursor-pointer items-center
+                  flex cursor-pointer items-center hover:bg-primary/80
                   ${sidebarCollapsed ? "justify-center px-0" : "px-2"}
-                  py-2 rounded transition-colors
-                  ${
-                    item.isActive
-                      ? "text-white"
-                      : "text-[#231F20] hover:bg-gray-50"
+                  py-2 rounded-lg transition-colors
+                  ${item.isActive
+                    ? "text-white bg-primary"
+                    : " "
                   }
                   gap-2
                 `}
-                style={item.isActive ? { backgroundColor: "#795CF5" } : {}}
                 title={sidebarCollapsed ? item.label : ""}
               >
-                {item.iconType === "image" ? (
-                  <img src={  item.isActive && item.activeIcon ? item.activeIcon : item.icon} alt={item.label} className="w-6 h-6" />
-                ) : (
-                  <item.icon className="w-6 h-6 text-[#000000]" />
-                )}
+
+                <SvgIcon name={item.icon} className="w-6 h-6 " />
                 {!sidebarCollapsed && (
-                  <span className="text-body-medium font-medium">{item.label}</span>
+                  <span className=" font-medium">{item.label}</span>
                 )}
               </a>
             ))}
@@ -172,8 +154,8 @@ export default function UserProfileLayout({
             className="fixed inset-0 bg-black/40 z-30 md:hidden"
             onClick={toggleMobileSidebar}
           />
-          <div className="fixed inset-y-0 left-0 z-40 w-56 bg-white border-r border-gray-200 flex flex-col p-2 md:hidden">
-            <div className="h-12 flex items-center justify-between border-b border-gray-200 px-3">
+          <div className="fixed inset-y-0 left-0 z-40 w-56 bg-bg-secondary border-r  flex flex-col p-2 md:hidden">
+            <div className="h-12 flex items-center justify-between border-b  px-3">
               <div
                 className="cursor-pointer"
                 onClick={() => {
@@ -181,15 +163,16 @@ export default function UserProfileLayout({
                   router.push("/");
                 }}
               >
-                <img
-                  src="/Icons/Home.svg"
-                  alt="Owners Universe Logo"
-                  className="h-6"
+                <SvgIcon
+                  name="ownersUniverse"
+                  className="text-foreground"
+                  width={130}
+                  height={130}
                 />
               </div>
               <button
                 onClick={toggleMobileSidebar}
-                className="text-gray-600 cursor-pointer text-sm"
+                className="cursor-pointer text-sm"
               >
                 ✕
               </button>
@@ -197,25 +180,20 @@ export default function UserProfileLayout({
 
             <div className="flex-1 space-y-0.5 mt-2">
               {profileNavItems.map((item) => (
-                <a
+                <Link
                   key={item.href}
+                  href={item.href}
                   onClick={() => {
                     toggleMobileSidebar();
-                    router.push(item.href);
                   }}
-                  className={`flex cursor-pointer items-center gap-2 px-2 py-1.5 rounded transition-colors ${
-                    item.isActive
-                      ? "bg-[#795CF5] text-white"
-                      : "text-gray-600 hover:bg-gray-50"
-                  }`}
+                  className={`flex cursor-pointer items-center gap-2 px-2 py-1.5 rounded transition-colors hover:bg-primary/80 ${item.isActive
+                    ? "bg-primary"
+                    : ""
+                    }`}
                 >
-                  {item.iconType === "image" ? (
-                    <img src={item.icon} alt={item.label} className="w-4 h-4" />
-                  ) : (
-                    <item.icon className="w-4 h-4" />
-                  )}
+                  <SvgIcon name={item.icon} className="w-6 h-6 " />
                   <span className="text-body-medium font-medium">{item.label}</span>
-                </a>
+                </Link>
               ))}
             </div>
           </div>

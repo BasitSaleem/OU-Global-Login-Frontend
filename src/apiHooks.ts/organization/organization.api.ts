@@ -6,6 +6,8 @@ import {
   OgOrgResponse,
   Organization,
   UpdateOrganizationData,
+  CreateOrganizationResponse,
+  OgOrgDetailResponse,
 } from "./organization.types";
 import { toast } from "@/hooks/useToast";
 
@@ -27,20 +29,23 @@ const ENDPOINTS = {
 export const useCreateOrganization = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreateOrganizationData) =>
-      request<{ organization: Organization }>(
+    mutationFn: async (data: CreateOrganizationData) => {
+      const res = await request<CreateOrganizationResponse>(
         ENDPOINTS.ORGANIZATIONS,
         "POST",
         {},
         data
-      ),
+      )
+      return res.data
+    },
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ["organizations"] });
       toast.success(
         "Organization created",
-        "The organization and lead were created successfully"
+        "The organization has been created and lead registration is processing in the background."
       );
     },
+    retry: false,
     onError: (error: any) => {
       const message =
         (error as Error)?.message || "Organization creation failed";
@@ -49,14 +54,18 @@ export const useCreateOrganization = () => {
   });
 };
 // 2. GET ALL ORGANIZATIONS
-export const useGetOrganizations = (page = 1, limit = 10) => {
+export const useGetOrganizations = (page: number, limit: number) => {
   return useQuery({
     queryKey: ["organizations", page, limit],
-    queryFn: () => {
+    queryFn: async () => {
       const url = `${ENDPOINTS.ORGANIZATIONS}?page=${page}&limit=${limit}`;
-      return request<OgOrgResponse>(url, "GET");
+      const res = await request<OgOrgResponse>(url, "GET");
+      return res.data
     },
-    select: (res) => res.data,
+    select: (data) => ({
+      totalCount: data.totalCounts,
+      organization: data.organizations
+    })
   });
 };
 
@@ -64,8 +73,10 @@ export const useGetOrganizations = (page = 1, limit = 10) => {
 export const useOrganizationDetails = (id: string) => {
   return useQuery({
     queryKey: ["organization", id],
-    queryFn: () =>
-      request<{ organization: Organization }>(ENDPOINTS.ORGANIZATION_ID(id), "GET"),
+    queryFn: async () => {
+      const res = await request<OgOrgDetailResponse>(ENDPOINTS.ORGANIZATION_ID(id), "GET")
+      return res.data
+    },
     select: (data) => data.organization,
     enabled: !!id,
   });
@@ -102,9 +113,12 @@ export const useCheckOrganizationNameAvailability = (name: string) => {
   return useQuery({
     queryKey: ["organizationNameAvailability", name],
     queryFn: () => request(ENDPOINTS.CHECK_NAME(name), "GET"),
-    enabled: !!name,
+    enabled: !!name && name.length > 0,
     select: (data) => data?.data.isAvailable,
     retry: false,
+    staleTime: 30000, // Cache for 30 seconds
+    gcTime: 300000, // Keep in cache for 5 minutes
+    refetchOnWindowFocus: false,
   });
 };
 // 6. TOGGLE FAVORITE
@@ -118,9 +132,12 @@ export const useIsFavorite = () => {
         {},
         payload
       ),
+
+    onSuccess: () => toast.error("Favorited", "The organization is added to favorite"),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["organizations"] });
     },
+
   });
 };
 
@@ -128,31 +145,57 @@ export const useIsFavorite = () => {
 export const useDeleteOrganization = (onFinish?: () => void) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => {
-      return request(ENDPOINTS.ORGANIZATION_ID(id), "DELETE");
+    mutationFn: (id: string) => request(ENDPOINTS.ORGANIZATION_ID(id), "DELETE"),
+    onMutate: async (deletedId: string) => {
+      await queryClient.cancelQueries({ queryKey: ["organizations"] });
+      const previousOrganizations = queryClient.getQueriesData({ queryKey: ["organizations"] });
+      queryClient.setQueriesData(
+        { queryKey: ["organizations"] },
+        (old: any) => {
+          if (!old) return old;
+          return {
+            ...old,
+            totalCounts: Math.max((old.totalCounts || 1) - 1, 0),
+            organizations: old.organizations?.filter((org: any) => org.id !== deletedId) || []
+          };
+        }
+      );
+
+      return { previousOrganizations, deletedId };
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["organizations"] });
-      toast.success("Organization deleted", "The organization was deleted");
+    onSuccess: async () => {
+      // Invalidate and refetch to get the latest data from the server
+      await queryClient.invalidateQueries({ queryKey: ["organizations"] });
+      toast.success("Organization deleted", "The organization was deleted successfully");
     },
-    onError: (error: any) => {
+    onError: (error: any, deletedId: string, context) => {
+      // Rollback optimistic updates on error
+      if (context?.previousOrganizations) {
+        context.previousOrganizations.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
       const message = (error as Error)?.message || "Delete failed";
       toast.error("Failed to delete organization", message);
     },
     onSettled: () => {
       if (onFinish) onFinish();
-    }
+    },
   });
 };
+
 
 // 8. CHECK SUBDOMAIN AVAILABILITY
 export const useCheckSubDomainAvailability = (subDomain: string) => {
   return useQuery({
     queryKey: ["subDomainAvailability", subDomain],
     queryFn: () => request(ENDPOINTS.CHECK_SUBDOMAIN(subDomain), "GET"),
-    enabled: !!subDomain,
+    enabled: !!subDomain && subDomain.length > 0,
     select: (data) => data.data.isAvailable,
     retry: false,
+    staleTime: 30000, // Cache for 30 seconds
+    gcTime: 300000, // Keep in cache for 5 minutes
+    refetchOnWindowFocus: false,
   });
 };
 //9. GET ALL PRODUCTS OF ORGANIZATION

@@ -3,7 +3,7 @@
 import { ReactNode } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ThemeProvider } from 'next-themes';
+import { ThemeProvider } from './theme-provider';
 import { ToastProvider } from '@/hooks/useToast';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistor, store } from '@/redux/store';
@@ -25,22 +25,18 @@ const queryClient = new QueryClient({
 
 export function Providers({ children }: ProvidersProps) {
   return (
-    <ReduxProvider store={store}>
-      <PersistGate loading={<GlobalLoading bg={true} />} persistor={persistor}>
-        <QueryClientProvider client={queryClient}>
-          <ReactQueryDevtools initialIsOpen={false} />
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
+    <ThemeProvider>
+      <ReduxProvider store={store}>
+        <PersistGate loading={<GlobalLoading />} persistor={persistor}>
+          <QueryClientProvider client={queryClient}>
+            <ReactQueryDevtools initialIsOpen={false} />
+
             <ToastProvider>
               {children}
             </ToastProvider>
-          </ThemeProvider>
-        </QueryClientProvider>
-      </PersistGate>
-    </ReduxProvider>
+          </QueryClientProvider>
+        </PersistGate>
+      </ReduxProvider>
+    </ThemeProvider>
   );
 }

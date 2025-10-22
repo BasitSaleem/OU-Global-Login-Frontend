@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { useAppDispatch } from "@/redux/store";
 import { setAuth } from "@/redux/slices/auth.slice";
 import { PublicRoute } from "@/components/guards/publicRoute.guard";
+import { ThemeToggle } from "@/components/ThemeToggle";
 export default function LoginPage() {
   const { mutate: login, isPending, error } = useLogin();
   const searchParams = useSearchParams();
@@ -37,7 +38,6 @@ export default function LoginPage() {
       setParams(data);
     }
     if (!app) {
-      // Redirect with default param
       router.replace("/login?app=OG");
     }
   }, [router, searchParams]);
@@ -85,21 +85,16 @@ export default function LoginPage() {
     <PublicRoute redirectTo={typeof params === 'string' && params.length > 0 ? params : "/"}>
       <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 relative overflow-hidden">
         <div className="absolute inset-0 opacity-40">
-          <img
-            src="https://api.builder.io/api/v1/image/assets/TEMP/c50393b05848b5d4a774880c9a82dc541689594f?width=3660"
-            alt=""
-            className="w-full h-full object-cover"
-          />
         </div>
         <div className="relative z-10 flex items-center justify-between p-4 sm:p-6 lg:p-8">
           <Logo Icon={app === "OI" ? Icons.OI : Icons.owneruniverse} />
           <div className="flex items-center gap-2 sm:gap-3">
-            <span className="text-xs sm:text-sm text-gray-700 hidden sm:block">
+            <span className="text-xs sm:text-sm  hidden sm:block">
               Don't have an account?
             </span>
             <Link
               href={`/sign-up?app=${app}`}
-              className="bg-[#795CF5] hover:bg-[#7C3AED] text-white text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition-colors"
+              className="bg-primary hover:bg-[#7C3AED] text-white text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition-colors"
             >
               Sign Up
             </Link>
@@ -108,13 +103,12 @@ export default function LoginPage() {
 
         <div className="flex items-center justify-center px-6 h-[450px] sm:h-full sm:px-6 pb-4 sm:pb-6 pt-1 sm:pt-2">
           <div className="relative z-10 w-full max-w-sm sm:max-w-md xl:max-w-md">
-            <div className="bg-white rounded-2xl sm:rounded-[16px] shadow-[0_0_20px_0_rgba(0,0,0,0.06)] px-4 sm:px-14 py-3 sm:py-4">
+            <div className="bg-bg-secondary rounded-2xl sm:rounded-[16px] px-4 sm:px-14 py-3 sm:py-4">
               <div className="text-center mb-3 mt-2 sm:mb-4">
-                <h1 className="text-base sm:text-xl font-bold text-gray-900">
+                <h1 className="text-base sm:text-xl font-bold text-text">
                   Welcome back
                 </h1>
               </div>
-
               <FormProvider {...methods}>
                 {" "}
                 <form
@@ -122,7 +116,6 @@ export default function LoginPage() {
                   className="space-y-2 sm:space-y-3"
                 >
                   <Input
-                    className="w-full h-8 sm:h-9 px-3 bg-gray-100 border-0 rounded-lg text-xs sm:text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#795CF5] transition-all"
                     id="email"
                     label="Email"
                     type="email"
@@ -134,7 +127,6 @@ export default function LoginPage() {
                   />
 
                   <Input
-                    className="w-full h-8 sm:h-9 px-3 bg-gray-100  border-0 rounded-lg text-xs sm:text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#795CF5] transition-all"
                     id="password"
                     label="Password"
                     type="password"
@@ -151,15 +143,15 @@ export default function LoginPage() {
                       <input
                         type="checkbox"
                         {...methods.register("rememberMe")}
-                        className="w-3 h-3 sm:w-4 sm:h-4 appearance-none border border-gray-400 rounded checked:bg-[#795CF5] focus:ring-1 focus:ring-[#795CF5] cursor-pointer"
+                        className="w-3 h-3 sm:w-4 sm:h-4 border bg-primary rounded  focus:ring-primary cursor-pointer"
                       />
-                      <span className="text-xs text-gray-900 font-semibold">
+                      <span className="text-xs font-semibold">
                         Remember me
                       </span>
                     </label>
                     <Link
                       href="/forgot-password"
-                      className="text-xs font-bold text-[#795CF5] underline hover:underline"
+                      className="text-xs font-bold text-primary underline hover:underline"
                     >
                       Forget Password?
                     </Link>
@@ -169,9 +161,9 @@ export default function LoginPage() {
                     <Button
                       type="submit"
                       isLoading={isPending}
-                      disabled={isPending}
+                      disabled={isPending || Object.keys(methods.formState.errors).length > 0}
                       variant="primary"
-                      className="w-full h-8 sm:h-9 dark:bg-[#795CF5] dark:hover:bg-[#7C3AED] text-white text-xs sm:text-sm font-bold rounded-full transition-colors cursor-pointer flex items-center justify-center"
+                      className="w-full h-8 sm:h-9 text-white text-xs sm:text-sm font-bold rounded-full  cursor-pointer"
                     >
                       {!isPending ? "Sign In" : "Signing in ..."}
                     </Button>
@@ -181,40 +173,40 @@ export default function LoginPage() {
 
               {/* Divider */}
               <div className="my-3 sm:my-7 flex items-center">
-                <div className="flex-1 border-t border-[#C9C8CD]"></div>
-                <span className="px-2 sm:px-3 text-xs sm:text-sm text-gray-900">
+                <div className="flex-1 border-t border"></div>
+                <span className="px-2 sm:px-3 text-xs sm:text-sm">
                   Or
                 </span>
-                <div className="flex-1 border-t border-[#C9C8CD]"></div>
+                <div className="flex-1 border-t border"></div>
               </div>
 
               <div className="space-y-2 sm:space-y-5">
-                <button className="cursor-pointer w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border border-[#C9C8CD] rounded-full hover:bg-gray-50 transition-colors">
+                <button className="cursor-pointer w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border  rounded-full hover:bg-primary/80 transition-colors">
                   <Image src={Icons.google} alt="Google" width={20} height={20} />
-                  <span className="text-xs sm:text-sm text-gray-900">
+                  <span className="text-xs sm:text-sm">
                     Continue with Google
                   </span>
                 </button>
-                <button className="cursor-pointer w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border border-[#C9C8CD] rounded-full hover:bg-gray-50 transition-colors">
+                <button className="cursor-pointer w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border rounded-full hover:bg-primary/80 transition-colors">
                   <Image
                     src={Icons.microsoft}
                     alt="Microsoft"
                     width={20}
                     height={20}
                   />
-                  <span className="text-xs sm:text-sm text-gray-900">
+                  <span className="text-xs sm:text-sm">
                     Continue with Microsoft
                   </span>
                 </button>
               </div>
 
               <div className="mt-3 sm:mt-4 text-center">
-                <span className="text-xs sm:text-sm text-gray-900">
+                <span className="text-xs sm:text-sm">
                   Don't have an account{" "}
                 </span>
                 <Link
                   href={`/sign-up?app=${app}`}
-                  className="underline text-xs sm:text-sm font-bold text-[#795CF5] hover:underline"
+                  className="underline text-xs sm:text-sm font-bold text-primary hover:underline"
                 >
                   Sign Up
                 </Link>
@@ -224,7 +216,7 @@ export default function LoginPage() {
         </div>
 
         <div className="text-center relative z-10 pb-2 sm:pb-4">
-          <p className="text-sm text-gray-700">
+          <p className="text-sm text-text">
             ©2025 Owners Inventory - All rights reserved
           </p>
         </div>

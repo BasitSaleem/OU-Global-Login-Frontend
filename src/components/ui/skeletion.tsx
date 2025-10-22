@@ -24,7 +24,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   animate = true,
 }) => {
   const skeletonClass = `
-    bg-gray-300
+    bg-skeleton
     ${rounded && !circle ? "rounded-md" : ""}
     ${circle ? "rounded-full" : ""}
     ${animate ? "animate-pulse" : ""}

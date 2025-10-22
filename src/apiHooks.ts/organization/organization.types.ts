@@ -24,6 +24,7 @@ export interface CreateOrganizationData {
   isSendCredentialsEmail?: boolean;
   dataCenterId?: string;
   status?: string;
+  product?: string[];
 }
 
 export interface UpdateOrganizationData {
@@ -43,19 +44,19 @@ export enum OrgStatus {
 export interface OgOrganization {
   id: string;
   status?: "ACTIVE" | "PENDING" | "BLOCKED" | "SUSPENDED";
-  name?: string; // Made optional to support "Add New" items
+  name?: string;
   isAddNew?: boolean;
   remarks?: string | null;
-  created_at?: string; // Made optional to support "Add New" items
-  memberships?: OgOrgMembership[]; // Made optional to support "Add New" items
+  created_at?: string;
+  memberships?: OgOrgMembership[];
   updated_at?: string; // Made optional to support "Add New" items
   is_blocked?: boolean; // Made optional to support "Add New" items
   favorites?: {
     userId: string,
     organizationId: string
-  }[]; // Made optional to support "Add New" items
-  ogUserId?: string; // Made optional to support "Add New" items
-  products?: OgProduct[]; // Made optional to support "Add New" items
+  }[];
+  ogUserId?: string;
+  products?: OgProduct[];
 }
 
 export interface OgProduct {
@@ -71,9 +72,38 @@ export interface OgProduct {
 }
 
 export interface OgOrgResponse {
+  totalCount: number,
   data: {
     totalCounts: number;
     organizations: OgOrganization[];
-    message: string,
   };
+  message?: string
+  success: boolean
+}
+export interface OgOrgDetailResponse {
+  data: {
+    organization: OgOrganization[];
+  };
+  message?: string
+  success: boolean
+}
+
+export interface LeadRegistrationResponse {
+  jobId: string;
+  status: 'queued' | 'in-progress' | 'completed' | 'failed';
+  message: string;
+  subDomainName: string;
+  progressUrl?: string;
+  sseUrl?: string;
+  organizationProgressUrl?: string;
+}
+
+export interface CreateOrganizationResponse {
+  data: {
+    organization: OgOrganization;
+    product?: OgProduct;
+    leadRegistration?: LeadRegistrationResponse | null;
+  }
+  message?: string
+  success?: boolean
 }
