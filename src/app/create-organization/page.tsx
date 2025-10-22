@@ -5,7 +5,7 @@ import {
   useCheckSubDomainAvailability,
   useCreateOrganization,
 } from "@/apiHooks.ts/organization/organization.api";
-import { CreateOrganizationResponse } from "@/apiHooks.ts/organization/organization.types";
+import { CreateOrganizationData, CreateOrganizationResponse } from "@/apiHooks.ts/organization/organization.types";
 import { PRODUCTS } from "@/constants";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useRouter } from "next/navigation";
@@ -13,43 +13,154 @@ import { useState } from "react";
 import { toast } from "@/hooks/useToast";
 import { CreateOrganizationGuard } from "@/components/guards/createOrgRoute.guard";
 import ProgressModal from "@/components/ui/ProgressModal";
+import { CheckCircle, XCircle } from "lucide-react";
+import { Button, Input, LoadingSpinner } from "@/components/ui";
+import { ThemeToggle } from "@/components/ThemeToggle";
+
+interface AvailabilityStatusProps {
+  isLoading: boolean;
+  isAvailable?: boolean;
+  isDebouncing: boolean;
+  fieldName: string;
+  value: string;
+}
+
+const AvailabilityStatus: React.FC<AvailabilityStatusProps> = ({
+  isLoading,
+  isAvailable,
+  isDebouncing,
+  fieldName,
+  value
+}) => {
+  if (!value) return null;
+
+  if (isDebouncing) {
+    return (
+      <div className="flex items-center gap-2 mt-2 text-sm text-text">
+        <LoadingSpinner size={4} className="border-text" />
+        <span>Checking {fieldName} availability...</span>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center gap-2 mt-2 text-sm text-blue-600">
+        <LoadingSpinner size={4} className="border-blue-600" />
+        <span>Verifying {fieldName}...</span>
+      </div>
+    );
+  }
+
+  if (isAvailable === true) {
+    return (
+      <div className="flex items-center gap-2 mt-2 text-sm text-green-600">
+        <CheckCircle className="w-4 h-4" />
+        <span>{fieldName} is available</span>
+      </div>
+    );
+  }
+
+  if (isAvailable === false) {
+    return (
+      <div className="flex items-center gap-2 mt-2 text-sm text-red-600">
+        <XCircle className="w-4 h-4" />
+        <span>{fieldName} is already taken</span>
+      </div>
+    );
+  }
+
+  return null;
+};
 export default function CreateOrgPage() {
   const [companyName, setCompanyName] = useState("");
   const [subDomain, setSubDomain] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("OI");
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [organizationData, setOrganizationData] = useState<CreateOrganizationResponse | null>(null);
-  const debouncedCompanyName = useDebounce(companyName, 2000);
-  const debouncedSubDomain = useDebounce(subDomain, 2000);
+
+  const debouncedCompanyName = useDebounce(companyName.trim(), 800);
+  const debouncedSubDomain = useDebounce(subDomain.trim(), 800);
+
+  // Check if we're still debouncing
+  const isNameDebouncing = companyName.trim() !== debouncedCompanyName && companyName.trim().length > 0;
+  const isSubDomainDebouncing = subDomain.trim() !== debouncedSubDomain && subDomain.trim().length > 0;
+
   const createOrgMutation = useCreateOrganization();
   const Router = useRouter();
 
-  const { data: isNameAvailable, isFetching: checkingName } =
+  const { data: isNameAvailable, isFetching: checkingName, isError: nameError } =
     useCheckOrganizationNameAvailability(debouncedCompanyName);
 
-  const { data: isSubAvailable, isFetching: checkingSub } =
+  const { data: isSubAvailable, isFetching: checkingSub, isError: subError } =
     useCheckSubDomainAvailability(
       selectedProduct === "OI" ? debouncedSubDomain : ""
     );
 
+  // Determine if we can submit
+  const canSubmit = () => {
+    if (!companyName.trim()) return false;
+    if (selectedProduct === "OI" && !subDomain.trim()) return false;
+    if (isNameDebouncing || checkingName) return false;
+    if (selectedProduct === "OI" && (isSubDomainDebouncing || checkingSub)) return false;
+    if (isNameAvailable === false) return false;
+    if (selectedProduct === "OI" && isSubAvailable === false) return false;
+    if (createOrgMutation.isPending) return false;
+    return true;
+  };
+
 
 
   const handleSubmit = () => {
-    if (!companyName || (selectedProduct === "OI" && !subDomain)) return;
+    const trimmedName = companyName.trim();
+    const trimmedSubDomain = subDomain.trim();
+
+    if (!trimmedName) {
+      toast.error('Please enter a company name');
+      return;
+    }
+
+    if (selectedProduct === "OI" && !trimmedSubDomain) {
+      toast.error('Please enter a sub-domain');
+      return;
+    }
+
+    if (isNameDebouncing || checkingName) {
+      toast.error('Please wait while we verify the organization name');
+      return;
+    }
+
+    if (selectedProduct === "OI" && (isSubDomainDebouncing || checkingSub)) {
+      toast.error('Please wait while we verify the sub-domain');
+      return;
+    }
 
     if (isNameAvailable === false) {
-      toast.error("Organization name is already taken");
+      toast.error('Organization name is already taken. Please choose a different name.');
       return;
     }
+
     if (selectedProduct === "OI" && isSubAvailable === false) {
-      toast.error("Subdomain is already taken");
+      toast.error('Sub-domain is already taken. Please choose a different sub-domain.');
       return;
     }
-    const payload = {
-      name: companyName,
-      subDomainName: subDomain,
+
+    if (nameError) {
+      toast.error('Unable to verify organization name. Please try again.');
+      return;
+    }
+
+    if (selectedProduct === "OI" && subError) {
+      toast.error('Unable to verify sub-domain. Please try again.');
+      return;
+    }
+
+    const payload: CreateOrganizationData = {
+      name: trimmedName,
+      subDomainName: trimmedSubDomain,
       product: [selectedProduct],
     };
+
     createOrgMutation.mutate(payload, {
       onSuccess: (data) => {
         setOrganizationData({
@@ -62,7 +173,9 @@ export default function CreateOrgPage() {
 
         setShowProgressModal(true);
       },
-      onError: (error) => {
+      onError: (error: any) => {
+        const message = (error as Error)?.message || 'Organization creation failed';
+        toast.error('Failed to create organization', message);
         console.error('Organization creation failed:', error);
       }
     });
@@ -82,38 +195,33 @@ export default function CreateOrgPage() {
     setOrganizationData(null);
     Router.push("/");
   };
-  console.log(organizationData, "dtatatatatat");
-
   return (
     <>
       <>
-        <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 p-4 sm:p-8">
-          <div className="bg-white rounded-xl shadow-lg p-6 sm:p-12 w-full max-w-2xl">
-            <h1 className="mb-8 text-2xl sm:text-3xl font-bold text-center text-gray-900">
+        <div className="min-h-screen w-full flex items-center justify-center bg-background p-4 sm:p-8">
+          <div className="bg-bg-secondary rounded-xl shadow-lg p-6 sm:p-12 w-full max-w-2xl border">
+            <h1 className="mb-8 text-2xl sm:text-3xl font-bold text-center ">
               Create an Organization
             </h1>
 
             {/* Company Name */}
             <div className="mb-6">
-              <label className="block text-base font-medium mb-2">
-                Company Name
-              </label>
-              <input
+
+              <Input
+                isRequired
+                label="Company Name"
                 type="text"
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
-                className="w-full border rounded px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-[#795CF5]"
                 placeholder="Enter company name"
               />
-              {companyName && (
-                <p className="text-sm mt-1">
-                  {debouncedCompanyName !== companyName
-                    ? "Checking availability..."
-                    : isNameAvailable
-                      ? " Name available"
-                      : " Name already taken"}
-                </p>
-              )}
+              <AvailabilityStatus
+                isLoading={checkingName}
+                isAvailable={isNameAvailable}
+                isDebouncing={isNameDebouncing}
+                fieldName="Organization name"
+                value={companyName}
+              />
             </div>
 
             {/* Products */}
@@ -127,8 +235,8 @@ export default function CreateOrgPage() {
                     disabled={product.isDisabled}
                     onClick={() => setSelectedProduct(product.name)}
                     className={`flex items-center gap-2 border rounded-lg px-3 py-3 text-base font-medium transition ${selectedProduct === product.name
-                      ? "border-[#795CF5] bg-[#795CF512] text-[#795CF5]"
-                      : "border-gray-200 text-gray-700 bg-gray-100 hover:bg-gray-200"
+                      ? "border-primary bg-bg-secondary hover:text-text hover:bg-primary/70 text-primary"
+                      : "border text-text"
                       } ${product.isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                   >
                     <img
@@ -143,63 +251,58 @@ export default function CreateOrgPage() {
             </div>
 
             {/* Sub-Domain */}
-            <div className="mb-6">
-              <div className="flex items-center gap-2 mb-2">
-                <label className="block text-base font-medium">
-                  Sub-Domain Name
-                </label>
-                <div className="relative group">
-                  <span className="cursor-pointer text-white hover:text-[#795CF5] bg-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                    i
-                  </span>
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block">
-                    <div className="bg-gray-800 text-white text-xs rounded py-1 px-2 shadow-lg whitespace-nowrap">
-                      Sub-domain is for Owners Inventory only
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="mb-2">
+              <ThemeToggle />
 
-              <input
+              <Input
+                isRequired
                 type="text"
+                label="Sub-Domain Name"
                 value={subDomain}
                 onChange={(e) => setSubDomain(e.target.value)}
                 disabled={selectedProduct !== "OI"}
-                className={`w-full border rounded px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-[#795CF5] ${selectedProduct !== "OI" ? "bg-gray-100 cursor-not-allowed" : ""
-                  }`}
                 placeholder="Enter sub-domain"
               />
-              {selectedProduct === "OI" && subDomain && (
-                <p className="text-sm mt-1">
-                  {debouncedSubDomain !== subDomain
-                    ? "Checking availability..."
-                    : isSubAvailable
-                      ? "Sub-domain available"
-                      : "Sub-domain already taken"}
-                </p>
+              {selectedProduct === "OI" && (
+                <AvailabilityStatus
+                  isLoading={checkingSub}
+                  isAvailable={isSubAvailable}
+                  isDebouncing={isSubDomainDebouncing}
+                  fieldName="Sub-domain"
+                  value={subDomain}
+                />
               )}
             </div>
 
             {/* Actions */}
             <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 mt-8">
-              <button
+              <Button
+                variant="secondary"
+                className="py-5"
                 onClick={() => {
                   setCompanyName("");
                   setSubDomain("");
                   setSelectedProduct("OI");
                 }}
-                className="w-full sm:w-auto px-4 py-2 rounded-lg border border-[#795CF5] text-[#795CF5] text-base font-medium hover:bg-[#795CF507] cursor-pointer"
                 disabled={createOrgMutation.isPending}
               >
                 Reset
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleSubmit}
-                className="w-full sm:w-auto px-4 py-2 rounded-lg text-white text-base font-medium cursor-pointer bg-[#795CF5] hover:bg-[#7C3AED] disabled:opacity-50"
-                disabled={createOrgMutation.isPending}
+                variant="primary"
+                className="py-5"
+                disabled={!canSubmit()}
               >
-                {createOrgMutation.isPending ? "Creating..." : "Continue"}
-              </button>
+                {createOrgMutation.isPending ? (
+                  <div className="flex items-center gap-2">
+                    <LoadingSpinner size={4} />
+                    <span>Creating...</span>
+                  </div>
+                ) : (
+                  "Continue"
+                )}
+              </Button>
             </div>
           </div>
         </div>

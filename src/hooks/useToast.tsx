@@ -8,8 +8,7 @@ import {
     useState,
 } from "react";
 import { CheckCircle2, Info, XCircle } from "lucide-react";
-import Image from "next/image";
-import { Logo } from "@/components/ui";
+import { SvgIcon } from "@/components/ui/SvgIcon";
 
 type ToastType = "success" | "info" | "error";
 
@@ -76,25 +75,29 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                                 : "text-blue-600";
                     const bgColor =
                         t.type === "success"
-                            ? "bg-emerald-50 border-emerald-200"
+                            ? "bg-card border"
                             : t.type === "error"
                                 ? "bg-red-50 border-red-200"
                                 : "bg-blue-50 border-blue-200";
                     return (
                         <div
                             key={t.id}
-                            className={`pointer-events-auto animate-toast-slide-in rounded-lg border ${bgColor} p-4 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 ease-in-out focus-within:outline-2 focus-within:outline-purple-500 focus-within:outline-offset-2 min-h-[64px] backdrop-blur-sm`}
+                            className={`pointer-events-auto  animate-toast-slide-in rounded-lg border ${bgColor} p-4 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 ease-in-out focus-within:outline-2 focus-within:outline-purple-500 focus-within:outline-offset-2 min-h-[64px] backdrop-blur-sm`}
                             role="alert"
                             aria-live="polite"
                         >
                             <div className="flex items-start gap-3">
-                                <Logo className="mt-0.5 h-5 w-5 flex-shrink-0" />
-                                <div className="flex-1 min-w-0">
-                                    <div className="text-sm font-semibold text-slate-900 truncate">
+                                <SvgIcon
+                                    name="ownersUniverseColl"
+                                    className="text-foreground"
+                                    width={20}
+                                    height={20}
+                                />                                <div className="flex-1 min-w-0">
+                                    <div className="text-sm font-semibold text-black truncate">
                                         {t.title}
                                     </div>
                                     {t.description && (
-                                        <div className="mt-1 text-xs text-slate-600 line-clamp-2">
+                                        <div className="mt-1 text-xs text-black line-clamp-2">
                                             {t.description}
                                         </div>
                                     )}
@@ -148,22 +151,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                     animation: toast-slide-out 0.3s ease-in;
                 }
                 
-                /* Dark mode support */
-                @media (prefers-color-scheme: dark) {
-                    .toast-dark {
-                        background: #1f2937;
-                        border-color: #374151;
-                        color: #f9fafb;
-                    }
-                    
-                    .toast-dark .text-slate-900 {
-                        color: #f9fafb;
-                    }
-                    
-                    .toast-dark .text-slate-600 {
-                        color: #d1d5db;
-                    }
-                }
+            
                 
                 /* Responsive design */
                 @media (max-width: 640px) {

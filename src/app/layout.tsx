@@ -23,6 +23,25 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var theme = localStorage.getItem('ou-global-theme');
+                  if (theme && ['light', 'dark', 'dark-ocean', 'dark-crimson'].includes(theme)) {
+                    document.documentElement.classList.remove('light', 'dark', 'dark-ocean', 'dark-crimson');
+                    document.documentElement.classList.add(theme);
+                  } else {
+                    document.documentElement.classList.add('light');
+                  }
+                } catch (e) {
+                  document.documentElement.classList.add('light');
+                }
+              })();
+            `,
+          }}
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body

@@ -31,7 +31,9 @@ export function PublicRoute({
   useEffect(() => {
     if (!isChecking && isAuthenticated) {
       const returnUrl = searchParams.get('returnUrl');
+      console.log(returnUrl, "////");
       const destination = returnUrl ? decodeURIComponent(returnUrl) : redirectTo;
+      console.log(destination, "////DESTINATION/");
       router.push(destination);
     }
   }, [isAuthenticated, isChecking, router, searchParams, redirectTo]);

@@ -47,7 +47,7 @@ function ViewAllProductsPage() {
       <div className="max-w-7xl mx-auto">
         {/* Page Header */}
         <div className="mb-3">
-          <h1 className="text-heading-1 font-bold text-black">All Products</h1>
+          <h1 className="text-heading-1 font-bold text">All Products</h1>
         </div>
 
         {/* Products Grid */}
@@ -55,7 +55,7 @@ function ViewAllProductsPage() {
           {products.map((product) => (
             <div
               key={product.id}
-              className="bg-white border border-gray-200 rounded p-4 hover:shadow-sm transition-shadow cursor-pointer"
+              className="bg-bg-secondary border rounded p-4 hover:shadow-sm transition-shadow cursor-pointer"
             >
               <div className="flex items-start gap-3">
                 {/* Product Icon */}

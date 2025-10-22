@@ -22,14 +22,14 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     disabled,
     ...props
   }, ref) => {
-    const baseStyles = 'inline-flex  cursor-pointer items-center justify-center gap-1.5 rounded font-medium transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-offset-1 disabled:pointer-events-none disabled:opacity-50';
+    const baseStyles = ' inline-flex  cursor-pointer items-center justify-center gap-1.5 rounded font-medium transition-all duration-300 focus:outline-none disabled:pointer-events-none disabled:opacity-50';
 
     const variants = {
-      primary: 'bg-[#795CF5] text-white hover:bg-[#7C3AED] focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600',
-      secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200 focus:ring-gray-500 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700',
+      primary: 'bg-primary py-4 text-text hover:bg-primary/80 border-primary border rounded-lg',
+      secondary: 'bg-bg-secondary py-4 text-text hover:bg-primary/80 border-primary border rounded-lg',
       outline: 'border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50 focus:ring-gray-500 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800',
-      ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-gray-500 dark:text-gray-300 dark:hover:bg-gray-800',
-      destructive: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 dark:bg-red-500 dark:hover:bg-red-600'
+      ghost: 'text-gray-700 py-4 hover:bg-gray-100 rounded-lg focus:ring-gray-500  dark:hover:bg-bg-secondary/70',
+      destructive: 'bg-red-600 py-4 text-[#ffff] hover:bg-red-700 focus:ring-red-500 rounded-lg border-red-600 border'
     };
 
     const sizes = {

@@ -1,9 +1,8 @@
 'use client';
-
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
-import Sidebar from './sidebar';
-import AppHeader from './app-header';
+import Sidebar from './Sidebar';
+import AppHeader from './Header/Header';
 import ComingSoonModal from '../modals/ComingSoonModal';
 
 
@@ -28,11 +27,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
 
-    <div className="min-h-screen bg-white flex font-inter">
+    <div className="min-h-screen bg-background flex font-inter">
       <Sidebar
         collapsed={sidebarCollapsed}
         mobileOpen={mobileSidebarOpen}
-        onToggleCollapse={toggleSidebar}
         onToggleMobile={toggleMobileSidebar}
         currentPath={pathname}
         onShowModal={(icon) => {

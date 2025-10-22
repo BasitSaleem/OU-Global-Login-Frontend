@@ -69,7 +69,6 @@ export const useProgressTracking = (
       eventSource.onmessage = (event) => {
         try {
           const data: SSEEvent = JSON.parse(event.data);
-
           switch (data.type) {
             case 'connected':
               console.log('SSE connected:', data.message);
@@ -153,7 +152,6 @@ export const useProgressTracking = (
     return cleanup;
   }, [url, connect, cleanup]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       cleanup();
@@ -171,25 +169,23 @@ export const useProgressTracking = (
   };
 };
 
-// Hook specifically for job progress tracking
-export const useJobProgress = (
-  jobId: string | null,
+// Hook delete organization progress
+export const useDeleteOrganizationProgress = (
+  organizationId: string | null,
   options: UseProgressTrackingOptions = {}
 ) => {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-  const url = jobId ? `${baseUrl}/progress/job/${jobId}/stream` : null;
-  console.log(url);
-
+  const url = organizationId ? `${baseUrl}/progress/delete-organization/${organizationId}/stream` : null;
   return useProgressTracking(url, options);
 };
 
 // Hook specifically for organization progress tracking  
-export const useOrganizationProgress = (
+export const useCreateOrganizationProgress = (
   organizationId: string | null,
   options: UseProgressTrackingOptions = {}
 ) => {
   const baseUrl = useMemo(() => process.env.NEXT_PUBLIC_API_BASE_URL, []);
-  const url = organizationId ? `${baseUrl}/progress/organization/${organizationId}/stream` : null;
+  const url = organizationId ? `${baseUrl}/progress/create-organization/${organizationId}/stream` : null;
 
   return useProgressTracking(url, options);
 };

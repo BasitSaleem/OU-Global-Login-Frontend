@@ -49,7 +49,7 @@ export function LoadingSkeleton({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'animate-pulse rounded-md bg-gray-200 dark:bg-gray-700',
+        'animate-pulse rounded-md bg-skeleton ',
         className
       )}
     />
@@ -67,22 +67,21 @@ export function LoadingSpinner({ size = 5, className }: { size?: number, classNa
 
 export function GlobalLoading({
   text = "Loading...",
-  bg = false,
   className
 }: LoadingProps) {
   return (
     <div
       className={cn(
-        `fixed inset-0 z-50 flex items-center justify-center pointer-events-none ${bg ? "bg-white" : "bg-black/85"} `,
+        `fixed inset-0 z-50 flex items-center justify-center pointer-events-none bg-background"} `,
         className
       )}
     >
       <div className="text-center">
         <div
           className=
-          "animate-spin rounded-full h-12 w-12 border-b-2 border-[#795CF5] mx-auto" />
+          "animate-spin rounded-full h-28 w-28 border-b-2 border-[#795CF5] mx-auto" />
         {text && (
-          <p className="mt-4 text-gray-700 dark:text-gray-300 text-sm font-medium">
+          <p className="mt-4  text-sm font-medium">
             {text}
           </p>
         )}

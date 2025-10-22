@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { StaticImport } from 'next/dist/shared/lib/get-img-props';
+import { SvgIcon } from './SvgIcon';
 interface LogoProps {
   /**
    * Width of the logo in pixels
@@ -53,13 +54,11 @@ const Logo: React.FC<LogoProps> = ({
       className={`relative inline-block ${isClickable ? 'cursor-pointer transition-opacity hover:opacity-80' : ''} ${className}`}
       onClick={onClick}
     >
-      <Image
-        src={Icon ?? "/Icons/Owners Universe coll.svg"}
-        alt={alt}
+      <SvgIcon
+        name="ownersUniverse"
+        className="text-foreground"
         width={width}
         height={height}
-        priority={priority}
-        className="object-contain"
       />
     </div>
   );

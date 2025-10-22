@@ -1,12 +1,13 @@
 "use client";
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ExternalLink, Home, CheckCircle } from 'lucide-react';
+import { Home, CheckCircle, X } from 'lucide-react';
 import { ProgressTracker } from './ProgressTracker';
-import { useOrganizationProgress } from '@/hooks/useProgressTracking';
+import { useCreateOrganizationProgress } from '@/hooks/useProgressTracking';
 import { CreateOrganizationResponse } from '@/apiHooks.ts/organization/organization.types';
 import Image from 'next/image';
 import { Icons } from '../utils/icons';
+import { SvgIcon } from './SvgIcon';
 
 interface ProgressModalProps {
   isOpen: boolean;
@@ -24,23 +25,15 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
   onGoHome
 }) => {
 
-
   const handleProgress = useCallback((progress: any) => {
     console.log("Progress update:", progress);
   }, []);
 
-  // const handleComplete = useCallback((progress: any) => {
-  // }, []);
-    const handleComplete = useCallback(
+  const handleComplete = useCallback(
     (progress: any) => {
-      console.log("Registration complete:", progress);
-      // Call parent-provided onComplete handler if it exists
       onComplete?.();
-
-      // Close the modal automatically when process completes
-      onClose?.();
     },
-    [onClose, onComplete]
+    [onComplete]
   );
 
   const handleError = useCallback((err: any) => {
@@ -52,7 +45,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
     isConnecting,
     error,
     reconnect
-  } = useOrganizationProgress(
+  } = useCreateOrganizationProgress(
     organizationData?.data?.organization.id || null,
     {
       onProgress: handleProgress,
@@ -101,16 +94,16 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="relative w-full max-w-4xl max-h-[90vh] mx-4 bg-gray-50 rounded-2xl shadow-2xl overflow-hidden"
+            className="relative w-full max-w-4xl max-h-[90vh] mx-4 bg-bg-secondary rounded-2xl shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
+            <div className="sticky top-0 bg-bg-secondary border-b  px-6 py-4 flex items-center justify-between z-10">
               <div>
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-xl font-semibold ">
                   Organization Registration
                 </h2>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm  mt-1">
                   {organizationData?.data.organization?.name || 'Setting up your organization...'}
                 </p>
               </div>
@@ -123,7 +116,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={handleClose}
-                    className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                    className="p-2  hover:text-gray-600 hover:bg-bg-secondary rounded-lg transition-colors"
                     title="Close"
                   >
                     <X className="w-5 h-5" />
@@ -132,7 +125,6 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
               </div>
             </div>
 
-            {/* Content */}
             <div className="p-6 max-h-[calc(90vh-80px)] overflow-y-auto">
               <ProgressTracker
                 progress={progress}
@@ -140,7 +132,6 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                 isConnecting={isConnecting}
                 error={error}
                 onRetry={reconnect}
-                showDetailedSteps={false}
               />
 
               {/* Action Buttons */}
@@ -150,12 +141,12 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
-                    className="mt-8 bg-white rounded-xl border border-gray-200 p-6"
+                    className="mt-8 bg-bg-secondary rounded-xl border p-6"
                   >
                     <div className="flex items-center gap-3 mb-4">
-                      <CheckCircle className="w-6 h-6 text-[#795CF5]" />
+                      <CheckCircle className="w-6 h-6 text-primary" />
                       <div>
-                        <h3 className="text-lg font-semibold text-[#795CF5]">
+                        <h3 className="text-lg font-semibold text-primary">
                           Registration Complete!
                         </h3>
                         <p className="text-[#9685e2] text-sm">
@@ -164,37 +155,24 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                       </div>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={handleViewPortal}
-                        className="flex items-center justify-center gap-2 px-4 py-2 text-white rounded-lg hover:scale-110 duration-300 cursor-pointer"
-                      >
-                        <Image src={Icons.ownerinventory} alt='ownerinventory' width={50} height={50} className="w-20 h-10" />
+                    <button onClick={handleViewPortal} className="flex flex-row items-center sm:flex-row gap-3 cursor-pointer hover:scale-110 duration-300">
 
-                      </motion.button>
+                      {/* <Image src={Icons.ownerinventory} alt='ownerinventory' width={50} height={50} className="w-20 h-10" /> */}
+                      <SvgIcon name='ownersInventory' width={5} height={5} className='text-for w-7 h-7' />
+                      <h1 className='mt-1.5'> OwnersInventory</h1>
 
-                      {/* <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={handleGoHome}
-                        className="flex items-center justify-center gap-2 px-4 py-2 cursor-pointer hover:scale-110 duration-300 "
-                      >
-                        <Image src={Icons.home} alt='ownerinventory' width={50} height={50} className="w-10 h-8" />
-                      </motion.button> */}
-                    </div>
+                    </button>
 
                     {/* Portal Access Info */}
                     {organizationData?.data.leadRegistration?.subDomainName && (
-                      <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                      <div className="mt-4 p-4 bg-bg-secondary border rounded-lg">
                         <h4 className="font-medium text-blue-900 mb-2">
                           OI Access Information
                         </h4>
                         <div className="text-sm text-blue-800 space-y-1">
                           <p>
                             <strong> URL:</strong> {' '}
-                            <code className="bg-blue-100 px-2 py-1 rounded">
+                            <code className="bg-background px-2 py-1 rounded">
                               http://{organizationData.data.leadRegistration.subDomainName}.{'ownersanalytics.com'}
                             </code>
                           </p>
