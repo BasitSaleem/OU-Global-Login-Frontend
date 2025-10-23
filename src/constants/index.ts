@@ -7,7 +7,9 @@ export const APP_CONFIG = {
 };
 
 export const API_CONFIG = {
-  baseUrl: (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') ? process.env.NEXT_PUBLIC_API_URL : process.env.NEXT_PUBLIC_API_PROD_URL,
+  baseUrl: process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_API_BASE_URL 
+                : process.env.NODE_ENV === 'test' ? process.env.NEXT_PUBLIC_API_STAGGING_BASE_URL 
+                : process.env.NEXT_PUBLIC_API_PROD_BASE_URL,
   timeout: 10000,
   retryAttempts: 3
 };
