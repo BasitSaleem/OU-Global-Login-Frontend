@@ -11,10 +11,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema } from "@/schems/auth.schemas";
 import { Button, Input, LoadingSpinner, Logo } from "@/components/ui";
 import { signUpData } from "@/apiHooks.ts/auth/auth.types";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { useAppDispatch } from "@/redux/store";
+import { setAuth } from "@/redux/slices/auth.slice";
 
 export default function SignUpPage() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const methods = useForm({
     resolver: zodResolver(signUpSchema),
   });
@@ -37,7 +39,21 @@ export default function SignUpPage() {
     signUp(
       { first_name: data.first_name, last_name: data.last_name, email: data.email, password: data.password } as signUpData,
       {
-        onSuccess: () => {
+        onSuccess: (response) => {
+          const { user, accessToken, refreshToken, redirect_url } = response.data;
+          const organization = user.organizations?.[0] ?? null;
+  
+          dispatch(
+            setAuth({
+              user,
+              organization,
+              isAuthenticated: true,
+              refreshToken,
+              isLoading: false,
+              error: null,
+            })
+          );
+          
           router.push("/create-organization");
         },
       }
@@ -49,10 +65,9 @@ export default function SignUpPage() {
       {/* Background decorative image */}
       <div className="absolute inset-0 opacity-40">
       </div>
-      <ThemeToggle />
 
       {/* Header with logo and sign in */}
-      <div className="relative z-10 flex items-center justify-between p-4 sm:p-4 lg:p-6">
+      <div className="relative z-10 flex items-center justify-between p-4 sm:p-6 lg:p-8">
         <Logo Icon={app === "OI" ? Icons.OI : Icons.owneruniverse} />
         <div className="flex items-center gap-2 sm:gap-3">
           <span className="text-xs sm:text-sm hidden sm:block">
@@ -60,7 +75,7 @@ export default function SignUpPage() {
           </span>
           <Link
             href={`/login?app=${app}`}
-            className="bg-primary border hover:bg-primary/80 text-text text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition-colors"
+            className="bg-primary border hover:bg-primary/80 text-btn-text text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition-colors"
           >
             Sign In
           </Link>
@@ -172,13 +187,13 @@ export default function SignUpPage() {
 
             {/* Social login buttons */}
             <div className="space-y-2 sm:space-y-5">
-              <button className="cursor-pointer w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border  rounded-full hover:bg-primary/80 transition-colors">
+              <button className="cursor-pointer hover:text-btn-text w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border  rounded-full hover:bg-primary/80 transition-colors">
                 <Image src={Icons.google} alt="Google" width={20} height={20} />
                 <span className="text-xs sm:text-sm">
                   Continue with Google
                 </span>
               </button>
-              <button className="cursor-pointer w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border  rounded-full hover:bg-primary/80 transition-colors">
+              <button className="cursor-pointer hover:text-btn-text w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border  rounded-full hover:bg-primary/80 transition-colors">
                 <Image
                   src={Icons.microsoft}
                   alt="Microsoft"

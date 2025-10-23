@@ -83,7 +83,8 @@ export default function LoginPage() {
 
   return (
     <PublicRoute redirectTo={typeof params === 'string' && params.length > 0 ? params : "/"}>
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 relative overflow-hidden">
+      <ThemeToggle/>
+      <div className="min-h-screen bg-card relative overflow-hidden">
         <div className="absolute inset-0 opacity-40">
         </div>
         <div className="relative z-10 flex items-center justify-between p-4 sm:p-6 lg:p-8">
@@ -94,7 +95,7 @@ export default function LoginPage() {
             </span>
             <Link
               href={`/sign-up?app=${app}`}
-              className="bg-primary hover:bg-[#7C3AED] text-white text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition-colors"
+              className="bg-primary hover:bg-[#7C3AED] text-btn-text text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition-colors"
             >
               Sign Up
             </Link>
@@ -181,20 +182,20 @@ export default function LoginPage() {
               </div>
 
               <div className="space-y-2 sm:space-y-5">
-                <button className="cursor-pointer w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border  rounded-full hover:bg-primary/80 transition-colors">
+                <button className="cursor-pointer hover:text-btn-text w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border  rounded-full hover:bg-primary/80 transition-colors">
                   <Image src={Icons.google} alt="Google" width={20} height={20} />
-                  <span className="text-xs sm:text-sm">
+                  <span className="text-xs sm:text-sm ">
                     Continue with Google
                   </span>
                 </button>
-                <button className="cursor-pointer w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border rounded-full hover:bg-primary/80 transition-colors">
+                <button className="cursor-pointer hover:text-btn-text w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border rounded-full hover:bg-primary/80 transition-colors">
                   <Image
                     src={Icons.microsoft}
                     alt="Microsoft"
                     width={20}
                     height={20}
                   />
-                  <span className="text-xs sm:text-sm">
+                  <span className="text-xs sm:text-sm ">
                     Continue with Microsoft
                   </span>
                 </button>

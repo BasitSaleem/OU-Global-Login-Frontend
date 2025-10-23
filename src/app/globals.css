@@ -8,8 +8,8 @@
   /* Light theme colors */
   --color-primary-50: #F5F3FF;
   --color-card-secondary: #FFF;
-  --gradient-primary-start: #f8f8fa;
-  --gradient-primary-end: #e2dff0;
+  --gradient-primary-start: #faf5ff;
+  --gradient-primary-end: #fdf2f8;
   --color-primary-100: #EDE9FE;
 
   --color-primary-200: #DDD6FE;
@@ -24,6 +24,7 @@
   --color-skeleton: #D1D5DB;
   --color-black: #131313;
   --color-text: #6B7280;
+  --color-text-btn: #ffffff;
   /* --color-hover: #795CF5; */
   /* Gray scale */
   /* --color-gray: #1F2937; */
@@ -45,6 +46,7 @@
   --color-foreground: var(--color-black);
   --color-border: #E5E7EB;
   --color-bg-secondary: #ffffff;
+  --color-invert: #131313;
 
 }
 
@@ -62,6 +64,8 @@
   --color-input-bg: #1a222e;
   --color-black: #000000;
   --color-text: #ffffff;
+  --color-invert: #ffffff;
+  --color-text-btn: #ffffff;
   /* --color-hover: #795CF5; */
 }
 
@@ -111,6 +115,7 @@
   --color-primary-800: var(--color-primary-800);
   --color-primary-900: var(--color-primary-900);
   --color-text: var(--color-text);
+  --color-btn-text: var(--color-text-btn);
   /* --color-hover: var(--color-primary-900); */
   --color-card-secondary: var(--color-card-secondary);
   --color-text-secondary: var(--color-card-secondary);
@@ -126,6 +131,7 @@
   --color-background: var(--color-background);
   --color-foreground: var(--color-foreground);
   --color-border: var(--color-border);
+  --color-invert: var(--color-invert);
 
 
   /* Gray colors */

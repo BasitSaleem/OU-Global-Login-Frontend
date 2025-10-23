@@ -121,6 +121,7 @@ function OrganizationsContent() {
         isOpen={showProgressModal}
         organizationData={organizationData}
         onClose={handleModalClose}
+        isFromMain={false}
       />
     </div>
   );

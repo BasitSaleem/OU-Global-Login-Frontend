@@ -15,6 +15,7 @@ interface ProgressModalProps {
   onClose: () => void;
   onComplete?: () => void;
   onGoHome?: () => void;
+  isFromMain: boolean;
 }
 
 export const ProgressModal: React.FC<ProgressModalProps> = ({
@@ -22,7 +23,8 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
   organizationData,
   onClose,
   onComplete,
-  onGoHome
+  onGoHome,
+  isFromMain
 }) => {
 
   const handleProgress = useCallback((progress: any) => {
@@ -80,13 +82,17 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            onClick={handleClose}
-          />
+          {
+            !isFromMain && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                onClick={handleClose}
+              />
+            )
+          }
 
           {/* Modal Content */}
           <motion.div
@@ -108,21 +114,25 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
-                {canClose && (
-                  <motion.button
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handleClose}
-                    className="p-2  hover:text-gray-600 hover:bg-bg-secondary rounded-lg transition-colors"
-                    title="Close"
-                  >
-                    <X className="w-5 h-5" />
-                  </motion.button>
-                )}
-              </div>
+              {
+                !isFromMain && (
+                  <div className="flex items-center gap-2">
+                    {canClose && (
+                      <motion.button
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={handleClose}
+                        className="p-2  hover:text-gray-600 hover:bg-bg-secondary rounded-lg transition-colors"
+                        title="Close"
+                      >
+                        <X className="w-5 h-5" />
+                      </motion.button>
+                    )}
+                  </div>
+                )
+              }
             </div>
 
             <div className="p-6 max-h-[calc(90vh-80px)] overflow-y-auto">
@@ -182,7 +192,19 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                         </div>
                       </div>
                     )}
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleGoHome}
+                        className="flex items-center cursor-pointer justify-center gap-2 px-4 py-2 bg-gray-100 hover:text-white rounded-lg hover:bg-primary transition-colors"
+                      >
+                        <Home className="w-4 h-4" />
+                        Go to Dashboard
+                      </motion.button>
+                    </div>
                   </motion.div>
+                  
                 )}
               </AnimatePresence>
 

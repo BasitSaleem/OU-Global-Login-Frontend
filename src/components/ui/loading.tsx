@@ -1,10 +1,11 @@
+"use client"
 import { cn } from '@/utils/helpers';
 import { Loader2 } from 'lucide-react';
+import { useEffect } from 'react';
 
 interface LoadingProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
   text?: string;
-  bg?: boolean
   fullScreen?: boolean;
   className?: string;
 }
@@ -66,23 +67,31 @@ export function LoadingSpinner({ size = 5, className }: { size?: number, classNa
 
 
 export function GlobalLoading({
-  text = "Loading...",
+  text = "Loading",
   className
 }: LoadingProps) {
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, []);
+
   return (
     <div
       className={cn(
-        `fixed inset-0 z-50 flex items-center justify-center pointer-events-none bg-background"} `,
+        "fixed inset-0 z-50 flex items-center justify-center pointer-events-auto bg-background/80 backdrop-blur-sm overflow-hidden",
         className
       )}
+      aria-modal="true"
+      role="status"
     >
       <div className="text-center">
-        <div
-          className=
-          "animate-spin rounded-full h-28 w-28 border-b-2 border-[#795CF5] mx-auto" />
+        <div className="animate-spin rounded-full h-24 w-24 border-b-3 border-primary mx-auto" />
         {text && (
-          <p className="mt-4  text-sm font-medium">
-            {text}
+          <p className="mt-4 text-sm font-medium ">
+            {`${text}  ...`}
           </p>
         )}
       </div>

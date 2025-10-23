@@ -113,8 +113,8 @@ export default function AppHeader({
         </div>
       </div>
 
-          <ThemeToggle />
       <div className="flex items-center gap-2">
+      <ThemeToggle />
         <div className="relative" ref={notificationsRef}>
 
           <button

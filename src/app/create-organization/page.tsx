@@ -311,6 +311,7 @@ export default function CreateOrgPage() {
           onClose={handleModalClose}
           onComplete={handleProgressComplete}
           onGoHome={handleGoHome}
+          isFromMain={true}
         />
       </>
     </>

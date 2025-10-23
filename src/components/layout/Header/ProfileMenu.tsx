@@ -35,7 +35,7 @@ export default function ProfileMenu({ onClose, open }: ProfileMenuProps) {
     return (
         <div className="absolute -right-3 sm:right-0 top-10 w-64 sm:w-72 bg-bg-secondary border  rounded-lg shadow-lg z-50">
             {isPending && (
-                <GlobalLoading text="Logging out" />
+                <GlobalLoading text="Logging out"  />
             )}
 
             {/* User Info */}

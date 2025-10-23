@@ -4,11 +4,12 @@ import Image from "next/image"
 import { Icons } from "@/components/utils/icons";
 import { SvgIcon } from "@/components/ui/SvgIcon";
 import { FileText } from "lucide-react";
+import { Button } from "@/components/ui";
 
 export default function EmailSettingsPage() {
   return (
     <main className="p-5">
-      <div className="w-full max-w-4xl ">
+      <div className="w-full max-w-4xl p-3">
         {/* Email Settings Card */}
         <div
           className="w-full p-7 border rounded bg-bg-secondary shadow-sm space-y-5"
@@ -113,11 +114,11 @@ export default function EmailSettingsPage() {
 
           {/* Update Button */}
           <div className="flex justify-end">
-            <button
-              className="px-3 py-1.5 rounded text-white text-body-medium font-medium transition-colors cursor-pointer bg-[#795CF5] hover:bg-[#7C3AED]"
+            <Button
+            variant="primary"
             >
               Update Email Address
-            </button>
+            </Button>
           </div>
         </div>
       </div>

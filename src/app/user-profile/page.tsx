@@ -239,11 +239,13 @@ export default function UserProfilePage() {
 
               {/* Save Button */}
               <div className="flex justify-end">
-                <button
-                  className="px-3 py-1.5 rounded text-white bg-primary hover:bg-primary/80 text-body-medium cursor-pointer font-medium transition-colors"
+                <Button
+                variant='primary'
+                // className='text-primary'
+                  // className="px-3 py-1.5 rounded text-white bg-primary hover:bg-primary/80 text-body-medium cursor-pointer font-medium transition-colors"
                 >
                   Save Changes
-                </button>
+                </Button>
               </div>
             </div>
           </div>

@@ -7,6 +7,7 @@ import { IconName, SvgIcon } from "../ui/SvgIcon";
 import { cn } from "@/utils/helpers";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { useTheme } from "next-themes";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -37,6 +38,7 @@ export default function Sidebar({
   onShowModal,
 }: SidebarProps) {
   const router = useRouter();
+  const theme = useTheme();
 
   const navigationItems: NavigationItem[] = [
     {
@@ -137,7 +139,9 @@ export default function Sidebar({
     }
 
     if (item.hasTime) {
-      return <Image src={Icons.pie} alt="time" width={14} height={14} />;
+      return <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9 0.0146484C13.4617 0.273463 17 3.97343 17 8.5C17 13.1944 13.1944 17 8.5 17C3.80558 17 0 13.1944 0 8.5C0 3.80558 3.80558 0 8.5 0H9V0.0146484ZM9 7.15625C9.50846 7.29002 9.88379 7.75228 9.88379 8.30273C9.88371 8.55046 9.8077 8.7805 9.67773 8.9707L10.4346 9.72754L10.0811 10.0811L9.31348 9.31348C9.13372 9.42319 8.92327 9.48828 8.69727 9.48828C8.04255 9.48806 7.51194 8.95745 7.51172 8.30273C7.51172 8.07661 7.57573 7.86537 7.68555 7.68555L3.19629 3.19629C1.83906 4.55352 1 6.42893 1 8.5C1 12.6421 4.35786 16 8.5 16C12.6421 16 16 12.6421 16 8.5C16 4.52593 12.9089 1.27592 9 1.01855V7.15625ZM7.70703 7L8.02832 7.32129C8.16692 7.22654 8.32766 7.16273 8.5 7.13379V7H7.70703ZM7.10742 6.40039H8.5V6H6.70703L7.10742 6.40039ZM6.10742 5.40039H8.5V5H5.70703L6.10742 5.40039ZM5.10742 4.40039H8.5V4H4.70703L5.10742 4.40039ZM4.10742 3.40039H8.5V3H3.70703L4.10742 3.40039ZM8.5 1C6.87273 1 5.36771 1.51982 4.13867 2.40039H8.5V1Z" fill="currentColor" />
+      </svg>
     }
 
     if (item.hasBadge && !item.isActive) {
@@ -192,35 +196,63 @@ export default function Sidebar({
     );
   };
 
-  const ViewAllProductsButton = () => {
-    const buttonClass = cn(
-      "flex items-center transition-colors cursor-pointer hover:bg-primary",
-      {
-        "justify-center w-10 h-10 mx-0 rounded border-t": collapsed,
-        "justify-between w-full px-2 py-1.5 rounded": !collapsed,
-        "border-border shadow-md": collapsed && currentPath === "/view-all-product",
-        "border-border hover:shadow-sm": collapsed && currentPath !== "/view-all-product",
-        "text-white bg-primary/90": !collapsed && currentPath === "/view-all-product",
-        "text-gray-600": !collapsed && currentPath !== "/view-all-product",
-      }
-    );
+const ViewAllProductsButton = () => {
+  const isActive = currentPath === "/view-all-product";
 
-    return (
-      <Link href={"/view-all-product"}
-        className={buttonClass}
-        title={collapsed ? "View All Products" : ""}
-      >
-        {collapsed ? (
-          <Image src={Icons.allProducts} alt="View All Products" width={16} height={16} />
-        ) : (
-          <>
-            <span className="font-medium p-1">View All Products</span>
-            <ChevronRight />
-          </>
-        )}
-      </Link>
-    );
-  };
+  const buttonClass = cn(
+    "flex items-center transition-colors cursor-pointer hover:bg-primary hover:text-btn-text",
+    collapsed
+      ? "justify-center w-10 h-10 mx-0 rounded border-t"
+      : "justify-between w-full px-2 py-1.5 rounded",
+    collapsed
+      ? isActive
+        ? "border-border shadow-md"
+        : "border-border hover:shadow-sm"
+      : isActive
+        ? "text-white bg-primary/90"
+        : "text-gray-600"
+  );
+
+  return (
+    <Link
+      href="/view-all-product"
+      className={buttonClass}
+      title={collapsed ? "View All Products" : ""}
+    >
+      {collapsed ? (
+        <Image
+          src={Icons.allProducts}
+          alt="View All Products"
+          width={16}
+          height={16}
+        />
+      ) : (
+        <>
+          <span className={cn("p-1", theme.theme === "light" ? "" : "text-invert")}>
+            View All Products
+          </span>
+
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 2L13 9.5L5 17"
+              stroke="currentColor"
+              strokeWidth="1.875"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </>
+      )}
+    </Link>
+  );
+};
+
 
   return (
     <>
