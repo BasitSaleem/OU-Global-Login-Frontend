@@ -7,6 +7,22 @@ interface CardProps {
     organizations: OgOrganization[] | undefined;
 }
 
+export const generateProductLink = (subdomain: string) => {
+    console.log('SubDomain: ', subdomain);
+    
+    let url = '';
+    if(process.env.NODE_ENV === 'development') {
+        url = `http://${subdomain}.localhost:8000/login?sso_login=true`
+    } else if( process.env.NODE_ENV === 'test') {
+        url = `http://${subdomain}.${process.env.OI_PRODUCT_DOMAIN}/login?sso_login=true`
+    } else {
+        url = `#`
+    }
+
+    return url;
+
+}
+
 const OrganizationProductCard = ({ code, organizations }: CardProps) => {
     const PRODUCT_NAME_MAP: Record<string, string> = {
         OI: "Owners Inventory",
@@ -49,7 +65,7 @@ const OrganizationProductCard = ({ code, organizations }: CardProps) => {
                             return (
                                 <Link
                                     key={org.id}
-                                    href={`http://${org.products?.[0]?.oi_sub_domain || org.name}.ownersanalytics.com`}
+                                    href={generateProductLink(org.products?.[0]?.oi_sub_domain!)}
                                     target="_blank"
                                     className="group"
                                 >
