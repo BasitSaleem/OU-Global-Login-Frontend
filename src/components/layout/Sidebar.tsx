@@ -196,62 +196,63 @@ export default function Sidebar({
     );
   };
 
-const ViewAllProductsButton = () => {
-  const isActive = currentPath === "/view-all-product";
+  const ViewAllProductsButton = () => {
+    const isActive = currentPath === "/view-all-product";
 
-  const buttonClass = cn(
-    "flex items-center transition-colors cursor-pointer hover:bg-primary hover:text-btn-text",
-    collapsed
-      ? "justify-center w-10 h-10 mx-0 rounded border-t"
-      : "justify-between w-full px-2 py-1.5 rounded",
-    collapsed
-      ? isActive
-        ? "border-border shadow-md"
-        : "border-border hover:shadow-sm"
-      : isActive
-        ? "text-white bg-primary/90"
-        : "text-gray-600"
-  );
+    const buttonClass = cn(
+      "flex items-center transition-colors cursor-pointer hover:bg-primary hover:text-btn-text",
+      collapsed
+        ? "justify-center w-10 h-10 mx-0 rounded border-t"
+        : "justify-between w-full px-2 py-1.5 rounded",
+      collapsed
+        ? isActive
+          ? "border-border shadow-md"
+          : "border-border hover:shadow-sm"
+        : isActive
+          ? "text-white bg-primary/90"
+          : "text-gray-600"
+    );
 
-  return (
-    <Link
-      href="/view-all-product"
-      className={buttonClass}
-      title={collapsed ? "View All Products" : ""}
-    >
-      {collapsed ? (
-        <Image
-          src={Icons.allProducts}
-          alt="View All Products"
-          width={16}
-          height={16}
-        />
-      ) : (
-        <>
-          <span className={cn("p-1", theme.theme === "light" ? "" : "text-invert")}>
-            View All Products
-          </span>
+    return (
+      <Link
+        href="/view-all-product"
+        className={buttonClass}
+        title={collapsed ? "View All Products" : ""}
+      >
+        {collapsed ? (
+          <Image
+            src={Icons.allProducts}
+            alt="View All Products"
+            width={16}
+            height={16}
+          />
+        ) : (
+          <>
+            <span className={cn("p-1", theme.theme === "light" ? "" : "text-invert")}>
+              View All Products
+            </span>
 
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M5 2L13 9.5L5 17"
-              stroke="currentColor"
-              strokeWidth="1.875"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </>
-      )}
-    </Link>
-  );
-};
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className={cn("p-1 w-6 h-6", theme.theme === "light" ? "" : "text-invert")}
+            >
+              <path
+                d="M5 2L13 9.5L5 17"
+                stroke="currentColor"
+                strokeWidth="1.875"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </>
+        )}
+      </Link>
+    );
+  };
 
 
   return (

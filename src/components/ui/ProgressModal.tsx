@@ -1,13 +1,12 @@
 "use client";
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, CheckCircle, X } from 'lucide-react';
+import {  CheckCircle, X } from 'lucide-react';
 import { ProgressTracker } from './ProgressTracker';
 import { useCreateOrganizationProgress } from '@/hooks/useProgressTracking';
 import { CreateOrganizationResponse } from '@/apiHooks.ts/organization/organization.types';
-import Image from 'next/image';
-import { Icons } from '../utils/icons';
 import { SvgIcon } from './SvgIcon';
+import { Button } from './button';
 
 interface ProgressModalProps {
   isOpen: boolean;
@@ -193,18 +192,23 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                       </div>
                     )}
                     <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
-                      <motion.button
+                      <Button
+                        variant='primary'
+                        onClick={handleGoHome}>
+                        Go to Dashboard
+                      </Button>
+                      {/* <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={handleGoHome}
-                        className="flex items-center cursor-pointer justify-center gap-2 px-4 py-2 bg-gray-100 hover:text-white rounded-lg hover:bg-primary transition-colors"
+                        className="flex items-center cursor-pointer justify-center gap-2 px-4 py-2  rounded-lg hover:bg-primary transition-colors"
                       >
                         <Home className="w-4 h-4" />
                         Go to Dashboard
-                      </motion.button>
+                      </motion.button> */}
                     </div>
                   </motion.div>
-                  
+
                 )}
               </AnimatePresence>
 
@@ -225,15 +229,19 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-3">
-                      <motion.button
+                       <Button
+                        variant='primary'
+                        onClick={handleGoHome}>
+                        Go to Dashboard
+                      </Button>
+                      {/* <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={handleGoHome}
-                        className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                        className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg hover:bg-primary/80 transition-colors"
                       >
                         <Home className="w-4 h-4" />
-                        Go to Dashboard
-                      </motion.button>
+                      </motion.button> */}
                     </div>
                   </motion.div>
                 )}

@@ -13,7 +13,6 @@ import { useEffect, useState } from "react";
 import { useAppDispatch } from "@/redux/store";
 import { setAuth } from "@/redux/slices/auth.slice";
 import { PublicRoute } from "@/components/guards/publicRoute.guard";
-import { ThemeToggle } from "@/components/ThemeToggle";
 export default function LoginPage() {
   const { mutate: login, isPending, error } = useLogin();
   const searchParams = useSearchParams();
@@ -23,7 +22,7 @@ export default function LoginPage() {
   const [params, setParams] = useState<any>({});
   useEffect(() => {
     const app = searchParams.get("app");
-    if(searchParams.get('client_id') !== '') {
+    if (searchParams.get('client_id') !== '') {
       const data = {
         client_id: searchParams.get('client_id'),
         redirect_uri: searchParams.get('redirect_uri'),
@@ -83,7 +82,6 @@ export default function LoginPage() {
 
   return (
     <PublicRoute redirectTo={typeof params === 'string' && params.length > 0 ? params : "/"}>
-      <ThemeToggle/>
       <div className="min-h-screen bg-card relative overflow-hidden">
         <div className="absolute inset-0 opacity-40">
         </div>
