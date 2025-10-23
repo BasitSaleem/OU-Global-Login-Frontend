@@ -14,7 +14,7 @@ export const generateProductLink = (subdomain: string) => {
     if(process.env.NODE_ENV === 'development') {
         url = `http://${subdomain}.localhost:8000/login?sso_login=true`
     } else {
-        url = `http://${subdomain}.${process.env.OI_PRODUCT_DOMAIN}/login?sso_login=true`
+        url = `http://${subdomain}.${process.env.NEXT_PUBLIC_OI_PRODUCT_DOMAIN}/login?sso_login=true`
     }
 
     return url;
