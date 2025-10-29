@@ -4,7 +4,7 @@ import React from 'react'
 const Loading = () => {
   return (
     <>
-      <GlobalLoading bg />
+      <GlobalLoading />
     </>
   )
 }

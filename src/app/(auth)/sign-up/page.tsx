@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Icons } from "@/components/utils/icons";
@@ -8,15 +8,12 @@ import Image from "next/image";
 import { useSignUp } from "@/apiHooks.ts/auth/auth.api";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signUpSchema } from "@/schems/auth.schemas";
-import { Button, Input, LoadingSpinner, Logo } from "@/components/ui";
+import { signUpSchema } from "@/schemas/auth.schemas";
+import { Button, Input, } from "@/components/ui";
 import { signUpData } from "@/apiHooks.ts/auth/auth.types";
-import { useAppDispatch } from "@/redux/store";
-import { setAuth } from "@/redux/slices/auth.slice";
 
 export default function SignUpPage() {
   const router = useRouter();
-  const dispatch = useAppDispatch();
   const methods = useForm({
     resolver: zodResolver(signUpSchema),
   });
@@ -34,59 +31,38 @@ export default function SignUpPage() {
     }
   }, [router, searchParams]);
 
-
   const onSubmit = async (data: signUpData) => {
+    console.log(data, "/////");
+
     signUp(
       { first_name: data.first_name, last_name: data.last_name, email: data.email, password: data.password } as signUpData,
       {
         onSuccess: (response) => {
-          const { user, accessToken, refreshToken, redirect_url } = response.data;
-          const organization = user.organizations?.[0] ?? null;
-  
-          dispatch(
-            setAuth({
-              user,
-              organization,
-              isAuthenticated: true,
-              refreshToken,
-              isLoading: false,
-              error: null,
-            })
-          );
-          
-          router.push("/create-organization");
+          // const { user, refreshToken, } = response.data;
+          // const organization = user.organizations?.[0] ?? null;
+          // dispatch(
+          //   setAuth({
+          //     user,
+          //     organization,
+          //     isAuthenticated: true,
+          //     refreshToken,
+          //     isLoading: false,
+          //     error: null,
+          //   })
+          // );
+          router.push(`/otp?email=${encodeURIComponent(response.data.email)}`);
         },
       }
     );
   };
 
   return (
-    <div className="min-h-screen bg-card relative overflow-hidden">
-      {/* Background decorative image */}
-      <div className="absolute inset-0 opacity-40">
-      </div>
 
-      {/* Header with logo and sign in */}
-      <div className="relative z-10 flex items-center justify-between p-4 sm:p-6 lg:p-8">
-        <Logo Icon={app === "OI" ? Icons.OI : Icons.owneruniverse} />
-        <div className="flex items-center gap-2 sm:gap-3">
-          <span className="text-xs sm:text-sm hidden sm:block">
-            Already have an account?
-          </span>
-          <Link
-            href={`/login?app=${app}`}
-            className="bg-primary border hover:bg-primary/80 text-btn-text text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition-colors"
-          >
-            Sign In
-          </Link>
-        </div>
-      </div>
-
-      {/* Main content container */}
-      <div className="flex items-center justify-center px-6 sm:px-6 pb-4 sm:pb-6 pt-0 sm:pt-2">
+    <>    {/* Main content container */}
+      < div className="flex items-center justify-center px-6 sm:px-6 pb-4 sm:pb-6 pt-0 sm:pt-2" >
         {/* Main sign up card */}
-        <div className="relative z-10 w-full max-w-xs sm:max-w-md">
-          <div className="bg-bg-secondary rounded-2xl sm:rounded-[15px] shadow-[0_0_20px_0_rgba(0,0,0,0.06)] px-4 sm:px-14 py-3 sm:py-4">
+        <div className="relative z-10 w-full max-w-sm sm:max-w-md xl:max-w-md">
+          <div className="bg-bg-secondary rounded-2xl sm:rounded-[16px] px-4 sm:px-14 py-3 sm:py-4">
             {/* Welcome heading */}
             <div className="text-center mb-3 mt-2 sm:mb-4">
               <h1 className="text-base sm:text-lg font-bold text-text">
@@ -219,15 +195,10 @@ export default function SignUpPage() {
               </Link>
             </div>
           </div>
-        </div>
-      </div>
+        </div >
+      </div >
 
-      {/* Footer */}
-      <div className="text-center relative z-10 pb-2 sm:pb-0">
-        <p className="text-xs ">
-          ©2025 Owners Inventory - All rights reserved
-        </p>
-      </div>
-    </div>
+    </>
+
   );
 }

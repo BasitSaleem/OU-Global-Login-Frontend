@@ -6,15 +6,20 @@ import {
   useCreateOrganization,
 } from "@/apiHooks.ts/organization/organization.api";
 import { CreateOrganizationData, CreateOrganizationResponse } from "@/apiHooks.ts/organization/organization.types";
-import { PRODUCTS } from "@/constants";
+import { PRODUCTS, ROUTES } from "@/constants";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "@/hooks/useToast";
-import { CreateOrganizationGuard } from "@/components/guards/createOrgRoute.guard";
 import ProgressModal from "@/components/ui/ProgressModal";
-import { CheckCircle, XCircle } from "lucide-react";
+import { CheckCircle, Route, XCircle } from "lucide-react";
 import { Button, Input, LoadingSpinner } from "@/components/ui";
+import { AuthGuard } from "@/components/guards/auth-guard";
+import { GlobalLoading } from "@/components/ui/loading";
+import { setAuth, setOrganization } from "@/redux/slices/auth.slice";
+import { useDispatch } from "react-redux";
+import { useAppDispatch } from "@/redux/store";
+import { CreateOrganizationGuard } from "@/components/guards/createOrgRoute.guard";
 
 
 interface AvailabilityStatusProps {
@@ -78,14 +83,12 @@ export default function CreateOrgPage() {
   const [selectedProduct, setSelectedProduct] = useState("OI");
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [organizationData, setOrganizationData] = useState<CreateOrganizationResponse | null>(null);
-
   const debouncedCompanyName = useDebounce(companyName.trim(), 1500);
   const debouncedSubDomain = useDebounce(subDomain.trim(), 1500);
-
   // Check if we're still debouncing
   const isNameDebouncing = companyName.trim() !== debouncedCompanyName && companyName.trim().length > 0;
   const isSubDomainDebouncing = subDomain.trim() !== debouncedSubDomain && subDomain.trim().length > 0;
-
+  const dispatch = useAppDispatch()
   const createOrgMutation = useCreateOrganization();
   const Router = useRouter();
 
@@ -115,45 +118,45 @@ export default function CreateOrgPage() {
     const trimmedName = companyName.trim();
     const trimmedSubDomain = subDomain.trim();
 
-    if (!trimmedName) {
-      toast.error('Please enter a company name');
-      return;
-    }
+    // if (!trimmedName) {
+    //   toast.error('Please enter a company name');
+    //   return;
+    // }
 
-    if (selectedProduct === "OI" && !trimmedSubDomain) {
-      toast.error('Please enter a sub-domain');
-      return;
-    }
+    // if (selectedProduct === "OI" && !trimmedSubDomain) {
+    //   toast.error('Please enter a sub-domain');
+    //   return;
+    // }
 
-    if (isNameDebouncing || checkingName) {
-      toast.error('Please wait while we verify the organization name');
-      return;
-    }
+    // if (isNameDebouncing || checkingName) {
+    //   toast.error('Please wait while we verify the organization name');
+    //   return;
+    // }
 
-    if (selectedProduct === "OI" && (isSubDomainDebouncing || checkingSub)) {
-      toast.error('Please wait while we verify the sub-domain');
-      return;
-    }
+    // if (selectedProduct === "OI" && (isSubDomainDebouncing || checkingSub)) {
+    //   toast.error('Please wait while we verify the sub-domain');
+    //   return;
+    // }
 
-    if (isNameAvailable === false) {
-      toast.error('Organization name is already taken. Please choose a different name.');
-      return;
-    }
+    // if (isNameAvailable === false) {
+    //   toast.error('Organization name is already taken. Please choose a different name.');
+    //   return;
+    // }
 
-    if (selectedProduct === "OI" && isSubAvailable === false) {
-      toast.error('Sub-domain is already taken. Please choose a different sub-domain.');
-      return;
-    }
+    // if (selectedProduct === "OI" && isSubAvailable === false) {
+    //   toast.error('Sub-domain is already taken. Please choose a different sub-domain.');
+    //   return;
+    // }
 
-    if (nameError) {
-      toast.error('Unable to verify organization name. Please try again.');
-      return;
-    }
+    // if (nameError) {
+    //   toast.error('Unable to verify organization name. Please try again.');
+    //   return;
+    // }
 
-    if (selectedProduct === "OI" && subError) {
-      toast.error('Unable to verify sub-domain. Please try again.');
-      return;
-    }
+    // if (selectedProduct === "OI" && subError) {
+    //   toast.error('Unable to verify sub-domain. Please try again.');
+    //   return;
+    // }
 
     const payload: CreateOrganizationData = {
       name: trimmedName,
@@ -169,8 +172,9 @@ export default function CreateOrgPage() {
             product: data.product,
             leadRegistration: data.leadRegistration || null,
           },
-        });
 
+        });
+        dispatch(setOrganization({ organization: data.organization }))
         setShowProgressModal(true);
       },
       onError: (error: any) => {
@@ -187,17 +191,17 @@ export default function CreateOrgPage() {
   };
 
   const handleProgressComplete = () => {
-    console.log('Registration completed!');
+    Router.push(ROUTES.DASHBOARD)
   };
 
   const handleGoHome = () => {
     setShowProgressModal(false);
     setOrganizationData(null);
-    Router.push("/");
+    Router.push(ROUTES.DASHBOARD);
   };
   return (
-    <>
-      <>
+    <CreateOrganizationGuard>
+      <AuthGuard fallback={<GlobalLoading />}>
         <div className="min-h-screen w-full flex items-center justify-center bg-background p-4 sm:p-8">
           <div className="bg-bg-secondary rounded-xl shadow-lg p-6 sm:p-12 w-full max-w-2xl border">
             <h1 className="mb-8 text-2xl sm:text-3xl font-bold text-center ">
@@ -313,7 +317,7 @@ export default function CreateOrgPage() {
           onGoHome={handleGoHome}
           isFromMain={true}
         />
-      </>
-    </>
+      </AuthGuard>
+    </CreateOrganizationGuard>
   );
 }

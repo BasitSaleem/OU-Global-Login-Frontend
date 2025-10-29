@@ -163,7 +163,7 @@ export default function Sidebar({
 
   const NavigationItem = ({ item }: { item: NavigationItem }) => {
     const itemClass = cn(
-      "flex cursor-pointer items-center hover:bg-primary/80 py-1 rounded transition-colors",
+      "flex cursor-pointer items-center hover:bg-primary/80 py-2 rounded-lg transition-colors",
       {
         "justify-center px-0": collapsed,
         "px-2": !collapsed,
@@ -202,14 +202,14 @@ export default function Sidebar({
     const buttonClass = cn(
       "flex items-center transition-colors cursor-pointer hover:bg-primary hover:text-btn-text",
       collapsed
-        ? "justify-center w-10 h-10 mx-0 rounded border-t"
-        : "justify-between w-full px-2 py-1.5 rounded",
+        ? "justify-center w-10 h-10 mx-0  border-t"
+        : "justify-between w-full px-2 py-1.5 rounded-lg",
       collapsed
         ? isActive
           ? "border-border shadow-md"
           : "border-border hover:shadow-sm"
         : isActive
-          ? "text-white bg-primary/90"
+          ? "text-white bg-primary/90 "
           : "text-gray-600"
     );
 

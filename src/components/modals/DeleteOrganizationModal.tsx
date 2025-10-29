@@ -138,7 +138,7 @@ function ProgressTracking(progress: JobProgress | null, onClose: () => void, rec
                 </div>
                 <div className="w-full rounded-full h-2">
                     <motion.div
-                        className={`h-2 rounded-full ${progress.status === 'completed' ? 'bg-[#795CF5]' :
+                        className={`h-2 rounded-full ${progress.status === 'completed' ? 'bg-primary' :
                             progress.status === 'failed' ? 'bg-red-500' :
                                 'bg-red-600'}`}
                         initial={{ width: 0 }}
@@ -149,7 +149,7 @@ function ProgressTracking(progress: JobProgress | null, onClose: () => void, rec
                     <div className="mt-4 text-center">
                         <Button
                             onClick={onClose}
-                            className="bg-[#795CF5] hover:bg-[#9c88f5]"
+                            className="bg-primary hover:bg-primary"
                         >
                             Done
                         </Button>
@@ -201,7 +201,7 @@ function ProgressTracking(progress: JobProgress | null, onClose: () => void, rec
                 </>
             ) : isConnected ? (
                 <>
-                    <div className="w-2 h-2 bg-[#2e1792] rounded-full animate-pulse" />
+                    <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
                     <span>Connected</span>
                 </>
             ) : (
