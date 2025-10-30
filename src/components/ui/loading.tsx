@@ -28,16 +28,16 @@ export function Loading({
       'flex flex-col items-center justify-center gap-3',
       className
     )}>
-      <Loader2 className={cn('animate-spin text-blue-600 dark:text-blue-400', sizes[size])} />
+      <Loader2 className={cn('animate-spin text-blue-600 ', sizes[size])} />
       {text && (
-        <p className="text-sm text-gray-600 dark:text-gray-400">{text}</p>
+        <p className="text-sm">{text}</p>
       )}
     </div>
   );
 
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm dark:bg-gray-900/80">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
         {content}
       </div>
     );
@@ -60,7 +60,7 @@ export function LoadingSkeleton({ className }: { className?: string }) {
 export function LoadingSpinner({ size = 5, className }: { size?: number, className?: string }) {
   return (
     <div className="text-center flex flex-col items-center">
-      <div className={cn(`animate-spin rounded-full h-${size} w-${size} border-b-2 border-[#795CF5] mx-auto`, className)}></div>
+      <div className={cn(`animate-spin rounded-full h-${size} w-${size} border-b-2 border-primary mx-auto`, className)}></div>
     </div >
   );
 }

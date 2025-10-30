@@ -31,17 +31,14 @@ export function PublicRoute({
   useEffect(() => {
     if (!isChecking && isAuthenticated) {
       const returnUrl = searchParams.get('returnUrl');
-      console.log(returnUrl, "////");
       const destination = returnUrl ? decodeURIComponent(returnUrl) : redirectTo;
-      console.log('Destination:: ', destination);
-      
-      router.push(destination);
+      router.replace(destination);
     }
   }, [isAuthenticated, isChecking, router, searchParams, redirectTo]);
 
   if (isChecking) {
     return fallback || (
-      <GlobalLoading text='checking authentication' />
+      <GlobalLoading text='checking authentication...' />
     );
   }
 

@@ -20,9 +20,11 @@ export const AUTH_CONFIG = {
   rememberMeTimeout: 30 * 24 * 60 * 60 * 1000 // 30 days
 };
 
+
 export const ROUTES = {
   HOME: '/',
-  LOGIN: '/login',
+  LOGIN: '/login?app=OG',
+  CREATE_ORGANIZATION: "/create-organization",
   REGISTER: '/sign-up',
   FORGOT_PASSWORD: '/auth/forgot-password',
   RESET_PASSWORD: '/auth/reset-password',

@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { signinData, signUpData } from "./auth.types";
+import { ResendOtpData, signinData, signUpData, VerifyOtpData } from "./auth.types";
 import { request } from "@/utils/requestFunction";
 import { toast } from "@/hooks/useToast";
 const ENDPOINTS = {
   SIGN_IN: "/auth/sign-in",
   SIGN_UP: "/auth/sign-up",
   LOG_OUT: "/auth/logout",
+  VERIFY_OTP: "/auth/verify-email",
+  RESENT_OTP: "/auth/resend-otp"
 };
 
 export const useLogin = () => {
@@ -41,11 +43,12 @@ export const useSignUp = () => {
         {},
         data
       ),
-    onSuccess: (user) => {
+    onSuccess: (user, data) => {
       queryClient.setQueryData(["user", user.id], user);
+      console.log(data, "response dataaa");
       toast.success(
-        "Account created!",
-        "Welcome to Owners Universe! Your account has been created successfully."
+        "Verification Email sent",
+        `Verification email sent successfully to ${data.email}`
       );
     },
     onError: (error: any) => {
@@ -71,5 +74,34 @@ export const useLogout = () => {
       const message = (error as Error)?.message || "Logout failed";
       toast.error("Logout failed", message);
     },
+  });
+};
+
+export const useVerifyOtp = () => {
+  return useMutation({
+    mutationFn: (data: VerifyOtpData) =>
+      request(ENDPOINTS.VERIFY_OTP, "POST", {}, data),
+    onSuccess: (data) => {
+      toast.success("OTP verified ", data.message || "OTP verification successful")
+    },
+    onError: (error) => {
+      const message = (error as Error)?.message || "OTP verification failed";
+      toast.error("OTP verification failed", message);
+    }
+  });
+};
+
+export const useResendOtp = () => {
+  return useMutation({
+    mutationFn: (data: ResendOtpData) =>
+      request(ENDPOINTS.RESENT_OTP, "POST", {}, data),
+    onSuccess: (data) => {
+      toast.success("OTP resent  ", data.message || "OTP resent successfully")
+
+    },
+    onError: (error) => {
+      const message = (error as Error)?.message || "Resent otp failed";
+      toast.error("Resent failed", message);
+    }
   });
 };

@@ -17,3 +17,11 @@ export interface signUpData {
   email: string;
   password: string;
 }
+export interface VerifyOtpData {
+  email: string;
+  otp: string;
+}
+
+export interface ResendOtpData {
+  email: string;
+}

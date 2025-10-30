@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { Providers } from "@/providers";
+import { SEO } from "@/components/SEO";
 
 
 const inter = Inter({
@@ -47,6 +48,7 @@ export default function RootLayout({
       <body
         suppressHydrationWarning
         className={`${inter.className} antialiased`}
+
       >
         <Providers >
           <ErrorBoundary>{children}</ErrorBoundary>

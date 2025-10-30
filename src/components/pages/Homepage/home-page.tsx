@@ -142,7 +142,7 @@ export default function HomePage() {
             {/* Right Side */}
             <button
               onClick={() => (window.location.href = "/view-all-product")}
-              className="w-full sm:w-auto text-white px-3 py-2 rounded hover:opacity-90 transition-opacity cursor-pointer  hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700"
+              className="w-full sm:w-auto  px-3 py-2  hover:opacity-90 transition-opacity cursor-pointer  hover:bg-primary bg-primary rounded-xl"
             >
               Explore All Products
             </button>
