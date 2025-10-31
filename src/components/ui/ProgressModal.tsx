@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, } from 'react';
+import React, { useCallback, useEffect, } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {  CheckCircle, X } from 'lucide-react';
 import { ProgressTracker } from './ProgressTracker';
@@ -8,6 +8,7 @@ import { CreateOrganizationResponse } from '@/apiHooks.ts/organization/organizat
 import { SvgIcon } from './SvgIcon';
 import { Button } from './button';
 import { useAppDispatch } from "@/redux/store";
+import { setOrganization } from '@/redux/slices/auth.slice';
 
 interface ProgressModalProps {
   isOpen: boolean;
@@ -76,6 +77,14 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
       window.open(`http://${organizationData.data.leadRegistration.subDomainName}.${domain}`, '_blank');
     }
   };
+
+  useEffect(() => {
+
+    if(isFromMain && progress?.status === 'completed') {
+      dispatch(setOrganization(organizationData))
+    }
+
+  }, [progress?.status])
 
   return (
     <AnimatePresence>

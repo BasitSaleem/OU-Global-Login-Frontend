@@ -174,7 +174,7 @@ export default function CreateOrgPage() {
           },
 
         });
-        dispatch(setOrganization({ organization: data.organization }))
+        // dispatch(setOrganization({ organization: data.organization }))
         setShowProgressModal(true);
       },
       onError: (error: any) => {
