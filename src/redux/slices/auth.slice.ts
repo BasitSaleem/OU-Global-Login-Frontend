@@ -18,7 +18,6 @@ const initialState: AuthState = {
   isLoading: false,
   error: null,
   refreshToken: null,
-  ssoReturnUrl: null
 };
 
 const authSlice = createSlice({
@@ -35,19 +34,12 @@ const authSlice = createSlice({
     setOrganization: (state, action: PayloadAction<any>) => {
       state.organization = action.payload;
     },
-    setSSoURL: (state, action: PayloadAction<string>) => {
-      state.ssoReturnUrl = action.payload
-    },
-    clearSso: (state) => {
-      state.ssoReturnUrl = null
-    },
     clearAuth: (state) => {
       state.user = null;
       state.isAuthenticated = false;
       state.error = null;
       state.organization = null
       state.refreshToken = null
-      state.ssoReturnUrl = null
     },
     initializeAuth: (state) => {
       const token = localStorage.getItem(AUTH_CONFIG.tokenKey);
@@ -65,5 +57,5 @@ const authSlice = createSlice({
     },
   },
 });
-export const { setAuth, clearAuth, setSSoURL,clearSso, setOrganization, initializeAuth } = authSlice.actions;
+export const { setAuth, clearAuth, setOrganization, initializeAuth } = authSlice.actions;
 export default authSlice.reducer;

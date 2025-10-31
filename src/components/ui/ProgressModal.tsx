@@ -7,6 +7,7 @@ import { useCreateOrganizationProgress } from '@/hooks/useProgressTracking';
 import { CreateOrganizationResponse } from '@/apiHooks.ts/organization/organization.types';
 import { SvgIcon } from './SvgIcon';
 import { Button } from './button';
+import { useAppDispatch } from "@/redux/store";
 
 interface ProgressModalProps {
   isOpen: boolean;
@@ -25,7 +26,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
   onGoHome,
   isFromMain
 }) => {
-
+  const dispatch = useAppDispatch()
   const handleProgress = useCallback((progress: any) => {
     console.log("Progress update:", progress);
   }, []);

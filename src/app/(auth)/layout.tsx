@@ -10,10 +10,10 @@ interface AuthLayoutProp {
     children: React.ReactNode;
 }
 const AuthLayout = ({ children }: AuthLayoutProp) => {
-    const { ssoReturnUrl } = useAppSelector((s) => s.auth)
+    const ssoReturnUrl = localStorage.getItem('ssoReturnUrl') ?? '';
     const searchParams = useSearchParams();
     const app = searchParams.get("app") || "OG";
-    if (ssoReturnUrl) {
+    if (ssoReturnUrl && ssoReturnUrl.length > 0) {
         return (
             <PublicRoute redirectTo={ssoReturnUrl ?? '/'}>
                 <GlobalLoading text='redirecting after sso' />

@@ -11,9 +11,10 @@ import { loginSchema } from "@/schemas/auth.schemas";
 import { useLogin } from "@/apiHooks.ts/auth/auth.api";
 import { useEffect, useState } from "react";
 import { useAppDispatch } from "@/redux/store";
-import { setAuth, setSSoURL } from "@/redux/slices/auth.slice";
+import { setAuth } from "@/redux/slices/auth.slice";
 import { LoginSEO } from "@/components/SEO";
 import { PublicRoute } from "@/components/guards/publicRoute.guard";
+import { m } from "framer-motion";
 export default function LoginPage() {
   const { mutate: login, isPending, error } = useLogin();
   const searchParams = useSearchParams();
@@ -76,8 +77,9 @@ export default function LoginPage() {
         );
         console.log('Redirect URL: ', redirect_url);
         
-        dispatch(setSSoURL(redirect_url))
-        // window.location.href = redirect_url
+        // dispatch(setSSoURL(redirect_url))
+        localStorage.setItem('ssoReturnUrl', redirect_url);
+
       },
     });
   };

@@ -1,25 +1,22 @@
 "use client";
 
 import { Icons } from "@/components/utils/icons";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppSelector } from "@/redux/store";
 import OrganizationProductCard from "../Organizations/OrganizationProductCard";
 import { useGetOrganizations } from "@/apiHooks.ts/organization/organization.api";
 import { LoadingSpinner } from "@/components/ui";
 import { Skeleton } from "@/components/ui/skeletion";
 import Link from "next/link";
 import { useEffect } from "react";
-import { clearSso } from "@/redux/slices/auth.slice";
-
 
 export default function HomePage() {
   const { user } = useAppSelector((s) => s.auth);
-  const dispatch = useAppDispatch();
   const { data, isPending: loadingOrganizations } = useGetOrganizations(1, 20);
 
   const productCodes = ["OI", "OJ", "OM", "OA"];
 
   useEffect(() => {
-    dispatch(clearSso())
+    localStorage.removeItem('ssoReturnUrl')
   }, [])
 
   return (
