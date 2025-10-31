@@ -58,12 +58,12 @@ const OrganizationProductCard = ({ code, organizations }: CardProps) => {
                     </p>
 
                     <div className="flex flex-wrap items-center gap-2 mt-3">
-                        {filteredOrganizations.map((org) => {
+                        {filteredOrganizations.map((org, i) => {
                             const bgColor = getColorFromId(org.id ?? "");
                             return (
                                 <Link
                                     key={org.id}
-                                    href={generateProductLink(org.products?.[0]?.oi_sub_domain!)}
+                                    href={generateProductLink(org.products?.[i]?.oi_sub_domain!)}
                                     target="_blank"
                                     className="group"
                                 >

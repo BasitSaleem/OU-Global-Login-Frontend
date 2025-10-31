@@ -5,6 +5,7 @@ import { getColorFromId } from "@/utils/getRandomColors";
 import { Trash } from "lucide-react";
 import Link from "next/link";
 import React, { useMemo, useState } from "react";
+import { generateProductLink } from "./OrganizationProductCard";
 
 interface OrganizationGridComponentProps {
   id: string;
@@ -107,7 +108,7 @@ export function OrganizationGridComponent({
           </span>
           <div className="flex items-center -space-x-0.5">
             {org?.products?.map((product, index) => (
-              <Link key={product.id} href={`http://${org.name}.ownersanalytics.com`} target="_blank" className="z-30">
+              <Link key={product.id} href={generateProductLink(org?.products?.[index]?.oi_sub_domain!)} target="_blank" className="z-30">
                 <img
                   key={index}
                   src={`/Icons/${product.product_name}_LOGO.svg`}
