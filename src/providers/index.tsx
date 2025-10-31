@@ -32,11 +32,11 @@ export function Providers({ children }: ProvidersProps) {
         <PersistGate loading={<GlobalLoading />} persistor={persistor}>
           <QueryClientProvider client={queryClient}>
             <ReactQueryDevtools initialIsOpen={false} />
-            <CreateOrganizationGuard>
+            {/* <CreateOrganizationGuard> */}
               <ToastProvider>
                 {children}
               </ToastProvider>
-            </CreateOrganizationGuard>
+            {/* </CreateOrganizationGuard> */}
           </QueryClientProvider>
         </PersistGate>
       </ReduxProvider>

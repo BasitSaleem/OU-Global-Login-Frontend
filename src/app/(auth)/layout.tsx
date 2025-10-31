@@ -1,15 +1,25 @@
 "use client"
 import { PublicRoute } from '@/components/guards/publicRoute.guard';
 import { Logo } from '@/components/ui';
+import { GlobalLoading } from '@/components/ui/loading';
 import { Icons } from '@/components/utils/icons';
+import { useAppSelector } from '@/redux/store';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 interface AuthLayoutProp {
     children: React.ReactNode;
 }
 const AuthLayout = ({ children }: AuthLayoutProp) => {
+    const { ssoReturnUrl } = useAppSelector((s) => s.auth)
     const searchParams = useSearchParams();
     const app = searchParams.get("app") || "OG";
+    if (ssoReturnUrl) {
+        return (
+            <PublicRoute redirectTo={ssoReturnUrl ?? '/'}>
+                <GlobalLoading text='redirecting after sso' />
+            </PublicRoute>
+        )
+    }
     return (
         <div className="min-h-screen bg-card relative overflow-hidden">
             {/* Background decorative image */}
@@ -31,9 +41,9 @@ const AuthLayout = ({ children }: AuthLayoutProp) => {
                     </Link>
                 </div>
             </div>
-            <PublicRoute redirectTo="/">
+            {/* <PublicRoute redirectTo={ssoReturnUrl ?? '/'}> */}
                 {children}
-            </PublicRoute>
+            {/* </PublicRoute> */}
             <div className="fixed bottom-[24px] inset-x-0 z-10 pb-2 sm:pb-0 flex justify-center">
                 <p className="text-xs text-center">
                     ©2025 Owners Inventory - All rights reserved

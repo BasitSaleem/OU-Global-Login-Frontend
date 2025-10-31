@@ -1,9 +1,10 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useAppSelector } from '@/redux/store';
+import { useAppDispatch, useAppSelector } from '@/redux/store';
 import { ROUTES } from '@/constants';
 import { GlobalLoading } from '../ui/loading';
+import { setAuth } from '@/redux/slices/auth.slice';
 interface PublicRouteProps {
   children: React.ReactNode;
   redirectTo?: string;
@@ -19,7 +20,7 @@ export function PublicRoute({
   const searchParams = useSearchParams();
   const { isAuthenticated } = useAppSelector((state) => state.auth);
   const [isChecking, setIsChecking] = useState(true);
-
+const dispatch = useAppDispatch()
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsChecking(false);
@@ -30,12 +31,17 @@ export function PublicRoute({
 
   useEffect(() => {
     if (!isChecking && isAuthenticated) {
-      const returnUrl = searchParams.get('returnUrl');
-      const destination = returnUrl ? decodeURIComponent(returnUrl) : redirectTo;
+      console.log('redirectTo inside: ', redirectTo);
+
+      const destination = redirectTo;
+
+      console.log('Destination: ', destination);
+      
       router.replace(destination);
+      
     }
   }, [isAuthenticated, isChecking, router, searchParams, redirectTo]);
-
+  
   if (isChecking) {
     return fallback || (
       <GlobalLoading text='checking authentication...' />

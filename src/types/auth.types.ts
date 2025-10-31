@@ -65,6 +65,7 @@ export interface AuthState {
   error?: string | null;
   refreshToken?: string | null;
   organization: OgOrganization|null
+  ssoReturnUrl?:string |null
 }
 
 export enum UserRole {

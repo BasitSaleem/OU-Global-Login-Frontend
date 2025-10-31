@@ -11,8 +11,9 @@ import { loginSchema } from "@/schemas/auth.schemas";
 import { useLogin } from "@/apiHooks.ts/auth/auth.api";
 import { useEffect, useState } from "react";
 import { useAppDispatch } from "@/redux/store";
-import { setAuth } from "@/redux/slices/auth.slice";
+import { setAuth, setSSoURL } from "@/redux/slices/auth.slice";
 import { LoginSEO } from "@/components/SEO";
+import { PublicRoute } from "@/components/guards/publicRoute.guard";
 export default function LoginPage() {
   const { mutate: login, isPending, error } = useLogin();
   const searchParams = useSearchParams();
@@ -73,129 +74,133 @@ export default function LoginPage() {
             error: null,
           })
         );
-
-        setParams(redirect_url);
+        console.log('Redirect URL: ', redirect_url);
+        
+        dispatch(setSSoURL(redirect_url))
+        // window.location.href = redirect_url
       },
     });
   };
-
+ 
 
   return (
     <>
-      <LoginSEO />
-      <main className="flex items-center justify-center px-6 h-[450px pb-4 md:pt-1 pt-20">
-        <div className="relative z-10 w-full max-w-sm sm:max-w-md xl:max-w-md">
-          <div className="bg-bg-secondary rounded-2xl sm:rounded-[16px] px-4 sm:px-14 py-3 sm:py-4">
-            <div className="text-center mb-3 mt-2 sm:mb-4">
-              <h1 className="text-base sm:text-xl font-bold text-text">
-                Welcome back
-              </h1>
-            </div>
-            <FormProvider {...methods}>
-              {" "}
-              <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="space-y-2 sm:space-y-3"
-              >
-                <Input
-                  id="email"
-                  label="Email"
-                  type="email"
-                  placeholder="Enter Email"
-                  {...methods.register("email", {
-                    required: "Email is required",
-                  })}
-                  error={methods.formState.errors.email?.message as string}
-                />
+      // <PublicRoute redirectTo={typeof params === 'string' && params.length > 0 ? params : "/"}>
+        <LoginSEO />
+        <main className="flex items-center justify-center px-6 h-[450px pb-4 md:pt-1 pt-20">
+          <div className="relative z-10 w-full max-w-sm sm:max-w-md xl:max-w-md">
+            <div className="bg-bg-secondary rounded-2xl sm:rounded-[16px] px-4 sm:px-14 py-3 sm:py-4">
+              <div className="text-center mb-3 mt-2 sm:mb-4">
+                <h1 className="text-base sm:text-xl font-bold text-text">
+                  Welcome back
+                </h1>
+              </div>
+              <FormProvider {...methods}>
+                {" "}
+                <form
+                  onSubmit={handleSubmit(onSubmit)}
+                  className="space-y-2 sm:space-y-3"
+                >
+                  <Input
+                    id="email"
+                    label="Email"
+                    type="email"
+                    placeholder="Enter Email"
+                    {...methods.register("email", {
+                      required: "Email is required",
+                    })}
+                    error={methods.formState.errors.email?.message as string}
+                  />
 
-                <Input
-                  id="password"
-                  label="Password"
-                  type="password"
-                  placeholder="Enter Password"
-                  isPassword={true}
-                  {...methods.register("password", {
-                    required: "Password is required",
-                  })} // Register input
-                  error={methods.formState.errors.password?.message as string}
-                />
+                  <Input
+                    id="password"
+                    label="Password"
+                    type="password"
+                    placeholder="Enter Password"
+                    isPassword={true}
+                    {...methods.register("password", {
+                      required: "Password is required",
+                    })} // Register input
+                    error={methods.formState.errors.password?.message as string}
+                  />
 
-                <div className="flex items-center justify-between pt-1 sm:pt-2">
-                  <label className="flex items-center gap-1.5">
-                    <input
-                      type="checkbox"
-                      {...methods.register("rememberMe")}
-                      className="w-3 h-3 sm:w-4 sm:h-4 border bg-primary rounded  focus:ring-primary cursor-pointer"
-                    />
-                    <span className="text-xs font-semibold">
-                      Remember me
-                    </span>
-                  </label>
-                  <Link
-                    href="/forgot-password"
-                    className="text-xs font-bold text-primary underline hover:underline"
-                  >
-                    Forget Password?
-                  </Link>
-                </div>
+                  <div className="flex items-center justify-between pt-1 sm:pt-2">
+                    <label className="flex items-center gap-1.5">
+                      <input
+                        type="checkbox"
+                        {...methods.register("rememberMe")}
+                        className="w-3 h-3 sm:w-4 sm:h-4 border bg-primary rounded  focus:ring-primary cursor-pointer"
+                      />
+                      <span className="text-xs font-semibold">
+                        Remember me
+                      </span>
+                    </label>
+                    <Link
+                      href="/forgot-password"
+                      className="text-xs font-bold text-primary underline hover:underline"
+                    >
+                      Forget Password?
+                    </Link>
+                  </div>
 
-                <div className="pt-2 sm:pt-3 sm:mt-5">
-                  <Button
-                    type="submit"
-                    isLoading={isPending}
-                    disabled={isPending || Object.keys(methods.formState.errors).length > 0}
-                    variant="primary"
-                    className="w-full h-8 sm:h-9 text-white text-xs sm:text-sm font-bold rounded-full  cursor-pointer"
-                  >
-                    {!isPending ? "Sign In" : "Signing in ..."}
-                  </Button>
-                </div>
-              </form>
-            </FormProvider>
+                  <div className="pt-2 sm:pt-3 sm:mt-5">
+                    <Button
+                      type="submit"
+                      isLoading={isPending}
+                      disabled={isPending || Object.keys(methods.formState.errors).length > 0}
+                      variant="primary"
+                      className="w-full h-8 sm:h-9 text-white text-xs sm:text-sm font-bold rounded-full  cursor-pointer"
+                    >
+                      {!isPending ? "Sign In" : "Signing in ..."}
+                    </Button>
+                  </div>
+                </form>
+              </FormProvider>
 
-            {/* Divider */}
-            <div className="my-3 sm:my-7 flex items-center">
-              <div className="flex-1 border-t border"></div>
-              <span className="px-2 sm:px-3 text-xs sm:text-sm">
-                Or
-              </span>
-              <div className="flex-1 border-t border"></div>
-            </div>
-
-            <div className="space-y-2 sm:space-y-5">
-              <button className="cursor-pointer hover:text-btn-text w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border  rounded-full hover:bg-primary/80 transition-colors">
-                <Image src={Icons.google} alt="Google" width={20} height={20} />
-                <span className="text-xs sm:text-sm ">
-                  Continue with Google
+              {/* Divider */}
+              <div className="my-3 sm:my-7 flex items-center">
+                <div className="flex-1 border-t border"></div>
+                <span className="px-2 sm:px-3 text-xs sm:text-sm">
+                  Or
                 </span>
-              </button>
-              <button className="cursor-pointer hover:text-btn-text w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border rounded-full hover:bg-primary/80 transition-colors">
-                <Image
-                  src={Icons.microsoft}
-                  alt="Microsoft"
-                  width={20}
-                  height={20}
-                />
-                <span className="text-xs sm:text-sm ">
-                  Continue with Microsoft
-                </span>
-              </button>
-            </div>
+                <div className="flex-1 border-t border"></div>
+              </div>
 
-            <div className="mt-3 sm:mt-4 text-center">
-              <span className="text-xs sm:text-sm">
-                Don't have an account{" "}
-              </span>
-              <Link
-                href={`/sign-up?app=${app}`}
-                className="underline text-xs sm:text-sm font-bold text-primary hover:underline"
-              >
-                Sign Up
-              </Link>
+              <div className="space-y-2 sm:space-y-5">
+                <button className="cursor-pointer hover:text-btn-text w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border  rounded-full hover:bg-primary/80 transition-colors">
+                  <Image src={Icons.google} alt="Google" width={20} height={20} />
+                  <span className="text-xs sm:text-sm ">
+                    Continue with Google
+                  </span>
+                </button>
+                <button className="cursor-pointer hover:text-btn-text w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border rounded-full hover:bg-primary/80 transition-colors">
+                  <Image
+                    src={Icons.microsoft}
+                    alt="Microsoft"
+                    width={20}
+                    height={20}
+                  />
+                  <span className="text-xs sm:text-sm ">
+                    Continue with Microsoft
+                  </span>
+                </button>
+              </div>
+
+              <div className="mt-3 sm:mt-4 text-center">
+                <span className="text-xs sm:text-sm">
+                  Don't have an account{" "}
+                </span>
+                <Link
+                  href={`/sign-up?app=${app}`}
+                  className="underline text-xs sm:text-sm font-bold text-primary hover:underline"
+                >
+                  Sign Up
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-      </main>
-    </>
+        </main>
+      // </PublicRoute>
+      </>
   );
 }
