@@ -1,23 +1,25 @@
 "use client";
 
 import { Icons } from "@/components/utils/icons";
-import { useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import OrganizationProductCard from "../Organizations/OrganizationProductCard";
 import { useGetOrganizations } from "@/apiHooks.ts/organization/organization.api";
 import { LoadingSpinner } from "@/components/ui";
 import { Skeleton } from "@/components/ui/skeletion";
 import Link from "next/link";
 import { useEffect } from "react";
+import { setSSOStatus } from "@/redux/slices/auth.slice";
 
 export default function HomePage() {
   const { user } = useAppSelector((s) => s.auth);
   const { data, isPending: loadingOrganizations } = useGetOrganizations(1, 20);
+  const dispatch = useAppDispatch();
 
   const productCodes = ["OI", "OJ", "OM", "OA"];
 
-  // useEffect(() => {
-  //   localStorage.removeItem('ssoReturnUrl')
-  // }, [])
+  useEffect(() => {
+    dispatch(setSSOStatus(false));
+  }, [])
 
   return (
     <div className="p-4 bg-background min-h-screen">

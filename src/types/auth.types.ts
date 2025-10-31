@@ -64,7 +64,8 @@ export interface AuthState {
   isLoading?: boolean;
   error?: string | null;
   refreshToken?: string | null;
-  organization: OgOrganization|null
+  organization: OgOrganization|null;
+  setSSO?: boolean|null;
 }
 
 export enum UserRole {
