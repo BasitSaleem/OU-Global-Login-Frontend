@@ -15,9 +15,9 @@ export default function HomePage() {
 
   const productCodes = ["OI", "OJ", "OM", "OA"];
 
-  useEffect(() => {
-    localStorage.removeItem('ssoReturnUrl')
-  }, [])
+  // useEffect(() => {
+  //   localStorage.removeItem('ssoReturnUrl')
+  // }, [])
 
   return (
     <div className="p-4 bg-background min-h-screen">

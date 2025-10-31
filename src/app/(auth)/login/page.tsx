@@ -64,6 +64,7 @@ export default function LoginPage() {
       onSuccess: (response) => {
         const { user, accessToken, refreshToken, redirect_url } = response.data;
         const organization = user.organizations?.[0] ?? null;
+        localStorage.setItem('ssoReturnUrl', redirect_url);
 
         dispatch(
           setAuth({
@@ -78,7 +79,6 @@ export default function LoginPage() {
         console.log('Redirect URL: ', redirect_url);
         
         // dispatch(setSSoURL(redirect_url))
-        localStorage.setItem('ssoReturnUrl', redirect_url);
 
       },
     });
