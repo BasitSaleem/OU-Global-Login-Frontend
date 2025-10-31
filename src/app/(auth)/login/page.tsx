@@ -87,7 +87,7 @@ export default function LoginPage() {
 
   return (
     <>
-      // <PublicRoute redirectTo={typeof params === 'string' && params.length > 0 ? params : "/"}>
+      {/* // <PublicRoute redirectTo={typeof params === 'string' && params.length > 0 ? params : "/"}> */}
         <LoginSEO />
         <main className="flex items-center justify-center px-6 h-[450px pb-4 md:pt-1 pt-20">
           <div className="relative z-10 w-full max-w-sm sm:max-w-md xl:max-w-md">
@@ -202,7 +202,7 @@ export default function LoginPage() {
             </div>
           </div>
         </main>
-      // </PublicRoute>
+      {/* // </PublicRoute> */}
       </>
   );
 }
