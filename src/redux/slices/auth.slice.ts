@@ -18,7 +18,6 @@ const initialState: AuthState = {
   isLoading: false,
   error: null,
   refreshToken: null,
-  setSSO: null,
 };
 
 const authSlice = createSlice({
@@ -34,9 +33,6 @@ const authSlice = createSlice({
     },
     setOrganization: (state, action: PayloadAction<any>) => {
       state.organization = action.payload;
-    },
-    setSSOStatus: (state, action: PayloadAction<any>) => {
-      state.setSSO = action.payload;
     },
     clearAuth: (state) => {
       state.user = null;
@@ -61,5 +57,5 @@ const authSlice = createSlice({
     },
   },
 });
-export const { setAuth, clearAuth, setSSOStatus, setOrganization, initializeAuth } = authSlice.actions;
+export const { setAuth, clearAuth, setOrganization, initializeAuth } = authSlice.actions;
 export default authSlice.reducer;

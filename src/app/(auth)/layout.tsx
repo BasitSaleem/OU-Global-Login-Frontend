@@ -1,29 +1,23 @@
 "use client"
-import { PublicRoute } from '@/components/guards/publicRoute.guard';
 import { Logo } from '@/components/ui';
-import { GlobalLoading } from '@/components/ui/loading';
 import { Icons } from '@/components/utils/icons';
-import { setSSOStatus } from '@/redux/slices/auth.slice';
-import { useAppDispatch, useAppSelector } from '@/redux/store';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 interface AuthLayoutProp {
     children: React.ReactNode;
 }
 const AuthLayout = ({ children }: AuthLayoutProp) => {
-    const dispatch = useAppDispatch();
-    const ssoStatus = useAppSelector((s) => s.auth.setSSO)
     const searchParams = useSearchParams();
     const app = searchParams.get("app") || "OG";
     console.log("SSO RETURN URL:: ");
-    if (ssoStatus) {
-        console.log("SSO STATUS:: ", ssoStatus);
-        dispatch(setSSOStatus(false));
+    // if (ssoStatus) {
+    //     console.log("SSO STATUS:: ", ssoStatus);
+    //     dispatch(setSSOStatus(false));
         
-        return (
-            <GlobalLoading text='redirecting after sso' />
-        )
-    }
+    //     return (
+    //         <GlobalLoading text='redirecting after sso' />
+    //     )
+    // }
     return (
         <div className="min-h-screen bg-card relative overflow-hidden">
             {/* Background decorative image */}
