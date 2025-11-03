@@ -174,7 +174,7 @@ export const useDeleteOrganizationProgress = (
   organizationId: string | null,
   options: UseProgressTrackingOptions = {}
 ) => {
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const baseUrl = process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_API_BASE_URL : process.env.NEXT_PUBLIC_API_PROD_BASE_URL;
   const url = organizationId ? `${baseUrl}/progress/delete-organization/${organizationId}/stream` : null;
   return useProgressTracking(url, options);
 };
@@ -184,7 +184,7 @@ export const useCreateOrganizationProgress = (
   organizationId: string | null,
   options: UseProgressTrackingOptions = {}
 ) => {
-  const baseUrl = useMemo(() => process.env.NEXT_PUBLIC_API_BASE_URL, []);
+  const baseUrl = useMemo(() => process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_API_BASE_URL : process.env.NEXT_PUBLIC_API_PROD_BASE_URL, []);
   const url = organizationId ? `${baseUrl}/progress/create-organization/${organizationId}/stream` : null;
 
   return useProgressTracking(url, options);
