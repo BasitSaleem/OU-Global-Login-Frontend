@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 import { OTPInput } from "@/components/ui/otp-input";
 import { useDispatch } from "react-redux";
 import { setAuth } from "@/redux/slices/auth.slice";
-import { CreateOrganizationGuard } from "@/components/guards/createOrgRoute.guard";
 export default function OTPPage() {
   const { mutate: verifyOtp, isPending, error } = useVerifyOtp();
   const { mutate: resendOtp, isPending: isResending } = useResendOtp();
@@ -44,11 +43,9 @@ export default function OTPPage() {
       {
         onSuccess: (response) => {
           const { user, refreshToken } = response.data
-          const organization = null;
           dispatch(
             setAuth({
               user,
-              organization,
               isAuthenticated: true,
               refreshToken,
               isLoading: false,

@@ -32,8 +32,6 @@ export default function SignUpPage() {
   }, [router, searchParams]);
 
   const onSubmit = async (data: signUpData) => {
-    console.log(data, "/////");
-
     signUp(
       { first_name: data.first_name, last_name: data.last_name, email: data.email, password: data.password } as signUpData,
       {

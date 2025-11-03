@@ -99,8 +99,6 @@ export default function CreateOrgPage() {
     useCheckSubDomainAvailability(
       selectedProduct === "OI" ? debouncedSubDomain : ""
     );
-
-  // Determine if we can submit
   const canSubmit = () => {
     if (!companyName.trim()) return false;
     if (selectedProduct === "OI" && !subDomain.trim()) return false;
@@ -117,47 +115,6 @@ export default function CreateOrgPage() {
   const handleSubmit = () => {
     const trimmedName = companyName.trim();
     const trimmedSubDomain = subDomain.trim();
-
-    // if (!trimmedName) {
-    //   toast.error('Please enter a company name');
-    //   return;
-    // }
-
-    // if (selectedProduct === "OI" && !trimmedSubDomain) {
-    //   toast.error('Please enter a sub-domain');
-    //   return;
-    // }
-
-    // if (isNameDebouncing || checkingName) {
-    //   toast.error('Please wait while we verify the organization name');
-    //   return;
-    // }
-
-    // if (selectedProduct === "OI" && (isSubDomainDebouncing || checkingSub)) {
-    //   toast.error('Please wait while we verify the sub-domain');
-    //   return;
-    // }
-
-    // if (isNameAvailable === false) {
-    //   toast.error('Organization name is already taken. Please choose a different name.');
-    //   return;
-    // }
-
-    // if (selectedProduct === "OI" && isSubAvailable === false) {
-    //   toast.error('Sub-domain is already taken. Please choose a different sub-domain.');
-    //   return;
-    // }
-
-    // if (nameError) {
-    //   toast.error('Unable to verify organization name. Please try again.');
-    //   return;
-    // }
-
-    // if (selectedProduct === "OI" && subError) {
-    //   toast.error('Unable to verify sub-domain. Please try again.');
-    //   return;
-    // }
-
     const payload: CreateOrganizationData = {
       name: trimmedName,
       subDomainName: trimmedSubDomain,
@@ -200,8 +157,8 @@ export default function CreateOrgPage() {
     Router.push(ROUTES.DASHBOARD);
   };
   return (
-    <CreateOrganizationGuard>
-      <AuthGuard fallback={<GlobalLoading />}>
+    <AuthGuard fallback={<GlobalLoading />}>
+      <CreateOrganizationGuard>
         <div className="min-h-screen w-full flex items-center justify-center bg-background p-4 sm:p-8">
           <div className="bg-bg-secondary rounded-xl shadow-lg p-6 sm:p-12 w-full max-w-2xl border">
             <h1 className="mb-8 text-2xl sm:text-3xl font-bold text-center ">
@@ -308,16 +265,16 @@ export default function CreateOrgPage() {
             </div>
           </div>
         </div>
+      </CreateOrganizationGuard>
 
-        <ProgressModal
-          isOpen={showProgressModal}
-          organizationData={organizationData}
-          onClose={handleModalClose}
-          onComplete={handleProgressComplete}
-          onGoHome={handleGoHome}
-          isFromMain={true}
-        />
-      </AuthGuard>
-    </CreateOrganizationGuard>
+      <ProgressModal
+        isOpen={showProgressModal}
+        organizationData={organizationData}
+        onClose={handleModalClose}
+        onComplete={handleProgressComplete}
+        onGoHome={handleGoHome}
+        isFromMain={true}
+      />
+    </AuthGuard>
   );
 }

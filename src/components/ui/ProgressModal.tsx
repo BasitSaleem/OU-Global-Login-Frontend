@@ -1,7 +1,7 @@
 "use client";
 import React, { useCallback, useEffect, } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {  CheckCircle, X } from 'lucide-react';
+import { CheckCircle, X } from 'lucide-react';
 import { ProgressTracker } from './ProgressTracker';
 import { useCreateOrganizationProgress } from '@/hooks/useProgressTracking';
 import { CreateOrganizationResponse } from '@/apiHooks.ts/organization/organization.types';
@@ -40,7 +40,6 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
   );
 
   const handleError = useCallback((err: any) => {
-    console.error("Error:", err);
   }, []);
   const {
     progress,
@@ -80,7 +79,9 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
 
   useEffect(() => {
 
-    if(isFromMain && progress?.status === 'completed') {
+    if (isFromMain && isCompleted) {
+      console.log("/setting the organization data here in this ");
+
       dispatch(setOrganization(organizationData))
     }
 
@@ -239,7 +240,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-3">
-                       <Button
+                      <Button
                         variant='primary'
                         onClick={handleGoHome}>
                         Go to Dashboard
