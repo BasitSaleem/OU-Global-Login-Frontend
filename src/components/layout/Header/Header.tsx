@@ -9,7 +9,9 @@ import { NotificationsDropdown } from "./NotificationDropdown";
 import { NotificationItemProps } from "./Header.types";
 import { SvgIcon } from "@/components/ui/SvgIcon";
 import { ThemeToggle } from "@/components/ThemeToggle";
-
+import { PermissionGuard } from "@/components/HOCs/permission-guard";
+import Image from "next/image";
+import { Button } from "@/components/ui";
 interface HeaderProps {
   onToggleSidebar: () => void;
   onToggleMobileSidebar: () => void;
@@ -114,10 +116,12 @@ export default function AppHeader({
       </div>
 
       <div className="flex items-center gap-2">
-      <ThemeToggle />
+        <ThemeToggle />
         <div className="relative" ref={notificationsRef}>
 
-          <button
+          <Button
+            // permission="og:access::notification"
+            variant="basic"
             onClick={toggleNotifications}
             className="relative p-1 hover:scale-110  cursor-pointer"
             aria-label="Open notifications"
@@ -129,7 +133,7 @@ export default function AppHeader({
                 style={{ backgroundColor: "#D1202D" }}
               />
             )}
-          </button>
+          </Button>
 
           {notificationsOpen && (
             <NotificationsDropdown
@@ -143,27 +147,38 @@ export default function AppHeader({
             />
           )}
         </div>
-
-        <button
+        <Button
+          permission="og:access::setting"
+          variant="basic"
           onClick={handleSettingsClick}
           className="p-1 hover:scale-110 duration-300 cursor-pointer"
         >
           <SvgIcon name="settings" className="w-8 h-8" />
-        </button>
+        </Button>
 
         <div className="relative" ref={profileDropdownRef}>
-          <button
+          <Button
             onClick={toggleProfileDropdown}
+            variant="basic"
             className="w-7 h-7 rounded-full flex items-center hover:scale-110 duration-300 justify-center hover:opacity-90 transition-opacity cursor-pointer"
             style={{ backgroundColor: "#795CF5" }}
             aria-label="Open profile menu"
           >
-            <span className="text-white text-body-small font-medium">
+
+
+            {user?.profile_url ? <div>
+              <Image
+                className="w-7 h-7 rounded-full"
+                src={user?.profile_url}
+                alt="profile"
+                width={200}
+                height={200}
+              /></div> : <span className="text-white font-medium">
               {" "}
               {`${user?.first_name?.charAt(0) ?? ""}${user?.last_name?.charAt(0) ?? ""
                 }`.toUpperCase()}
-            </span>
-          </button>
+            </span>}
+          </Button>
 
           <ProfileMenu onClose={() => setProfileDropdownOpen(false)} open={profileDropdownOpen} />
 

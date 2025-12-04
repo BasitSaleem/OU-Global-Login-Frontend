@@ -1,4 +1,5 @@
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
+import { PermissionGuard } from "@/components/HOCs/permission-guard";
 import { getColorFromId } from "@/utils/getRandomColors";
 import Link from "next/link";
 
@@ -9,9 +10,8 @@ interface CardProps {
 
 export const generateProductLink = (subdomain: string) => {
     console.log('SubDomain: ', subdomain);
-    
     let url = '';
-    if(process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development') {
         url = `http://${subdomain}.localhost:8000/login?sso_login=true`
     } else {
         url = `https://${subdomain}.${process.env.NEXT_PUBLIC_OI_PRODUCT_DOMAIN}/login?sso_login=true`
@@ -34,9 +34,8 @@ const OrganizationProductCard = ({ code, organizations }: CardProps) => {
     };
 
     const filteredOrganizations = filterOrganizationsByProduct(organizations, code);
+    console.log(filteredOrganizations, "filteredOrganizations");
     if (filteredOrganizations.length === 0) return null;
-    console.log(code, filteredOrganizations, "/////");
-
     return (
         <div className="bg-bg-secondary border border-border rounded-xl p-3 hover:shadow-md transition-shadow">
             <div className="flex items-start gap-3">
@@ -58,26 +57,51 @@ const OrganizationProductCard = ({ code, organizations }: CardProps) => {
                     </p>
 
                     <div className="flex flex-wrap items-center gap-2 mt-3">
-                        {filteredOrganizations.map((org, i) => {
+                        {filteredOrganizations.map((org) => {
                             const bgColor = getColorFromId(org.id ?? "");
                             return (
-                                <Link
-                                    key={org.id}
-                                    href={generateProductLink(org.products?.[i]?.oi_sub_domain!)}
-                                    target="_blank"
-                                    className="group"
+                                <PermissionGuard
+                                    requiredPermissions="og:access::products"
+                                    fallback={
+                                        <div
+                                            key={org.id}
+                                            className="group"
+                                        >
+                                            <div
+                                                className="w-7 h-7 rounded-md flex items-center justify-center text-white font-semibold text-sm transition-transform cursor-not-allowed"
+                                                style={{ backgroundColor: bgColor }}
+                                                title={org.name}
+                                            >
+                                                {org.name
+                                                    ? org.name.charAt(0).toUpperCase() +
+                                                    (org.name.charAt(1)?.toUpperCase() || "")
+                                                    : ""}
+                                            </div>
+                                        </div>
+                                    }
                                 >
-                                    <div
-                                        className="w-7 h-7 rounded-md flex items-center justify-center text-white font-semibold text-sm hover:scale-110 transition-transform duration-300 cursor-pointer"
-                                        style={{ backgroundColor: bgColor }}
-                                        title={org.name}
-                                    >
-                                        {org.name
-                                            ? org.name.charAt(0).toUpperCase() +
-                                            (org.name.charAt(1)?.toUpperCase() || "")
-                                            : ""}
-                                    </div>
-                                </Link>
+                                    {org.products?.filter(p => p.product_name === code).map((product) => (
+                                        product.oi_sub_domain ? (
+                                            <Link
+                                                key={product.oi_sub_domain}
+                                                href={generateProductLink(product.oi_sub_domain)}
+                                                target="_blank"
+                                                className="group"
+                                            >
+                                                <div
+                                                    className="w-7 h-7 rounded-md flex items-center justify-center text-white font-semibold text-sm hover:scale-110 transition-transform duration-300 cursor-pointer"
+                                                    style={{ backgroundColor: bgColor }}
+                                                    title={org.name}
+                                                >
+                                                    {org.name
+                                                        ? org.name.charAt(0).toUpperCase() +
+                                                        (org.name.charAt(1)?.toUpperCase() || "")
+                                                        : ""}
+                                                </div>
+                                            </Link>
+                                        ) : null
+                                    ))}
+                                </PermissionGuard>
                             );
                         })}
                     </div>

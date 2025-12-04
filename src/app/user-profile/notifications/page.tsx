@@ -202,7 +202,6 @@ export default function NotificationPreferencesPage() {
   return (
     <main className="p-3">
       <div className="w-full px-8">
-        {/* Header Section */}
         <div className="mb-3 gap-2">
           <div>
             <h1 className="text-heading-1 font-bold text-black mb-1 pt-8">
@@ -213,10 +212,8 @@ export default function NotificationPreferencesPage() {
             </p>
           </div>
 
-          {/* Owner Switcher */}
           <div className="flex justify-center  mt-3">
             <div className="flex items-center gap-2 mb-3">
-              {/* Inventory */}
               <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('inventory')}>
                 <Image src={Icons.owneranalytics} alt="owner analytics" width={16} height={16} className={`w-8 h-8 rounded-lg p-1 transition border ${selectedOwner === 'inventory' ? 'border-primary bg-bg-secondary' : 'border-transparent'
                   }`} />
@@ -226,7 +223,6 @@ export default function NotificationPreferencesPage() {
                 </div>
               </div>
 
-              {/* Jungle */}
               <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('jungle')}>
                 <Image src={Icons.ownerjungle} alt="owner jungle" width={20} height={20} className={`w-8 h-8 rounded-lg p-1 transition border ${selectedOwner === 'jungle' ? 'border-primary bg-bg-secondary' : 'border-transparent'
                   }`} />
@@ -235,7 +231,6 @@ export default function NotificationPreferencesPage() {
                 </div>
               </div>
 
-              {/* Marketplace */}
               <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('marketplace')}>
                 <Image src={Icons.ownermarketplace} alt="owner marketplace" width={16} height={16} className={`w-8 h-8 rounded-lg p-1 transition border ${selectedOwner === 'marketplace' ? 'border-primary bg-bg-secondary' : 'border-transparent'
                   }`} />
@@ -244,7 +239,6 @@ export default function NotificationPreferencesPage() {
                 </div>
               </div>
 
-              {/* Analytics */}
               <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('analytics')}>
                 <Image src={Icons.owneranalytics} alt="owner analytics" width={16} height={16} className={`w-8 h-8 rounded-lg p-1 transition border ${selectedOwner === 'analytics' ? 'border-primary bg-bg-secondary' : 'border-transparent'
                   }`} />

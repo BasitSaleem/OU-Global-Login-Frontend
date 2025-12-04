@@ -1,15 +1,17 @@
 "use client";
+import { useGetMe } from "@/apiHooks.ts/auth/auth.api";
+import { useAcceptInvitation, useGetInvitations } from "@/apiHooks.ts/invitation/invitation.api";
+import { inviteData } from "@/apiHooks.ts/invitation/invitation.type";
 import { useCreateOrganization, useGetOrganizations } from "@/apiHooks.ts/organization/organization.api";
 import { CreateOrganizationData, CreateOrganizationResponse } from "@/apiHooks.ts/organization/organization.types";
 import DashboardLayout from "@/components/layout/dashboard-layout";
 import CreateOrgModal from "@/components/modals/CreateOrgModal";
-import DeclineModal from "@/components/modals/DeclineModal";
+import DeclineModal from "@/components/modals/InviteConfirmationModal";
 import OrganizationGrid from "@/components/pages/Organizations/OrganizationGrid";
 import PendingInvitations from "@/components/pages/Organizations/PendingInvitation";
 import ProgressModal from "@/components/ui/ProgressModal";
 import { toast } from "@/hooks/useToast";
-import { Invitation } from '@/types/common';
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 function OrganizationsContent() {
   const organizationsList = [
@@ -19,17 +21,7 @@ function OrganizationsContent() {
     },
   ];
 
-  const pendingInvitations: Invitation[] = [
-    // {
-    //   id: "space-group",
-    //   name: "Space Group",
-    //   abbreviation: "SG",
-    //   backgroundColor: "#F95C5B",
-    //   invitedBy: "Wilson",
-    //   product: "Owners Inventory",
-    //   timeAgo: "2 hours ago",
-    // },
-  ];
+
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [organizations, setOrganizations] = useState<any>(organizationsList);
@@ -39,6 +31,8 @@ function OrganizationsContent() {
   const [page, setPage] = useState(1)
   const { mutate: createOrg, isPending } = useCreateOrganization()
   const { data: userOrgs, status: orgStatus, isPending: isOrgPending, error: orgError } = useGetOrganizations(page, 10);
+  const { data, isPending: isInvitationPending, error: invitationError } = useGetInvitations();
+  const invitations: inviteData[] = useMemo(() => data!, [data]);
   useEffect(() => {
     if (orgStatus === "success" && userOrgs) {
       setOrganizations((prev: any) => {
@@ -100,17 +94,10 @@ function OrganizationsContent() {
         </div>
 
         <PendingInvitations
-          invitations={pendingInvitations}
-          onAccept={(id) => console.log("Accept invitation:", id)}
-          onDecline={() => setIsDeclineModalOpen(true)}
+          isLoading={isInvitationPending}
+          invitations={invitations}
         />
       </div>
-
-      <DeclineModal
-        isOpen={isDeclineModalOpen}
-        onClose={() => setIsDeclineModalOpen(false)}
-        onConfirm={handleDecline}
-      />
       <CreateOrgModal
         isLoading={isPending}
         isOpen={isCreateModalOpen}
@@ -119,6 +106,7 @@ function OrganizationsContent() {
       />
       <ProgressModal
         isOpen={showProgressModal}
+
         organizationData={organizationData}
         onClose={handleModalClose}
         isFromMain={false}
@@ -134,3 +122,5 @@ export default function Page() {
     </DashboardLayout>
   );
 }
+
+

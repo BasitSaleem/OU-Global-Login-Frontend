@@ -1,9 +1,12 @@
 import { useLogout } from "@/apiHooks.ts/auth/auth.api";
+import { PermissionGuard } from "@/components/HOCs/permission-guard";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Button } from "@/components/ui";
 import { GlobalLoading } from "@/components/ui/loading";
 import { SvgIcon } from "@/components/ui/SvgIcon";
 import { clearAuth } from "@/redux/slices/auth.slice";
 import { useAppSelector, useAppDispatch } from "@/redux/store";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -35,7 +38,7 @@ export default function ProfileMenu({ onClose, open }: ProfileMenuProps) {
     return (
         <div className="absolute -right-3 sm:right-0 top-10 w-64 sm:w-72 bg-bg-secondary border  rounded-lg shadow-lg z-50">
             {isPending && (
-                <GlobalLoading text="Logging out"  />
+                <GlobalLoading text="Logging out" />
             )}
 
             {/* User Info */}
@@ -43,10 +46,17 @@ export default function ProfileMenu({ onClose, open }: ProfileMenuProps) {
                 <div
                     className="w-7 h-7 rounded-full flex items-center justify-center cursor-pointer bg-primary"
                 >
-                    <span className="text-text text-body-small font-medium">
+                    {user?.profile_url ? <div>
+                        <Image
+                            className="w-7 h-7 rounded-full"
+                            src={user?.profile_url}
+                            alt="profile"
+                            width={100}
+                            height={100}
+                        /></div> : <span className="text-white">
                         {`${user?.first_name?.charAt(0) ?? ""}${user?.last_name?.charAt(0) ?? ""
                             }`.toUpperCase()}
-                    </span>
+                    </span>}
                 </div>
                 <div>
                     <h3 className="text-body-medium-bold text-gray-900">{user?.first_name}</h3>
@@ -56,8 +66,9 @@ export default function ProfileMenu({ onClose, open }: ProfileMenuProps) {
                 </div>
             </div>
 
-            {/* Menu Items */}
             <div className="p-3 space-y-2">
+
+
                 <Link href={"/user-profile"}
                     className="w-full flex items-center gap-2 px-2 py-1.5 hover:text-[#ffff] rounded-lg  hover:bg-primary/80  cursor-pointer"
                 >
@@ -65,21 +76,23 @@ export default function ProfileMenu({ onClose, open }: ProfileMenuProps) {
                     <SvgIcon name="profile" className="w-6 h-6" />
                     <span className=" ">Profile</span>
                 </Link>
-
-                <Link href="/account-setting" className="w-full flex items-center hover:text-[#ffff] gap-2 px-0.5 py-0.5 rounded-lg hover:bg-primary/80   cursor-pointer">
-
-                    <SvgIcon name="settings" className="w-8 h-8" width={14} height={14} />
-                    <span className="">Account settings</span>
-                </Link>
-
-                <button
-                    onClick={() => handleLogout()}
-                    className="w-full flex items-center gap-2 px-2 py-1.5 hover:text-[#ffff] hover:bg-red-500/80 rounded-lg cursor-pointer"
+                <PermissionGuard
+                    requiredPermissions="og:access::setting"
                 >
+                    <Link href="/account-setting" className="w-full flex items-center hover:text-[#ffff] gap-2 px-0.5 py-0.5 rounded-lg hover:bg-primary/80   cursor-pointer">
 
-                    <SvgIcon name="logout" className="w-6 h-6" />
+                        <SvgIcon name="settings" className="w-8 h-8" width={14} height={14} />
+                        <span className="">Account settings</span>
+                    </Link>
+                </PermissionGuard>
+                <Button
+                    onClick={() => handleLogout()}
+                    leftIcon={<SvgIcon name="logout" className="w-6 h-6" />}
+                    variant="basic"
+                    className="w-full flex items-center text-black  justify-start gap-2 px-2 py-[18px] hover:text-[#ffff] hover:bg-red-500/80 rounded-lg"
+                >
                     <span className="">Log out</span>
-                </button>
+                </Button>
             </div>
         </div>
     );

@@ -21,7 +21,7 @@ interface NavigationItem {
   href: string;
   type: "svg" | "image";
   svgName?: IconName
-  image: string;
+  image?: string;
   activeImage?: string;
   label: string;
   isActive: boolean;
@@ -45,8 +45,8 @@ export default function Sidebar({
       href: "/",
       type: "svg",
       svgName: "home",
-      image: Icons.home,
-      activeImage: Icons.homewhite,
+      // image: Icons.home,
+      // activeImage: Icons.homewhite,
       label: "Home",
       isActive: currentPath === "/",
     },
@@ -54,10 +54,26 @@ export default function Sidebar({
       href: "/organizations",
       type: "svg",
       svgName: "organization",
-      image: Icons.organization,
-      activeImage: Icons.organizationwhite,
+      // image: Icons.organization,
+      // activeImage: Icons.organizationwhite,
       label: "Organizations",
       isActive: currentPath === "/organizations",
+    },
+    {
+      href: "/payment-methods",
+      type: "svg",
+      svgName: "payment-methods",
+      // image: Icons.organization,
+      label: "Payment Methods",
+      isActive: currentPath === "/payment-methods",
+    },
+    {
+      href: "/billing",
+      type: "svg",
+      svgName: "billing",
+      // image: Icons.organization,
+      label: "billing",
+      isActive: currentPath === "/billing",
     },
     {
       href: "/inventory",
@@ -147,11 +163,7 @@ export default function Sidebar({
     if (item.hasBadge && !item.isActive) {
       return (
         <span
-          className="text-body-tiny font-medium px-1.5 py-0.5 rounded-full"
-          style={{
-            // backgroundColor: "rgba(121, 92, 245, 0.07)",
-            // color: "#795CF5",
-          }}
+          className="text-body-tiny font-medium px-1.5 py-0.5 rounded-full text-primary"
         >
           TRY
         </span>

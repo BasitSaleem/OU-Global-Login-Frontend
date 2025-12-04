@@ -25,3 +25,23 @@ export interface VerifyOtpData {
 export interface ResendOtpData {
   email: string;
 }
+export interface userProfile {
+  id?: string;
+  first_name?: string;
+  last_name?: string;
+  contact?: string | null;
+  email?:string,
+  profile_url?: string;
+  password?: string | null;
+  status?: string;
+  created_at?: Date;
+  updated_at?: Date;
+  street_address?: string | null;
+  city?: string | null;
+  state?: string | null;
+  zip_code?: string | null;
+  country?: string | null;
+  tax_vat_number?: string | null;
+  emergency_contact_no?: string | null;
+  emergency_contact_name?: string | null;
+}

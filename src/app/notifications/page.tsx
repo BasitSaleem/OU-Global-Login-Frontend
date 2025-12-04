@@ -114,9 +114,7 @@ function NotificationsPage() {
     );
   };
 
-  // 🔹 Dummy filtered data (for now, just filter by product type ID or sidebar ID)
   const filteredNotifications = notifications.filter((n) => {
-    // 🔹 Sidebar filter
     if (activeSidebarFilter === "today") {
       const isToday =
         n.time.includes("Just now") ||
@@ -125,7 +123,6 @@ function NotificationsPage() {
         n.time.includes("hours ago");
       if (!isToday) return false;
     }
-    // 🔹 Unread toggle
     if (onlyUnread && !n.hasUnreadDot) return false;
 
     // 🔹 Product filter
@@ -161,7 +158,6 @@ function NotificationsPage() {
           setOnlyUnread={setOnlyUnread}
         />
 
-        {/* Feed stays inline with your NotificationItem */}
         <div className="flex-1 overflow-y-auto">
           <div className="p-1 sm:p-3 pt-2">
             <div className="space-y-1">
@@ -202,7 +198,6 @@ function NotificationsPage() {
   );
 }
 
-// 🔹 Skeleton Loader (overlay style)
 function NotificationsSkeleton() {
   return (
     <div className="flex flex-1 items-center justify-center min-h-screen">

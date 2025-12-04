@@ -9,6 +9,7 @@ import { OrganizationGridComponent } from "./OrganizationGridComponent";
 import { toast } from "@/hooks/useToast";
 import { LoadingSpinner } from "@/components/ui";
 import { Plus } from "lucide-react";
+import { PermissionGuard } from "@/components/HOCs/permission-guard";
 
 export interface OrganizationGridProps {
   organizations: OgOrganization[];
@@ -78,17 +79,12 @@ export default function OrganizationGrid({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+
         {loading ? Array.from({ length: 6 }).map((_, idx) => (
-          <div key={idx} className="bg-bg-secondary p-3 rounded-xl border">
-            {idx === 0 ? (
-              <div className="flex items-center justify-center w-full h-full">
-                <div className="flex flex-col items-center justify-center ">
-                  <div className="text-5xl text-skeleton animate-pulse ">+</div>
-                  <h1 className="text-skeleton animate-pulse">Add new</h1>
-                </div>
-              </div>
-            ) : (
-              <>
+          <PermissionGuard
+            requiredPermissions="og:create::organization"
+            fallback={
+              <div key={idx} className="bg-bg-secondary p-3 py-6 rounded-xl border">
                 <div className="flex items-start gap-3 mb-2">
                   <Skeleton width="40px" height="40px" circle />
                   <div className="flex-1 min-w-0 space-y-2">
@@ -103,9 +99,38 @@ export default function OrganizationGrid({
                     <Skeleton width="24px" height="24px" circle count={3} />
                   </div>
                 </div>
-              </>
-            )}
-          </div>
+              </div>
+            }
+          >
+            <div key={idx} className="bg-bg-secondary p-3 py-6 rounded-xl border">
+              {idx === 0 ? (
+                <div className="flex items-center justify-center w-full h-full">
+                  <div className="flex flex-col items-center justify-center ">
+                    <Plus size={50} color="#D1D5DB" />
+                    <h1 className="text-skeleton animate-pulse">Add new</h1>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-start gap-3 mb-2">
+                    <Skeleton width="40px" height="40px" circle />
+                    <div className="flex-1 min-w-0 space-y-2">
+                      <Skeleton width="60%" height="16px" />
+                      <Skeleton width="40%" height="12px" />
+                    </div>
+                    <Skeleton width="24px" height="24px" circle />
+                  </div>
+                  <div className="mt-auto flex items-center justify-between px-2 py-1.5 rounded bg-skeleton">
+                    <Skeleton width="20%" height="12px" />
+                    <div className="flex space-x-1">
+                      <Skeleton width="24px" height="24px" circle count={3} />
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </PermissionGuard>
+
         ))
           : <>
             {organizations?.map((org) => (
@@ -151,10 +176,9 @@ export default function OrganizationGrid({
             ))}</>}
       </div>
 
-      {/* View More */}
-
-
-      {selectedOrg && (
+      <PermissionGuard
+        requiredPermissions="og:delete::organization"
+      >      {selectedOrg && (
         <DeleteOrganizationModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
@@ -164,6 +188,8 @@ export default function OrganizationGrid({
           isDeleting={deleteLoading}
         />
       )}
+      </PermissionGuard>
+
     </div>
   );
 }

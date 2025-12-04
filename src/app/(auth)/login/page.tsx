@@ -13,7 +13,9 @@ import { useEffect, useState } from "react";
 import { useAppDispatch } from "@/redux/store";
 import { setAuth } from "@/redux/slices/auth.slice";
 import { LoginSEO } from "@/components/SEO";
-import { PublicRoute } from "@/components/guards/publicRoute.guard";
+import { PublicRoute } from "@/components/HOCs/publicRoute.guard";
+import { ROUTES } from "@/constants";
+import { signInResponse } from "@/types/auth.types";
 
 export default function LoginPage() {
   const { mutate: login, isPending, error } = useLogin();
@@ -53,38 +55,31 @@ export default function LoginPage() {
       ...formData,
       ...params,
     }
-
-    console.log('Data Sending: ', data);
-
     return data;
   }
 
   const onSubmit = async (data: any) => {
     login(createOnSubmitData(data), {
-      onSuccess: (response) => {
-        const { user, accessToken, refreshToken, redirect_url } = response.data;
-        const organization = user.organizations?.[0] ?? null;
-
+      onSuccess: (response: signInResponse) => {
+        const redirect_url = response.data?.redirect_url
         dispatch(
           setAuth({
-            user,
-            organization,
+            user: response.data?.user!,
             isAuthenticated: true,
-            refreshToken,
             isLoading: false,
             error: null,
           })
         );
-        console.log('Redirect URL: ', redirect_url);
-        
-        if(redirect_url) {
+        router.push(ROUTES.DASHBOARD)
+        if (redirect_url) {
           setParams(redirect_url);
         }
 
       },
     });
+
   };
- 
+
 
   return (
     <>
@@ -123,7 +118,7 @@ export default function LoginPage() {
                     isPassword={true}
                     {...methods.register("password", {
                       required: "Password is required",
-                    })} // Register input
+                    })}
                     error={methods.formState.errors.password?.message as string}
                   />
 
@@ -160,7 +155,6 @@ export default function LoginPage() {
                 </form>
               </FormProvider>
 
-              {/* Divider */}
               <div className="my-3 sm:my-7 flex items-center">
                 <div className="flex-1 border-t border"></div>
                 <span className="px-2 sm:px-3 text-xs sm:text-sm">
@@ -204,6 +198,6 @@ export default function LoginPage() {
           </div>
         </main>
       </PublicRoute>
-      </>
+    </>
   );
 }

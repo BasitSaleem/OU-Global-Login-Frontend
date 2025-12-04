@@ -45,20 +45,17 @@ function ViewAllProductsPage() {
   return (
     <div className="p-4">
       <div className="max-w-7xl mx-auto">
-        {/* Page Header */}
         <div className="mb-3">
           <h1 className="text-heading-1 font-bold text">All Products</h1>
         </div>
 
-        {/* Products Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {products.map((product) => (
             <div
               key={product.id}
-              className="bg-bg-secondary border rounded p-4 hover:shadow-sm transition-shadow cursor-pointer"
+              className="bg-bg-secondary border rounded-xl p-4 hover:shadow-sm transition-shadow cursor-pointer"
             >
               <div className="flex items-start gap-3">
-                {/* Product Icon */}
                 <div
                   className="w-9 h-9 rounded flex items-center justify-center flex-shrink-0"
                   style={{ backgroundColor: product.backgroundColor }}

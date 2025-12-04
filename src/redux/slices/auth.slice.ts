@@ -1,17 +1,25 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AuthState } from "@/types/auth.types";
+import { AuthState, User } from "@/types/auth.types";
 import { AUTH_CONFIG } from "@/constants";
-
 const initialState: AuthState = {
   user: {
     id: "",
     first_name: "",
     last_name: "",
     email: "",
+    contact: "",
+    street_address: "",
+    city: "",
+    state: "",
+    zip_code: "",
+    country: "",
+    tax_vat_number: "",
+    emergency_contact_name: "",
+    emergency_contact_no: "",
+    profile_url: "",
     role_id: "",
     status: "",
     role: null,
-    profile_url: "",
   },
   isAuthenticated: false,
   organization: null,
@@ -29,7 +37,9 @@ const authSlice = createSlice({
       state.organization = action.payload.organization;
       state.isAuthenticated = true;
       state.refreshToken = action.payload.refreshToken;
-
+    },
+    setProfile: (state, action: PayloadAction<User>) => {
+      state.user = action.payload;
     },
     setOrganization: (state, action: PayloadAction<any>) => {
       state.organization = action.payload;
@@ -57,5 +67,5 @@ const authSlice = createSlice({
     },
   },
 });
-export const { setAuth, clearAuth, setOrganization, initializeAuth } = authSlice.actions;
+export const { setAuth, clearAuth, setProfile, setOrganization, initializeAuth } = authSlice.actions;
 export default authSlice.reducer;
