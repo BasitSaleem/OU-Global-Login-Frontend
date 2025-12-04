@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Icons } from "@/components/utils/icons";
 import Image from "next/image";
@@ -19,8 +19,9 @@ export default function SignUpPage() {
   });
   const { handleSubmit } = methods;
   const { mutate: signUp, isPending, error } = useSignUp();
-
-
+  const token = useParams().token;
+  const email = useSearchParams().get("email");
+  console.log(email, token);
   const searchParams = useSearchParams();
   const app = searchParams.get("app") || "OG";
 
