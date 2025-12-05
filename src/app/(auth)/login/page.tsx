@@ -16,6 +16,7 @@ import { LoginSEO } from "@/components/SEO";
 import { PublicRoute } from "@/components/HOCs/publicRoute.guard";
 import { ROUTES } from "@/constants";
 import { signInResponse } from "@/types/auth.types";
+import { signinData } from "@/apiHooks.ts/auth/auth.types";
 
 export default function LoginPage() {
   const { mutate: login, isPending, error } = useLogin();
@@ -36,7 +37,7 @@ export default function LoginPage() {
         response_type: searchParams.get('response_type'),
         code_challenge: searchParams.get('code_challenge'),
         code_challenge_method: searchParams.get('code_challenge_method'),
-        subdomain: searchParams.get('subdomain')
+        subdomain: searchParams.get('subdomain'),
       }
       setParams(data);
     }
@@ -44,10 +45,22 @@ export default function LoginPage() {
       router.replace("/login?app=OG");
     }
   }, [router, searchParams]);
+  const token = useSearchParams().get('token') || undefined
+  // const token = (() => {
+  //   const appParam = searchParams.get('app');
+  //   if (appParam && appParam.includes('?token=')) {
+  //     const parts = appParam.split('?token=');
+  //     if (parts.length > 1) {
+  //       return parts[1];
+  //     }
+  //   }
+  //   return searchParams.get('token');
+  // })();
 
   const methods = useForm({
     resolver: zodResolver(loginSchema),
   });
+
   const { handleSubmit } = methods;
 
   const createOnSubmitData = (formData: any) => {
@@ -57,9 +70,8 @@ export default function LoginPage() {
     }
     return data;
   }
-
-  const onSubmit = async (data: any) => {
-    login(createOnSubmitData(data), {
+  const onSubmit = async (data: signinData) => {
+    login(createOnSubmitData({ ...data, token }), {
       onSuccess: (response: signInResponse) => {
         const redirect_url = response.data?.redirect_url
         dispatch(

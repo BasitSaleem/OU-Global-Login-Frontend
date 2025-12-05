@@ -56,7 +56,7 @@ export const useCreateOrganization = () => {
 // 2. GET ALL ORGANIZATIONS
 export const useGetOrganizations = (page: number, limit: number) => {
   return useQuery({
-    queryKey: ["organizations", page, limit],
+    queryKey: ["organizations"],
     queryFn: async () => {
       const url = `${ENDPOINTS.ORGANIZATIONS}?page=${page}&limit=${limit}`;
       const res = await request<OgOrgResponse>(url, "GET");

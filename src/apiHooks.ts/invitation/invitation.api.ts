@@ -77,7 +77,7 @@ export const useAcceptInvitation = (callbacks?: { onSuccess?: () => void }) => {
             return res.data
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["invitations"] });
+            queryClient.invalidateQueries({ queryKey: ["invitations", "organizations"] });
             toast.success(
                 "Invitation accepted",
                 "The invitation has been accepted."

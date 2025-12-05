@@ -6,7 +6,6 @@ import { Trash } from "lucide-react";
 import Link from "next/link";
 import React, { useMemo, useState } from "react";
 import { generateProductLink } from "./OrganizationProductCard";
-import { PermissionGuard } from "@/components/HOCs/permission-guard";
 import { Button } from "@/components/ui";
 import Image from "next/image";
 
@@ -112,7 +111,7 @@ export function OrganizationGridComponent({
           style={{ backgroundColor: "rgba(121, 92, 245, 0.07)" }}
         >
           <span className="text-body-small font-medium text-primary">
-            {org?.memberships?.length ?? "0"} members
+            {org?.memberships?.length ?? "0"} member{org?.memberships?.length === 1 ? "" : "s"}
           </span>
           <div className="flex items-center -space-x-0.5">
             {org?.products?.map((product, index) => (

@@ -17,6 +17,7 @@ import { generateSubdomainSuggestions } from "@/utils/subdomainGenerator";
 import { SubdomainSuggestion } from "@/components/SubdomainSuggestion";
 import { AvailabilityStatus } from "@/components/AvailabilityStatus";
 import { PermissionGuard } from "@/components/HOCs/permission-guard";
+import { CreateOrganizationGuard } from "@/components/HOCs/createOrgRoute.guard";
 
 export default function CreateOrgPage() {
   const [companyName, setCompanyName] = useState("");
@@ -115,7 +116,7 @@ export default function CreateOrgPage() {
   };
 
   const handleProgressComplete = () => {
-    router.push(ROUTES.DASHBOARD)
+    console.log("handleProgressComplete")
   };
 
   const handleGoHome = () => {
@@ -126,122 +127,123 @@ export default function CreateOrgPage() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen w-full flex items-center justify-center bg-background p-4 sm:p-8">
-        <div className="bg-bg-secondary rounded-xl shadow-lg p-6 sm:p-12 w-full max-w-2xl border">
+      <CreateOrganizationGuard>
+        <div className="min-h-screen w-full flex items-center justify-center bg-background p-4 sm:p-8">
+          <div className="bg-bg-secondary rounded-xl shadow-lg p-6 sm:p-12 w-full max-w-2xl border">
 
-          <h1 className="mb-8 text-2xl sm:text-3xl font-bold text-center ">
-            Create an Organization
-          </h1>
+            <h1 className="mb-8 text-2xl sm:text-3xl font-bold text-center ">
+              Create an Organization
+            </h1>
 
-          <div className="mb-6">
-            <Input
-              isRequired
-              label="Company Name"
-              type="text"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-              placeholder="Enter company name"
-            />
-            <AvailabilityStatus
-              isLoading={checkingName}
-              isAvailable={isNameAvailable}
-              isDebouncing={isNameDebouncing}
-              fieldName="Organization name"
-              value={companyName}
-            />
-          </div>
+            <div className="mb-6">
+              <Input
+                isRequired
+                label="Company Name"
+                type="text"
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                placeholder="Enter company name"
+              />
+              <AvailabilityStatus
+                isLoading={checkingName}
+                isAvailable={isNameAvailable}
+                isDebouncing={isNameDebouncing}
+                fieldName="Organization name"
+                value={companyName}
+              />
+            </div>
 
-          {/* Products */}
-          <div className="mb-6">
-            <label className="block text-base font-medium mb-3">Products</label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {PRODUCTS.map((product) => (
-                <button
-                  key={product.id}
-                  type="button"
-                  disabled={product.isDisabled}
-                  onClick={() => setSelectedProduct(product.name)}
-                  className={`flex items-center gap-2 border rounded-lg px-3 py-3 text-base font-medium transition ${selectedProduct === product.name
-                    ? "border-primary bg-bg-secondary hover:text-text hover:bg-primary/70 text-primary"
-                    : "border text-text"
-                    } ${product.isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                >
-                  <img
-                    src={product.icon}
-                    alt={product.name}
-                    className="w-6 h-6"
-                  />
-                  {product.fullname}
-                </button>
-              ))}
+            {/* Products */}
+            <div className="mb-6">
+              <label className="block text-base font-medium mb-3">Products</label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {PRODUCTS.map((product) => (
+                  <button
+                    key={product.id}
+                    type="button"
+                    disabled={product.isDisabled}
+                    onClick={() => setSelectedProduct(product.name)}
+                    className={`flex items-center gap-2 border rounded-lg px-3 py-3 text-base font-medium transition ${selectedProduct === product.name
+                      ? "border-primary bg-bg-secondary hover:text-text hover:bg-primary/70 text-primary"
+                      : "border text-text"
+                      } ${product.isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                  >
+                    <img
+                      src={product.icon}
+                      alt={product.name}
+                      className="w-6 h-6"
+                    />
+                    {product.fullname}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Sub-Domain */}
+            <div className="mb-2">
+              <Input
+                isRequired
+                type="text"
+                label="Sub-Domain Name"
+                value={subDomain}
+                onChange={(e) => setSubDomain(e.target.value.toLocaleLowerCase())}
+                disabled={selectedProduct !== "OI"}
+                placeholder="Enter sub-domain"
+              />
+
+              {/* Subdomain Suggestions */}
+              {selectedProduct === "OI" && companyName.trim().length > 1 && (
+                <SubdomainSuggestion
+                  suggestions={subdomainSuggestions}
+                  onSuggestionClick={handleSuggestionClick}
+                  isLoading={isGeneratingSuggestions}
+                />
+              )}
+
+              {selectedProduct === "OI" && (
+                <AvailabilityStatus
+                  isLoading={checkingSub}
+                  isAvailable={isSubAvailable}
+                  isDebouncing={isSubDomainDebouncing}
+                  fieldName="Sub-domain"
+                  value={subDomain}
+                />
+              )}
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 mt-8">
+              <Button
+                variant="secondary"
+                className="py-5"
+                onClick={() => {
+                  setCompanyName("");
+                  setSubDomain("");
+                  setSelectedProduct("OI");
+                }}
+                disabled={createOrgMutation.isPending}
+              >
+                Reset
+              </Button>
+              <Button
+                onClick={handleSubmit}
+                variant="primary"
+                className="py-5"
+                disabled={!canSubmit()}
+              >
+                {createOrgMutation.isPending ? (
+                  <div className="flex items-center gap-2">
+                    <LoadingSpinner size={4} />
+                    <span>Creating...</span>
+                  </div>
+                ) : (
+                  "Continue"
+                )}
+              </Button>
             </div>
           </div>
-
-          {/* Sub-Domain */}
-          <div className="mb-2">
-            <Input
-              isRequired
-              type="text"
-              label="Sub-Domain Name"
-              value={subDomain}
-              onChange={(e) => setSubDomain(e.target.value.toLocaleLowerCase())}
-              disabled={selectedProduct !== "OI"}
-              placeholder="Enter sub-domain"
-            />
-
-            {/* Subdomain Suggestions */}
-            {selectedProduct === "OI" && companyName.trim().length > 1 && (
-              <SubdomainSuggestion
-                suggestions={subdomainSuggestions}
-                onSuggestionClick={handleSuggestionClick}
-                isLoading={isGeneratingSuggestions}
-              />
-            )}
-
-            {selectedProduct === "OI" && (
-              <AvailabilityStatus
-                isLoading={checkingSub}
-                isAvailable={isSubAvailable}
-                isDebouncing={isSubDomainDebouncing}
-                fieldName="Sub-domain"
-                value={subDomain}
-              />
-            )}
-          </div>
-
-          {/* Actions */}
-          <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 mt-8">
-            <Button
-              variant="secondary"
-              className="py-5"
-              onClick={() => {
-                setCompanyName("");
-                setSubDomain("");
-                setSelectedProduct("OI");
-              }}
-              disabled={createOrgMutation.isPending}
-            >
-              Reset
-            </Button>
-            <Button
-              onClick={handleSubmit}
-              variant="primary"
-              className="py-5"
-              disabled={!canSubmit()}
-            >
-              {createOrgMutation.isPending ? (
-                <div className="flex items-center gap-2">
-                  <LoadingSpinner size={4} />
-                  <span>Creating...</span>
-                </div>
-              ) : (
-                "Continue"
-              )}
-            </Button>
-          </div>
         </div>
-      </div>
-
+      </CreateOrganizationGuard>
       <ProgressModal
         isOpen={showProgressModal}
         organizationData={organizationData}

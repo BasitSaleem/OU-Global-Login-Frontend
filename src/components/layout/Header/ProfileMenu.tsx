@@ -44,19 +44,21 @@ export default function ProfileMenu({ onClose, open }: ProfileMenuProps) {
             {/* User Info */}
             <div className="flex items-center gap-3 p-3 border-b ">
                 <div
-                    className="w-7 h-7 rounded-full flex items-center justify-center cursor-pointer bg-primary"
+                    className="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer bg-primary"
                 >
-                    {user?.profile_url ? <div>
+                    {user?.profile_url ?
                         <Image
-                            className="w-7 h-7 rounded-full"
+                            className="w-8 h-8 rounded-full object-cover"
                             src={user?.profile_url}
                             alt="profile"
                             width={100}
                             height={100}
-                        /></div> : <span className="text-white">
-                        {`${user?.first_name?.charAt(0) ?? ""}${user?.last_name?.charAt(0) ?? ""
-                            }`.toUpperCase()}
-                    </span>}
+
+                        />
+                        : <span className="text-white">
+                            {`${user?.first_name?.charAt(0) ?? ""}${user?.last_name?.charAt(0) ?? ""
+                                }`.toUpperCase()}
+                        </span>}
                 </div>
                 <div>
                     <h3 className="text-body-medium-bold text-gray-900">{user?.first_name}</h3>

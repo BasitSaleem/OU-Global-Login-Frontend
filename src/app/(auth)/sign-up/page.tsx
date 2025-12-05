@@ -19,9 +19,8 @@ export default function SignUpPage() {
   });
   const { handleSubmit } = methods;
   const { mutate: signUp, isPending, error } = useSignUp();
-  const token = useParams().token;
+  const token = useSearchParams().get("token");
   const email = useSearchParams().get("email");
-  console.log(email, token);
   const searchParams = useSearchParams();
   const app = searchParams.get("app") || "OG";
 
@@ -31,7 +30,11 @@ export default function SignUpPage() {
       router.replace("/sign-up?app=OG");
     }
   }, [router, searchParams]);
-
+  useEffect(() => {
+    if (email) {
+      methods.setValue("email", email);
+    }
+  }, [email, methods]);
   const onSubmit = async (data: signUpData) => {
     signUp(
       { first_name: data.first_name, last_name: data.last_name, email: data.email, password: data.password } as signUpData,
@@ -49,7 +52,7 @@ export default function SignUpPage() {
           //     error: null,
           //   })
           // );
-          router.push(`/otp?email=${encodeURIComponent(response.data.email)}`);
+          router.push(`/otp?email=${encodeURIComponent(response.data.email)}${token ? `&token=${token}` : undefined}`);
         },
       }
     );

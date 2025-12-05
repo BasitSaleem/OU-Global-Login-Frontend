@@ -4,6 +4,8 @@ import { usePathname } from 'next/navigation';
 import Sidebar from './Sidebar';
 import AppHeader from './Header/Header';
 import ComingSoonModal from '../modals/ComingSoonModal';
+import { AuthGuard } from '../HOCs/auth-guard';
+import { GlobalLoading } from '../ui/loading';
 
 
 interface DashboardLayoutProps {
@@ -26,38 +28,40 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   };
 
   return (
+    <AuthGuard fallback={<GlobalLoading text='loading in the auth guard .....' />}>
 
-    <div className="min-h-screen bg-background flex font-inter">
-      <Sidebar
-        collapsed={sidebarCollapsed}
-        mobileOpen={mobileSidebarOpen}
-        onToggleMobile={toggleMobileSidebar}
-        currentPath={pathname}
-        onShowModal={(icon) => {
-          setModalIcon(icon);
-          setIsModalOpen(true);
-        }}
-      />
-
-      <div className="flex-1 flex flex-col min-h-screen">
-        {/* Header */}
-        <AppHeader
-          onToggleSidebar={toggleSidebar}
-          onToggleMobileSidebar={toggleMobileSidebar}
-          mobileSidebarOpen={mobileSidebarOpen}
+      <div className="min-h-screen bg-background flex font-inter">
+        <Sidebar
+          collapsed={sidebarCollapsed}
+          mobileOpen={mobileSidebarOpen}
+          onToggleMobile={toggleMobileSidebar}
+          currentPath={pathname}
+          onShowModal={(icon) => {
+            setModalIcon(icon);
+            setIsModalOpen(true);
+          }}
         />
 
-        <main className="flex-1">
-          {children}
-        </main>
+        <div className="flex-1 flex flex-col min-h-screen">
+          {/* Header */}
+          <AppHeader
+            onToggleSidebar={toggleSidebar}
+            onToggleMobileSidebar={toggleMobileSidebar}
+            mobileSidebarOpen={mobileSidebarOpen}
+          />
 
-        <ComingSoonModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          icon={modalIcon}
-          title="Coming Soon!"
-        />
+          <main className="flex-1">
+            {children}
+          </main>
+
+          <ComingSoonModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            icon={modalIcon}
+            title="Coming Soon!"
+          />
+        </div>
       </div>
-    </div>
+    </AuthGuard>
   );
 }

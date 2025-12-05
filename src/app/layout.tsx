@@ -12,8 +12,93 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Owners Global Login System",
-  description: "Global authentication system for business owners",
+  title: {
+    default: "Owners Global - Global Login & Authentication Platform",
+    template: "%s | Owners Global"
+  },
+  description: "Global authentication and business management platform for Owners Global. Streamline your business operations with our suite of integrated products including Owners Inventory, Owners Jobs, Owners Marketplace, and more.",
+  keywords: [
+    "business management",
+    "authentication platform",
+    "owners global",
+    "global login",
+    "business tools",
+    "inventory management",
+    "job management",
+    "marketplace",
+    "SaaS platform",
+    "business dashboard",
+    "organization management"
+  ],
+  authors: [
+    {
+      name: "Owners Global",
+    }
+  ],
+  creator: "Owners Global",
+  publisher: "Owners Global",
+  applicationName: "Owners Global",
+
+  // Open Graph metadata
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://ownersglobal.com",
+    siteName: "Owners Global",
+    title: "Owners Global - Global Login & Authentication Platform",
+    description: "Global authentication and business management platform for Owners Global. Streamline your business operations with our suite of integrated products.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Owners Global Logo",
+      }
+    ],
+  },
+
+  // Twitter Card metadata
+  twitter: {
+    card: "summary_large_image",
+    title: "Owners Global - Global Login & Authentication Platform",
+    description: "Global authentication and business management platform for Owners Global. Streamline your business operations with our suite of integrated products.",
+    creator: "@ownersglobal",
+    images: ["/og-image.png"],
+  },
+
+  // App icons and favicons
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/icon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/icon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
+
+  // Theme and appearance
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" }
+  ],
+
+  // Verification and other metadata
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+
+  // Viewport is set via viewport export below
+  // manifest: "/manifest.json",
 };
 
 export default function RootLayout({

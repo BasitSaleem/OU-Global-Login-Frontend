@@ -20,8 +20,13 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
     isError,
     error
   } = useGetMe();
-  const organization = data?.data?.user?.organizations?.[0] ?? null;
-  dispatch(setOrganization(organization))
+  const organization = data?.data?.user?.organizations?.[0] ?? data?.data?.user?.memberships?.[0]?.organization ?? undefined
+  console.log(organization, "organization");
+  if (organization !== undefined) {
+    console.log("organization is not undefined");
+    dispatch(setOrganization(organization))
+  }
+
   // useEffect(() => {
   //   if (!isLoading && (isError || !data?.user)) {
   //     router.push(ROUTES.LOGIN);
@@ -42,3 +47,15 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
     return <>{children}</>;
   }
 }
+// "memberships": [
+//                 {
+//                     "id": "769d4d93-aa1c-487b-b6f9-957083977b7d",
+//                     "role": "MEMBER",
+//                     "createdAt": "2025-12-05T12:59:46.153Z",
+//                     "organization": {
+//                         "id": "8b15c5e2-6498-4ff7-b669-e908d3023cb6",
+//                         "name": "fist",
+//                         "created_at": "2025-12-05T07:36:44.121Z"
+//                     }
+//                 }
+//             ]

@@ -10,15 +10,13 @@ import { CreateOrganizationGuard } from '@/components/HOCs/createOrgRoute.guard'
 export default function Page() {
   return (
     <ErrorBoundary>
-      <AuthGuard fallback={<GlobalLoading text='loading in the auth guard .....' />}>
-        <DashboardLayout>
-          <CreateOrganizationGuard>
-            <Suspense fallback={<GlobalLoading />}>
-              <HomePage />
-            </Suspense>
-          </CreateOrganizationGuard>
-        </DashboardLayout>
-      </AuthGuard>
+      <DashboardLayout>
+        <CreateOrganizationGuard>
+          <Suspense fallback={<GlobalLoading />}>
+            <HomePage />
+          </Suspense>
+        </CreateOrganizationGuard>
+      </DashboardLayout>
     </ErrorBoundary>
   );
 }
