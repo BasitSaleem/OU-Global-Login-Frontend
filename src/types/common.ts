@@ -231,6 +231,14 @@ export type Invitation = {
 // Generated on: 2025-12-05T07:56:07.328Z
 // Total permissions: 11
 
+// Auto-generated permission types
+// Generated on: 2025-12-08T09:25:37.520Z
+// Total permissions: 11
+
+// Auto-generated permission types
+// Generated on: 2025-12-08T09:26:06.205Z
+// Total permissions: 11
+
 export type Permission =
   | "og:create::organization"
   | "og:delete::organization"

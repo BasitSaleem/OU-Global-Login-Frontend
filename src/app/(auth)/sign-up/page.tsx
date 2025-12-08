@@ -52,7 +52,7 @@ export default function SignUpPage() {
           //     error: null,
           //   })
           // );
-          router.push(`/otp?email=${encodeURIComponent(response.data.email)}${token ? `&token=${token}` : undefined}`);
+          router.push(`/otp?email=${encodeURIComponent(response.data.email)}${token ? `&token=${token}` : ""}`);
         },
       }
     );

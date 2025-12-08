@@ -46,17 +46,6 @@ export default function LoginPage() {
     }
   }, [router, searchParams]);
   const token = useSearchParams().get('token') || undefined
-  // const token = (() => {
-  //   const appParam = searchParams.get('app');
-  //   if (appParam && appParam.includes('?token=')) {
-  //     const parts = appParam.split('?token=');
-  //     if (parts.length > 1) {
-  //       return parts[1];
-  //     }
-  //   }
-  //   return searchParams.get('token');
-  // })();
-
   const methods = useForm({
     resolver: zodResolver(loginSchema),
   });
@@ -86,7 +75,6 @@ export default function LoginPage() {
         if (redirect_url) {
           setParams(redirect_url);
         }
-
       },
     });
 
