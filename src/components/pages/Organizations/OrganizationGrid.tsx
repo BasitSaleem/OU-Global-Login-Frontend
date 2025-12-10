@@ -71,7 +71,7 @@ export default function OrganizationGrid({
             {loading ? "Loading Organizations" : "Your Organizations"}
           </h1>
           {!loading ? <div
-            className="w-6 h-6 rounded-full flex items-center justify-center text-white text-body-tiny font-medium bg-primary"
+            className="w-6 h-6 rounded-full flex items-center justify-center text-white font-medium bg-primary"
           >
             {Math.max((organizations?.length || 0)) - 1}
           </div> : <LoadingSpinner size={4} />}
@@ -139,16 +139,16 @@ export default function OrganizationGrid({
                 onClick={() => org?.isAddNew && onAddNew()}
                 className={`relative group ${org?.isAddNew ? "" : "bg-bg-secondary border border-border rounded-xl"
                   }  ${org?.isAddNew ? "" : "p-3"
-                  } hover:shadow-sm transition-shadow cursor-pointer`}
+                  } hover:shadow-sm transition-shadow cursor-pointer rounded-xl`}
               >
                 {org?.isAddNew ? (
                   <div
-                    className="flex flex-col items-center justify-center text-center h-full rounded-xl bg-primary/50 py-8"
+                    className="flex flex-col items-center justify-center text-center h-full rounded-xl bg-primary/5 py-8"
                   >
                     <div className="mb-">
-                      <Plus size={50} color="#ffff" />
+                      <Plus size={50} color="#795CF5" />
                     </div>
-                    <span className=" text-[#ffff] font-bold">
+                    <span className=" text-[#795CF5] font-bold">
                       Add New
                     </span>
                   </div>

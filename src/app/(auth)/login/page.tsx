@@ -49,6 +49,7 @@ export default function LoginPage() {
   const methods = useForm({
     resolver: zodResolver(loginSchema),
   });
+  console.log(token);
 
   const { handleSubmit } = methods;
 

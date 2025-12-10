@@ -34,8 +34,8 @@ export default function CreateOrgModal({
   const isNameDebouncing = companyName.trim() !== debouncedCompanyName && companyName.trim().length > 0;
   const isSubDomainDebouncing = subDomain.trim() !== debouncedSubDomain && subDomain.trim().length > 0;
 
-  const { data: isNameAvailable, isFetching: checkingName, isError: nameError } =
-    useCheckOrganizationNameAvailability(debouncedCompanyName);
+  // const { data: isNameAvailable, isFetching: checkingName, isError: nameError } =
+  //   useCheckOrganizationNameAvailability(debouncedCompanyName);
 
   const { data: isSubAvailable, isFetching: checkingSub, isError: subError } =
     useCheckSubDomainAvailability(selectedProduct === 'OI' ? debouncedSubDomain : '');
@@ -70,9 +70,9 @@ export default function CreateOrgModal({
   const canSubmit = () => {
     if (!companyName.trim()) return false;
     if (selectedProduct === 'OI' && !subDomain.trim()) return false;
-    if (isNameDebouncing || checkingName) return false;
+    // if (isNameDebouncing || checkingName) return false;
     if (selectedProduct === 'OI' && (isSubDomainDebouncing || checkingSub)) return false;
-    if (isNameAvailable === false) return false;
+    // if (isNameAvailable === false) return false;
     if (selectedProduct === 'OI' && isSubAvailable === false) return false;
     return true;
   };
@@ -101,39 +101,39 @@ export default function CreateOrgModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg" ariaLabel="Create organization">
       {isLoading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">         
-         <div className="relative bg-bg-secondary rounded-xl shadow-xl w-full max-w-xl mx-4 border animate-pulse">
-          <div className="p-4 ">
-            <div className="h-8 bg-skeleton rounded-lg w-56"></div>
-          </div>
-          <div className="p-4">
-            <div className="mb-6">
-              <div className="h-10 bg-gray-100 rounded-lg"></div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="relative bg-bg-secondary rounded-xl shadow-xl w-full max-w-xl mx-4 border animate-pulse">
+            <div className="p-4 ">
+              <div className="h-8 bg-skeleton rounded-lg w-56"></div>
             </div>
-            <div className="mb-6">
-              <div className="grid grid-cols-2 gap-3">
-                {[1, 2, 3, 4].map((item) => (
-                  <div
-                    key={item}
-                    className="flex items-center gap-3 border border-gray-200 rounded-lg px-2 py-3"
-                  >
-                    <div className="w-6 h-6 bg-skeleton rounded-full"></div>
-                    <div className="h-4 bg-skeleton rounded w-3/4"></div>
-                  </div>
-                ))}
+            <div className="p-4">
+              <div className="mb-6">
+                <div className="h-10 bg-gray-100 rounded-lg"></div>
+              </div>
+              <div className="mb-6">
+                <div className="grid grid-cols-2 gap-3">
+                  {[1, 2, 3, 4].map((item) => (
+                    <div
+                      key={item}
+                      className="flex items-center gap-3 border border-gray-200 rounded-lg px-2 py-3"
+                    >
+                      <div className="w-6 h-6 bg-skeleton rounded-full"></div>
+                      <div className="h-4 bg-skeleton rounded w-3/4"></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="mb-2">
+                <div className="h-12 bg-gray-100 rounded-lg"></div>
               </div>
             </div>
-            <div className="mb-2">
-              <div className="h-12 bg-gray-100 rounded-lg"></div>
+            <div className="p-6 border-t border-gray-200">
+              <div className="flex gap-3 w-full justify-end">
+                <div className="h-10 bg-skeleton rounded-lg w-24"></div>
+                <div className="h-10 bg-skeleton rounded-lg w-24"></div>
+              </div>
             </div>
           </div>
-          <div className="p-6 border-t border-gray-200">
-            <div className="flex gap-3 w-full justify-end">
-              <div className="h-10 bg-skeleton rounded-lg w-24"></div>
-              <div className="h-10 bg-skeleton rounded-lg w-24"></div>
-            </div>
-          </div>
-        </div>
         </div>
       )}
 
@@ -146,14 +146,14 @@ export default function CreateOrgModal({
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value.toLocaleLowerCase())}
           />
-          <AvailabilityStatus
+          {/* <AvailabilityStatus
             isLoading={checkingName}
             isAvailable={isNameAvailable}
             isDebouncing={isNameDebouncing}
             fieldName="Organization name"
             value={companyName}
             companyName={true}
-          />
+          /> */}
         </div>
 
         <label className="block text-body-small font-medium mb-2 ml-1">Products</label>
@@ -181,8 +181,14 @@ export default function CreateOrgModal({
               label="Sub-Domain"
               isRequired
               value={subDomain}
-              onChange={(e) => setSubDomain(e.target.value.toLocaleLowerCase())}
-            />
+              onChange={(e) =>
+                setSubDomain(
+                  e.target.value
+                    .toLocaleLowerCase()
+                    .trim()
+                    .replace(/[^a-z0-9-]/g, "")
+                )
+              } />
             <AvailabilityStatus
               isLoading={checkingSub}
               isAvailable={isSubAvailable}

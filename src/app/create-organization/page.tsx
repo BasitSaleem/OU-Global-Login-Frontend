@@ -1,6 +1,5 @@
 'use client';
 import {
-  useCheckOrganizationNameAvailability,
   useCheckSubDomainAvailability,
   useCreateOrganization,
 } from "@/apiHooks.ts/organization/organization.api";
@@ -16,7 +15,6 @@ import { AuthGuard } from "@/components/HOCs/auth-guard";
 import { generateSubdomainSuggestions } from "@/utils/subdomainGenerator";
 import { SubdomainSuggestion } from "@/components/SubdomainSuggestion";
 import { AvailabilityStatus } from "@/components/AvailabilityStatus";
-import { PermissionGuard } from "@/components/HOCs/permission-guard";
 import { CreateOrganizationGuard } from "@/components/HOCs/createOrgRoute.guard";
 
 export default function CreateOrgPage() {
@@ -27,17 +25,17 @@ export default function CreateOrgPage() {
   const [organizationData, setOrganizationData] = useState<CreateOrganizationResponse | null>(null);
   const [isGeneratingSuggestions, setIsGeneratingSuggestions] = useState(false);
 
-  const debouncedCompanyName = useDebounce(companyName.trim(), 1500);
+  // const debouncedCompanyName = useDebounce(companyName.trim(), 1500);
   const debouncedSubDomain = useDebounce(subDomain.trim(), 1500);
 
-  const isNameDebouncing = companyName.trim() !== debouncedCompanyName && companyName.trim().length > 0;
+  // const isNameDebouncing = companyName.trim() !== debouncedCompanyName && companyName.trim().length > 0;
   const isSubDomainDebouncing = subDomain.trim() !== debouncedSubDomain && subDomain.trim().length > 0;
 
   const createOrgMutation = useCreateOrganization();
   const router = useRouter();
 
-  const { data: isNameAvailable, isFetching: checkingName, isError: nameError } =
-    useCheckOrganizationNameAvailability(debouncedCompanyName);
+  // const { data: isNameAvailable, isFetching: checkingName, isError: nameError } =
+  //   useCheckOrganizationNameAvailability(debouncedCompanyName);
 
   const { data: isSubAvailable, isFetching: checkingSub, isError: subError } =
     useCheckSubDomainAvailability(
@@ -73,9 +71,9 @@ export default function CreateOrgPage() {
   const canSubmit = () => {
     if (!companyName.trim()) return false;
     if (selectedProduct === "OI" && !subDomain.trim()) return false;
-    if (isNameDebouncing || checkingName) return false;
+    // if (isNameDebouncing || checkingName) return false;
     if (selectedProduct === "OI" && (isSubDomainDebouncing || checkingSub)) return false;
-    if (isNameAvailable === false) return false;
+    // if (isNameAvailable === false) return false;
     if (selectedProduct === "OI" && isSubAvailable === false) return false;
     if (createOrgMutation.isPending) return false;
     return true;
@@ -144,13 +142,13 @@ export default function CreateOrgPage() {
                 onChange={(e) => setCompanyName(e.target.value)}
                 placeholder="Enter company name"
               />
-              <AvailabilityStatus
+              {/* <AvailabilityStatus
                 isLoading={checkingName}
                 isAvailable={isNameAvailable}
                 isDebouncing={isNameDebouncing}
                 fieldName="Organization name"
                 value={companyName}
-              />
+              /> */}
             </div>
 
             {/* Products */}
@@ -186,7 +184,14 @@ export default function CreateOrgPage() {
                 type="text"
                 label="Sub-Domain Name"
                 value={subDomain}
-                onChange={(e) => setSubDomain(e.target.value.toLocaleLowerCase())}
+                onChange={(e) =>
+                  setSubDomain(
+                    e.target.value
+                      .toLocaleLowerCase()
+                      .trim()
+                      .replace(/[^a-z0-9-]/g, "")
+                  )
+                }
                 disabled={selectedProduct !== "OI"}
                 placeholder="Enter sub-domain"
               />

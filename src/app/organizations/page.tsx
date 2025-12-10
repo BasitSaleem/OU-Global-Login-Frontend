@@ -1,12 +1,10 @@
 "use client";
-import { useGetMe } from "@/apiHooks.ts/auth/auth.api";
-import { useAcceptInvitation, useGetInvitations } from "@/apiHooks.ts/invitation/invitation.api";
+import { useGetInvitations } from "@/apiHooks.ts/invitation/invitation.api";
 import { inviteData } from "@/apiHooks.ts/invitation/invitation.type";
 import { useCreateOrganization, useGetOrganizations } from "@/apiHooks.ts/organization/organization.api";
 import { CreateOrganizationData, CreateOrganizationResponse } from "@/apiHooks.ts/organization/organization.types";
 import DashboardLayout from "@/components/layout/dashboard-layout";
 import CreateOrgModal from "@/components/modals/CreateOrgModal";
-import DeclineModal from "@/components/modals/InviteConfirmationModal";
 import OrganizationGrid from "@/components/pages/Organizations/OrganizationGrid";
 import PendingInvitations from "@/components/pages/Organizations/PendingInvitation";
 import ProgressModal from "@/components/ui/ProgressModal";

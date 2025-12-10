@@ -32,7 +32,7 @@ export function OrganizationGridComponent({
   const { organization } = useAppSelector((s) => s.auth)
   const bgColor = useMemo(() => getColorFromId(org.id), [org.id]);
   return (
-    <div key={id} className="flex flex-col h-[100px]">
+    <Link href={`/organization-details/${org.id}`} key={id} className="flex flex-col h-[100px]">
       {/* Top section */}
       <div key={org.id} className="flex items-start gap-3 mb-2">
         <div
@@ -130,6 +130,6 @@ export function OrganizationGridComponent({
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

@@ -1,9 +1,9 @@
 "use client"
 import React, { useState } from 'react';
 import { DashboardLayout } from "@/components/layout";
-import PaymentMethodCard from "@/components/pages/PaymentMethods/PaymentMethodCard";
-import PaymentModal from "@/components/pages/PaymentMethods/PaymentModal";
-import DeletePaymentModal from '@/components/pages/PaymentMethods/DeletePaymentModal';
+import PaymentMethodCard from "@/components/pages/OrganizationDetails/PaymentMethods/PaymentMethodCard";
+import PaymentModal from "@/components/pages/OrganizationDetails/PaymentMethods/PaymentModal";
+import DeletePaymentModal from '@/components/pages/OrganizationDetails/PaymentMethods/DeletePaymentModal';
 
 export interface PaymentMethod {
     id: string;
@@ -85,52 +85,50 @@ const PaymentMethodsPage = () => {
     };
 
     return (
-        <DashboardLayout>
-            <div className="px-4 py-12 w-full mx-auto md:px-11">
-                <div className="flex items-center gap-2 mb-6">
-                    <h1 className="font-bold text-2xl">Payment Method</h1>
-                    <div className="bg-[#8B5CF6] text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                        {paymentMethods.length}
-                    </div>
+        <div className="px-4 py-12 w-full mx-auto md:px-11">
+            <div className="flex items-center gap-2 mb-6">
+                <h1 className="font-bold text-2xl">Payment Method</h1>
+                <div className="bg-[#8B5CF6] text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                    {paymentMethods.length}
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <PaymentMethodCard
-                        variant="add"
-                        onAdd={handleAddClick}
-                    />
-                    {paymentMethods.map(method => (
-                        <PaymentMethodCard
-                            key={method.id}
-                            variant="display"
-                            cardType={method.cardType}
-                            last4={method.last4}
-                            expiry={method.expiry}
-                            isPrimary={method.isPrimary}
-                            onEdit={() => handleEditClick(method)}
-                            onDelete={() => setIsDeleteModalOpen(true)}
-                            onMakePrimary={() => handleMakePrimary(method.id)}
-                        />
-                    ))}
-                </div>
-
-                <PaymentModal
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    mode={modalMode}
-                    initialData={selectedMethod}
-                    onSave={handleSave}
-                />
-                <DeletePaymentModal
-                    isOpen={isDeleteModalOpen}
-                    onClose={() => setIsDeleteModalOpen(false)}
-                    onDelete={handleDeleteClick}
-                // initialData={selectedMethod}
-                />
-
-
             </div>
-        </DashboardLayout>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <PaymentMethodCard
+                    variant="add"
+                    onAdd={handleAddClick}
+                />
+                {paymentMethods.map(method => (
+                    <PaymentMethodCard
+                        key={method.id}
+                        variant="display"
+                        cardType={method.cardType}
+                        last4={method.last4}
+                        expiry={method.expiry}
+                        isPrimary={method.isPrimary}
+                        onEdit={() => handleEditClick(method)}
+                        onDelete={() => setIsDeleteModalOpen(true)}
+                        onMakePrimary={() => handleMakePrimary(method.id)}
+                    />
+                ))}
+            </div>
+
+            <PaymentModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                mode={modalMode}
+                initialData={selectedMethod}
+                onSave={handleSave}
+            />
+            <DeletePaymentModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onDelete={handleDeleteClick}
+            // initialData={selectedMethod}
+            />
+
+
+        </div>
     );
 };
 

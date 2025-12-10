@@ -28,7 +28,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   };
 
   return (
-    <AuthGuard fallback={<GlobalLoading text='loading in the auth guard .....' />}>
+    <AuthGuard fallback={<GlobalLoading text='Authenticating' />}>
 
       <div className="min-h-screen bg-background flex font-inter">
         <Sidebar
@@ -37,8 +37,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           onToggleMobile={toggleMobileSidebar}
           currentPath={pathname}
           onShowModal={(icon) => {
-            setModalIcon(icon);
             setIsModalOpen(true);
+            setModalIcon(icon);
           }}
         />
 

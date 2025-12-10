@@ -8,6 +8,7 @@ import { RootState } from '@/redux/store';
 import { useEffect } from 'react';
 import { ROUTES } from '@/constants';
 import { GlobalLoading } from '@/components/ui/loading';
+import { useGetMe } from '@/apiHooks.ts/auth/auth.api';
 
 export default function AcceptInvitePage() {
     const params = useParams();
@@ -16,14 +17,14 @@ export default function AcceptInvitePage() {
     const token = params.token as string;
     const emailParam = searchParams.get('email');
 
-    const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
-    const { data: invitation, isLoading, error } = useGetInvitationByToken(token, !!token);
+    // const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+    const { data: me } = useGetMe()
     const { mutate: acceptInvitation, isPending: isAccepting } = useAcceptInvitation({
         onSuccess: () => {
             router.push('/organizations');
         },
     });
-
+    console.log(me)
     // For new users, redirect to signup with email pre-filled
     // const handleSignupToAccept = () => {
     //     if (emailParam) {
@@ -37,17 +38,12 @@ export default function AcceptInvitePage() {
     //     }
     // };
 
-    // if (isLoading) {
-    //     return (
-    //         <LoadingSpinner />
-    //     );
-    // }
     useEffect(() => {
         checkAuth()
     }, [])
     const checkAuth = () => {
-        if (!isAuthenticated) {
-            router.push(ROUTES.LOGIN + (token ? `?token=${token}` : ''))
+        if (!me?.data?.user) {
+            router.push(ROUTES.LOGIN + (token ? `&token=${token}` : ''))
         }
         else {
             acceptInvite()

@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { Input } from '@/components/ui/input';
 import { Modal } from '@/components/modals/GenericModal';
-import { PaymentMethod } from '@/app/payment-methods/page';
+import { PaymentMethod } from '@/app/organization-details/[orgId]/payment-methods/page';
 
 interface PaymentModalProps {
     isOpen: boolean;

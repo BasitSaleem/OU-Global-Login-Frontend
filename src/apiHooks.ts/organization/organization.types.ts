@@ -1,4 +1,4 @@
-import { OgOrgMembership, OgUser } from "../membership/membership.types";
+import { OgOrgMembership } from "../membership/membership.types";
 
 export type products = "OI" | "OG" | "OA" | "OJ";
 export interface Organization {
@@ -82,7 +82,7 @@ export interface OgOrgResponse {
 }
 export interface OgOrgDetailResponse {
   data: {
-    organization: OgOrganization[];
+    organization: OgOrganization;
   };
   message?: string
   success: boolean

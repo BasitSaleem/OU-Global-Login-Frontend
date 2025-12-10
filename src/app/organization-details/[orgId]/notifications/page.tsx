@@ -215,7 +215,7 @@ export default function NotificationPreferencesPage() {
           <div className="flex justify-center  mt-3">
             <div className="flex items-center gap-2 mb-3">
               <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('inventory')}>
-                <Image src={Icons.owneranalytics} alt="owner analytics" width={16} height={16} className={`w-8 h-8 rounded-lg p-1 transition border ${selectedOwner === 'inventory' ? 'border-primary bg-bg-secondary' : 'border-transparent'
+                <Image src={Icons.ownerinventory} alt="owner analytics" width={16} height={16} className={`w-8 h-8 rounded-lg p-1 transition border ${selectedOwner === 'inventory' ? 'border-primary bg-bg-secondary' : 'border-transparent'
                   }`} />
 
                 <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-bg-secondary border text-black text-body-tiny font-medium rounded px-2 py-1 whitespace-nowrap z-10 shadow-sm">

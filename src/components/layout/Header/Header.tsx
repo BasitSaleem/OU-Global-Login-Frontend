@@ -8,8 +8,6 @@ import { useAppSelector } from "@/redux/store";
 import { NotificationsDropdown } from "./NotificationDropdown";
 import { NotificationItemProps } from "./Header.types";
 import { SvgIcon } from "@/components/ui/SvgIcon";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { PermissionGuard } from "@/components/HOCs/permission-guard";
 import Image from "next/image";
 import { Button } from "@/components/ui";
 interface HeaderProps {
@@ -85,15 +83,17 @@ export default function AppHeader({
   return (
     <header className="h-14 border-b bg-bg-secondary flex items-center justify-between px-4">
       <div className="flex items-center gap-4 flex-1 max-w-2xl">
-        <button
+        <Button
+          variant="basic"
           onClick={onToggleSidebar}
           className="hidden lg:flex hover:scale-105 cursor-pointer"
           title="Toggle sidebar"
         >
           <SvgIcon name="hamburger" className="w-5 h-5 text-gray-600" />
-        </button>
+        </Button>
 
-        <button
+        <Button
+          variant="basic"
           onClick={onToggleMobileSidebar}
           className="lg:hidden hover:bg-bg-secondary rounded transition-colors cursor-pointer"
         >
@@ -102,7 +102,7 @@ export default function AppHeader({
           ) : (
             <Menu className="w-4 h-4 text-gray-600" />
           )}
-        </button>
+        </Button>
 
         <div className="relative flex-1 max-w-lg">
           <SvgIcon name="search" className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4"
@@ -116,17 +116,16 @@ export default function AppHeader({
       </div>
 
       <div className="flex items-center gap-2">
-        <ThemeToggle />
         <div className="relative" ref={notificationsRef}>
 
           <Button
             // permission="og:access::notification"
             variant="basic"
             onClick={toggleNotifications}
-            className="relative p-1 hover:scale-110  cursor-pointer"
+            className="relative p-1 cursor-pointer"
             aria-label="Open notifications"
           >
-            <SvgIcon name="notification" className="w-5 h-5" />
+            <SvgIcon name="notification" width={20} height={20} />
             {anyUnread && (
               <div
                 className="absolute top-0 right-0 w-1.5 h-1.5 rounded-full"
@@ -151,33 +150,32 @@ export default function AppHeader({
           permission="og:access::setting"
           variant="basic"
           onClick={handleSettingsClick}
-          className="p-1 hover:scale-110 duration-300 cursor-pointer"
+          className="p-1 cursor-pointer"
         >
-          <SvgIcon name="settings" className="w-8 h-8" />
+          <SvgIcon name="settings" width={20} height={20} />
         </Button>
 
         <div className="relative" ref={profileDropdownRef}>
           <Button
             onClick={toggleProfileDropdown}
             variant="basic"
-            className="w-7 h-7 rounded-full flex items-center hover:scale-110 duration-300 justify-center hover:opacity-90 transition-opacity cursor-pointer"
+            className="w-8 h-8  rounded-full flex items-center justify-center hover:opacity-90 transition-opacity"
             style={{ backgroundColor: "#795CF5" }}
             aria-label="Open profile menu"
           >
-
-
-            {user?.profile_url ? <div>
+            {user?.profile_url ?
               <Image
-                className="w-7 h-7 rounded-full"
+                className="w-8 h-8 rounded-full"
                 src={user?.profile_url}
                 alt="profile"
                 width={200}
                 height={200}
-              /></div> : <span className="text-white font-medium">
-              {" "}
-              {`${user?.first_name?.charAt(0) ?? ""}${user?.last_name?.charAt(0) ?? ""
-                }`.toUpperCase()}
-            </span>}
+              />
+              : <span className="text-white mt-[2px] font-medium  cursor-pointer items-center">
+                {" "}
+                {`${user?.first_name?.charAt(0) ?? ""}${user?.last_name?.charAt(0) ?? ""
+                  }`.toUpperCase()}
+              </span>}
           </Button>
 
           <ProfileMenu onClose={() => setProfileDropdownOpen(false)} open={profileDropdownOpen} />

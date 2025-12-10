@@ -125,11 +125,11 @@ export default function UserProfileLayout({
                 key={item.href}
                 onClick={() => router.push(item.href)}
                 className={`
-                  flex cursor-pointer items-center hover:bg-primary/80
+                  flex cursor-pointer items-center hover:bg-primary/10 hover:text-primary
                   ${sidebarCollapsed ? "justify-center px-0" : "px-2"}
                   py-2 rounded-lg transition-colors
                   ${item.isActive
-                    ? "text-white bg-primary"
+                    ? "text-primary bg-primary/10"
                     : " "
                   }
                   gap-2
@@ -137,7 +137,7 @@ export default function UserProfileLayout({
                 title={sidebarCollapsed ? item.label : ""}
               >
 
-                <SvgIcon name={item.icon} className="w-6 h-6 " />
+                <SvgIcon name={item.icon} width={20} height={20} className="text-[#4B5563]" />
                 {!sidebarCollapsed && (
                   <span className=" font-medium">{item.label}</span>
                 )}

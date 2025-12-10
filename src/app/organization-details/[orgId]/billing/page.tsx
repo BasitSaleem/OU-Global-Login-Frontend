@@ -3,10 +3,10 @@ import { DashboardLayout } from "@/components/layout";
 import { Icons } from "@/components/utils/icons";
 import Image from "next/image";
 import { useState } from "react";
-import PlanSection from "@/components/pages/Billing/PlanSection";
-import RenewalSection from "@/components/pages/Billing/RenewalSection";
-import PaymentMethodSection from "@/components/pages/Billing/PaymentMethodSection";
-import InvoicesSection from "@/components/pages/Billing/InvoicesSection";
+import PlanSection from "@/components/pages/OrganizationDetails/Billing/PlanSection";
+import RenewalSection from "@/components/pages/OrganizationDetails/Billing/RenewalSection";
+import PaymentMethodSection from "@/components/pages/OrganizationDetails/Billing/PaymentMethodSection";
+import InvoicesSection from "@/components/pages/OrganizationDetails/Billing/InvoicesSection";
 
 type OwnerKey = 'inventory' | 'jungle' | 'marketplace' | 'analytics';
 
@@ -95,8 +95,6 @@ const BillingContent = () => {
 
 export default function Page() {
     return (
-        <DashboardLayout>
-            <BillingContent />
-        </DashboardLayout>
+        <BillingContent />
     );
 }

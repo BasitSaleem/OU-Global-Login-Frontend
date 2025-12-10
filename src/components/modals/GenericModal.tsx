@@ -61,9 +61,9 @@ function ModalRoot({
             onClick={onClose}
             ariaLabel='Close'
             variant='basic'
-            className="absolute top-3 right-3  hover:bg-primary/80 rounded-2xl p-1 cursor-pointer"
+            className="absolute top-3 right-3 p-1 cursor-pointer"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5 hover:scale-105 hover:text-primary transition-all duration-300" />
           </Button>
         )}
         {children}
