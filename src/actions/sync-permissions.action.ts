@@ -19,10 +19,7 @@ function generatePermissionType(permissions: string[]): string {
   const permissionTypes = permissions
     .map(permission => `  | "${permission}"`)
     .join('\n');
-  return `// Auto-generated permission types
-// Generated on: ${new Date().toISOString()}
-// Total permissions: ${permissions.length}
-
+  return `
 export type Permission =
 ${permissionTypes}`;
 }
