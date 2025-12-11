@@ -8,7 +8,7 @@ import React, { useMemo, useState } from "react";
 import { generateProductLink } from "./OrganizationProductCard";
 import { Button } from "@/components/ui";
 import Image from "next/image";
-
+import { useRouter } from "next/navigation";
 interface OrganizationGridComponentProps {
   id: string;
   org: OgOrganization;
@@ -31,9 +31,15 @@ export function OrganizationGridComponent({
   );
   const { organization } = useAppSelector((s) => s.auth)
   const bgColor = useMemo(() => getColorFromId(org.id), [org.id]);
+  const router = useRouter()
+  const onClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    router.push(`/organization-details/${org.id}`)
+  }
   return (
-    <Link href={`/organization-details/${org.id}`} key={id} className="flex flex-col h-[100px]">
-      {/* Top section */}
+    <div
+      onClick={onClick}
+      key={id} className="flex flex-col h-[100px]">
       <div key={org.id} className="flex items-start gap-3 mb-2">
         <div
           className="w-10 h-10 rounded flex items-center justify-center text-white font-medium"
@@ -130,6 +136,6 @@ export function OrganizationGridComponent({
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
