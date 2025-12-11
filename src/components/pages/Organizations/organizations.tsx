@@ -7,7 +7,7 @@ type organizations = {
 
 const OrgCard: React.FC<organizations> = ({ initials, color, title, subtitle }) => {
   return (
-    <div className="bg-white border border-gray-200 rounded p-4 hover:shadow-md transition-shadow">
+    <div className="bg-white border rounded p-4 hover:shadow-md transition-shadow">
       <div className="flex items-center gap-2">
         {/* Icon */}
         <div

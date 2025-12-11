@@ -1,5 +1,3 @@
-// src/constants/icons.ts
-
 export const Icons = {
   addNew: "/Icons/Add New.svg",
   allProducts: "/Icons/All Products.svg",
@@ -18,7 +16,7 @@ export const Icons = {
   home: "/Icons/Home.svg",
   logout: "/Icons/Logout.svg",
   notification: "/Icons/Notification.svg",
-  notificationblue :"/Icons/Notificationblue.svg",
+  notificationblue: "/Icons/Notificationblue.svg",
   organization: "/Icons/Organization.svg",
   pie: "/Icons/Pie.svg",
   production: "/Icons/Production.svg",
@@ -34,16 +32,17 @@ export const Icons = {
   microsoft: "/Icons/microsoft-logo-svgrepo-com.svg",
   google: "/Icons/GoogleIcon.svg",
   owneruniverse: "/Icons/Owners Universe.svg",
-  ownerjungle: "/Icons/Owners Jungle.svg",
-  owneranalytics: "/Icons/Owners Analytics.svg",
-  ownerinventory: "/Icons/Owners Inventory.svg",
-  ownermarketplace: "/Icons/Owners Marketplace.svg",
+  ownerjungle: "/Icons/OJ_LOGO.svg",
+  owneranalytics: "/Icons/OA_LOGO.svg",
+  ownerinventory: "/Icons/OI_LOGO.svg",
+  ownermarketplace: "/Icons/OM_LOGO.svg",
   owneruniversecoll: "/Icons/Owners Universe coll.svg",
   homewhite: "/Icons/Homewhite.svg",
   organizationwhite: "/Icons/Organizationwhite.svg",
   notificationwhite: "/Icons/Notificationwhite.svg",
   emailwhite: "/Icons/Emailwhite.svg",
   changePasswordwhite: "/Icons/Change Passwordwhite.svg",
-  homepageimage: "/Icons/Welcome-cuate.svg"
+  homepageimage: "/Icons/Welcome-cuate.svg",
+  OI: "/Icons/OI.svg",
 
 } as const;

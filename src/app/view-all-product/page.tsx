@@ -8,7 +8,7 @@ function ViewAllProductsPage() {
       id: 'inventory',
       title: 'Owners Inventory',
       description: 'Manage your inventory',
-      icon: Icons.ownerinventory,
+      icon: '/Icons/OI_LOGO.svg',
       backgroundColor: '#F3E8FF',
       status: 'Open',
       available: true
@@ -17,7 +17,7 @@ function ViewAllProductsPage() {
       id: 'analytics',
       title: 'Owners Analytics',
       description: 'Get insights and analyze your business performance',
-      icon: Icons.owneranalytics,
+      icon: '/Icons/OA_LOGO.svg',
       backgroundColor: '#FFEDD5',
       status: 'Coming Soon',
       available: false
@@ -26,7 +26,7 @@ function ViewAllProductsPage() {
       id: 'marketplace',
       title: 'Owners Marketplace',
       description: 'Buy and sell products',
-      icon: Icons.ownermarketplace,
+      icon: '/Icons/OM_LOGO.svg',
       backgroundColor: '#FCE7F3',
       status: 'Coming Soon',
       available: false
@@ -35,7 +35,7 @@ function ViewAllProductsPage() {
       id: 'jungle',
       title: 'Owners Jungle',
       description: 'Explore opportunities',
-      icon: Icons.ownerjungle,
+      icon: '/Icons/OJ_LOGO.svg',
       backgroundColor: '#DBEAFE',
       status: 'Coming Soon',
       available: false
@@ -45,20 +45,17 @@ function ViewAllProductsPage() {
   return (
     <div className="p-4">
       <div className="max-w-7xl mx-auto">
-        {/* Page Header */}
         <div className="mb-3">
-          <h1 className="text-heading-1 font-bold text-black">All Products</h1>
+          <h1 className="text-heading-1 font-bold text">All Products</h1>
         </div>
 
-        {/* Products Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {products.map((product) => (
             <div
               key={product.id}
-              className="bg-white border border-gray-200 rounded p-4 hover:shadow-sm transition-shadow cursor-pointer"
+              className="bg-bg-secondary border rounded-xl p-4 hover:shadow-sm transition-shadow cursor-pointer"
             >
               <div className="flex items-start gap-3">
-                {/* Product Icon */}
                 <div
                   className="w-9 h-9 rounded flex items-center justify-center flex-shrink-0"
                   style={{ backgroundColor: product.backgroundColor }}

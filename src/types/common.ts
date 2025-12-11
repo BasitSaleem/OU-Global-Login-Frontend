@@ -35,3 +35,31 @@ export interface SEOProps {
   url?: string;
   type?: 'website' | 'article' | 'profile';
 }
+
+export type Invitation = {
+  id: string;
+  name: string;
+  abbreviation: string;
+  backgroundColor: string;
+  invitedBy: string;
+  product: string;
+  timeAgo: string;
+};
+
+
+export type Permission =
+  | "og:create::organization"
+  | "og:delete::organization"
+  | "og:favorite::organization"
+  | "og:edit::password"
+  | "og:access::notification_preferences"
+  | "og:edit::email"
+  | "og:access::setting"
+  | "og:access::products"
+  | "og:view::all_products"
+  | "og:view::all_notifications"
+  | "og:edit::profile"
+
+export interface WithPermissionsProps {
+  userPermissions: Permission[];
+}

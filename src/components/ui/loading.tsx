@@ -1,5 +1,7 @@
+"use client"
 import { cn } from '@/utils/helpers';
 import { Loader2 } from 'lucide-react';
+import { useEffect } from 'react';
 
 interface LoadingProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -8,11 +10,11 @@ interface LoadingProps {
   className?: string;
 }
 
-export function Loading({ 
-  size = 'md', 
-  text, 
+export function Loading({
+  size = 'md',
+  text,
   fullScreen = false,
-  className 
+  className
 }: LoadingProps) {
   const sizes = {
     sm: 'h-4 w-4',
@@ -26,16 +28,16 @@ export function Loading({
       'flex flex-col items-center justify-center gap-3',
       className
     )}>
-      <Loader2 className={cn('animate-spin text-blue-600 dark:text-blue-400', sizes[size])} />
+      <Loader2 className={cn('animate-spin text-blue-600 ', sizes[size])} />
       {text && (
-        <p className="text-sm text-gray-600 dark:text-gray-400">{text}</p>
+        <p className="text-sm">{text}</p>
       )}
     </div>
   );
 
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm dark:bg-gray-900/80">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
         {content}
       </div>
     );
@@ -48,15 +50,51 @@ export function LoadingSkeleton({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'animate-pulse rounded-md bg-gray-200 dark:bg-gray-700',
+        'animate-pulse rounded-md bg-skeleton ',
         className
       )}
     />
   );
 }
 
-export function LoadingSpinner({ className }: { className?: string }) {
+export function LoadingSpinner({ size = 5, className }: { size?: number, className?: string }) {
   return (
-    <Loader2 className={cn('h-4 w-4 animate-spin', className)} />
+    <div className="text-center flex flex-col items-center">
+      <div className={cn(`animate-spin rounded-full h-${size} w-${size} border-b-2 border-primary mx-auto`, className)}></div>
+    </div >
+  );
+}
+
+
+export function GlobalLoading({
+  text = "Loading",
+  className
+}: LoadingProps) {
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, []);
+
+  return (
+    <div
+      className={cn(
+        "fixed inset-0 z-50 flex items-center justify-center pointer-events-auto bg-background/80 backdrop-blur-sm overflow-hidden",
+        className
+      )}
+      aria-modal="true"
+      role="status"
+    >
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-24 w-24 border-b-3 border-primary mx-auto" />
+        {text && (
+          <p className="mt-4 text-sm font-medium ">
+            {`${text}  ...`}
+          </p>
+        )}
+      </div>
+    </div>
   );
 }

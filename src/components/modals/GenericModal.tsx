@@ -2,6 +2,7 @@
 
 import { X } from 'lucide-react';
 import React, { useEffect } from 'react';
+import { Button } from '../ui';
 
 type ModalSize = 'sm' | 'md' | 'lg';
 
@@ -45,24 +46,25 @@ function ModalRoot({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#00000080] p-3"
+      className="fixed h-full bg-background/80 inset-0 text-text z-50 flex items-center justify-center p-3"
       onClick={closeOnOverlay ? onClose : undefined}
       role="dialog"
       aria-modal="true"
       aria-label={ariaLabel}
     >
       <div
-        className={`bg-white rounded-xl shadow-lg relative ${sizeClasses[size]} max-w-[95vw] p-6 ${className}`}
+        className={`bg-bg-secondary rounded-xl shadow-lg border relative ${sizeClasses[size]} max-w-[95vw] p-6 ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
         {showCloseButton && (
-          <button
+          <Button
             onClick={onClose}
-            className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 bg-[#795CF512] rounded-2xl p-1 cursor-pointer"
-            aria-label="Close"
+            ariaLabel='Close'
+            variant='basic'
+            className="absolute top-3 right-3 p-1 cursor-pointer"
           >
-            <X className="w-5 h-5" />
-          </button>
+            <X className="w-5 h-5 hover:scale-105 hover:text-primary transition-all duration-300" />
+          </Button>
         )}
         {children}
       </div>
@@ -84,7 +86,7 @@ function Title({ children, className = '' }: SectionProps) {
 }
 
 function Body({ children, className = '' }: SectionProps) {
-  return <div className={`text-sm text-gray-700 ${className}`}>{children}</div>;
+  return <div className={`text-sm text-text ${className}`}>{children}</div>;
 }
 
 function Footer({ children, className = '' }: SectionProps) {

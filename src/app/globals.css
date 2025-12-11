@@ -3,44 +3,291 @@
 /* Import Inter font with all required weights */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
+/* Define your color palette in CSS variables */
+:root {
+  /* Light theme colors */
+  --color-primary-50: #F5F3FF;
+  --color-card-secondary: #FFF;
+  --gradient-primary-start: #faf5ff;
+  --gradient-primary-end: #fdf2f8;
+  --color-primary-100: #EDE9FE;
+
+  --color-primary-200: #DDD6FE;
+  --color-primary-300: #C4B5FD;
+  --color-primary-400: #A78BFA;
+  --color-primary-500: #795CF5;
+  --color-primary-600: #7C3AED;
+  --color-primary-700: #6D28D9;
+  --color-primary-800: #5B21B6;
+  --color-primary-900: #4C1D95;
+  --color-bg-secondary: #FFF;
+  --color-skeleton: #D1D5DB;
+  --color-black: #131313;
+  --color-text: #6B7280;
+  --color-red: #E53935;
+  --color-text-btn: #ffffff;
+  /* --color-hover: #795CF5; */
+  /* Gray scale */
+  /* --color-gray: #1F2937; */
+  /* --color-gray-50: #F9FAFB;
+  --color-gray-100: #F3F4F6;
+  --color-gray-200: #E5E7EB;
+  --color-gray-300: #D1D5DB;
+  --color-gray-400: #9CA3AF;
+  --color-gray-500: #6B7280;
+  --color-gray-600: #4B5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1F2937;
+  --color-gray-900: #111827; */
+  --color-input-bg: #ffffff;
+  /* Base colors */
+  --color-white: #FFFFFF;
+  /* Background and text */
+  --color-background: var(--color-white);
+  --color-foreground: var(--color-black);
+  --color-border: #E5E7EB;
+  --color-bg-secondary: #ffffff;
+  --color-invert: #131313;
+
+}
+
+/* Dark theme colors */
+.dark {
+  --color-background: #111827;
+  --color-foreground: var(--color-white);
+  --color-border: #4B5563;
+  --color-bg-secondary: #1F2937;
+  --color-card-secondary: #4B5563;
+  --color-primary-100: #EDE9FE;
+  --color-primary-500: #9333EA;
+  --gradient-primary-start: #9333EA;
+  --gradient-primary-end: #2563EB;
+  --color-skeleton: #4B5563;
+  --color-input-bg: #1a222e;
+  --color-black: #000000;
+  --color-text: #ffffff;
+  --color-invert: #ffffff;
+  --color-text-btn: #ffffff;
+  --color-red: #E53935;
+  /* --color-hover: #795CF5; */
+}
+
+.dark-ocean {
+  --color-background: #0a1128;
+  --color-foreground: #e0f2fe;
+  --color-border: #1e3a5f;
+  --color-bg-secondary: #1e293b;
+  --color-card-secondary: #334155;
+  --color-primary-100: #e0f2fe;
+  --color-primary-500: #0ea5e9;
+  --gradient-primary-start: #0369a1;
+  --gradient-primary-end: #0ea5e9;
+  --color-skeleton: #475569;
+}
+
+.dark-crimson {
+  --color-background: #1a0b0e;
+  --color-foreground: #fce7f3;
+  --color-border: #5c1a2e;
+  --color-bg-secondary: #291521;
+  --color-card-secondary: #451a32;
+  --color-primary-100: #fce7f3;
+  --color-primary-500: #be185d;
+  --gradient-primary-start: #831843;
+  --gradient-primary-end: #be185d;
+  --color-skeleton: #6b2c4a;
+}
+
+@utility bg-card {
+  background: linear-gradient(90deg, var(--gradient-primary-start), var(--gradient-primary-end));
+}
+
+
+
+/* Register colors with Tailwind 4 */
+@theme {
+  /* Primary colors */
+  --color-primary-50: var(--color-primary-50);
+  --color-primary-100: var(--color-primary-100);
+  --color-primary-200: var(--color-primary-200);
+  --color-primary-300: var(--color-primary-300);
+  --color-primary-400: var(--color-primary-400);
+  --color-primary-500: var(--color-primary-500);
+  --color-primary-600: var(--color-primary-600);
+  --color-primary-700: var(--color-primary-700);
+  --color-primary-800: var(--color-primary-800);
+  --color-primary-900: var(--color-primary-900);
+  --color-text: var(--color-text);
+  --color-btn-text: var(--color-text-btn);
+  /* --color-hover: var(--color-primary-900); */
+  --color-card-secondary: var(--color-card-secondary);
+  --color-text-secondary: var(--color-card-secondary);
+  --color-bg-secondary: var(--color-bg-secondary);
+  --color-skeleton: var(--color-skeleton);
+  --color-primary: var(--color-primary-500);
+  --color-input-bg: var(--color-input-bg);
+  /* Base colors */
+  --color-black: var(--color-black);
+  --color-white: var(--color-white);
+  --color-hover: var(--color-hover);
+  /* Semantic colors */
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-foreground);
+  --color-border: var(--color-border);
+  --color-invert: var(--color-invert);
+  --color-red: var(--color-red);
+
+
+  /* Gray colors */
+  /* --color-gray-50: var(--color-gray-50);
+  --color-gray-100: var(--color-gray-100);
+  --color-gray-200: var(--color-gray-200);
+  --color-gray-300: var(--color-gray-300);
+  --color-gray-400: var(--color-gray-400);
+  --color-gray-500: var(--color-gray-500);
+  --color-gray-600: var(--color-gray-600);
+  --color-gray-700: var(--color-gray-700);
+  --color-gray-800: var(--color-gray-800);
+  --color-gray-900: var(--color-gray-900); */
+
+
+}
+
+/* Autofill styles layer - higher specificity */
+@layer components {
+
+  /* Light mode autofill styling to match bg-gray-100 */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0px 1000px var(--color-gray-100) inset;
+    box-shadow: 0 0 0px 1000px var(--color-gray-100) inset;
+    -webkit-text-fill-color: var(--color-foreground);
+    caret-color: var(--color-foreground);
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
+  /* gradient for home card  bg  */
+
+
+  /* Focus state for autofilled inputs - preserve focus ring */
+  input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px var(--color-gray-100) inset, 0 0 0 2px var(--color-primary-500);
+    box-shadow: 0 0 0px 1000px var(--color-gray-100) inset, 0 0 0 2px var(--color-primary-500);
+    -webkit-text-fill-color: var(--color-foreground);
+    caret-color: var(--color-foreground);
+    outline: none;
+  }
+
+  /* Dark mode autofill styling */
+  .dark input:-webkit-autofill,
+  .dark input:-webkit-autofill:hover,
+  .dark input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0px 1000px var(--color-gray-800) inset;
+    box-shadow: 0 0 0px 1000px var(--color-gray-800) inset;
+    -webkit-text-fill-color: var(--color-foreground);
+    caret-color: var(--color-foreground);
+  }
+
+  /* .dark .dark-gradient-primary-horizontal {
+    background: linear-gradient(90deg, #9333EA 0%, #2563EB 100%);
+  } */
+
+  /* Dark mode focus state for autofilled inputs */
+  .dark input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px var(--color-gray-800) inset, 0 0 0 2px var(--color-primary-500);
+    box-shadow: 0 0 0px 1000px var(--color-gray-800) inset, 0 0 0 2px var(--color-primary-500);
+    -webkit-text-fill-color: var(--color-foreground);
+    caret-color: var(--color-foreground);
+    outline: none;
+  }
+}
+
 /* Base styles with brand colors and typography */
 @layer base {
   * {
-    border-color: theme('colors.gray.200');
+    border-color: var(--color-border);
+    transition: border-color 0.2s ease;
   }
-  
+
+  /* Theme toggle shimmer animation */
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
   html {
     scroll-behavior: smooth;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
-  
+
   body {
-    background-color: white;
-    color: theme('colors.black');
+    background-color: var(--color-background);
+    color: var(--color-foreground);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* 
+  *,
+  *::before,
+  *::after {
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      fill 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      stroke 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  } */
+
+  /* Prevent flash of unstyled content */
+  .no-transition *,
+  .no-transition *::before,
+  .no-transition *::after {
+    transition: none !important;
+  }
+
+  /* Ensure html and body transition smoothly */
+  html {
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  body {
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      color 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
 }
 
 /* Professional typography utility classes */
 @layer utilities {
+
   /* Heading Typography Classes - Compact professional sizes */
   .text-heading-1 {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-size: 18px;
     line-height: 20px;
     font-weight: 600;
-    color: theme('colors.black');
+    color: var(--color-foreground);
   }
+
+
 
   .text-heading-2 {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-size: 16px;
     line-height: 18px;
     font-weight: 600;
-    color: theme('colors.black');
+    color: var(--color-foreground);
   }
 
   .text-heading-3 {
@@ -48,7 +295,7 @@
     font-size: 15px;
     line-height: 16px;
     font-weight: 600;
-    color: theme('colors.black');
+    color: var(--color-foreground);
   }
 
   /* Body Typography - Professional compact sizes */
@@ -57,6 +304,7 @@
     font-size: 16px;
     line-height: 20px;
     font-weight: 400;
+    color: var(--color-foreground);
   }
 
   .text-body-large-bold {
@@ -64,6 +312,7 @@
     font-size: 16px;
     line-height: 20px;
     font-weight: 500;
+    color: var(--color-foreground);
   }
 
   .text-body-medium {
@@ -71,6 +320,7 @@
     font-size: 15px;
     line-height: 18px;
     font-weight: 500;
+    color: var(--color-text);
   }
 
   .text-body-medium-bold {
@@ -78,6 +328,7 @@
     font-size: 15px;
     line-height: 18px;
     font-weight: 500;
+    color: var(--color-foreground);
   }
 
   .text-body-small {
@@ -85,6 +336,7 @@
     font-size: 14px;
     line-height: 16px;
     font-weight: 400;
+    color: var(--color-gray-500);
   }
 
   .text-body-small-bold {
@@ -92,6 +344,7 @@
     font-size: 14px;
     line-height: 16px;
     font-weight: 500;
+    color: var(--color-foreground);
   }
 
   .text-body-tiny {
@@ -99,5 +352,24 @@
     font-size: 13px;
     line-height: 14px;
     font-weight: 400;
+    color: var(--color-foreground);
+  }
+
+  /* High specificity autofill focus styles */
+  .focus\:ring-2:focus:-webkit-autofill,
+  .focus\:ring-primary-500:focus:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px var(--color-gray-100) inset, 0 0 0 2px var(--color-primary-500) !important;
+    box-shadow: 0 0 0px 1000px var(--color-gray-100) inset, 0 0 0 2px var(--color-primary-500) !important;
+    -webkit-text-fill-color: var(--color-foreground) !important;
+    caret-color: var(--color-foreground) !important;
+  }
+
+  /* Dark mode high specificity autofill focus styles */
+  .dark .focus\:ring-2:focus:-webkit-autofill,
+  .dark .focus\:ring-primary-500:focus:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px var(--color-gray-800) inset, 0 0 0 2px var(--color-primary-500) !important;
+    box-shadow: 0 0 0px 1000px var(--color-gray-800) inset, 0 0 0 2px var(--color-primary-500) !important;
+    -webkit-text-fill-color: var(--color-foreground) !important;
+    caret-color: var(--color-foreground) !important;
   }
 }

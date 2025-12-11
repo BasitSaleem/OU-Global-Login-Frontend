@@ -5,7 +5,6 @@ import NotificationsHeaderControls from "@/components/pages/Notifications/Notifi
 import NotificationItem from "@/components/pages/Notifications/NotificationItems";
 import NotificationsSidebar from "@/components/pages/Notifications/NotificationSidebar";
 import { Suspense, useState } from "react";
-import { HiMenu, HiX } from "react-icons/hi";
 
 function NotificationsPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -26,7 +25,6 @@ function NotificationsPage() {
     { id: "owners-marketplace", label: "Owners Marketplace" },
   ];
 
-  // 🔹 Keep notifications in state so we can update the unread dot
   const [notifications, setNotifications] = useState([
     {
       id: 1,
@@ -83,7 +81,7 @@ function NotificationsPage() {
     {
       id: 5,
       avatar: "DS",
-      avatarColor: "#F95C5B",
+      // avatarColor: "#F95C5B",
       name: "David Smith",
       action: "updated a page",
       title: "Supervisors AI Bot",
@@ -116,9 +114,7 @@ function NotificationsPage() {
     );
   };
 
-  // 🔹 Dummy filtered data (for now, just filter by product type ID or sidebar ID)
   const filteredNotifications = notifications.filter((n) => {
-    // 🔹 Sidebar filter
     if (activeSidebarFilter === "today") {
       const isToday =
         n.time.includes("Just now") ||
@@ -127,7 +123,6 @@ function NotificationsPage() {
         n.time.includes("hours ago");
       if (!isToday) return false;
     }
-    // 🔹 Unread toggle
     if (onlyUnread && !n.hasUnreadDot) return false;
 
     // 🔹 Product filter
@@ -143,7 +138,7 @@ function NotificationsPage() {
   });
 
   return (
-    <div className="flex bg-white">
+    <div className="flex bg-background">
       <NotificationsSidebar
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
@@ -163,7 +158,6 @@ function NotificationsPage() {
           setOnlyUnread={setOnlyUnread}
         />
 
-        {/* Feed stays inline with your NotificationItem */}
         <div className="flex-1 overflow-y-auto">
           <div className="p-1 sm:p-3 pt-2">
             <div className="space-y-1">
@@ -172,7 +166,7 @@ function NotificationsPage() {
                   <NotificationItem
                     key={n.id}
                     initials={n.avatar}
-                    color={n.avatarColor}
+                    color={n.avatarColor!}
                     name={n.name}
                     action={n.action}
                     time={n.time}
@@ -181,16 +175,18 @@ function NotificationsPage() {
                     description={n.subtitle}
                     updates={n.updates}
                     onMarkAsRead={() =>
-                      setNotifications(prev =>
-                        prev.map(notif =>
-                          notif.id === n.id ? { ...notif, hasUnreadDot: false } : notif
+                      setNotifications((prev) =>
+                        prev.map((notif) =>
+                          notif.id === n.id
+                            ? { ...notif, hasUnreadDot: false }
+                            : notif
                         )
                       )
                     }
                   />
                 ))
               ) : (
-                <p className="text-gray-500 text-body-medium text-center py-4">
+                <p className=" text-center py-4">
                   No notifications found for this filter.
                 </p>
               )}
@@ -202,18 +198,17 @@ function NotificationsPage() {
   );
 }
 
-// 🔹 Skeleton Loader (overlay style)
 function NotificationsSkeleton() {
   return (
     <div className="flex flex-1 items-center justify-center min-h-screen">
       <div className="text-center space-y-2 animate-pulse">
-        <div className="h-4 w-32 bg-gray-200 rounded mx-auto" />
-        <div className="h-3 w-48 bg-gray-200 rounded mx-auto" />
+        <div className="h-4 w-32 bg-background rounded mx-auto" />
+        <div className="h-3 w-48 bg-background rounded mx-auto" />
         <div className="space-y-1">
           {[...Array(4)].map((_, i) => (
             <div
               key={i}
-              className="h-12 w-[400px] max-w-full bg-gray-200 rounded"
+              className="h-12 w-[400px] max-w-full bg-bg-secondary rounded"
             />
           ))}
         </div>
@@ -225,7 +220,7 @@ function NotificationsSkeleton() {
 export default function Page() {
   return (
     <DashboardLayout>
-         <Suspense fallback={<NotificationsSkeleton />}>
+      <Suspense fallback={<NotificationsSkeleton />}>
         <NotificationsPage />
       </Suspense>
     </DashboardLayout>

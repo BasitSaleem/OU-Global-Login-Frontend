@@ -1,4 +1,5 @@
 'use client';
+import { Button } from '@/components/ui';
 import React from 'react';
 import { HiX } from 'react-icons/hi';
 
@@ -27,14 +28,14 @@ export default function NotificationsSidebar({
   return (
     <>
       <div
-        className={`fixed inset-y-0 left-0 z-40 w-56 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out
+        className={`fixed inset-y-0 left-0 z-40 w-[402px] bg-background border-r transform transition-transform duration-300 ease-in-out
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
           md:translate-x-0 md:static md:flex md:flex-col`}
       >
         {/* Mobile close header */}
-        <div className="p-2 border-b border-gray-200 flex items-center justify-between md:hidden bg-white">
+        <div className="p-2 border-b  flex items-center justify-between md:hidden bg-background ">
           <h1 className="text-heading-2 font-bold">Notifications</h1>
-          <button onClick={() => setSidebarOpen(false)} className="text-gray-600  cursor-pointer hover:text-black ">
+          <button onClick={() => setSidebarOpen(false)} className=" cursor-pointer hover:text-black ">
             <HiX size={16} />
           </button>
         </div>
@@ -46,20 +47,13 @@ export default function NotificationsSidebar({
           {/* Filter Tabs */}
           <div className="flex gap-1 mb-3">
             {sidebarFilters.map((filter) => (
-              <button
+              <Button
                 key={filter.id}
+                variant={activeSidebarFilter === filter.id ? 'primary' : 'secondary'}
                 onClick={() => setActiveSidebarFilter(filter.id)}
-                className={`px-2 py-1 rounded text-body-medium transition-colors cursor-pointer ${
-                  activeSidebarFilter === filter.id ? 'text-primary' : 'text-black hover:bg-gray-50'
-                }`}
-                style={
-                  activeSidebarFilter === filter.id
-                    ? { backgroundColor: '#795CF512', color: '#795CF5' }
-                    : {}
-                }
               >
                 {filter.label}
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -68,20 +62,15 @@ export default function NotificationsSidebar({
             <h3 className="text-body-small font-medium text-black mb-2">PRODUCTS</h3>
             <div className="space-y-1">
               {productFilters.map((product) => (
-                <button
+                <Button
                   key={product.id}
                   onClick={() => setActiveProductFilter(product.id)}
-                  className={`w-full text-left px-2 py-2 rounded text-body-medium transition-colors cursor-pointer ${
-                    activeProductFilter === product.id ? 'text-primary' : 'text-black hover:bg-gray-50'
-                  }`}
-                  style={
-                    activeProductFilter === product.id
-                      ? { backgroundColor: '#795CF512', color: '#795CF5' }
-                      : {}
-                  }
+                  variant={activeProductFilter === product.id ? 'primary' : 'ghost'}
+                  className='w-full justify-start'
                 >
                   {product.label}
-                </button>
+                </Button>
+
               ))}
             </div>
           </div>
@@ -90,7 +79,7 @@ export default function NotificationsSidebar({
 
       {/* Mobile overlay */}
       {sidebarOpen && (
-        <div className="fixed inset-0 bg-black/40 z-30 md:hidden" onClick={() => setSidebarOpen(false)} />
+        <div className="fixed inset-0 bg-background/70 z-30 md:hidden" onClick={() => setSidebarOpen(false)} />
       )}
     </>
   );

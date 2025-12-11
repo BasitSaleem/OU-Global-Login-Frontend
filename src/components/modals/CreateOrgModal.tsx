@@ -1,103 +1,230 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Modal } from './GenericModal';
+import { Button, Input } from '../ui';
+import { PRODUCTS } from '@/constants';
+import { useCheckOrganizationNameAvailability, useCheckSubDomainAvailability } from '@/apiHooks.ts/organization/organization.api';
+import { useDebounce } from '@/hooks/useDebounce';
+import { CreateOrganizationData } from '@/apiHooks.ts/organization/organization.types';
+import { generateSubdomainSuggestions } from '@/utils/subdomainGenerator';
+import { SubdomainSuggestion } from '../SubdomainSuggestion';
+import { AvailabilityStatus } from '../AvailabilityStatus';
 
 interface CreateOrgModalProps {
   isOpen: boolean;
+  isLoading: boolean;
   onClose: () => void;
-  onSubmit: (data: { companyName: string; subDomain: string; product: string }) => void;
+  onSubmit: (data: CreateOrganizationData) => void;
 }
 
-export default function CreateOrgModal({ isOpen, onClose, onSubmit }: CreateOrgModalProps) {
+export default function CreateOrgModal({
+  isOpen,
+  isLoading,
+  onClose,
+  onSubmit
+}: CreateOrgModalProps) {
   const [companyName, setCompanyName] = useState('');
   const [subDomain, setSubDomain] = useState('');
-  const [selectedProduct, setSelectedProduct] = useState('Owners Inventory');
+  const [selectedProduct, setSelectedProduct] = useState('OI');
+  const [isGeneratingSuggestions, setIsGeneratingSuggestions] = useState(false);
 
-  const products = [
-    { id: 'inventory', name: 'Owners Inventory', icon: 'https://api.builder.io/api/v1/image/assets/TEMP/3c4327f1dd595491744f2af966536dd987ec0a0a?width=66' },
-    { id: 'marketplace', name: 'Owners Marketplace', icon: 'https://api.builder.io/api/v1/image/assets/TEMP/df8a47bf275bccdb600fe4495f3d4bead9cb844f?width=64' },
-    { id: 'analytics', name: 'Owners Analytics', icon: 'https://api.builder.io/api/v1/image/assets/TEMP/72b1ea421112224fa1bea68adcd733be5aa8666b?width=76' },
-    { id: 'jungle', name: 'Owners Jungle', icon: 'https://api.builder.io/api/v1/image/assets/TEMP/78407e1c15d2b695844d30eed5f5358ca8da09f8?width=64' },
-  ];
+  const debouncedCompanyName = useDebounce(companyName.trim(), 800);
+  const debouncedSubDomain = useDebounce(subDomain.trim(), 800);
+  const isNameDebouncing = companyName.trim() !== debouncedCompanyName && companyName.trim().length > 0;
+  const isSubDomainDebouncing = subDomain.trim() !== debouncedSubDomain && subDomain.trim().length > 0;
+
+  // const { data: isNameAvailable, isFetching: checkingName, isError: nameError } =
+  //   useCheckOrganizationNameAvailability(debouncedCompanyName);
+
+  const { data: isSubAvailable, isFetching: checkingSub, isError: subError } =
+    useCheckSubDomainAvailability(selectedProduct === 'OI' ? debouncedSubDomain : '');
+
+  const subdomainSuggestions = useMemo(() => {
+    if (!companyName.trim() || companyName.trim().length < 2) return [];
+    return generateSubdomainSuggestions(companyName);
+  }, [companyName]);
+
+  // useEffect(() => {
+  //   if (subDomain === '' && subdomainSuggestions.length > 0 && selectedProduct === 'OI') {
+  //     setSubDomain(subdomainSuggestions[0]);
+  //   }
+  // }, [subdomainSuggestions, subDomain, selectedProduct]);
+
+  useEffect(() => {
+    if (companyName.trim().length > 1) {
+      setIsGeneratingSuggestions(true);
+      const timer = setTimeout(() => {
+        setIsGeneratingSuggestions(false);
+      }, 400);
+      return () => clearTimeout(timer);
+    } else {
+      setIsGeneratingSuggestions(false);
+    }
+  }, [companyName]);
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setSubDomain(suggestion);
+  };
+
+  const canSubmit = () => {
+    if (!companyName.trim()) return false;
+    if (selectedProduct === 'OI' && !subDomain.trim()) return false;
+    // if (isNameDebouncing || checkingName) return false;
+    if (selectedProduct === 'OI' && (isSubDomainDebouncing || checkingSub)) return false;
+    // if (isNameAvailable === false) return false;
+    if (selectedProduct === 'OI' && isSubAvailable === false) return false;
+    return true;
+  };
 
   const handleSubmit = () => {
-    if (companyName && subDomain && selectedProduct) {
-      onSubmit({ companyName, subDomain, product: selectedProduct });
-      onClose();
-    }
+    const trimmedName = companyName.trim();
+    const trimmedSubDomain = subDomain.trim();
+    const payload: CreateOrganizationData = {
+      name: trimmedName,
+      subDomainName: trimmedSubDomain,
+      product: [selectedProduct],
+    };
+
+    onSubmit(payload);
   };
+
+  useEffect(() => {
+    if (!isOpen) {
+      setCompanyName('');
+      setSubDomain('');
+      setSelectedProduct('OI');
+      setIsGeneratingSuggestions(false);
+    }
+  }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg" ariaLabel="Create organization">
-      <Modal.Title className="mb-2 text-heading-2">Create an Organization</Modal.Title>
-
-      <Modal.Body>
-        {/* Company Name */}
-        <label className="block text-body-small font-medium mb-0.5">Company Name</label>
-        <input
-          type="text"
-          value={companyName}
-          onChange={(e) => setCompanyName(e.target.value)}
-          className="w-full border rounded px-2 py-1.5 mb-2 text-body-medium focus:outline-none focus:ring-1 focus:ring-[#795CF5]"
-        />
-
-        {/* Products */}
-        <label className="block text-body-small font-medium mb-1">Products</label>
-        <div className="grid grid-cols-2 gap-1 mb-2">
-          {products.map((product) => (
-            <button
-              key={product.id}
-              type="button"
-              onClick={() => setSelectedProduct(product.name)}
-              className={`flex items-center gap-1.5 border rounded px-1.5 py-1.5 text-body-small font-medium cursor-pointer ${
-                selectedProduct === product.name
-                  ? 'border-[#795CF5] bg-[#795CF512] text-[#795CF5]'
-                  : 'border-gray-200 text-gray-700 bg-gray-100'
-              }`}
-            >
-              <img src={product.icon} alt={product.name} className="w-4 h-4" />
-              {product.name}
-            </button>
-          ))}
-        </div>
-
-        {/* Sub-Domain */}
-        <div className="flex items-center gap-1.5 mb-0.5">
-          <label className="block text-body-small font-medium">Sub-Domain Name</label>
-          <div className="relative group">
-            <span className="cursor-pointer text-white hover:text-[#795CF5] bg-gray-500 rounded-full w-4 h-4 flex items-center justify-center text-body-tiny">
-              i
-            </span>
-            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block">
-              <div className="bg-gray-800 text-white text-body-tiny rounded py-0.5 px-1.5 shadow-lg whitespace-nowrap">
-                Sub-domain is for Owners Inventory only
+      {isLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="relative bg-bg-secondary rounded-xl shadow-xl w-full max-w-xl mx-4 border animate-pulse">
+            <div className="p-4 ">
+              <div className="h-8 bg-skeleton rounded-lg w-56"></div>
+            </div>
+            <div className="p-4">
+              <div className="mb-6">
+                <div className="h-10 bg-gray-100 rounded-lg"></div>
+              </div>
+              <div className="mb-6">
+                <div className="grid grid-cols-2 gap-3">
+                  {[1, 2, 3, 4].map((item) => (
+                    <div
+                      key={item}
+                      className="flex items-center gap-3 border border-gray-200 rounded-lg px-2 py-3"
+                    >
+                      <div className="w-6 h-6 bg-skeleton rounded-full"></div>
+                      <div className="h-4 bg-skeleton rounded w-3/4"></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="mb-2">
+                <div className="h-12 bg-gray-100 rounded-lg"></div>
+              </div>
+            </div>
+            <div className="p-6 border-t border-gray-200">
+              <div className="flex gap-3 w-full justify-end">
+                <div className="h-10 bg-skeleton rounded-lg w-24"></div>
+                <div className="h-10 bg-skeleton rounded-lg w-24"></div>
               </div>
             </div>
           </div>
         </div>
+      )}
 
-        <input
-          type="text"
-          value={subDomain}
-          onChange={(e) => setSubDomain(e.target.value)}
-          className="w-full border rounded px-2 py-1.5 mb-1.5 text-body-medium focus:outline-none focus:ring-1 focus:ring-[#795CF5]"
-        />
+      <Modal.Title className="mb-2 text-heading-2">Create an Organization</Modal.Title>
+      <Modal.Body>
+        <div className="mb-4">
+          <Input
+            label="Company Name"
+            isRequired
+            value={companyName}
+            onChange={(e) => setCompanyName(e.target.value.toLocaleLowerCase())}
+          />
+          {/* <AvailabilityStatus
+            isLoading={checkingName}
+            isAvailable={isNameAvailable}
+            isDebouncing={isNameDebouncing}
+            fieldName="Organization name"
+            value={companyName}
+            companyName={true}
+          /> */}
+        </div>
+
+        <label className="block text-body-small font-medium mb-2 ml-1">Products</label>
+        <div className="grid grid-cols-2 gap-1 mb-2">
+          {PRODUCTS.map((product) => (
+            <button
+              key={product.id}
+              type="button"
+              onClick={() => setSelectedProduct(product.name)}
+              disabled={product.isDisabled}
+              className={`flex items-center gap-2 border rounded-lg px-3 py-3 text-base font-medium transition mb-1 ${selectedProduct === product.name
+                ? 'border-primary bg-bg-secondary text-primary'
+                : 'border text-text bg-bg-secondary hover:bg-primary/10'
+                } ${product.isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+            >
+              <img src={product.icon} alt={product.name} className="w-4 h-4" />
+              {product.fullname}
+            </button>
+          ))}
+        </div>
+
+        {selectedProduct === 'OI' && (
+          <div className="mb-4">
+            <Input
+              label="Sub-Domain"
+              isRequired
+              value={subDomain}
+              onChange={(e) =>
+                setSubDomain(
+                  e.target.value
+                    .toLocaleLowerCase()
+                    .trim()
+                    .replace(/[^a-z0-9-]/g, "")
+                )
+              } />
+            <AvailabilityStatus
+              isLoading={checkingSub}
+              isAvailable={isSubAvailable}
+              isDebouncing={isSubDomainDebouncing}
+              fieldName="Sub-domain"
+              value={subDomain}
+            />
+            {companyName.trim().length > 1 && (
+              <SubdomainSuggestion
+                suggestions={subdomainSuggestions}
+                onSuggestionClick={handleSuggestionClick}
+                isLoading={isGeneratingSuggestions}
+              />
+            )}
+
+
+          </div>
+        )}
       </Modal.Body>
 
       <Modal.Footer>
-        <button
+        <Button
           onClick={onClose}
-          className="px-3 py-1.5 rounded border border-[#795CF5] text-[#795CF5] text-body-small hover:bg-[#795CF507] cursor-pointer"
+          variant="secondary"
+          className="px-3"
         >
           Cancel
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={handleSubmit}
-          className="px-3 py-1.5 rounded text-white text-body-small cursor-pointer bg-[#795CF5] hover:bg-[#7C3AED]"
+          isLoading={isLoading}
+          disabled={isLoading || !canSubmit()}
+          className="px-3"
         >
           Continue
-        </button>
+        </Button>
       </Modal.Footer>
     </Modal>
   );

@@ -1,184 +1,113 @@
 "use client";
+import { useGetInvitations } from "@/apiHooks.ts/invitation/invitation.api";
+import { inviteData } from "@/apiHooks.ts/invitation/invitation.type";
+import { useCreateOrganization, useGetOrganizations } from "@/apiHooks.ts/organization/organization.api";
+import { CreateOrganizationData, CreateOrganizationResponse } from "@/apiHooks.ts/organization/organization.types";
 import DashboardLayout from "@/components/layout/dashboard-layout";
 import CreateOrgModal from "@/components/modals/CreateOrgModal";
-import DeclineModal from "@/components/modals/DeclineModal";
 import OrganizationGrid from "@/components/pages/Organizations/OrganizationGrid";
 import PendingInvitations from "@/components/pages/Organizations/PendingInvitation";
-import { Icons } from "@/components/utils/icons";
-import { Check, X } from "lucide-react";
-import { useState } from "react";
+import ProgressModal from "@/components/ui/ProgressModal";
+import { toast } from "@/hooks/useToast";
+import { useEffect, useMemo, useState } from "react";
 
 function OrganizationsContent() {
-  const organizations = [
+  const organizationsList = [
     {
       id: "add-new",
       isAddNew: true,
     },
-    {
-      id: "post-purchase",
-      name: "Post Purchase Management App",
-      abbreviation: "PP",
-      backgroundColor: "#137F6A",
-      members: 22,
-      teamAvatars: [
-        Icons.owneruniverse,
-        Icons.ownerinventory,
-        Icons.ownerjungle,
-        Icons.ownermarketplace
-      ],
-    },
-    {
-      id: "marketing",
-      name: "Marketing",
-      abbreviation: "M",
-      backgroundColor: "#F95C5B",
-      members: 22,
-      teamAvatars: [
-        Icons.owneruniverse,
-        Icons.ownerinventory,
-        Icons.ownerjungle,
-      ],
-    },
-    {
-      id: "al-asif",
-      name: "Al-Asif Interiors",
-      abbreviation: "AI",
-      backgroundColor: "#B11E67",
-      members: 22,
-      teamAvatars: [
-       Icons.owneruniverse,
-        Icons.ownerinventory,
-        Icons.ownerjungle,
-        Icons.ownermarketplace
-      ],
-    },
-    {
-      id: "operations",
-      name: "Operations",
-      abbreviation: "O",
-      backgroundColor: "#1AD1B9",
-      members: 22,
-      teamAvatars: [
-        Icons.owneruniverse,
-        Icons.ownerinventory,
-        Icons.ownerjungle,
-      ],
-    },
-    {
-      id: "spotify",
-      name: "Spotify",
-      abbreviation: "S",
-      backgroundColor: "#795CF5",
-      members: 22,
-      teamAvatars: [
-         Icons.owneruniverse,
-        Icons.ownerinventory,
-        Icons.ownerjungle,
-        Icons.ownermarketplace
-      ],
-    },
-    {
-      id: "brandscope",
-      name: "Brandscope",
-      abbreviation: "B",
-      backgroundColor: "#FF7C3B",
-      members: 22,
-      teamAvatars: [
-       Icons.owneruniverse,
-        Icons.ownerinventory,
-      ],
-    },
-    {
-      id: "red-star",
-      name: "Red Star Technologies",
-      abbreviation: "RS",
-      backgroundColor: "#137F6A",
-      members: 22,
-      teamAvatars: [
-       Icons.owneruniverse,
-      ],
-    },
-    {
-      id: "wallace",
-      name: "Wallace Willer McLeod Project Management Web...",
-      abbreviation: "WW",
-      backgroundColor: "#795CF5",
-      members: 22,
-      teamAvatars: [
-        Icons.owneruniverse,
-        Icons.ownerinventory,
-        Icons.ownerjungle,
-        Icons.ownermarketplace
-      ],
-    },
   ];
 
-  const pendingInvitations = [
-    {
-      id: "al-asif-exteriors",
-      name: "Al-Asif Exteriors",
-      abbreviation: "AE",
-      backgroundColor: "#B11E67",
-      invitedBy: "Sarah Chen",
-      product: "Owners Inventory",
-      timeAgo: "2 hours ago",
-    },
-    {
-      id: "sales-dept",
-      name: "Sales Department",
-      abbreviation: "SD",
-      backgroundColor: "#1AD1B9",
-      invitedBy: "Mike Wilson",
-      product: "Owners Marketplace",
-      timeAgo: "2 hours ago",
-    },
-    {
-      id: "space-group",
-      name: "Space Group",
-      abbreviation: "SG",
-      backgroundColor: "#F95C5B",
-      invitedBy: "Wilson",
-      product: "Owners Inventory",
-      timeAgo: "2 hours ago",
-    },
-  ];
+
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [organizations, setOrganizations] = useState<any>(organizationsList);
   const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
+  const [showProgressModal, setShowProgressModal] = useState(false);
+  const [organizationData, setOrganizationData] = useState<CreateOrganizationResponse | null>(null);
+  const [page, setPage] = useState(1)
+  const { mutate: createOrg, isPending } = useCreateOrganization()
+  const { data: userOrgs, status: orgStatus, isPending: isOrgPending, error: orgError } = useGetOrganizations(page, 10);
+  const { data, isPending: isInvitationPending, error: invitationError } = useGetInvitations();
+  const invitations: inviteData[] = useMemo(() => data!, [data]);
+  useEffect(() => {
+    if (orgStatus === "success" && userOrgs) {
+      setOrganizations((prev: any) => {
+        const base = page === 1 ? [{ id: "add-new", isAddNew: true }] : prev;
+        const merged = [...base, ...userOrgs.organization];
+        const unique = merged.filter(
+          (org, i, arr) => i === arr.findIndex(o => o.id === org.id)
+        );
+        return unique;
+      });
+    }
+  }, [orgStatus, userOrgs, page]);
 
-  const handleCreateOrg = (data: {
-    companyName: string;
-    subDomain: string;
-    product: string;
-  }) => {
-    console.log("New Organization Data:", data);
+  const handleCreateOrg = (data: CreateOrganizationData) => {
+    createOrg(data, {
+      onSuccess: (res) => {
+        setOrganizationData({
+          data: {
+            organization: res.organization,
+            product: res.product,
+            leadRegistration: res.leadRegistration || null
+          }
+        });
+        setIsCreateModalOpen(false);
+        setShowProgressModal(true);
+      },
+      onError: (err: any) => {
+        toast.error(err?.message || 'Failed to create organization');
+      },
+    });
+  };
+  const handleModalClose = () => {
+    setShowProgressModal(false);
+    setOrganizationData(null);
   };
   const handleDecline = () => setIsDeclineModalOpen(false);
 
+  const handleOrganizationDeleted = (deletedOrgId: string) => {
+    setOrganizations((prev: any[]) =>
+      prev.filter(org => org.id !== deletedOrgId)
+    );
+  };
+
   return (
-    <div className="p-2 sm:p-8">
+    <div className="p-2 sm:p-8 bg-background">
       <div className="max-w-xs sm:max-w-7xl mx-auto space-y-8">
         <OrganizationGrid
           organizations={organizations}
           onAddNew={() => setIsCreateModalOpen(true)}
+          onOrganizationDeleted={handleOrganizationDeleted}
+          loading={isOrgPending}
         />
+        <div className="mt-4 flex justify-end">
+          <button onClick={() => {
+            setPage((prev) => prev + 1)
+          }} className="text-primary text-body-medium font-medium hover:underline cursor-pointer">
+            View More
+          </button>
+        </div>
 
         <PendingInvitations
-          invitations={pendingInvitations}
-          onAccept={(id) => console.log("Accept invitation:", id)}
-          onDecline={() => setIsDeclineModalOpen(true)}
+          isLoading={isInvitationPending}
+          invitations={invitations}
         />
       </div>
-
-      <DeclineModal
-        isOpen={isDeclineModalOpen}
-        onClose={() => setIsDeclineModalOpen(false)}
-        onConfirm={handleDecline}
-      />
       <CreateOrgModal
+        isLoading={isPending}
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateOrg}
+      />
+      <ProgressModal
+        isOpen={showProgressModal}
+
+        organizationData={organizationData}
+        onClose={handleModalClose}
+        isFromMain={false}
       />
     </div>
   );
@@ -191,3 +120,5 @@ export default function Page() {
     </DashboardLayout>
   );
 }
+
+
