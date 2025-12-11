@@ -46,6 +46,7 @@ export type Invitation = {
   timeAgo: string;
 };
 
+
 export type Permission =
   | "og:create::organization"
   | "og:delete::organization"

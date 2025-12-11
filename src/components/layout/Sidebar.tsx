@@ -103,6 +103,7 @@ export default function Sidebar({
     {
       href: "/analytics",
       type: "svg",
+      hasTime: true,
       svgName: 'OA',
       label: "Analytics",
       hasBadge: true,
