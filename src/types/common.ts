@@ -45,3 +45,21 @@ export type Invitation = {
   product: string;
   timeAgo: string;
 };
+
+
+export type Permission =
+  | "og:create::organization"
+  | "og:delete::organization"
+  | "og:favorite::organization"
+  | "og:edit::password"
+  | "og:access::notification_preferences"
+  | "og:edit::email"
+  | "og:access::setting"
+  | "og:access::products"
+  | "og:view::all_products"
+  | "og:view::all_notifications"
+  | "og:edit::profile"
+
+export interface WithPermissionsProps {
+  userPermissions: Permission[];
+}

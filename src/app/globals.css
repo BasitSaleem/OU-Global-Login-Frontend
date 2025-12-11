@@ -24,6 +24,7 @@
   --color-skeleton: #D1D5DB;
   --color-black: #131313;
   --color-text: #6B7280;
+  --color-red: #E53935;
   --color-text-btn: #ffffff;
   /* --color-hover: #795CF5; */
   /* Gray scale */
@@ -38,7 +39,7 @@
   --color-gray-700: #374151;
   --color-gray-800: #1F2937;
   --color-gray-900: #111827; */
-  --color-input-bg: #F3F4F6;
+  --color-input-bg: #ffffff;
   /* Base colors */
   --color-white: #FFFFFF;
   /* Background and text */
@@ -67,6 +68,7 @@
   --color-text: #ffffff;
   --color-invert: #ffffff;
   --color-text-btn: #ffffff;
+  --color-red: #E53935;
   /* --color-hover: #795CF5; */
 }
 
@@ -133,6 +135,7 @@
   --color-foreground: var(--color-foreground);
   --color-border: var(--color-border);
   --color-invert: var(--color-invert);
+  --color-red: var(--color-red);
 
 
   /* Gray colors */
@@ -333,7 +336,7 @@
     font-size: 14px;
     line-height: 16px;
     font-weight: 400;
-    color: var(--color-foreground);
+    color: var(--color-gray-500);
   }
 
   .text-body-small-bold {

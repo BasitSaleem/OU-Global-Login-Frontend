@@ -9,6 +9,7 @@ import { SvgIcon } from './SvgIcon';
 import { Button } from './button';
 import { useAppDispatch } from "@/redux/store";
 import { setOrganization } from '@/redux/slices/auth.slice';
+import { useRouter } from 'next/navigation';
 
 interface ProgressModalProps {
   isOpen: boolean;
@@ -28,6 +29,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
   isFromMain
 }) => {
   const dispatch = useAppDispatch()
+  const router = useRouter()
   const handleProgress = useCallback((progress: any) => {
     console.log("Progress update:", progress);
   }, []);
@@ -81,8 +83,8 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
 
     if (isFromMain && isCompleted) {
       console.log("/setting the organization data here in this ");
-
       dispatch(setOrganization(organizationData))
+      router.push('/organizations')
     }
 
   }, [progress?.status])
@@ -156,7 +158,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
 
               {/* Action Buttons */}
               <AnimatePresence>
-                {isCompleted && (
+                {isCompleted && !isFromMain && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}

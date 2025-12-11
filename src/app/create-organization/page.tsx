@@ -1,7 +1,5 @@
-"use client";
-
+'use client';
 import {
-  useCheckOrganizationNameAvailability,
   useCheckSubDomainAvailability,
   useCreateOrganization,
 } from "@/apiHooks.ts/organization/organization.api";
@@ -9,108 +7,77 @@ import { CreateOrganizationData, CreateOrganizationResponse } from "@/apiHooks.t
 import { PRODUCTS, ROUTES } from "@/constants";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { toast } from "@/hooks/useToast";
 import ProgressModal from "@/components/ui/ProgressModal";
-import { CheckCircle, Route, XCircle } from "lucide-react";
 import { Button, Input, LoadingSpinner } from "@/components/ui";
-import { AuthGuard } from "@/components/guards/auth-guard";
-import { GlobalLoading } from "@/components/ui/loading";
-import { setAuth, setOrganization } from "@/redux/slices/auth.slice";
-import { useDispatch } from "react-redux";
-import { useAppDispatch } from "@/redux/store";
-import { CreateOrganizationGuard } from "@/components/guards/createOrgRoute.guard";
+import { AuthGuard } from "@/components/HOCs/auth-guard";
+import { generateSubdomainSuggestions } from "@/utils/subdomainGenerator";
+import { SubdomainSuggestion } from "@/components/SubdomainSuggestion";
+import { AvailabilityStatus } from "@/components/AvailabilityStatus";
+import { CreateOrganizationGuard } from "@/components/HOCs/createOrgRoute.guard";
 
-
-interface AvailabilityStatusProps {
-  isLoading: boolean;
-  isAvailable?: boolean;
-  isDebouncing: boolean;
-  fieldName: string;
-  value: string;
-}
-
-const AvailabilityStatus: React.FC<AvailabilityStatusProps> = ({
-  isLoading,
-  isAvailable,
-  isDebouncing,
-  fieldName,
-  value
-}) => {
-  if (!value) return null;
-
-  if (isDebouncing) {
-    return (
-      <div className="flex items-center gap-2 mt-2 text-sm text-text">
-        <LoadingSpinner size={4} className="border-text" />
-        <span>Checking {fieldName} availability...</span>
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center gap-2 mt-2 text-sm text-blue-600">
-        <LoadingSpinner size={4} className="border-blue-600" />
-        <span>Verifying {fieldName}...</span>
-      </div>
-    );
-  }
-
-  if (isAvailable === true) {
-    return (
-      <div className="flex items-center gap-2 mt-2 text-sm text-green-600">
-        <CheckCircle className="w-4 h-4" />
-        <span>{fieldName} is available</span>
-      </div>
-    );
-  }
-
-  if (isAvailable === false) {
-    return (
-      <div className="flex items-center gap-2 mt-2 text-sm text-red-600">
-        <XCircle className="w-4 h-4" />
-        <span>{fieldName} is already taken</span>
-      </div>
-    );
-  }
-
-  return null;
-};
 export default function CreateOrgPage() {
   const [companyName, setCompanyName] = useState("");
   const [subDomain, setSubDomain] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("OI");
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [organizationData, setOrganizationData] = useState<CreateOrganizationResponse | null>(null);
-  const debouncedCompanyName = useDebounce(companyName.trim(), 1500);
-  const debouncedSubDomain = useDebounce(subDomain.trim(), 1500);
-  // Check if we're still debouncing
-  const isNameDebouncing = companyName.trim() !== debouncedCompanyName && companyName.trim().length > 0;
-  const isSubDomainDebouncing = subDomain.trim() !== debouncedSubDomain && subDomain.trim().length > 0;
-  const dispatch = useAppDispatch()
-  const createOrgMutation = useCreateOrganization();
-  const Router = useRouter();
+  const [isGeneratingSuggestions, setIsGeneratingSuggestions] = useState(false);
 
-  const { data: isNameAvailable, isFetching: checkingName, isError: nameError } =
-    useCheckOrganizationNameAvailability(debouncedCompanyName);
+  // const debouncedCompanyName = useDebounce(companyName.trim(), 1500);
+  const debouncedSubDomain = useDebounce(subDomain.trim(), 1500);
+
+  // const isNameDebouncing = companyName.trim() !== debouncedCompanyName && companyName.trim().length > 0;
+  const isSubDomainDebouncing = subDomain.trim() !== debouncedSubDomain && subDomain.trim().length > 0;
+
+  const createOrgMutation = useCreateOrganization();
+  const router = useRouter();
+
+  // const { data: isNameAvailable, isFetching: checkingName, isError: nameError } =
+  //   useCheckOrganizationNameAvailability(debouncedCompanyName);
 
   const { data: isSubAvailable, isFetching: checkingSub, isError: subError } =
     useCheckSubDomainAvailability(
       selectedProduct === "OI" ? debouncedSubDomain : ""
     );
+
+  const subdomainSuggestions = useMemo(() => {
+    if (!companyName.trim() || companyName.trim().length < 2) return [];
+    return generateSubdomainSuggestions(companyName);
+  }, [companyName]);
+
+  useEffect(() => {
+    if (subDomain === '' && subdomainSuggestions.length > 0 && selectedProduct === "OI") {
+      setSubDomain(subdomainSuggestions[0]);
+    }
+  }, [subdomainSuggestions, subDomain, selectedProduct]);
+  useEffect(() => {
+    if (companyName.trim().length > 1) {
+      setIsGeneratingSuggestions(true);
+      const timer = setTimeout(() => {
+        setIsGeneratingSuggestions(false);
+      }, 500);
+      return () => clearTimeout(timer);
+    } else {
+      setIsGeneratingSuggestions(false);
+    }
+  }, [companyName]);
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setSubDomain(suggestion);
+  };
+
   const canSubmit = () => {
     if (!companyName.trim()) return false;
     if (selectedProduct === "OI" && !subDomain.trim()) return false;
-    if (isNameDebouncing || checkingName) return false;
+    // if (isNameDebouncing || checkingName) return false;
     if (selectedProduct === "OI" && (isSubDomainDebouncing || checkingSub)) return false;
-    if (isNameAvailable === false) return false;
+    // if (isNameAvailable === false) return false;
     if (selectedProduct === "OI" && isSubAvailable === false) return false;
     if (createOrgMutation.isPending) return false;
     return true;
   };
-
-
 
   const handleSubmit = () => {
     const trimmedName = companyName.trim();
@@ -129,9 +96,7 @@ export default function CreateOrgPage() {
             product: data.product,
             leadRegistration: data.leadRegistration || null,
           },
-
         });
-        // dispatch(setOrganization({ organization: data.organization }))
         setShowProgressModal(true);
       },
       onError: (error: any) => {
@@ -145,29 +110,30 @@ export default function CreateOrgPage() {
   const handleModalClose = () => {
     setShowProgressModal(false);
     setOrganizationData(null);
+    router.push(ROUTES.DASHBOARD)
   };
 
   const handleProgressComplete = () => {
-    Router.push(ROUTES.DASHBOARD)
+    console.log("handleProgressComplete")
   };
 
   const handleGoHome = () => {
     setShowProgressModal(false);
     setOrganizationData(null);
-    Router.push(ROUTES.DASHBOARD);
+    router.push(ROUTES.DASHBOARD);
   };
+
   return (
-    <AuthGuard fallback={<GlobalLoading />}>
+    <AuthGuard>
       <CreateOrganizationGuard>
         <div className="min-h-screen w-full flex items-center justify-center bg-background p-4 sm:p-8">
           <div className="bg-bg-secondary rounded-xl shadow-lg p-6 sm:p-12 w-full max-w-2xl border">
+
             <h1 className="mb-8 text-2xl sm:text-3xl font-bold text-center ">
               Create an Organization
             </h1>
 
-            {/* Company Name */}
             <div className="mb-6">
-
               <Input
                 isRequired
                 label="Company Name"
@@ -176,13 +142,13 @@ export default function CreateOrgPage() {
                 onChange={(e) => setCompanyName(e.target.value)}
                 placeholder="Enter company name"
               />
-              <AvailabilityStatus
+              {/* <AvailabilityStatus
                 isLoading={checkingName}
                 isAvailable={isNameAvailable}
                 isDebouncing={isNameDebouncing}
                 fieldName="Organization name"
                 value={companyName}
-              />
+              /> */}
             </div>
 
             {/* Products */}
@@ -218,10 +184,27 @@ export default function CreateOrgPage() {
                 type="text"
                 label="Sub-Domain Name"
                 value={subDomain}
-                onChange={(e) => setSubDomain(e.target.value)}
+                onChange={(e) =>
+                  setSubDomain(
+                    e.target.value
+                      .toLocaleLowerCase()
+                      .trim()
+                      .replace(/[^a-z0-9-]/g, "")
+                  )
+                }
                 disabled={selectedProduct !== "OI"}
                 placeholder="Enter sub-domain"
               />
+
+              {/* Subdomain Suggestions */}
+              {selectedProduct === "OI" && companyName.trim().length > 1 && (
+                <SubdomainSuggestion
+                  suggestions={subdomainSuggestions}
+                  onSuggestionClick={handleSuggestionClick}
+                  isLoading={isGeneratingSuggestions}
+                />
+              )}
+
               {selectedProduct === "OI" && (
                 <AvailabilityStatus
                   isLoading={checkingSub}
@@ -266,7 +249,6 @@ export default function CreateOrgPage() {
           </div>
         </div>
       </CreateOrganizationGuard>
-
       <ProgressModal
         isOpen={showProgressModal}
         organizationData={organizationData}

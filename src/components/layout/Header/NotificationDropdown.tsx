@@ -1,6 +1,7 @@
 import NotificationItem from "@/components/pages/Notifications/NotificationItems";
 import { NotificationItemProps } from "./Header.types";
 import Link from "next/link";
+import { Button } from "@/components/ui";
 
 export function NotificationsDropdown({
     anyUnread,
@@ -105,19 +106,18 @@ function NotificationsControlsRow({
                     Only show unread
                 </span>
 
-                {/* Pill toggle (hidden on xs to save space) */}
-                <button
+                <Button
                     onClick={() => setUnreadOnly(!unreadOnly)}
-                    className={`w-12 h-6 rounded-full cursor-pointer p-1 hidden sm:flex items-center transition-colors border ${unreadOnly ? "bg-[#795CF5]" : "bg-gray-700"
+                    className={`w-12 h-6 rounded-full cursor-pointer p-1 hidden sm:flex items-center transition-colors border ${unreadOnly ? "bg-primary" : "bg-gray-700"
                         }`}
                     aria-pressed={unreadOnly}
                     aria-label="Toggle only show unread"
                 >
                     <span
-                        className={`w-4 h-4 bg-gray-600 rounded-full transition-transform ${unreadOnly ? "translate-x-6" : "translate-x-0"
+                        className={`w-4 h-4 bg-bg-secondary rounded-full transition-transform mr-6 ${unreadOnly ? "translate-x-6" : "translate-x-0"
                             }`}
                     />
-                </button>
+                </Button>
             </div>
         </div>
     );

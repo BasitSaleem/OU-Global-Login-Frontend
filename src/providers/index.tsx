@@ -9,8 +9,6 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { persistor, store } from '@/redux/store';
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { GlobalLoading } from '@/components/ui/loading';
-import { CreateOrganizationGuard } from '@/components/guards/createOrgRoute.guard';
-import { AuthGuard } from '@/components/guards/auth-guard';
 
 interface ProvidersProps {
   children: ReactNode;

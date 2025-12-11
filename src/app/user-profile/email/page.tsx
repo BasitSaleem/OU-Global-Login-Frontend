@@ -3,7 +3,7 @@
 import Image from "next/image"
 import { Icons } from "@/components/utils/icons";
 import { SvgIcon } from "@/components/ui/SvgIcon";
-import { FileText } from "lucide-react";
+import { FileText, FileWarning, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui";
 
 export default function EmailSettingsPage() {
@@ -23,11 +23,11 @@ export default function EmailSettingsPage() {
             <label className="text-body-small font-medium ">Current Email</label>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-2 border rounded">
               <span className="text-body-medium  inline-flex justify-center items-center break-all gap-2">
-              <SvgIcon className="h-5 w-5" name="email" />
+                <SvgIcon className="h-5 w-5" name="email" />
                 dev.logoanimations@gmail.com
               </span>
               <button className="self-end sm:self-auto p-0 hover:bg-primary/80 rounded transition-colors cursor-pointer">
-               <FileText stroke="2" />
+                <FileText stroke="2" />
               </button>
             </div>
           </div>
@@ -79,34 +79,10 @@ export default function EmailSettingsPage() {
 
           {/* Warning Message */}
           <div
-            className="flex flex-col sm:flex-row items-start sm:items-center gap-2 p-2 rounded bg-red-500/60"
+            className="flex flex-col sm:flex-row items-start sm:items-center gap-2 p-4  rounded bg-primary/10"
           >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="flex-shrink-0"
-            >
-              <path
-                d="M3.34249 17.4316H16.6573C17.1302 17.4316 17.4879 17.2285 17.7303 16.8226C17.9728 16.4166 17.9819 16.0054 17.7577 15.5891L11.1007 3.22578C10.6284 2.34922 9.3714 2.34922 8.89913 3.22578L2.2421 15.5891C2.01794 16.0054 2.02708 16.4166 2.26953 16.8225C2.51198 17.2285 2.86963 17.4316 3.34249 17.4316Z"
-                stroke="currentColor"
-                strokeWidth="1.25"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M9.77557 7.63282L9.99978 12.3984L10.2236 7.63478C10.2265 7.5705 10.2056 7.51521 10.161 7.46891C10.1163 7.42261 10.0618 7.39978 9.99744 7.4004C9.93435 7.40102 9.88102 7.42415 9.83745 7.46979C9.79388 7.51543 9.77325 7.56977 9.77557 7.63282Z"
-                stroke="currentColor"
-                strokeWidth="1.25"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M10 15.5176C9.78426 15.5176 9.60012 15.4413 9.44757 15.2888C9.29502 15.1362 9.21875 14.9521 9.21875 14.7363C9.21875 14.5206 9.29502 14.3364 9.44757 14.1839C9.60012 14.0314 9.78426 13.9551 10 13.9551C10.2157 13.9551 10.3999 14.0314 10.5524 14.1839C10.705 14.3364 10.7812 14.5206 10.7812 14.7363C10.7812 14.9521 10.705 15.1362 10.5524 15.2888C10.3999 15.4413 10.2157 15.5176 10 15.5176Z"
-                fill="currentColor"
-              />
-            </svg>
-            <p className="text-body-small font-medium text-black">
+            <TriangleAlert className="mb-6 opacity-60" />
+            <p className="font-medium text-black">
               Changing your email will disconnect your Google account. You'll need
               to reconnect it after confirming the new email address.
             </p>
@@ -115,13 +91,13 @@ export default function EmailSettingsPage() {
           {/* Update Button */}
           <div className="flex justify-end">
             <Button
-            variant="primary"
+              variant="primary"
             >
               Update Email Address
             </Button>
           </div>
         </div>
       </div>
-    </main>
+    </main >
   );
 }

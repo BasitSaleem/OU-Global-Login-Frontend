@@ -1,5 +1,3 @@
-// src/constants/icons.ts
-
 export const Icons = {
   addNew: "/Icons/Add New.svg",
   allProducts: "/Icons/All Products.svg",
@@ -18,7 +16,7 @@ export const Icons = {
   home: "/Icons/Home.svg",
   logout: "/Icons/Logout.svg",
   notification: "/Icons/Notification.svg",
-  notificationblue :"/Icons/Notificationblue.svg",
+  notificationblue: "/Icons/Notificationblue.svg",
   organization: "/Icons/Organization.svg",
   pie: "/Icons/Pie.svg",
   production: "/Icons/Production.svg",
@@ -36,7 +34,7 @@ export const Icons = {
   owneruniverse: "/Icons/Owners Universe.svg",
   ownerjungle: "/Icons/OJ_LOGO.svg",
   owneranalytics: "/Icons/OA_LOGO.svg",
-  ownerinventory: "/Icons/OI.svg",
+  ownerinventory: "/Icons/OI_LOGO.svg",
   ownermarketplace: "/Icons/OM_LOGO.svg",
   owneruniversecoll: "/Icons/Owners Universe coll.svg",
   homewhite: "/Icons/Homewhite.svg",

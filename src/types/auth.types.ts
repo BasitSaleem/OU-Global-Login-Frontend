@@ -1,7 +1,8 @@
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
+import { Permission } from "./common";
 
 export interface User {
-  id: string;
+  id?: string;
   first_name?: string;
   last_name?: string;
   contact?: string | null;
@@ -26,7 +27,7 @@ export interface User {
   role?: {
     id: string;
     name: string;
-    permissions: string[];
+    permissions: Permission[];
   } | null;
   organizations?: {
     id: string;
@@ -64,7 +65,7 @@ export interface AuthState {
   isLoading?: boolean;
   error?: string | null;
   refreshToken?: string | null;
-  organization?: OgOrganization|null;
+  organization?: OgOrganization | null;
 }
 
 export enum UserRole {
@@ -78,4 +79,15 @@ export interface AuthResponse {
   user: User;
   token: string;
   expiresIn: number;
+}
+export interface signInResponse {
+  statusCode: number
+  data?: {
+    user: User
+    accessToken: string,
+    refreshToken: string
+    redirect_url: string
+  }
+  message: string,
+  success: boolean
 }

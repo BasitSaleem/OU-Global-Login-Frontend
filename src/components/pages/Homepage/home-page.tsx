@@ -2,19 +2,19 @@
 
 import { Icons } from "@/components/utils/icons";
 import { useAppSelector } from "@/redux/store";
-import OrganizationProductCard from "../Organizations/OrganizationProductCard";
+import dynamic from "next/dynamic";
+const OrganizationProductCard = dynamic(() => import("../Organizations/OrganizationProductCard"));
 import { useGetOrganizations } from "@/apiHooks.ts/organization/organization.api";
 import { LoadingSpinner } from "@/components/ui";
 import { Skeleton } from "@/components/ui/skeletion";
 import Link from "next/link";
-
+import { useGetAllPermissions } from "@/apiHooks.ts/auth/auth.api";
+import Image from "next/image";
 export default function HomePage() {
   const { user } = useAppSelector((s) => s.auth);
   const { data, isPending: loadingOrganizations } = useGetOrganizations(1, 20);
   // const dispatch = useAppDispatch();
-
   const productCodes = ["OI", "OJ", "OM", "OA"];
-
   // useEffect(() => {
   //   dispatch(setSSOStatus(false));
   // }, [])
@@ -22,19 +22,9 @@ export default function HomePage() {
   return (
     <div className="p-4 bg-background min-h-screen">
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* Welcome Hero Section */}
-        <div className="p-6 relative border rounded-xl overflow-hidden bg-[#c8bef6] bg-card">
-          {/* Background Illustration */}
-          {/* <div className="absolute  right-0 top-0 opacity-10 dark:opacity-5">
-            <img
-              src="https://api.builder.io/api/v1/image/assets/TEMP/d357815c619928a7802f3725dd398cd9da43a059?width=512"
-              alt=""
-              className="w-64 h-64"
-            />
-          </div> */}
-
+        <div className="p-6 relative border rounded-xl py-16 overflow-hidden bg-card h-full">
           <div className="relative z-10 max-w-2xl">
-            <p className="text-body-small text-gray-500 dark:text-gray-400 mb-1">
+            <p className="text-body-small text-gray-500 mb-1">
               {new Date().toLocaleDateString("en-US", {
                 weekday: "long",
                 month: "long",
@@ -45,8 +35,7 @@ export default function HomePage() {
               Hello, {user?.first_name} {user?.last_name}
             </h1>
 
-            {/* Quote Card */}
-            <div className="bg-card-secondary rounded-lg p-4 shadow">
+            <div className="bg-card-secondary rounded-lg p-4">
               <p className="text-body-medium text-gray-600  cursor-auto">
                 You don't have to be great to start, but you have to start to be
                 great. <span className="font-bold">Zig Ziglar</span>
@@ -54,12 +43,13 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Welcome Illustration */}
-          <div className="absolute right-8 top-1/2 transform -translate-y-1/2 hidden xl:block">
-            <img
+          <div className="absolute right-8 top-1/2 transform -translate-y-1/2 hidden xl:block ">
+            <Image
+              width={500}
+              height={500}
               src={Icons.homepageimage}
               alt="Welcome illustration"
-              className="w-72 h-72"
+              className="w-72 h-72 object-contain"
             />
           </div>
         </div>
@@ -122,11 +112,10 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* Recent Section */}
         <div>
           <h2 className="text-heading-2 mb-2 text-foreground">Recent</h2>
           <div className="space-y-2 cursor-pointer">
-            <p className="text-gray-500 dark:text-gray-400 text-center text-sm">
+            <p className="text-gray-500  text-center text-sm">
               No recent activity yet.
             </p>
           </div>
@@ -143,13 +132,12 @@ export default function HomePage() {
               </p>
             </div>
 
-            {/* Right Side */}
-            <button
-              onClick={() => (window.location.href = "/view-all-product")}
-              className="w-full sm:w-auto  px-3 py-2  hover:opacity-90 transition-opacity cursor-pointer  hover:bg-primary bg-primary rounded-xl"
+            <Link
+              href="/view-all-products"
+              className="w-auto text-center text-white px-3 py-2  hover:opacity-90 transition-opacity hover:bg-primary bg-primary rounded-xl"
             >
               Explore All Products
-            </button>
+            </Link>
           </div>
         </div>
       </div>

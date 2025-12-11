@@ -2,6 +2,7 @@
 
 import { X } from 'lucide-react';
 import React, { useEffect } from 'react';
+import { Button } from '../ui';
 
 type ModalSize = 'sm' | 'md' | 'lg';
 
@@ -56,13 +57,14 @@ function ModalRoot({
         onClick={(e) => e.stopPropagation()}
       >
         {showCloseButton && (
-          <button
+          <Button
             onClick={onClose}
-            className="absolute top-3 right-3  hover:bg-primary/80 rounded-2xl p-1 cursor-pointer"
-            aria-label="Close"
+            ariaLabel='Close'
+            variant='basic'
+            className="absolute top-3 right-3 p-1 cursor-pointer"
           >
-            <X className="w-5 h-5" />
-          </button>
+            <X className="w-5 h-5 hover:scale-105 hover:text-primary transition-all duration-300" />
+          </Button>
         )}
         {children}
       </div>

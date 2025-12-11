@@ -56,7 +56,7 @@ export const useCreateOrganization = () => {
 // 2. GET ALL ORGANIZATIONS
 export const useGetOrganizations = (page: number, limit: number) => {
   return useQuery({
-    queryKey: ["organizations", page, limit],
+    queryKey: ["organizations"],
     queryFn: async () => {
       const url = `${ENDPOINTS.ORGANIZATIONS}?page=${page}&limit=${limit}`;
       const res = await request<OgOrgResponse>(url, "GET");
@@ -116,8 +116,8 @@ export const useCheckOrganizationNameAvailability = (name: string) => {
     enabled: !!name && name.length > 0,
     select: (data) => data?.data.isAvailable,
     retry: false,
-    staleTime: 30000, // Cache for 30 seconds
-    gcTime: 300000, // Keep in cache for 5 minutes
+    staleTime: 30000,
+    gcTime: 300000,
     refetchOnWindowFocus: false,
   });
 };
@@ -133,7 +133,7 @@ export const useIsFavorite = () => {
         payload
       ),
 
-    onSuccess: () => toast.error("Favorited", "The organization is added to favorite"),
+    onSuccess: () => toast.info("Favorited", "The organization is added to favorite"),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["organizations"] });
     },
@@ -164,12 +164,10 @@ export const useDeleteOrganization = (onFinish?: () => void) => {
       return { previousOrganizations, deletedId };
     },
     onSuccess: async () => {
-      // Invalidate and refetch to get the latest data from the server
       await queryClient.invalidateQueries({ queryKey: ["organizations"] });
       toast.success("Organization deleted", "The organization was deleted successfully");
     },
     onError: (error: any, deletedId: string, context) => {
-      // Rollback optimistic updates on error
       if (context?.previousOrganizations) {
         context.previousOrganizations.forEach(([queryKey, data]) => {
           queryClient.setQueryData(queryKey, data);
@@ -193,11 +191,10 @@ export const useCheckSubDomainAvailability = (subDomain: string) => {
     enabled: !!subDomain && subDomain.length > 0,
     select: (data) => data.data.isAvailable,
     retry: false,
-    staleTime: 30000, // Cache for 30 seconds
-    gcTime: 300000, // Keep in cache for 5 minutes
     refetchOnWindowFocus: false,
   });
 };
+
 //9. GET ALL PRODUCTS OF ORGANIZATION
 export const useGetOrganizationProducts = (id: string) => {
   return useQuery({
@@ -206,5 +203,4 @@ export const useGetOrganizationProducts = (id: string) => {
     enabled: !!id,
     select: (data) => data.data,
   });
-
 };
