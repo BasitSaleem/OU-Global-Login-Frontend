@@ -31,14 +31,14 @@ export async function uploadImageServer(formData: FormData, Id: string) {
 
         const fileKey = `uploads/${Id}.jpg`;
         const command = new PutObjectCommand({
-            Bucket: process.env.AWS_S3_BUCKET_NAME!,
+            Bucket: process.env.OG_AWS_S3_BUCKET_NAME!,
             Key: fileKey,
             Body: optimizedImage,
             ContentType: 'image/jpeg',
             ACL: 'public-read',
         });
         await s3Client.send(command);
-        const publicUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileKey}`;
+        const publicUrl = `https://${process.env.OG_AWS_S3_BUCKET_NAME}.s3.${process.env.OG_AWS_REGION}.amazonaws.com/${fileKey}`;
 
         return {
             success: true,
@@ -51,14 +51,14 @@ export async function uploadImageServer(formData: FormData, Id: string) {
     }
 }
 export async function getImageWithId(Id: string) {
-    return `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/uploads/${Id}.jpg`;
+    return `https://${process.env.OG_AWS_S3_BUCKET_NAME}.s3.${process.env.OG_AWS_REGION}.amazonaws.com/uploads/${Id}.jpg`;
 }
 export async function deleteImageWithId(id: string) {
     try {
         const { DeleteObjectCommand } = await import('@aws-sdk/client-s3');
 
         const command = new DeleteObjectCommand({
-            Bucket: process.env.AWS_S3_BUCKET_NAME!,
+            Bucket: process.env.OG_AWS_S3_BUCKET_NAME!,
             Key: `uploads/${id}.jpg`,
         });
 
