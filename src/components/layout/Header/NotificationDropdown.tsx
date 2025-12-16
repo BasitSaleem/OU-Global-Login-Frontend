@@ -27,7 +27,7 @@ export function NotificationsDropdown({
                 <h2 className="text-heading-2 font-bold ">Notifications</h2>
                 <Link
                     href="/notifications"
-                    className="text-body-small text-primary font-medium underline hover:no-underline"
+                    className="text-[14px] text-primary font-medium underline hover:no-underline"
                 >
                     View All
                 </Link>
@@ -73,7 +73,6 @@ export function NotificationsDropdown({
         </div>
     );
 }
-
 function NotificationsControlsRow({
     anyUnread,
     onMarkAllAsRead,
@@ -86,38 +85,42 @@ function NotificationsControlsRow({
     setUnreadOnly: (v: boolean) => void;
 }) {
     return (
-        <div className="flex items-center justify-between px-3 py-2">
-            <button
-                onClick={onMarkAllAsRead}
-                disabled={!anyUnread}
-                className={`text-body-small font-medium ${anyUnread
-                    ? "text-primary hover:underline cursor-pointer "
-                    : "text-gray-400 cursor-not-allowed"
-                    }`}
-            >
-                Mark all as read
-            </button>
+        <div className="flex items-center justify-end gap-x2">
 
-            <div className="flex items-center gap-2">
-                <span
-                    className="text-body-small cursor-pointer hover:underline"
-                    onClick={() => setUnreadOnly(!unreadOnly)}
+            <div className="flex items-center justify-between gap-2 pt-2 pr-2">
+                <button
+                    onClick={onMarkAllAsRead}
+                    disabled={!anyUnread}
+                    className={`text-[14px] leading-[16px] font-medium transition-colors bg-bg-secondary
+                        ${anyUnread
+                            ? "!text-[var(--color-primary-500)] hover:underline cursor-pointer"
+                            : "!text-gray-500 opacity-50 cursor-not-allowed"
+                        }`
+                    }
                 >
-                    Only show unread
-                </span>
-
-                <Button
-                    onClick={() => setUnreadOnly(!unreadOnly)}
-                    className={`w-12 h-6 rounded-full cursor-pointer p-1 hidden sm:flex items-center transition-colors border ${unreadOnly ? "bg-primary" : "bg-gray-700"
-                        }`}
-                    aria-pressed={unreadOnly}
-                    aria-label="Toggle only show unread"
-                >
+                    Mark all as read
+                </button>
+                <div className="flex items-center gap-2">
                     <span
-                        className={`w-4 h-4 bg-bg-secondary rounded-full transition-transform mr-6 ${unreadOnly ? "translate-x-6" : "translate-x-0"
+                        className="text-body-small cursor-pointer hover:underline"
+                        onClick={() => setUnreadOnly(!unreadOnly)}
+                    >
+                        Only show unread
+                    </span>
+
+                    <Button
+                        onClick={() => setUnreadOnly(!unreadOnly)}
+                        className={`w-12 h-6 rounded-full cursor-pointer p-1 hidden sm:flex items-center transition-colors border hover:bg-primary ${unreadOnly ? "bg-primary" : "bg-gray-700"
                             }`}
-                    />
-                </Button>
+                        aria-pressed={unreadOnly}
+                        aria-label="Toggle only show unread"
+                    >
+                        <span
+                            className={`w-4 h-4 bg-bg-secondary rounded-full transition-transform mr-6 ${unreadOnly ? "translate-x-6" : "translate-x-0"
+                                }`}
+                        />
+                    </Button>
+                </div>
             </div>
         </div>
     );

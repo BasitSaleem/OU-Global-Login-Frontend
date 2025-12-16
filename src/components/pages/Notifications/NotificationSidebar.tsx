@@ -49,8 +49,9 @@ export default function NotificationsSidebar({
             {sidebarFilters.map((filter) => (
               <Button
                 key={filter.id}
-                variant={activeSidebarFilter === filter.id ? 'primary' : 'secondary'}
+                variant={activeSidebarFilter === filter.id ? 'primary' : 'basic'}
                 onClick={() => setActiveSidebarFilter(filter.id)}
+                className={`h-8 ${activeSidebarFilter === filter.id ? "text-primary" : ''}  `}
               >
                 {filter.label}
               </Button>
@@ -65,8 +66,8 @@ export default function NotificationsSidebar({
                 <Button
                   key={product.id}
                   onClick={() => setActiveProductFilter(product.id)}
-                  variant={activeProductFilter === product.id ? 'primary' : 'ghost'}
-                  className='w-full justify-start'
+                  variant={activeProductFilter === product.id ? 'primary' : 'basic'}
+                  className={`w-full justify-start h-10 ${activeProductFilter === product.id ? "text-primary" : ''}`}
                 >
                   {product.label}
                 </Button>

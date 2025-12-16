@@ -16,7 +16,7 @@ const PaymentMethodSection = () => {
                     <SvgIcon name="visa" width={30} height={30} />
                     <p className="text-body-small">Visa -- 5616 Expires 08/2028</p>
                 </div>
-                <Button className="bg-primary/40 p-1.5 text-sm border-0 rounded-3xl px-4 text-primary w-full sm:w-auto">
+                <Button className=" bg-[#efedf7] text-[#795cf5] p-1.5 text-sm border-0 rounded-3xl px-4  w-full sm:w-auto">
                     Primary
                 </Button>
             </div>

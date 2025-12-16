@@ -92,6 +92,8 @@ export default function EmailSettingsPage() {
           <div className="flex justify-end">
             <Button
               variant="primary"
+              className=" bg-[#795cf5]/80 text-white hover:bg-[#795cf5]/70"
+
             >
               Update Email Address
             </Button>

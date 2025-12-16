@@ -42,7 +42,7 @@ export function OrganizationGridComponent({
       key={id} className="flex flex-col h-[100px]">
       <div key={org.id} className="flex items-start gap-3 mb-2">
         <div
-          className="w-10 h-10 rounded flex items-center justify-center text-white font-medium"
+          className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-medium"
           style={{ backgroundColor: bgColor }}
         >
           {org?.name
@@ -53,7 +53,7 @@ export function OrganizationGridComponent({
         </div>
 
         <div className="flex-1 min-w-0">
-          <h3 className="truncate text-body-medium-bold text-black leading-tight pt-3">
+          <h3 className="truncate text-body-medium-bold text-black leading-tight pt-1">
             {org?.name?.toUpperCase()}
           </h3>
         </div>
@@ -116,8 +116,8 @@ export function OrganizationGridComponent({
           className="flex items-center justify-between px-2 py-1.5 rounded"
           style={{ backgroundColor: "rgba(121, 92, 245, 0.07)" }}
         >
-          <span className="text-body-small font-medium text-primary">
-            {org?.memberships?.length ?? "0"} member{org?.memberships?.length === 1 ? "" : "s"}
+          <span className="text-[14px] font-medium text-primary-500">
+            {org?.membersCount ? org?.membersCount : "0"} member{org?.membersCount ? "" : "s"}
           </span>
           <div className="flex items-center -space-x-0.5">
             {org?.products?.map((product, index) => (

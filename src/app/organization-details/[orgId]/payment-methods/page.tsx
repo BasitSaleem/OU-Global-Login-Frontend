@@ -88,12 +88,12 @@ const PaymentMethodsPage = () => {
         <div className="px-4 py-12 w-full mx-auto md:px-11">
             <div className="flex items-center gap-2 mb-6">
                 <h1 className="font-bold text-2xl">Payment Method</h1>
-                <div className="bg-[#8B5CF6] text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                <div className="bg-[#8B5CF6] text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">
                     {paymentMethods.length}
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 <PaymentMethodCard
                     variant="add"
                     onAdd={handleAddClick}
