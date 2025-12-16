@@ -133,7 +133,7 @@ export default function HomePage() {
             </div>
 
             <Link
-              href="/view-all-products"
+              href="/view-all-product"
               className="w-auto text-center text-white px-3 py-2  hover:opacity-90 transition-opacity hover:bg-primary bg-primary rounded-xl"
             >
               Explore All Products

@@ -188,9 +188,50 @@ const PlanSection = () => {
     const GAP = 16;
     const TOTAL_MOVE = CARD_WIDTH + GAP;
     const VISIBLE_CARDS = 4;
-    const maxOffset = -((pricingPlans.length - VISIBLE_CARDS) * TOTAL_MOVE);
+
+    // Dynamic calculation for max index
+    const [maxIndex, setMaxIndex] = React.useState(0);
+    const containerRef = React.useRef<HTMLDivElement>(null);
+
+    React.useEffect(() => {
+        const updateMaxIndex = () => {
+            if (containerRef.current) {
+                const containerWidth = containerRef.current.offsetWidth;
+                const cardsVisible = Math.floor(containerWidth / TOTAL_MOVE);
+                // Ensure at least one card is considered "visible" for calculation logic
+                const safeVisible = Math.max(1, cardsVisible);
+                // Calculate how many steps we can scroll
+                // If cardsVisible >= pricingPlans.length, maxIndex should be 0 (no scroll needed)
+                // Otherwise, it's length - safeVisible (to align the last card to the end? 
+                // Actually, aligning last card to left edge often implies we can scroll until index = length - 1. 
+                // But the user wants NO extra space. 
+                // If we want the last card to settle at the end of the view? 
+                // Current implementation scrolls by TOTAL_MOVE. 
+                // Let's stick to the behavior: allowed index = length - visible_fully - fraction?
+                // Simplest approach satisfying "no extra margin":
+                // maxIndex = pricingPlans.length - (containerWidth / TOTAL_MOVE). 
+                // Since we rely on integer indices for `currentIndex`:
+
+                // Let's rely on the previous "visible cards" logic but make it dynamic.
+                const CalculatedMaxIndex = Math.max(0, pricingPlans.length - Math.floor(containerWidth / TOTAL_MOVE));
+                setMaxIndex(CalculatedMaxIndex);
+            }
+        };
+
+        updateMaxIndex();
+        window.addEventListener('resize', updateMaxIndex);
+        return () => window.removeEventListener('resize', updateMaxIndex);
+    }, [pricingPlans.length, TOTAL_MOVE]);
+
+
+    // Calculate maxOffset based on dynamic maxIndex
+    // If we scroll to maxIndex, the offset is -maxIndex * TOTAL_MOVE.
+    // This aligns the card at `maxIndex` to the left.
+    // If `maxIndex` is correct, the remaining cards + this one should fill the screen or end exactly at the right.
+    const maxOffset = -(maxIndex * TOTAL_MOVE);
+
     const handleNext = () => {
-        if (currentIndex < pricingPlans.length - 1) {
+        if (currentIndex < maxIndex) {
             setCurrentIndex(prev => prev + 1);
         }
     };
@@ -210,7 +251,7 @@ const PlanSection = () => {
                 Your Organization is currently on the Basic Plan.
             </p>
 
-            <div className="mt-9 relative group w-full grid grid-cols-1">
+            <div className="mt-9 relative group w-full grid grid-cols-1" ref={containerRef}>
                 <Button
                     variant='basic'
                     onClick={handlePrev}
@@ -222,12 +263,12 @@ const PlanSection = () => {
                 <Button
                     variant='basic'
                     onClick={handleNext}
-                    disabled={currentIndex === pricingPlans.length - 4}
+                    disabled={currentIndex >= maxIndex}
                     className="absolute right-0 top-1/2 -translate-y-1/2 z-10 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0 -mr-4 cursor-pointer disabled:cursor-not-allowed bg-primary/40 rounded-full py-8 "
                 > <ChevronRight size={40} color="white" />
                 </Button>
 
-                <div className="overflow-hidden w-full px-1 py-4 -my-4">
+                <div className="overflow-hidden w-full  py-4 -my-4">
                     <motion.div
                         className="flex gap-4 touch-pan-y cursor-grab active:cursor-grabbing"
                         style={{ touchAction: "pan-y", overscrollBehaviorX: "none" }}
@@ -235,11 +276,12 @@ const PlanSection = () => {
                         transition={{ type: "spring", stiffness: 300, damping: 30 }}
                         drag="x"
                         dragElastic={0.1}
+                        // If all cards fit, maxOffset is 0, so no drag possible to the left
                         dragConstraints={{ right: 0, left: maxOffset }}
                         onDragEnd={(e, { offset }) => {
                             const swipe = offset.x;
 
-                            if (swipe < -50 && currentIndex < pricingPlans.length - VISIBLE_CARDS) {
+                            if (swipe < -50 && currentIndex < maxIndex) {
                                 setCurrentIndex(prev => prev + 1);
                             } else if (swipe > 50 && currentIndex > 0) {
                                 setCurrentIndex(prev => prev - 1);

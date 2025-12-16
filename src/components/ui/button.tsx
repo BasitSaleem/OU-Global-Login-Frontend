@@ -110,7 +110,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const baseStyles = ' inline-flex  cursor-pointer items-center justify-center gap-1.5 rounded  transition-all duration-300 focus:outline-none disabled:pointer-events-none disabled:opacity-50';
 
     const variants = {
-      primary: 'bg-primary py-4 !text-btn-text hover:bg-primary/80 hover:!text-btn-text border-primary border rounded-lg',
+      primary: 'bg-primary/10  py-4  text-white hover:bg-primary/20 hover: border-primary border-0 rounded-lg',
       secondary: 'bg-bg-secondary py-4 hover:bg-primary/80 border-primary hover:!text-btn-text border rounded-lg',
       outline: 'border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50 focus:ring-gray-500 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800',
       ghost: 'text-gray-700 py-4 hover:bg-primary/80 rounded-lg focus:ring-gray-500 border rounded-lg hover:!text-btn-text ',

@@ -95,8 +95,9 @@ export const DeleteOrganizationModal: React.FC<DeleteOrganizationModalProps> = (
                         Are you sure you want to delete <span className="font-semibold">"{organizationData.name}"</span>?
                     </p>
                     {extraDetails && (
-                        <p className="mt-2 text-sm">{extraDetails}</p>
+                        <p className="mt-2 text-sm text-[var(--color-primary-900)]">{extraDetails}</p>
                     )}
+
                     <p className="mt-2 text-sm ">
                         This action cannot be undone.
                     </p>

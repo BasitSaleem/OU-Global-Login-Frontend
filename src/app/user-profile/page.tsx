@@ -126,7 +126,7 @@ export default function UserProfilePage() {
             </div>
 
             {/* User Details */}
-            <div className="space-y-5 flex flex-col justify-center ml-6">
+            <div className="space-y-5 flex flex-col justify-center pr-2">
               <div>
                 <label className="text-body-small">Name</label>
                 <p className="text-body-medium-bold">
@@ -135,7 +135,7 @@ export default function UserProfilePage() {
               </div>
               <div>
                 <label className="text-body-small">Email</label>
-                <p className="text-body-medium-bold">{user?.email}</p>
+                <p className="text-body-medium-bold overflow-ellipsis">{user?.email}</p>
               </div>
               <div>
                 <label className="text-body-small">Contact</label>
@@ -270,6 +270,8 @@ export default function UserProfilePage() {
               <div className="flex justify-end">
                 <Button
                   variant="primary"
+                  className=" bg-[#795cf5]/80 text-white hover:bg-[#795cf5]/70"
+
                   permission="og:edit::profile"
                   onClick={handleSaveChanges}
                   disabled={isPending || !isChanged}

@@ -30,7 +30,7 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
         return (
             <div
                 onClick={onAdd}
-                className="flex flex-col items-center justify-center w-full h-[180px] bg-bg-secondary border border-dashed border-primary rounded-xl cursor-pointer hover:bg-primary/10 transition-colors"
+                className="flex flex-col items-center justify-center w-full h-[180px]  border border-gray-300 rounded-xl cursor-pointer bg-primary/5 hover:bg-primary/10 transition-colors"
             >
                 <Plus strokeWidth={1.5} className="w-30 h-30 text-primary mb-2" />
                 <span className="text-primary font-medium">Add New</span>
@@ -39,7 +39,7 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
     }
 
     return (
-        <div className="relative w-full h-[180px] bg-bg-secondary rounded-xl p-6 border flex flex-col justify-between hover:shadow-md transition-shadow cursor-pointer">
+        <div className="relative w-full h-[180px] bg-bg-secondary rounded-xl p-6 m-0 border flex flex-col justify-between hover:shadow-md transition-shadow cursor-pointer">
             <div className="flex justify-between items-start">
                 <div className="flex items-center gap-3">
                     {cardType && <SvgIcon name={cardType} width={48} height={48} />}

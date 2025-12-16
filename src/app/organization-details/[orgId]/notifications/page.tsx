@@ -304,7 +304,7 @@ export default function NotificationPreferencesPage() {
         <div className="flex justify-end">
           <Button
             variant="primary"
-            className='text-[#ffff]'
+            className='text-[#ffff] bg-[#795CF5] hover:bg-[#795CF5]/90'
           >
             Save Preferences
           </Button>

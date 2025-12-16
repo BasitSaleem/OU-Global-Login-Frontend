@@ -164,7 +164,9 @@ export default function CreateOrgPage() {
                     className={`flex items-center gap-2 border rounded-lg px-3 py-3 text-base font-medium transition ${selectedProduct === product.name
                       ? "border-primary bg-bg-secondary hover:text-text hover:bg-primary/70 text-primary"
                       : "border text-text"
-                      } ${product.isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                      } ${product.isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`
+
+                    }
                   >
                     <img
                       src={product.icon}

@@ -29,7 +29,10 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
       {/* Avatar */}
       <div
         className="w-8 h-8 rounded-full flex items-center justify-center text-white text-body-tiny font-medium"
-        style={{ backgroundColor: color }}
+        style={{
+          backgroundColor: color || "#795CF5",
+          color: "white"
+        }}
       >
         {initials}
       </div>

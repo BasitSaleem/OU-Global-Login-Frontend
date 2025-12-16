@@ -25,7 +25,7 @@ export default function NotificationsHeaderControls({
       <div className="flex items-center gap-1 sm:gap-2">
         <button
           onClick={onMarkAllAsRead}
-          className="text-primary text-body-small  font-medium hover:underline cursor-pointer"
+          className="text-primary text-[14px]  font-medium hover:underline cursor-pointer"
         >
           Mark all as read
         </button>
@@ -42,17 +42,15 @@ export default function NotificationsHeaderControls({
         {/* Pill switch */}
         <div
           onClick={() => setOnlyUnread(!onlyUnread)}
-          className={`rounded-full p-0.5 cursor-pointer transition-colors ${
-            onlyUnread ? 'bg-[#795CF5]' : 'bg-gray-200'
-          } w-8 h-4 sm:w-10 sm:h-5`}
+          className={`rounded-full p-0.5 cursor-pointer transition-colors ${onlyUnread ? 'bg-[#795CF5]' : 'bg-gray-200'
+            } w-8 h-4 sm:w-10 sm:h-5`}
           role="switch"
           aria-checked={onlyUnread}
           aria-label="Only show unread notifications"
         >
           <div
-            className={`bg-white rounded-full shadow transition-transform w-3 h-3 sm:w-3.5 sm:h-3.5 ${
-              onlyUnread ? 'translate-x-4 sm:translate-x-5' : 'translate-x-0'
-            }`}
+            className={`bg-white rounded-full shadow transition-transform w-3 h-3 sm:w-3.5 sm:h-3.5 ${onlyUnread ? 'translate-x-4 sm:translate-x-5' : 'translate-x-0'
+              }`}
           />
         </div>
       </div>
