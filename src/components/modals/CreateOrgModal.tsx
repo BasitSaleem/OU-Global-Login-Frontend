@@ -167,7 +167,9 @@ export default function CreateOrgModal({
               className={`flex items-center gap-2 border rounded-lg px-3 py-3 text-base font-medium transition mb-1 ${selectedProduct === product.name
                 ? 'border-primary bg-bg-secondary text-primary'
                 : 'border text-text bg-bg-secondary hover:bg-primary/10'
-                } ${product.isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                } ${product.isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}
+                  ${product.isDisabled ? "bg-primary/10" : ""}
+                `}
             >
               <img src={product.icon} alt={product.name} className="w-4 h-4" />
               {product.fullname}
@@ -221,7 +223,7 @@ export default function CreateOrgModal({
           onClick={handleSubmit}
           isLoading={isLoading}
           disabled={isLoading || !canSubmit()}
-          className="px-3"
+          className="px-3 bg-[#795cf5]/80 text-white hover:bg-[#795cf5]/70"
         >
           Continue
         </Button>

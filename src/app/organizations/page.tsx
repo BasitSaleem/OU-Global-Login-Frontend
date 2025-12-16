@@ -75,7 +75,7 @@ function OrganizationsContent() {
   };
 
   return (
-    <div className="p-2 sm:p-8 bg-background">
+    <div className="p-2 sm:p-8 bg-background ">
       <div className="max-w-xs sm:max-w-7xl mx-auto space-y-8">
         <OrganizationGrid
           organizations={organizations}
@@ -86,8 +86,8 @@ function OrganizationsContent() {
         <div className="mt-4 flex justify-end">
           <button onClick={() => {
             setPage((prev) => prev + 1)
-          }} className="text-primary text-body-medium font-medium hover:underline cursor-pointer">
-            View More
+          }} >
+            <p className="text-primary-500 font-medium hover:underline cursor-pointer">View More</p>
           </button>
         </div>
 

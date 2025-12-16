@@ -1,6 +1,7 @@
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import { ChevronRight } from 'lucide-react';
 import { Icons } from '@/components/utils/icons';
+import Link from 'next/link';
 
 function ViewAllProductsPage() {
   const products = [
@@ -11,7 +12,8 @@ function ViewAllProductsPage() {
       icon: '/Icons/OI_LOGO.svg',
       backgroundColor: '#F3E8FF',
       status: 'Open',
-      available: true
+      available: true,
+      href: 'https://ownersinventory.com/'
     },
     {
       id: 'analytics',
@@ -82,7 +84,9 @@ function ViewAllProductsPage() {
                       className="text-body-small font-medium"
                       style={{ color: '#795CF5' }}
                     >
-                      {product.status}
+                      {product.title === "Owners Inventory" ? <Link href={product.href!}>
+                        Open
+                      </Link> : "Coming Soon"}
                     </span>
                     <ChevronRight
                       className="w-3 h-3"

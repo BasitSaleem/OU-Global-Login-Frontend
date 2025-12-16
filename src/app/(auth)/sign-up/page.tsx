@@ -146,7 +146,7 @@ export default function SignUpPage() {
                     isLoading={isPending}
                     disabled={isPending || Object.keys(methods.formState.errors).length > 0}
                     variant="primary"
-                    className="w-full h-8 sm:h-9 text-white text-xs sm:text-sm font-bold rounded-full  cursor-pointer"
+                    className="w-full h-8 sm:h-9 text-white text-xs bg-[#947AF6] hover:bg-[#947AF6]/80 sm:text-sm font-bold rounded-full  cursor-pointer"
 
                   >
                     {isPending ? "Signing up .." : "Sign up"}

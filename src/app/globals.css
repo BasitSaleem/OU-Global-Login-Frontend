@@ -28,8 +28,9 @@
   --color-text-btn: #ffffff;
   /* --color-hover: #795CF5; */
   /* Gray scale */
-  /* --color-gray: #1F2937; */
-  /* --color-gray-50: #F9FAFB;
+  /* Gray scale */
+  --color-gray: #1F2937;
+  --color-gray-50: #F9FAFB;
   --color-gray-100: #F3F4F6;
   --color-gray-200: #E5E7EB;
   --color-gray-300: #D1D5DB;
@@ -38,7 +39,7 @@
   --color-gray-600: #4B5563;
   --color-gray-700: #374151;
   --color-gray-800: #1F2937;
-  --color-gray-900: #111827; */
+  --color-gray-900: #111827;
   --color-input-bg: #ffffff;
   /* Base colors */
   --color-white: #FFFFFF;
@@ -129,7 +130,7 @@
   /* Base colors */
   --color-black: var(--color-black);
   --color-white: var(--color-white);
-  --color-hover: var(--color-hover);
+  /* --color-hover: var(--color-hover); */
   /* Semantic colors */
   --color-background: var(--color-background);
   --color-foreground: var(--color-foreground);
@@ -139,7 +140,8 @@
 
 
   /* Gray colors */
-  /* --color-gray-50: var(--color-gray-50);
+  /* Gray colors */
+  --color-gray-50: var(--color-gray-50);
   --color-gray-100: var(--color-gray-100);
   --color-gray-200: var(--color-gray-200);
   --color-gray-300: var(--color-gray-300);
@@ -148,7 +150,7 @@
   --color-gray-600: var(--color-gray-600);
   --color-gray-700: var(--color-gray-700);
   --color-gray-800: var(--color-gray-800);
-  --color-gray-900: var(--color-gray-900); */
+  --color-gray-900: var(--color-gray-900);
 
 
 }
