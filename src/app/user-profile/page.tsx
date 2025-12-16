@@ -61,7 +61,7 @@ export default function UserProfilePage() {
   }, [user]);
 
   const isChanged = useMemo(() => {
-    if (!originalData.current) return false;
+    if (!originalData.current || userData.contact === "" || userData.contact === user?.contact) return false;
     return !isEqual(originalData.current, userData);
   }, [userData]);
 

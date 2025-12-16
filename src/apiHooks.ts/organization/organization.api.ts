@@ -126,14 +126,16 @@ export const useIsFavorite = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: { userId: string; orgId: string }) =>
-      request<{ favorited: boolean; favoriteCount: number }>(
-        "/organization/favorite",
+      request<{ data: { favorite_d: boolean; favoriteCount: number }, message: string }>(
+        ENDPOINTS.TOGGLE_FAVORITE,
         "POST",
         {},
         payload
       ),
 
-    onSuccess: () => toast.info("Favorited", "The organization is added to favorite"),
+    onSuccess: (data) => {
+      toast.info(`${data?.data?.favorite_d ? "Favorited" : "Unfavorited"}`, data?.message)
+    },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["organizations"] });
     },
