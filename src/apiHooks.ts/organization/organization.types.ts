@@ -75,7 +75,7 @@ export interface OgProduct {
 export interface OgOrgResponse {
   totalCount: number,
   data: {
-    totalCounts: number;
+    totalCount: number;
     organizations: OgOrganization[];
   };
   message?: string

@@ -145,10 +145,10 @@ export default function OrganizationGrid({
                   <div
                     className="flex flex-col items-center justify-center text-center h-full rounded-xl bg-primary/5 py-8"
                   >
-                    <div className="mb-">
-                      <Plus size={50} color="#795CF5" />
+                    <div className="text-primary">
+                      <Plus size={50} />
                     </div>
-                    <span className=" text-[#795CF5] font-bold">
+                    <span className=" text-primary font-bold">
                       Add New
                     </span>
                   </div>

@@ -62,13 +62,6 @@ export default function UserProfileLayout({
       activeIcon: Icons.changePasswordwhite,
       isActive: pathname === "/user-profile/change-password",
     },
-    {
-      label: "Notifications",
-      href: "/user-profile/notifications",
-      icon: "notification",
-      activeIcon: Icons.notificationwhite,
-      isActive: pathname === "/user-profile/notifications",
-    },
   ];
 
   useEffect(() => {
@@ -137,7 +130,7 @@ export default function UserProfileLayout({
                 title={sidebarCollapsed ? item.label : ""}
               >
 
-                <SvgIcon name={item.icon} width={20} height={20} className="text-[#4B5563]" />
+                <SvgIcon name={item.icon} width={20} height={20} className="text-icon" />
                 {!sidebarCollapsed && (
                   <span className=" font-medium">{item.label}</span>
                 )}

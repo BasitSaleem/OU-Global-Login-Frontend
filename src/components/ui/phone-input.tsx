@@ -1,113 +1,146 @@
 'use client';
 
-import React from 'react';
-import PhoneInput from 'react-phone-input-2';
+import React, { forwardRef } from 'react';
+import PhoneInput2 from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import { cn } from '@/utils/helpers';
+import { Asterisk, Lock } from 'lucide-react';
+import { PermissionGuard } from '@/components/HOCs/permission-guard';
+import { Permission } from '@/types/common';
 
-interface CustomPhoneInputProps {
+export interface PhoneInputProps {
+    className?: string;
     value?: string;
-    onChange: (value: string, country: any) => void;
+    onChange: (value: string) => void;
     label?: string;
+    error?: string;
+    helperText?: string;
     isRequired?: boolean;
     disabled?: boolean;
-    error?: string;
+    permission?: Permission | Permission[];
+    checkAllPermissions?: boolean;
+    permissionFallback?: React.ReactNode;
     placeholder?: string;
     country?: string;
-    enableSearch?: boolean;
 }
 
-export const CustomPhoneInput: React.FC<CustomPhoneInputProps> = ({
-    value,
-    onChange,
-    label,
-    isRequired = false,
-    disabled = false,
-    error,
-    placeholder = 'Enter phone number',
-    country = 'us',
-    enableSearch = true,
-}) => {
-    return (
-        <div className="w-full">
-            {label && (
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {label}
-                    {isRequired && <span className="text-red-500 ml-1">*</span>}
-                </label>
-            )}
+const PhoneInput = forwardRef<any, PhoneInputProps>(
+    (
+        {
+            className,
+            value,
+            onChange,
+            label,
+            error,
+            helperText,
+            isRequired,
+            disabled,
+            permission,
+            checkAllPermissions = false,
+            permissionFallback,
+            placeholder,
+            country = 'us',
+            ...props
+        },
+        ref
+    ) => {
 
-            <div className={`
-        relative transition-all duration-200
-        ${error ? 'ring-1 ring-red-500' : 'focus-within:ring-1 focus-within:ring-blue-500'}
-        ${disabled ? 'opacity-60 cursor-not-allowed' : ''}
-      `}>
-                <PhoneInput
-                    country={country}
-                    value={value}
-                    onChange={onChange}
-                    disabled={disabled}
-                    placeholder={placeholder}
-                    enableSearch={enableSearch}
-                    searchPlaceholder="Search countries..."
-                    inputClass={`
-            !w-full !h-10 !px-3 !py-2 !border !border-gray-300 !rounded-md
-            !bg-white !text-gray-900 !text-sm
-            focus:!border-blue-500 focus:!ring-1 focus:!ring-blue-500
-            transition-colors duration-200
-            ${error ? '!border-red-500 !ring-red-500' : ''}
-            ${disabled ? '!bg-gray-100 !cursor-not-allowed' : ''}
-          `}
-                    buttonClass={`
-            !border !border-gray-300 !border-r-0 !rounded-l-md
-            !bg-white hover:!bg-gray-50
-            ${error ? '!border-red-500 !bg-red-50' : ''}
-            ${disabled ? '!bg-gray-100 !cursor-not-allowed' : ''}
-          `}
-                    dropdownClass="!border !border-gray-200 !shadow-lg !rounded-md !mt-1"
-                    searchClass="!border-b !border-gray-200 !p-2 !mb-0"
-                    containerClass=""
-                    inputStyle={{
-                        width: '100%',
-                        borderLeft: 'none',
-                        borderTopLeftRadius: 0,
-                        borderBottomLeftRadius: 0,
-                    }}
-                    buttonStyle={{
-                        borderRight: 'none',
-                        backgroundColor: 'white',
-                    }}
-                    countryCodeEditable={false}
-                    autoFormat={true}
-                    masks={{ us: '(...) ...-....' }}
-                    priority={{
-                        us: 0,
-                        gb: 1,
-                        ca: 2,
-                        au: 3,
-                        de: 4,
-                        fr: 5,
-                        it: 6,
-                        es: 7,
-                        jp: 8,
-                        kr: 9,
-                        cn: 10,
-                        in: 11,
-                        br: 12,
-                        mx: 13
-                    }}
-                />
+        // Locked/Disabled Input for permission fallback
+        const renderLockedInput = () => (
+            <div className="space-y-2">
+                {label && (
+                    <label className="text-sm text-text ml-1">
+                        {isRequired ? (
+                            <>
+                                {label}
+                                <Asterisk className="inline ml-1 mb-2" width={14} height={14} color="red" />
+                            </>
+                        ) : (
+                            label
+                        )}
+                        <Lock className="inline ml-2 mb-1" width={14} height={14} color="#6B7280" />
+                    </label>
+                )}
+                <div className="relative">
+                    <input
+                        disabled
+                        value={value}
+                        className="flex h-10 w-full mt-1.5 text-gray-500 rounded-lg border bg-gray-100 px-3 py-2 text-sm cursor-not-allowed opacity-50"
+                    />
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                        <Lock className="h-4 w-4 text-gray-500" />
+                    </div>
+                </div>
+                <p className="text-sm text-gray-500">No permission to edit this field</p>
             </div>
+        );
 
-            {error && (
-                <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                    </svg>
-                    {error}
-                </p>
-            )}
-        </div>
-    );
-};
+        const content = (
+            <div className={cn("space-y-2", className)}>
+                {label && (
+                    <label className="text-sm text-text ml-1 block">
+                        {isRequired ? (
+                            <>
+                                {label}
+                                <Asterisk className="inline ml-1 mb-2" width={14} height={14} color="red" />
+                            </>
+                        ) : (
+                            label
+                        )}
+                    </label>
+                )}
+                <div className={cn("relative group", disabled && "opacity-50 cursor-not-allowed")}>
+                    <PhoneInput2
+                        country={country}
+                        value={value}
+                        onChange={onChange}
+                        disabled={disabled}
+                        placeholder={placeholder}
+                        enableSearch={true}
+                        disableSearchIcon={true}
+                        searchClass="!p-2 !bg-white !text-gray-900 !rounded-t-lg"
+                        dropdownClass="!bg-white !text-gray-900 !border-gray-200 !shadow-lg !rounded-lg"
+                        inputProps={{
+                            ref: ref,
+                            required: isRequired,
+                        }}
+                        inputClass={cn(
+                            "!w-full !h-10 !text-sm !pl-12 !pr-3 !bg-input-bg !text-text !rounded-lg !border focus:!outline-none focus:!ring-1 focus:!ring-primary hover:!border-primary/50 transition-colors",
+                            error ? "!border-red-500 focus:!ring-red-500" : "!border-gray-200 !border",
+                            disabled ? "!bg-gray-100 !cursor-not-allowed !opacity-50" : ""
+                        )}
+                        buttonClass={cn(
+                            "!border-0 !bg-transparent !rounded-l-lg hover:!bg-transparent !placeholder-gray-400",
+                            disabled ? "!cursor-not-allowed" : ""
+                        )}
+                    />
+                </div>
+                {error && (
+                    <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+                )}
+                {helperText && !error && (
+                    <p className="text-sm text-gray-500">
+                        {helperText}
+                    </p>
+                )}
+            </div>
+        );
 
-export default CustomPhoneInput;
+        if (permission) {
+            return (
+                <PermissionGuard
+                    requiredPermissions={permission}
+                    checkAll={checkAllPermissions}
+                    fallback={permissionFallback || renderLockedInput()}
+                >
+                    {content}
+                </PermissionGuard>
+            )
+        }
+
+        return content;
+    }
+);
+
+PhoneInput.displayName = "PhoneInput";
+export { PhoneInput };

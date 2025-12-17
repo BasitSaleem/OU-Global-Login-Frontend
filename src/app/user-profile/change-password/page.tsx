@@ -75,7 +75,7 @@ export default function ChangePasswordPage() {
 
                 {/* Update Button */}
                 <Button
-                  className="w-full bg-[#795cf5]/80 text-white hover:bg-[#795cf5]/70"
+                  className="w-full bg-primary text-white hover:bg-primary/70"
                   variant="primary"
 
                 >

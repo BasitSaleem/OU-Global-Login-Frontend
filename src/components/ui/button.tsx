@@ -110,13 +110,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const baseStyles = ' inline-flex  cursor-pointer items-center justify-center gap-1.5 rounded  transition-all duration-300 focus:outline-none disabled:pointer-events-none disabled:opacity-50';
 
     const variants = {
-      primary: 'bg-primary/10  py-4  text-white hover:bg-primary/20 hover: border-primary border-0 rounded-lg',
-      secondary: 'bg-bg-secondary py-4 hover:bg-primary/80 border-primary hover:!text-btn-text border rounded-lg',
+      primary: 'bg-primary py-[17px] text-white hover:bg-primary/80 rounded-lg',
+      secondary: 'bg-bg-secondary py-4 hover:bg-primary border-primary hover:!text-btn-text border rounded-lg',
       outline: 'border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50 focus:ring-gray-500 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800',
       ghost: 'text-gray-700 py-4 hover:bg-primary/80 rounded-lg focus:ring-gray-500 border rounded-lg hover:!text-btn-text ',
       destructive: 'bg-red py-4 !text-btn-text hover:bg-red-700 focus:ring-red-500 rounded-lg border-red border',
       basic: ''
-
     };
 
     const sizes = {
@@ -235,7 +234,7 @@ const LockedButton = forwardRef<HTMLButtonElement, LockedButtonProps>(
     const baseStyles = 'inline-flex cursor-pointer items-center justify-center gap-1.5 rounded transition-all duration-300 focus:outline-none disabled:pointer-events-none disabled:opacity-50';
 
     const variants = {
-      primary: 'bg-gray-400 py-4 !text-btn-text border-gray-400 border rounded-lg',
+      primary: 'bg-gray-400 py-5 !text-btn-text border-gray-400 border rounded-lg',
       secondary: 'bg-gray-300 py-4 border-gray-400 border rounded-lg',
       outline: 'border border-gray-300 bg-transparent text-gray-500',
       ghost: 'text-gray-500 py-4 rounded-lg border rounded-lg',

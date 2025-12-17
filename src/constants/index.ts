@@ -1,3 +1,5 @@
+import { IconName } from "@/components/ui/SvgIcon";
+
 export const APP_CONFIG = {
   name: 'Owners Global Login',
   description: 'Global authentication system for business owners',
@@ -99,27 +101,27 @@ export const PRODUCTS = [
     name: "OI",
     fullname: "Owners Inventory",
     isDisabled: false,
-    icon: "https://api.builder.io/api/v1/image/assets/TEMP/3c4327f1dd595491744f2af966536dd987ec0a0a?width=66",
+    icon: "OI" as IconName,
   },
   {
     id: "marketplace",
     name: "OM",
     fullname: "Owners Marketplace",
     isDisabled: true,
-    icon: "https://api.builder.io/api/v1/image/assets/TEMP/df8a47bf275bccdb600fe4495f3d4bead9cb844f?width=64",
+    icon: "OM" as IconName,
   },
   {
     id: "analytics",
     name: "OA",
     fullname: "Owners Analytics",
     isDisabled: true,
-    icon: "https://api.builder.io/api/v1/image/assets/TEMP/72b1ea421112224fa1bea68adcd733be5aa8666b?width=76",
+    icon: "OA" as IconName,
   },
   {
     id: "jungle",
     name: "OJ",
     fullname: "Owners Jungle",
     isDisabled: true,
-    icon: "https://api.builder.io/api/v1/image/assets/TEMP/78407e1c15d2b695844d30eed5f5358ca8da09f8?width=64",
+    icon: "OJ" as IconName,
   },
 ];

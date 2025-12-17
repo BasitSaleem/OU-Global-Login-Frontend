@@ -89,7 +89,7 @@ export default function AppHeader({
           className="hidden lg:flex hover:scale-105 cursor-pointer"
           title="Toggle sidebar"
         >
-          <SvgIcon name="hamburger" className="w-5 h-5 text-gray-600" />
+          <SvgIcon name="hamburger" className="w-5 h-5 text-icon" />
         </Button>
 
         <Button
@@ -98,9 +98,9 @@ export default function AppHeader({
           className="lg:hidden hover:bg-bg-secondary rounded transition-colors cursor-pointer"
         >
           {mobileSidebarOpen ? (
-            <X className="w-4 h-4 text-gray-600" />
+            <X className="w-4 h-4 text-icon" />
           ) : (
-            <Menu className="w-4 h-4 text-gray-600" />
+            <Menu className="w-4 h-4 text-icon" />
           )}
         </Button>
 

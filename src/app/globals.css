@@ -15,11 +15,12 @@
   --color-primary-200: #DDD6FE;
   --color-primary-300: #C4B5FD;
   --color-primary-400: #A78BFA;
-  --color-primary-500: #795CF5;
+  --color-primary-500: #985cff;
   --color-primary-600: #7C3AED;
   --color-primary-700: #6D28D9;
   --color-primary-800: #5B21B6;
   --color-primary-900: #4C1D95;
+  --color-primary: #795cf5;
   --color-bg-secondary: #FFF;
   --color-skeleton: #D1D5DB;
   --color-black: #131313;
@@ -37,7 +38,6 @@
   --color-gray-400: #9CA3AF;
   --color-gray-500: #6B7280;
   --color-gray-600: #4B5563;
-  --color-gray-700: #374151;
   --color-gray-800: #1F2937;
   --color-gray-900: #111827;
   --color-input-bg: #ffffff;
@@ -48,6 +48,7 @@
   --color-foreground: var(--color-black);
   --color-border: #E5E7EB;
   --color-bg-secondary: #ffffff;
+  --color-icon: #374151;
   --color-invert: #131313;
 
 }
@@ -60,7 +61,8 @@
   --color-bg-secondary: #1F2937;
   --color-card-secondary: #4B5563;
   --color-primary-100: #EDE9FE;
-  --color-primary-500: #9333EA;
+  --color-primary-500: #985cff;
+  --color-primary: #985cff;
   --gradient-primary-start: #9333EA;
   --gradient-primary-end: #2563EB;
   --color-skeleton: #4B5563;
@@ -70,6 +72,7 @@
   --color-invert: #ffffff;
   --color-text-btn: #ffffff;
   --color-red: #E53935;
+  --color-icon: #ffffff;
   /* --color-hover: #795CF5; */
 }
 
@@ -120,12 +123,13 @@
   --color-primary-900: var(--color-primary-900);
   --color-text: var(--color-text);
   --color-btn-text: var(--color-text-btn);
+  --color-icon: var(--color-icon);
   /* --color-hover: var(--color-primary-900); */
   --color-card-secondary: var(--color-card-secondary);
   --color-text-secondary: var(--color-card-secondary);
   --color-bg-secondary: var(--color-bg-secondary);
   --color-skeleton: var(--color-skeleton);
-  --color-primary: var(--color-primary-500);
+  --color-primary: var(--color-primary);
   --color-input-bg: var(--color-input-bg);
   /* Base colors */
   --color-black: var(--color-black);
@@ -338,7 +342,7 @@
     font-size: 14px;
     line-height: 16px;
     font-weight: 400;
-    color: var(--color-gray-500);
+    color: var(--color-icon);
   }
 
   .text-body-small-bold {

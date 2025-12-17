@@ -23,7 +23,7 @@ function OrganizationsContent() {
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [organizations, setOrganizations] = useState<any>(organizationsList);
-  const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
+  // const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [organizationData, setOrganizationData] = useState<CreateOrganizationResponse | null>(null);
   const [page, setPage] = useState(1)
@@ -31,6 +31,7 @@ function OrganizationsContent() {
   const { data: userOrgs, status: orgStatus, isPending: isOrgPending, error: orgError } = useGetOrganizations(page, 10);
   const { data, isPending: isInvitationPending, error: invitationError } = useGetInvitations();
   const invitations: inviteData[] = useMemo(() => data!, [data]);
+
   useEffect(() => {
     if (orgStatus === "success" && userOrgs) {
       setOrganizations((prev: any) => {
@@ -43,7 +44,6 @@ function OrganizationsContent() {
       });
     }
   }, [orgStatus, userOrgs, page]);
-
   const handleCreateOrg = (data: CreateOrganizationData) => {
     createOrg(data, {
       onSuccess: (res) => {
@@ -66,7 +66,7 @@ function OrganizationsContent() {
     setShowProgressModal(false);
     setOrganizationData(null);
   };
-  const handleDecline = () => setIsDeclineModalOpen(false);
+  // const handleDecline = () => setIsDeclineModalOpen(false);
 
   const handleOrganizationDeleted = (deletedOrgId: string) => {
     setOrganizations((prev: any[]) =>
@@ -83,13 +83,13 @@ function OrganizationsContent() {
           onOrganizationDeleted={handleOrganizationDeleted}
           loading={isOrgPending}
         />
-        <div className="mt-4 flex justify-end">
+        {userOrgs?.totalCount! > 10 && <div className="mt-4 flex justify-end">
           <button onClick={() => {
             setPage((prev) => prev + 1)
           }} >
             <p className="text-primary-500 font-medium hover:underline cursor-pointer">View More</p>
           </button>
-        </div>
+        </div>}
 
         <PendingInvitations
           isLoading={isInvitationPending}

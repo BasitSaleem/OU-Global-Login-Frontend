@@ -63,7 +63,7 @@ export const useGetOrganizations = (page: number, limit: number) => {
       return res.data
     },
     select: (data) => ({
-      totalCount: data.totalCounts,
+      totalCount: data.totalCount,
       organization: data.organizations
     })
   });

@@ -10,6 +10,7 @@ import { CreateOrganizationData } from '@/apiHooks.ts/organization/organization.
 import { generateSubdomainSuggestions } from '@/utils/subdomainGenerator';
 import { SubdomainSuggestion } from '../SubdomainSuggestion';
 import { AvailabilityStatus } from '../AvailabilityStatus';
+import { SvgIcon } from '../ui/SvgIcon';
 
 interface CreateOrgModalProps {
   isOpen: boolean;
@@ -144,7 +145,7 @@ export default function CreateOrgModal({
             label="Company Name"
             isRequired
             value={companyName}
-            onChange={(e) => setCompanyName(e.target.value.toLocaleLowerCase())}
+            onChange={(e) => setCompanyName(e.target.value)}
           />
           {/* <AvailabilityStatus
             isLoading={checkingName}
@@ -161,17 +162,16 @@ export default function CreateOrgModal({
           {PRODUCTS.map((product) => (
             <button
               key={product.id}
-              type="button"
               onClick={() => setSelectedProduct(product.name)}
               disabled={product.isDisabled}
-              className={`flex items-center gap-2 border rounded-lg px-3 py-3 text-base font-medium transition mb-1 ${selectedProduct === product.name
+              className={`flex items-center gap-2 border  justify-start  rounded-lg px-3 py-3 text-base font-medium transition mb-1 ${selectedProduct === product.name
                 ? 'border-primary bg-bg-secondary text-primary'
                 : 'border text-text bg-bg-secondary hover:bg-primary/10'
                 } ${product.isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}
                   ${product.isDisabled ? "bg-primary/10" : ""}
                 `}
             >
-              <img src={product.icon} alt={product.name} className="w-4 h-4" />
+              <SvgIcon name={product.icon} width={16} height={16} />
               {product.fullname}
             </button>
           ))}
@@ -221,9 +221,10 @@ export default function CreateOrgModal({
         </Button>
         <Button
           onClick={handleSubmit}
+          variant='primary'
           isLoading={isLoading}
           disabled={isLoading || !canSubmit()}
-          className="px-3 bg-[#795cf5]/80 text-white hover:bg-[#795cf5]/70"
+          className='text-white'
         >
           Continue
         </Button>

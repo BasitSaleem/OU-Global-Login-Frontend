@@ -2,13 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Icons } from "@/components/utils/icons";
 import { IconName, SvgIcon } from "../ui/SvgIcon";
 import { cn } from "@/utils/helpers";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Button } from "../ui";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -130,13 +127,8 @@ export default function Sidebar({
   };
 
   const renderIcon = (item: NavigationItem, isCollapsed: boolean) => {
-    const iconSrc = item.isActive && item.activeImage ? item.activeImage : item.image;
     const iconClass = cn(
-      "cursor-pointer transition-colors text-[#4B5563]",
-      // {
-      //   "text-[#4B5563]": item.isActive,
-      //   "text-foreground": !item.isActive,
-      // }
+      "cursor-pointer transition-colors text-icon",
     );
 
     if (item.type === "svg" && item.svgName) {
@@ -145,13 +137,6 @@ export default function Sidebar({
 
     return (
       <SvgIcon name={item.svgName!} className={iconClass} width={20} height={20} />
-      // <img
-      //   src={iconSrc}
-      //   alt={item.label}
-      //   className={cn("w-6 h-6", {
-      //     "brightness-0 invert": item.isActive && item.type === "image",
-      //   })}
-      // />
     );
   };
 
@@ -183,7 +168,7 @@ export default function Sidebar({
       {
         "justify-center px-0": collapsed,
         "px-2": !collapsed,
-        "bg-primary/10 text-[#795CF5]": item.isActive,
+        "bg-primary/10 text-primary": item.isActive,
         "justify-between": !collapsed && (item.hasExternal || item.hasTime || item.hasBadge),
         "gap-2": !collapsed && !item.isActive,
       }
@@ -292,13 +277,13 @@ export default function Sidebar({
         {/* Header */}
         <div
           className={cn(
-            "h-14 flex items-center justify-start border-b cursor-pointer",
+            "h-14  flex items-center justify-start border-b cursor-pointer",
             collapsed ? "px-3" : "px-3"
           )}
         >
           {collapsed ? (
-            <div className="w-9 h-9 rounded flex items-center justify-center bg-primary/50">
-              <SvgIcon name="ownersUniverseColl" className=" w-[18px] h-[18px]" />
+            <div className="w-20 h-10 rounded-lg flex items-center justify-center bg-primary/10">
+              <SvgIcon name="ownersUniverseColl" width={20} height={20} />
             </div>
           ) : (
             <SvgIcon

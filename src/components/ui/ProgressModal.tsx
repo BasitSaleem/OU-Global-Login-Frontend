@@ -136,7 +136,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={handleClose}
-                        className="p-2  hover:text-gray-600 hover:bg-bg-secondary rounded-lg transition-colors"
+                        className="p-2  hover:text-gray-600 hover:bg-bg-secondary rounded-lg transition-colors cursor-pointer"
                         title="Close"
                       >
                         <X className="w-5 h-5" />
@@ -177,7 +177,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                       </div>
                     </div>
 
-                    <button onClick={handleViewPortal} className="flex flex-row items-center sm:flex-row gap-3 cursor-pointer hover:scale-110 duration-300">
+                    <button onClick={handleViewPortal} className="flex flex-row items-center sm:flex-row gap-3 cursor-pointer">
 
                       {/* <Image src={Icons.ownerinventory} alt='ownerinventory' width={50} height={50} className="w-20 h-10" /> */}
                       <SvgIcon name='ownersInventory' width={5} height={5} className='text-for w-7 h-7' />
@@ -204,13 +204,13 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                         </div>
                       </div>
                     )}
-                    <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
+                    {/* <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
                       <Button
                         variant='primary'
                         onClick={handleGoHome}>
                         Go to Dashboard
                       </Button>
-                      {/* <motion.button
+                      <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={handleGoHome}
@@ -218,8 +218,8 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                       >
                         <Home className="w-4 h-4" />
                         Go to Dashboard
-                      </motion.button> */}
-                    </div>
+                      </motion.button>
+                    </div> */}
                   </motion.div>
 
                 )}

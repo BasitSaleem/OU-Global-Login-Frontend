@@ -1,49 +1,48 @@
+"use client"
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import { ChevronRight } from 'lucide-react';
-import { Icons } from '@/components/utils/icons';
 import Link from 'next/link';
+import { IconName, SvgIcon } from '@/components/ui/SvgIcon';
+import { getColorFromId } from '@/utils/getRandomColors';
+import { useRouter } from 'next/navigation';
 
 function ViewAllProductsPage() {
+  const router = useRouter()
   const products = [
     {
-      id: 'inventory',
+      id: '1',
       title: 'Owners Inventory',
       description: 'Manage your inventory',
-      icon: '/Icons/OI_LOGO.svg',
-      backgroundColor: '#F3E8FF',
+      icon: 'OI',
       status: 'Open',
       available: true,
       href: 'https://ownersinventory.com/'
     },
     {
-      id: 'analytics',
+      id: '2',
       title: 'Owners Analytics',
       description: 'Get insights and analyze your business performance',
-      icon: '/Icons/OA_LOGO.svg',
-      backgroundColor: '#FFEDD5',
+      icon: 'OA',
       status: 'Coming Soon',
       available: false
     },
     {
-      id: 'marketplace',
+      id: '3',
       title: 'Owners Marketplace',
       description: 'Buy and sell products',
-      icon: '/Icons/OM_LOGO.svg',
-      backgroundColor: '#FCE7F3',
+      icon: 'OM',
       status: 'Coming Soon',
       available: false
     },
     {
-      id: 'jungle',
+      id: '4',
       title: 'Owners Jungle',
       description: 'Explore opportunities',
-      icon: '/Icons/OJ_LOGO.svg',
-      backgroundColor: '#DBEAFE',
+      icon: 'OJ',
       status: 'Coming Soon',
       available: false
     }
   ];
-
   return (
     <div className="p-4">
       <div className="max-w-7xl mx-auto">
@@ -53,23 +52,20 @@ function ViewAllProductsPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {products.map((product) => (
-            <div
+            <a
+              href={product.href}
+              target='_blank'
               key={product.id}
-              className="bg-bg-secondary border rounded-xl p-4 hover:shadow-sm transition-shadow cursor-pointer"
+              className={`bg-bg-secondary border rounded-xl p-4 ${product.available ? "hover:shadow-sm transition-shadow" : ""} ${product.available ? 'cursor-pointer' : 'cursor-not-allowed'}`}
             >
               <div className="flex items-start gap-3">
                 <div
-                  className="w-9 h-9 rounded flex items-center justify-center flex-shrink-0"
-                  style={{ backgroundColor: product.backgroundColor }}
+                  className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{ backgroundColor: getColorFromId(product.id) }}
                 >
-                  <img
-                    src={product.icon}
-                    alt={product.title}
-                    className="w-6 h-6"
-                  />
+                  <SvgIcon name={product.icon as IconName} width={24} height={24} />
                 </div>
 
-                {/* Product Info */}
                 <div className="flex-1 min-w-0">
                   <h3 className="text-heading-3 font-medium text-black mb-2">
                     {product.title}
@@ -78,7 +74,6 @@ function ViewAllProductsPage() {
                     {product.description}
                   </p>
 
-                  {/* Status Link */}
                   <div className="flex items-center gap-1">
                     <span
                       className="text-body-small font-medium"
@@ -95,7 +90,7 @@ function ViewAllProductsPage() {
                   </div>
                 </div>
               </div>
-            </div>
+            </a>
           ))}
         </div>
       </div>

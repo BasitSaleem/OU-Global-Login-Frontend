@@ -11,17 +11,9 @@ import isEqual from 'lodash/isEqual';
 import { Check, Image as ImageIcon } from 'lucide-react';
 import { useClickOutside } from '@/hooks/useClickOutSide';
 export default function UserProfilePage() {
-  const [uiState, setUiState] = useState({
-    sidebarCollapsed: false,
-    mobileSidebarOpen: false,
-    profileDropdownOpen: false,
-    notificationsOpen: false,
-    isUploading: false
-  });
 
   const { mutate: updateUser, isPending, isError } = useUpdateProfile()
   const { user } = useAppSelector((s) => s.auth)
-  console.log(user, 'user data');
   const [userData, setUserData] = useState<userProfile>({
     profile_url: user?.profile_url,
     first_name: user?.first_name,
@@ -61,7 +53,8 @@ export default function UserProfilePage() {
   }, [user]);
 
   const isChanged = useMemo(() => {
-    if (!originalData.current || userData.contact === "" || userData.contact === user?.contact) return false;
+    if (!originalData.current) return false;
+    if (!userData.first_name?.trim() || !userData.last_name?.trim() || !userData.contact?.trim()) return false;
     return !isEqual(originalData.current, userData);
   }, [userData]);
 
@@ -69,11 +62,6 @@ export default function UserProfilePage() {
   useClickOutside(
     [profileDropdownRef as RefObject<HTMLDivElement>, notificationsRef as RefObject<HTMLDivElement>],
     () => {
-      setUiState(prev => ({
-        ...prev,
-        profileDropdownOpen: false,
-        notificationsOpen: false
-      }));
     }
   );
 
@@ -85,7 +73,6 @@ export default function UserProfilePage() {
     }));
   };
   const handleSaveChanges = async () => {
-    setUiState(prev => ({ ...prev, isUploading: true }));
     updateUser(userData)
     dispatch(setProfile({ ...userData, email: user?.email, id: user?.id, role_id: user?.role_id, role: user?.role, status: user?.status } as User))
   };
@@ -155,20 +142,22 @@ export default function UserProfilePage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                 <Input
                   label="First Name"
+                  error={userData.first_name === "" ? "First name is required" : ""}
                   isRequired
                   permission="og:edit::profile"
                   type="text"
                   value={userData.first_name}
-                  onChange={(e) => handleInputChange('firstName', e.target.value)}
+                  onChange={(e) => handleInputChange('first_name', e.target.value)}
                 />
 
                 <Input
                   isRequired
                   permission="og:edit::profile"
                   label="Last Name"
+                  error={userData.last_name === "" ? "Last name is required" : ""}
                   type="text"
                   value={userData.last_name}
-                  onChange={(e) => handleInputChange('lastName', e.target.value)}
+                  onChange={(e) => handleInputChange('last_name', e.target.value)}
                 />
 
                 <Input
@@ -176,6 +165,7 @@ export default function UserProfilePage() {
                   permission="og:edit::profile"
                   isRequired
                   type="email"
+                  error={userData.email === "" ? "Email is required" : ""}
                   value={user?.email}
                   disabled
                 // onChange={(e) => handleInputChange('email', e.target.value)}
@@ -186,8 +176,9 @@ export default function UserProfilePage() {
                   permission="og:edit::profile"
                   isRequired
                   type="tel"
+                  error={userData.contact === "" ? "Contact is required" : ""}
                   value={userData?.contact ?? ""}
-                  onChange={(e) => handleInputChange('contact', e.target.value)}
+                  onChange={(e) => handleInputChange('contact', e.target.value.replace(/[^0-9^+]/g, ''))}
                 />
               </div>
 
@@ -270,7 +261,7 @@ export default function UserProfilePage() {
               <div className="flex justify-end">
                 <Button
                   variant="primary"
-                  className=" bg-[#795cf5]/80 text-white hover:bg-[#795cf5]/70"
+                  className=" bg-primary text-white hover:bg-primary/70"
 
                   permission="og:edit::profile"
                   onClick={handleSaveChanges}
