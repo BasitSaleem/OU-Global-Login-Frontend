@@ -57,6 +57,7 @@ export interface OgOrganization {
   }[];
   ogUserId?: string;
   products?: OgProduct[];
+  membersCount?: number;
 }
 
 export interface OgProduct {

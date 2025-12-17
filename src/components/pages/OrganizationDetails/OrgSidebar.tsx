@@ -62,7 +62,27 @@ export default function OrgSidebar({ collapsed, className, organizationDetails }
                 )}
             </Link>
             <nav className="px-3 py-1.5 space-y-1 ">
-                <p className="text-sm font-medium ml-4 py-1 text-gray-600">{organizationDetails?.name}</p>
+                <div
+                    className={cn(
+                        "flex items-center text-sm font-medium rounded-lg transition-colors p-2 mb-2",
+                        collapsed
+                            ? "justify-center bg-primary/10 text-primary"
+                            : "ml-1 text-gray-600"
+                    )}
+                >
+                    {collapsed ? (
+                        <span className="w-8 h-8 flex items-center justify-center text-primary text-xs font-semibold">
+                            {organizationDetails?.name
+                                ?.split(" ")
+                                .map((n) => n[0])
+                                .join("")
+                                .toUpperCase()
+                                .substring(0, 2)}
+                        </span>
+                    ) : (
+                        organizationDetails?.name
+                    )}
+                </div>
                 {sidebarItems.map((item) => {
                     const href = item.href(organizationDetails?.id);
                     const isActive = pathname === href;

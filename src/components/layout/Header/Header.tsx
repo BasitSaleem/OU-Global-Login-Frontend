@@ -156,10 +156,9 @@ export default function AppHeader({
         </Button>
 
         <div className="relative" ref={profileDropdownRef}>
-          <Button
+          <button
             onClick={toggleProfileDropdown}
-            variant="basic"
-            className="w-8 h-8  rounded-full flex items-center justify-center hover:opacity-90 transition-opacity"
+            className="w-8 h-8 rounded-full flex items-center justify-center hover:opacity-90 transition hover:scale-105 duration-300 cursor-pointer"
             style={{ backgroundColor: "#795CF5" }}
             aria-label="Open profile menu"
           >
@@ -168,15 +167,15 @@ export default function AppHeader({
                 className="w-8 h-8 rounded-full"
                 src={user?.profile_url}
                 alt="profile"
-                width={200}
-                height={200}
+                width={500}
+                height={500}
               />
               : <span className="text-white mt-[2px] font-medium  cursor-pointer items-center">
                 {" "}
                 {`${user?.first_name?.charAt(0) ?? ""}${user?.last_name?.charAt(0) ?? ""
                   }`.toUpperCase()}
               </span>}
-          </Button>
+          </button>
 
           <ProfileMenu onClose={() => setProfileDropdownOpen(false)} open={profileDropdownOpen} />
 
