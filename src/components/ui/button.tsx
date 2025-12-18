@@ -94,7 +94,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({
     className,
-    variant = 'primary',
+    variant = 'basic',
     size = 'md',
     isLoading = false,
     ariaLabel,
@@ -110,7 +110,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const baseStyles = ' inline-flex  cursor-pointer items-center justify-center gap-1.5 rounded  transition-all duration-300 focus:outline-none disabled:pointer-events-none disabled:opacity-50';
 
     const variants = {
-      primary: 'bg-primary py-[17px] text-white hover:bg-primary/80 rounded-lg',
+      primary: 'bg-primary py-4 text-white hover:bg-primary/80 rounded-lg',
       secondary: 'bg-bg-secondary py-4 hover:bg-primary border-primary hover:!text-btn-text border rounded-lg',
       outline: 'border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50 focus:ring-gray-500 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800',
       ghost: 'text-gray-700 py-4 hover:bg-primary/80 rounded-lg focus:ring-gray-500 border rounded-lg hover:!text-btn-text ',
@@ -119,10 +119,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     const sizes = {
-      sm: 'h-6 px-2 text-body-small',
-      md: 'h-7 px-3 text-body-medium',
-      lg: 'h-8 px-4 text-body-medium',
-      xl: 'h-9 px-5 text-body-large'
+      sm: 'h-6 px-2 ',
+      md: 'h-7 px-3 ',
+      lg: 'h-8 px-4 ',
+      xl: 'h-9 px-5 '
     };
 
     if (!permission) {

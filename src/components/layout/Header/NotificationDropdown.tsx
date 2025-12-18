@@ -111,13 +111,13 @@ function NotificationsControlsRow({
                     <Button
                         onClick={() => setUnreadOnly(!unreadOnly)}
                         variant="basic"
-                        className={`w-12 h-6 rounded-full cursor-pointer p-1 hidden sm:flex items-center transition-colors border bg-primary ${unreadOnly ? "bg-primary" : "bg-gray-700"
+                        className={`w-12 h-6 rounded-full cursor-pointer p-1 hidden sm:flex items-center transition-colors border bg-primary ${unreadOnly ? "bg-primary" : "bg-gray-200"
                             }`}
                         aria-pressed={unreadOnly}
                         aria-label="Toggle only show unread"
                     >
                         <span
-                            className={`w-4 h-4 ${!unreadOnly ? "bg-primary" : "bg-bg-secondary"}  rounded-full transition-transform mr-6  ${unreadOnly ? "translate-x-6" : "translate-x-0"
+                            className={`w-4 h-4 bg-white rounded-full transition-transform mr-6  ${unreadOnly ? "translate-x-6" : "translate-x-0"
                                 }`}
                         />
                     </Button>

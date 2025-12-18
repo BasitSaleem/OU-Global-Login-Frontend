@@ -215,7 +215,6 @@ export default function CreateOrgModal({
         <Button
           onClick={onClose}
           variant="secondary"
-          className="px-3"
         >
           Cancel
         </Button>
@@ -224,7 +223,7 @@ export default function CreateOrgModal({
           variant='primary'
           isLoading={isLoading}
           disabled={isLoading || !canSubmit()}
-          className='text-white'
+          className='py-[17px]'
         >
           Continue
         </Button>
