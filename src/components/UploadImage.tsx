@@ -1,6 +1,7 @@
 'use client';
 import { useState, useRef } from 'react';
 import { LoadingSpinner } from './ui';
+import { request } from '@/utils/requestFunction';
 
 
 interface ImageUploadProps {
@@ -27,15 +28,8 @@ export default function ImageUpload({
 
             const formData = new FormData();
             formData.append('image', file);
-            formData.append('id', id);
-
-            const response = await fetch('/api/upload', {
-                method: 'POST',
-                body: formData,
-            });
-
-            const result = await response.json();
-
+            const response = await request("/profile/upload-image", "POST", {}, formData, true)
+            const result = response.data
             if (!result.success) {
                 throw new Error(result.error);
             }
