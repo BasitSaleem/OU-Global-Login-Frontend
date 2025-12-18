@@ -8,6 +8,11 @@ export async function uploadImageServer(formData: FormData, Id: string) {
     try {
         const file = formData.get('image') as File;
 
+        if (!process.env.OG_AWS_S3_BUCKET_NAME || !process.env.OG_AWS_REGION) {
+            console.error('Missing AWS configuration');
+            return { success: false, error: 'Server configuration error' };
+        }
+
         if (!file) {
             return { success: false, error: 'No file provided' };
         }
@@ -16,8 +21,8 @@ export async function uploadImageServer(formData: FormData, Id: string) {
             return { success: false, error: 'File must be an image' };
         }
 
-        if (file.size > 5 * 1024 * 1024) {
-            return { success: false, error: 'File size must be less than 5MB' };
+        if (file.size > 2 * 1024 * 1024) {
+            return { success: false, error: 'File size must be less than 2MB' };
         }
 
         const buffer = await file.arrayBuffer();
@@ -61,6 +66,10 @@ export async function deleteImageWithId(id: string) {
             Bucket: process.env.OG_AWS_S3_BUCKET_NAME!,
             Key: `uploads/${id}.jpg`,
         });
+
+        if (!process.env.OG_AWS_S3_BUCKET_NAME) {
+            throw new Error('Bucket name is not defined');
+        }
 
         await s3Client.send(command);
         return { success: true, message: 'Profile image deleted' };
