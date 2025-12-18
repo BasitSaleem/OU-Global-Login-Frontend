@@ -91,7 +91,7 @@ function NotificationsControlsRow({
                 <button
                     onClick={onMarkAllAsRead}
                     disabled={!anyUnread}
-                    className={`text-[14px] leading-[16px] font-medium transition-colors bg-bg-secondary
+                    className={`text-[14px] leading-[16px] font-medium transition-colors text-primary
                         ${anyUnread
                             ? "!text-[var(--color-primary-500)] hover:underline cursor-pointer"
                             : "!text-gray-500 opacity-50 cursor-not-allowed"
@@ -110,13 +110,14 @@ function NotificationsControlsRow({
 
                     <Button
                         onClick={() => setUnreadOnly(!unreadOnly)}
-                        className={`w-12 h-6 rounded-full cursor-pointer p-1 hidden sm:flex items-center transition-colors border hover:bg-primary ${unreadOnly ? "bg-primary" : "bg-gray-700"
+                        variant="basic"
+                        className={`w-12 h-6 rounded-full cursor-pointer p-1 hidden sm:flex items-center transition-colors border bg-primary ${unreadOnly ? "bg-primary" : "bg-gray-700"
                             }`}
                         aria-pressed={unreadOnly}
                         aria-label="Toggle only show unread"
                     >
                         <span
-                            className={`w-4 h-4 bg-bg-secondary rounded-full transition-transform mr-6 ${unreadOnly ? "translate-x-6" : "translate-x-0"
+                            className={`w-4 h-4 ${!unreadOnly ? "bg-primary" : "bg-bg-secondary"}  rounded-full transition-transform mr-6  ${unreadOnly ? "translate-x-6" : "translate-x-0"
                                 }`}
                         />
                     </Button>

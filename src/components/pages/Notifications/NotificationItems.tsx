@@ -54,7 +54,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
                 aria-label="Mark notification as read"
                 title="Mark as read"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-[#795CF5] block" />
+                <span className="w-1.5 h-1.5 rounded-full bg-primary block" />
                 <span className="absolute -inset-[1px] rounded-full border  opacity-0 group-hover:opacity-100 transition-opacity" />
                 <span className="absolute top-6 -left-[100%] -translate-x-1/2 whitespace-nowrap border bg-bg-secondary text-black text-body-tiny px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity ">
                   Mark as read
