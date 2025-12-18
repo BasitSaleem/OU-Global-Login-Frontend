@@ -79,9 +79,9 @@ function ViewAllProductsPage() {
                       className="text-body-small font-medium"
                       style={{ color: '#795CF5' }}
                     >
-                      {product.title === "Owners Inventory" ? <Link href={product.href!}>
+                      {product.title === "Owners Inventory" ? <a href={product.href!} target='_blank'>
                         Open
-                      </Link> : "Coming Soon"}
+                      </a> : "Coming Soon"}
                     </span>
                     <ChevronRight
                       className="w-3 h-3"

@@ -275,7 +275,8 @@ export default function Sidebar({
         )}
       >
         {/* Header */}
-        <div
+        <Link
+          href="/"
           className={cn(
             "h-14  flex items-center justify-start border-b cursor-pointer",
             collapsed ? "px-3" : "px-3"
@@ -293,7 +294,7 @@ export default function Sidebar({
               height={130}
             />
           )}
-        </div>
+        </Link>
 
         {/* Navigation */}
         <nav className="px-3 py-1.5 space-y-1 ">

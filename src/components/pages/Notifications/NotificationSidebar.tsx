@@ -51,7 +51,7 @@ export default function NotificationsSidebar({
                 key={filter.id}
                 variant={activeSidebarFilter === filter.id ? 'primary' : 'basic'}
                 onClick={() => setActiveSidebarFilter(filter.id)}
-                className={`h-8 ${activeSidebarFilter === filter.id ? "text-primary" : ''}  `}
+                className={`h-8 bg-background hover:bg-primary/10 ${activeSidebarFilter === filter.id ? "text-primary bg-primary/10" : ''}  `}
               >
                 {filter.label}
               </Button>
@@ -60,14 +60,14 @@ export default function NotificationsSidebar({
 
           {/* Products */}
           <div>
-            <h3 className="text-body-small font-medium text-black mb-2">PRODUCTS</h3>
+            <h3 className="text-body-small] font-medium text-black mb-2">PRODUCTS</h3>
             <div className="space-y-1">
               {productFilters.map((product) => (
                 <Button
                   key={product.id}
                   onClick={() => setActiveProductFilter(product.id)}
                   variant={activeProductFilter === product.id ? 'primary' : 'basic'}
-                  className={`w-full justify-start h-10 ${activeProductFilter === product.id ? "text-primary" : ''}`}
+                  className={`w-full justify-start h-10 bg-background hover:bg-primary/10 ${activeProductFilter === product.id ? "text-primary bg-primary/10" : ''}`}
                 >
                   {product.label}
                 </Button>

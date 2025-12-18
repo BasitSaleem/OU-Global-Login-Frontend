@@ -45,9 +45,9 @@ export async function uploadImageServer(formData: FormData, Id: string) {
             url: publicUrl,
             message: 'image updated successfully'
         };
-    } catch (error) {
+    } catch (error: any) {
         console.error('Upload error:', error);
-        return { success: false, error: 'Failed to upload image' };
+        return { success: false, error: `Failed to upload image: ${error.message || 'Unknown error'}` };
     }
 }
 export async function getImageWithId(Id: string) {
@@ -64,8 +64,8 @@ export async function deleteImageWithId(id: string) {
 
         await s3Client.send(command);
         return { success: true, message: 'Profile image deleted' };
-    } catch (error) {
+    } catch (error: any) {
         console.error('Delete error:', error);
-        return { success: false, error: 'Failed to delete image' };
+        return { success: false, error: `Failed to delete image: ${error.message || 'Unknown error'}` };
     }
 }
