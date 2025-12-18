@@ -1,0 +1,21 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+    build:
+      commands:
+        - echo "OG_AWS_REGION=$OG_AWS_REGION" >> .env
+        - echo "OG_AWS_ACCESS_KEY_ID=$OG_AWS_ACCESS_KEY_ID" >> .env
+        - echo "OG_AWS_SECRET_ACCESS_KEY=$OG_AWS_SECRET_ACCESS_KEY" >> .env
+        - echo "OG_AWS_S3_BUCKET_NAME=$OG_AWS_S3_BUCKET_NAME" >> .env
+        - echo "OG_AWS_S3_UPLOAD_FOLDER=$OG_AWS_S3_UPLOAD_FOLDER" >> .env
+        - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
