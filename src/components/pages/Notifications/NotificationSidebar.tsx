@@ -67,7 +67,7 @@ export default function NotificationsSidebar({
                   key={product.id}
                   onClick={() => setActiveProductFilter(product.id)}
                   variant={activeProductFilter === product.id ? 'primary' : 'basic'}
-                  className={`w-full justify-start h-10 bg-background hover:bg-primary/10 ${activeProductFilter === product.id ? "text-primary bg-primary/10" : ''}`}
+                  className={`w-full justify-start h-10 bg-background hover:text-primary hover:bg-primary/10 ${activeProductFilter === product.id ? "text-primary bg-primary/10" : ''}`}
                 >
                   {product.label}
                 </Button>

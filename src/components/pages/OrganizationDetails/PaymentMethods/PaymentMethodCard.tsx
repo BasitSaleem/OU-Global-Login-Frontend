@@ -30,10 +30,10 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
         return (
             <div
                 onClick={onAdd}
-                className="flex flex-col items-center justify-center w-full h-[180px]  border border-gray-300 rounded-xl cursor-pointer bg-primary/5 hover:bg-primary/10 transition-colors"
+                className="flex flex-col items-center justify-center w-full h-[180px]  rounded-xl cursor-pointer bg-primary/5 hover:bg-primary/10 transition-colors"
             >
                 <Plus strokeWidth={1.5} className="w-30 h-30 text-primary mb-2" />
-                <span className="text-primary font-medium">Add New</span>
+                <span className="text-primary font-bold">Add New</span>
             </div>
         );
     }

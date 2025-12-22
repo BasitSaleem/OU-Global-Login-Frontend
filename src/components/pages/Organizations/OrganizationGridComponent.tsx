@@ -54,7 +54,7 @@ export function OrganizationGridComponent({
 
         <div className="flex-1 min-w-0">
           <h3 className="truncate text-body-medium-bold text-black leading-tight pt-1">
-            {org?.name?.toUpperCase()}
+            {org?.name}
           </h3>
         </div>
         <div className="flex-shrink-0 flex gap-2">

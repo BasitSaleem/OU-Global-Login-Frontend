@@ -64,14 +64,14 @@ export default function OrgSidebar({ collapsed, className, organizationDetails }
             <nav className="px-3 py-1.5 space-y-1 ">
                 <div
                     className={cn(
-                        "flex items-center text-sm font-medium rounded-lg transition-colors p-2 mb-2",
+                        "flex items-center text-sm font-medium rounded-lg transition-colors p-2 mb-2 text-icon",
                         collapsed
-                            ? "justify-center bg-primary/10 text-primary"
-                            : "ml-1 text-gray-600"
+                            ? "justify-center bg-primary/10 "
+                            : "ml-1"
                     )}
                 >
                     {collapsed ? (
-                        <span className="w-8 h-8 flex items-center justify-center text-primary text-xs font-semibold">
+                        <span className="w-8 h-8 flex items-center justify-center text-xs font-semibold">
                             {organizationDetails?.name
                                 ?.split(" ")
                                 .map((n) => n[0])
@@ -100,10 +100,10 @@ export default function OrgSidebar({ collapsed, className, organizationDetails }
                             )}
                         >
                             {collapsed ? (
-                                <SvgIcon name={item.icon} width={20} height={20} className='text-[#4B5563]' />
+                                <SvgIcon name={item.icon} width={20} height={20} className='text-icon' />
                             ) : (
                                 <span className='flex items-center w-full gap-3'>
-                                    <SvgIcon name={item.icon} width={20} height={20} className='text-[#4B5563] ' />
+                                    <SvgIcon name={item.icon} width={20} height={20} className='text-icon ' />
                                     <span className="truncate">{item.label}</span>
                                 </span>
                             )}

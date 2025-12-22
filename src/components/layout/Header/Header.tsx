@@ -125,7 +125,7 @@ export default function AppHeader({
             className="relative p-1 cursor-pointer"
             aria-label="Open notifications"
           >
-            <SvgIcon name="notification" width={20} height={20} />
+            <SvgIcon name="notification" width={20} height={20} className="text-icon" />
             {anyUnread && (
               <div
                 className="absolute top-0 right-0 w-1.5 h-1.5 rounded-full"
@@ -152,14 +152,13 @@ export default function AppHeader({
           onClick={handleSettingsClick}
           className="p-1 cursor-pointer"
         >
-          <SvgIcon name="settings" width={20} height={20} />
+          <SvgIcon name="settings" width={20} height={20} className="text-icon" />
         </Button>
 
         <div className="relative" ref={profileDropdownRef}>
           <button
             onClick={toggleProfileDropdown}
-            className="w-8 h-8 rounded-full flex items-center justify-center hover:opacity-90 transition hover:scale-105 duration-300 cursor-pointer"
-            style={{ backgroundColor: "#795CF5" }}
+            className="w-8 h-8 rounded-full flex items-center justify-center hover:opacity-90 transition hover:scale-105 duration-300 cursor-pointer bg-primary"
             aria-label="Open profile menu"
           >
             {user?.profile_url ?
@@ -170,7 +169,7 @@ export default function AppHeader({
                 width={500}
                 height={500}
               />
-              : <span className="text-white mt-[2px] font-medium  cursor-pointer items-center">
+              : <span className="text-white  font-medium  cursor-pointer items-center">
                 {" "}
                 {`${user?.first_name?.charAt(0) ?? ""}${user?.last_name?.charAt(0) ?? ""
                   }`.toUpperCase()}
