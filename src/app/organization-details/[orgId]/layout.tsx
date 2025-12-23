@@ -49,6 +49,7 @@ export default function OrganizationDetailsLayout({
                     onToggleSidebar={onToggleSidebar}
                     onToggleMobileSidebar={onToggleMobileSidebar}
                     mobileSidebarOpen={sidebarOpen}
+                    collapsed={collapsed}
                 />
                 <main className="flex-1 overflow-y-auto p-4">
                     {children}
