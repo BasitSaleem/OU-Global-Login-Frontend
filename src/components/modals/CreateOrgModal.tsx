@@ -223,7 +223,6 @@ export default function CreateOrgModal({
           variant='primary'
           isLoading={isLoading}
           disabled={isLoading || !canSubmit()}
-          className='py-[17px]'
         >
           Continue
         </Button>

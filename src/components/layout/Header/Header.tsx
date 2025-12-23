@@ -14,12 +14,14 @@ interface HeaderProps {
   onToggleSidebar: () => void;
   onToggleMobileSidebar: () => void;
   mobileSidebarOpen: boolean;
+  collapsed: boolean;
 }
 
 export default function AppHeader({
   onToggleSidebar,
   onToggleMobileSidebar,
   mobileSidebarOpen,
+  collapsed,
 }: HeaderProps) {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -79,6 +81,7 @@ export default function AppHeader({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+  console.log(collapsed, "f_______________-");
 
   return (
     <header className="h-14 border-b bg-bg-secondary flex items-center justify-between px-4">
@@ -89,7 +92,7 @@ export default function AppHeader({
           className="hidden lg:flex hover:scale-105 cursor-pointer"
           title="Toggle sidebar"
         >
-          <SvgIcon name="hamburger" className="w-5 h-5 text-icon" />
+          <SvgIcon name={collapsed ? "hamburgerRight" : "hamburgerLeft"} className="w-5 h-5 text-icon" />
         </Button>
 
         <Button
@@ -126,12 +129,12 @@ export default function AppHeader({
             aria-label="Open notifications"
           >
             <SvgIcon name="notification" width={20} height={20} className="text-icon" />
-            {anyUnread && (
+            {/* {anyUnread && (
               <div
                 className="absolute top-0 right-0 w-1.5 h-1.5 rounded-full"
                 style={{ backgroundColor: "#D1202D" }}
               />
-            )}
+            )} */}
           </Button>
 
           {notificationsOpen && (

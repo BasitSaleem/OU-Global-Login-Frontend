@@ -6,7 +6,8 @@ import Image from 'next/image';
 
 import { Icons } from '@/components/utils/icons';
 import { Button, Input } from '@/components/ui';
-import { Bell, Mail } from 'lucide-react';
+import { Bell, ChartColumnIncreasing, ClipboardCheck, Mail, ShoppingCart, Truck } from 'lucide-react';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 
 // Types
 type NotificationSettings = {
@@ -40,7 +41,7 @@ function NotificationSection({
   settings,
   updateNestedSetting
 }: {
-  icon: string;
+  icon: React.ComponentType<{ className?: string }>;
   title: string;
   items: { key: keyof NotificationSettings; label: string; highlighted?: boolean }[];
   settings: NotificationSettings;
@@ -49,8 +50,8 @@ function NotificationSection({
   return (
     <div className="bg-bg-secondary border  rounded-lg p-4">
       <div className="flex items-center gap-2 mb-3">
-        <Image src={Icon} alt={title} width={20} height={20} className="w-6 h-6" />
-        <h3 className="text-body-medium-bold font-medium text-black pb-2">{title}</h3>
+        <Icon className="text-primary" />
+        <h3 className="text-body-medium-bold font-medium text-black">{title}</h3>
       </div>
 
       <div className="space-y-3">
@@ -162,7 +163,7 @@ export default function NotificationPreferencesPage() {
 
   const sections: Section[] = [
     {
-      icon: Icons.sales,
+      icon: ShoppingCart,
       title: 'Sale',
       items: [
         { key: 'saleComplete', label: 'When a sale is done', highlighted: true },
@@ -172,7 +173,7 @@ export default function NotificationPreferencesPage() {
       ]
     },
     {
-      icon: Icons.purchase,
+      icon: ClipboardCheck,
       title: 'Purchase',
       items: [
         { key: 'stockPurchased', label: 'When new stock is purchased', highlighted: true },
@@ -181,7 +182,7 @@ export default function NotificationPreferencesPage() {
       ]
     },
     {
-      icon: Icons.transferStock,
+      icon: Truck,
       title: 'Transfer Stock',
       items: [
         { key: 'stockIssued', label: 'When stock is issued', highlighted: true },
@@ -189,7 +190,7 @@ export default function NotificationPreferencesPage() {
       ]
     },
     {
-      icon: Icons.production,
+      icon: ChartColumnIncreasing,
       title: 'Production',
       items: [
         { key: 'productionStarted', label: 'When production is started', highlighted: true },
@@ -215,16 +216,15 @@ export default function NotificationPreferencesPage() {
           <div className="flex justify-center  mt-3">
             <div className="flex items-center gap-2 mb-3">
               <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('inventory')}>
-                <Image src={Icons.ownerinventory} alt="owner analytics" width={16} height={16} className={`w-8 h-8 rounded-lg p-1 transition border ${selectedOwner === 'inventory' ? 'border-primary bg-bg-secondary' : 'border-transparent'
+                <SvgIcon name="OI" width={20} height={20} className={`w-8 h-8 rounded-lg p-1 transition border ${selectedOwner === 'inventory' ? 'border-primary bg-bg-secondary' : 'border-transparent'
                   }`} />
-
                 <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-bg-secondary border text-black text-body-tiny font-medium rounded px-2 py-1 whitespace-nowrap z-10 shadow-sm">
                   Owners Inventory
                 </div>
               </div>
 
               <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('jungle')}>
-                <Image src={Icons.ownerjungle} alt="owner jungle" width={20} height={20} className={`w-8 h-8 rounded-lg p-1 transition border ${selectedOwner === 'jungle' ? 'border-primary bg-bg-secondary' : 'border-transparent'
+                <SvgIcon name="OJ" width={20} height={20} className={`w-8 h-8 rounded-lg p-1 transition border ${selectedOwner === 'jungle' ? 'border-primary bg-bg-secondary' : 'border-transparent'
                   }`} />
                 <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-bg-secondary border text-black text-body-tiny font-medium rounded px-2 py-1 whitespace-nowrap z-10 shadow-sm">
                   Owners Jungle
@@ -232,7 +232,7 @@ export default function NotificationPreferencesPage() {
               </div>
 
               <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('marketplace')}>
-                <Image src={Icons.ownermarketplace} alt="owner marketplace" width={16} height={16} className={`w-8 h-8 rounded-lg p-1 transition border ${selectedOwner === 'marketplace' ? 'border-primary bg-bg-secondary' : 'border-transparent'
+                <SvgIcon name="OM" width={20} height={20} className={`w-8 h-8 rounded-lg p-1 transition border ${selectedOwner === 'marketplace' ? 'border-primary bg-bg-secondary' : 'border-transparent'
                   }`} />
                 <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-bg-secondary border text-black text-body-tiny font-medium rounded px-2 py-1 whitespace-nowrap z-10 shadow-sm">
                   Owner Marketplace
@@ -240,7 +240,7 @@ export default function NotificationPreferencesPage() {
               </div>
 
               <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('analytics')}>
-                <Image src={Icons.owneranalytics} alt="owner analytics" width={16} height={16} className={`w-8 h-8 rounded-lg p-1 transition border ${selectedOwner === 'analytics' ? 'border-primary bg-bg-secondary' : 'border-transparent'
+                <SvgIcon name="OA" width={20} height={20} className={`w-8 h-8 rounded-lg p-1 transition border ${selectedOwner === 'analytics' ? 'border-primary bg-bg-secondary' : 'border-transparent'
                   }`} />
                 <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-bg-secondary border text-black text-body-tiny font-medium rounded px-2 py-1 whitespace-nowrap z-10 shadow-sm">
                   Analytics
@@ -257,7 +257,7 @@ export default function NotificationPreferencesPage() {
           </h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {/* In-App Notifications */}
-            <div className="flex items-center  gap-2 p-3 border rounded-lg">
+            <div className="flex items-center justify-between gap-2 p-3 border rounded-lg">
               <Bell strokeWidth={2} color='#795CF5' size={22} />
               <span className="text-body-small text-black">In-App Notifications</span>
               <div className="ml-auto">
@@ -271,7 +271,7 @@ export default function NotificationPreferencesPage() {
             </div>
 
             {/* Email Notifications */}
-            <div className="flex items-center gap-2 p-3 border rounded-lg">
+            <div className="flex items-center justify-between gap-2 p-3 border rounded-lg">
               <Mail color='#795CF5' strokeWidth={2} size={22} />
               <span className="text-body-small text-black">Email Notifications</span>
               <div className="ml-auto">

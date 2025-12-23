@@ -100,7 +100,7 @@ export default function Sidebar({
     {
       href: "/analytics",
       type: "svg",
-      hasTime: true,
+      hasTime: false,
       svgName: 'OA',
       label: "Analytics",
       hasBadge: true,
@@ -128,7 +128,7 @@ export default function Sidebar({
 
   const renderIcon = (item: NavigationItem, isCollapsed: boolean) => {
     const iconClass = cn(
-      "cursor-pointer transition-colors text-icon",
+      `cursor-pointer transition-colors ${item.isActive ? "" : "text-icon"}`,
     );
 
     if (item.type === "svg" && item.svgName) {
@@ -168,7 +168,7 @@ export default function Sidebar({
       {
         "justify-center px-0": collapsed,
         "px-2": !collapsed,
-        "bg-primary/10 text-primary": item.isActive,
+        "bg-primary text-white hover:bg-primary hover:text-white": item.isActive,
         "justify-between": !collapsed && (item.hasExternal || item.hasTime || item.hasBadge),
         "gap-2": !collapsed && !item.isActive,
       }

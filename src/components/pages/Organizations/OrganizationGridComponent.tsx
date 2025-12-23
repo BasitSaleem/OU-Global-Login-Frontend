@@ -29,7 +29,6 @@ export function OrganizationGridComponent({
   const [isUpdate, setIsUpdate] = useState<boolean>(
     org?.favorites?.some((fUser) => fUser.userId === user?.id) ?? false
   );
-  const { organization } = useAppSelector((s) => s.auth)
   const bgColor = useMemo(() => getColorFromId(org.id), [org.id]);
   const router = useRouter()
   const onClick = (e: React.MouseEvent) => {
@@ -57,7 +56,7 @@ export function OrganizationGridComponent({
             {org?.name}
           </h3>
         </div>
-        <div className="flex-shrink-0 flex gap-2">
+        <div className="flex-shrink-0 flex ">
 
           <Button
             variant="basic"

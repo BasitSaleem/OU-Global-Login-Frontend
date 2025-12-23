@@ -109,8 +109,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                     Cancel
                 </Button>
                 <Button
-                    className='bg-[#795cf5]/80 text-white hover:bg-[#795cf5]/70 '
                     type="submit"
+                    variant='primary'
                 >
                     {mode === 'add' ? 'Add Card' : 'Save Changes'}
                 </Button>

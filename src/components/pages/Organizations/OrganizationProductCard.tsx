@@ -1,7 +1,9 @@
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
 import { PermissionGuard } from "@/components/HOCs/permission-guard";
+import { Button } from "@/components/ui";
 import { getColorFromId } from "@/utils/getRandomColors";
 import Link from "next/link";
+import { useState } from "react";
 
 interface CardProps {
     code: "OI" | "OJ" | "OM" | "OA";
@@ -9,7 +11,6 @@ interface CardProps {
 }
 
 export const generateProductLink = (subdomain: string) => {
-    console.log('SubDomain: ', subdomain);
     let url = '';
     if (process.env.NODE_ENV === 'development') {
         url = `http://${subdomain}.localhost:8000/login?sso_login=true`
@@ -22,6 +23,7 @@ export const generateProductLink = (subdomain: string) => {
 }
 
 const OrganizationProductCard = ({ code, organizations }: CardProps) => {
+    const [viewMore, setViewMore] = useState(8);
     const PRODUCT_NAME_MAP: Record<string, string> = {
         OI: "Owners Inventory",
         OJ: "Owners Jungle",
@@ -34,7 +36,6 @@ const OrganizationProductCard = ({ code, organizations }: CardProps) => {
     };
 
     const filteredOrganizations = filterOrganizationsByProduct(organizations, code);
-    console.log(filteredOrganizations, "filteredOrganizations");
     if (filteredOrganizations.length === 0) return null;
     return (
         <div className="bg-bg-secondary border border-border rounded-xl p-3 hover:shadow-md transition-shadow">
@@ -57,7 +58,7 @@ const OrganizationProductCard = ({ code, organizations }: CardProps) => {
                     </p>
 
                     <div className="flex flex-wrap items-center gap-2 mt-3">
-                        {filteredOrganizations.map((org) => {
+                        {filteredOrganizations.slice(0, viewMore).map((org) => {
                             const bgColor = getColorFromId(org.id ?? "");
                             return (
                                 <PermissionGuard
@@ -68,7 +69,7 @@ const OrganizationProductCard = ({ code, organizations }: CardProps) => {
                                             className="group"
                                         >
                                             <div
-                                                className="w-7 h-7 rounded-md flex items-center justify-center text-white font-semibold text-sm transition-transform cursor-not-allowed"
+                                                className="w-7 h-7 rounded-lg flex items-center justify-center text-white font-semibold text-sm transition-transform cursor-not-allowed"
                                                 style={{ backgroundColor: bgColor }}
                                                 title={org.name}
                                             >
@@ -89,7 +90,7 @@ const OrganizationProductCard = ({ code, organizations }: CardProps) => {
                                                 className="group"
                                             >
                                                 <div
-                                                    className="w-7 h-7 rounded-md flex items-center justify-center text-white font-semibold text-sm hover:scale-110 transition-transform duration-300 cursor-pointer"
+                                                    className="w-7 h-7 rounded-lg flex items-center justify-center text-white font-semibold text-sm hover:scale-110 transition-transform duration-300 cursor-pointer"
                                                     style={{ backgroundColor: bgColor }}
                                                     title={org.name}
                                                 >
@@ -104,6 +105,23 @@ const OrganizationProductCard = ({ code, organizations }: CardProps) => {
                                 </PermissionGuard>
                             );
                         })}
+                        {filteredOrganizations.length > 8 && (
+                            <>
+                                {viewMore < filteredOrganizations?.length ? (
+                                    <Button
+                                        onClick={() => setViewMore(viewMore + 4)}
+                                        className="text-primary text-sm underline"
+                                    >
+                                        View More
+                                    </Button>
+                                ) : <Button
+                                    onClick={() => setViewMore(viewMore - 4)}
+                                    className="text-primary text-sm underline"
+                                >
+                                    View less
+                                </Button>}
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

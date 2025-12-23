@@ -9,6 +9,7 @@ import OrganizationGrid from "@/components/pages/Organizations/OrganizationGrid"
 import PendingInvitations from "@/components/pages/Organizations/PendingInvitation";
 import ProgressModal from "@/components/ui/ProgressModal";
 import { toast } from "@/hooks/useToast";
+import { useAppSelector } from "@/redux/store";
 import { useEffect, useMemo, useState } from "react";
 
 function OrganizationsContent() {
@@ -19,7 +20,7 @@ function OrganizationsContent() {
     },
   ];
 
-
+  const { user } = useAppSelector((s) => s.auth);
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [organizations, setOrganizations] = useState<any>(organizationsList);
@@ -28,7 +29,7 @@ function OrganizationsContent() {
   const [organizationData, setOrganizationData] = useState<CreateOrganizationResponse | null>(null);
   const [page, setPage] = useState(1)
   const { mutate: createOrg, isPending } = useCreateOrganization()
-  const { data: userOrgs, status: orgStatus, isPending: isOrgPending, error: orgError } = useGetOrganizations(page, 10);
+  const { data: userOrgs, status: orgStatus, isPending: isOrgPending, error: orgError } = useGetOrganizations(page, 11);
   const { data, isPending: isInvitationPending, error: invitationError } = useGetInvitations();
   const invitations: inviteData[] = useMemo(() => data!, [data]);
 
@@ -40,10 +41,21 @@ function OrganizationsContent() {
         const unique = merged.filter(
           (org, i, arr) => i === arr.findIndex(o => o.id === org.id)
         );
-        return unique;
+        const addNewCard = unique.filter(org => org.isAddNew);
+        const regularOrgs = unique.filter(org => !org.isAddNew);
+        const sorted = regularOrgs.sort((a, b) => {
+          const aIsFavorite = a.favorites?.some((fav: any) => fav.userId === user?.id) || false;
+          const bIsFavorite = b.favorites?.some((fav: any) => fav.userId === user?.id) || false;
+          if (aIsFavorite && !bIsFavorite) return -1;
+          if (!aIsFavorite && bIsFavorite) return 1;
+          return 0;
+        });
+
+        return [...addNewCard, ...sorted];
       });
     }
-  }, [orgStatus, userOrgs, page]);
+  }, [orgStatus, userOrgs, page, user?.id]);
+
   const handleCreateOrg = (data: CreateOrganizationData) => {
     createOrg(data, {
       onSuccess: (res) => {
@@ -83,11 +95,17 @@ function OrganizationsContent() {
           onOrganizationDeleted={handleOrganizationDeleted}
           loading={isOrgPending}
         />
-        {userOrgs?.totalCount! > 10 && <div className="mt-4 flex justify-end">
+        {userOrgs?.totalCount! >= 10 ? <div className="mt-4 flex justify-end">
           <button onClick={() => {
             setPage((prev) => prev + 1)
           }} >
             <p className="text-primary-500 font-medium hover:underline cursor-pointer">View More</p>
+          </button>
+        </div> : <div className="mt-4 flex justify-end">
+          <button onClick={() => {
+            setPage((prev) => prev - 1)
+          }} >
+            <p className="text-primary-500 font-medium hover:underline cursor-pointer">View Less</p>
           </button>
         </div>}
 

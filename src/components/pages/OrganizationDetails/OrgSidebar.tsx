@@ -95,15 +95,15 @@ export default function OrgSidebar({ collapsed, className, organizationDetails }
                                 "flex items-center text-sm font-medium rounded-lg transition-colors p-2",
                                 collapsed ? "justify-center px-0" : "p-3",
                                 isActive
-                                    ? "bg-primary/10 text-primary"
+                                    ? "bg-primary text-white"
                                     : "hover:bg-primary/10 hover:text-primary"
                             )}
                         >
                             {collapsed ? (
-                                <SvgIcon name={item.icon} width={20} height={20} className='text-icon' />
+                                <SvgIcon name={item.icon} width={20} height={20} className={`text-icon ${isActive ? "text-white" : ""}`} />
                             ) : (
                                 <span className='flex items-center w-full gap-3'>
-                                    <SvgIcon name={item.icon} width={20} height={20} className='text-icon ' />
+                                    <SvgIcon name={item.icon} width={20} height={20} className={`text-icon ${isActive ? "text-white" : ""}`} />
                                     <span className="truncate">{item.label}</span>
                                 </span>
                             )}

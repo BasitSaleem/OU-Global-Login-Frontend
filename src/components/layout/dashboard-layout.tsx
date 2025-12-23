@@ -26,7 +26,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const toggleMobileSidebar = () => {
     setMobileSidebarOpen(!mobileSidebarOpen);
   };
-
   return (
     <AuthGuard fallback={<GlobalLoading text='Authenticating' />}>
 
@@ -48,6 +47,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             onToggleSidebar={toggleSidebar}
             onToggleMobileSidebar={toggleMobileSidebar}
             mobileSidebarOpen={mobileSidebarOpen}
+            collapsed={sidebarCollapsed}
           />
 
           <main className="flex-1">

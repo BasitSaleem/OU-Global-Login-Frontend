@@ -60,7 +60,7 @@ export default function NotificationsSidebar({
 
           {/* Products */}
           <div>
-            <h3 className="text-body-small] font-medium text-black mb-2">PRODUCTS</h3>
+            <h3 className="text-body-small] font-medium  mb-2">PRODUCTS</h3>
             <div className="space-y-1">
               {productFilters.map((product) => (
                 <Button
