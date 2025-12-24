@@ -1,3 +1,4 @@
+import { Permission } from "@/types/common";
 import { OgOrgMembership } from "../membership/membership.types";
 
 export type products = "OI" | "OG" | "OA" | "OJ";
@@ -58,6 +59,7 @@ export interface OgOrganization {
   ogUserId?: string;
   products?: OgProduct[];
   membersCount?: number;
+  permissionNames?: Permission[];
 }
 
 export interface OgProduct {
