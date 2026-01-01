@@ -1,17 +1,15 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, } from 'react';
 import { Modal } from './GenericModal';
-import { Button, Input } from '../ui';
+import { Button, Input, Loader } from '../ui';
 import { PRODUCTS } from '@/constants';
-import { useCheckOrganizationNameAvailability, useCheckSubDomainAvailability } from '@/apiHooks.ts/organization/organization.api';
+import { useCheckSubDomainAvailability, useGenerateSubdomainSuggestions } from '@/apiHooks.ts/organization/organization.api';
 import { useDebounce } from '@/hooks/useDebounce';
 import { CreateOrganizationData } from '@/apiHooks.ts/organization/organization.types';
-import { generateSubdomainSuggestions } from '@/utils/subdomainGenerator';
 import { SubdomainSuggestion } from '../SubdomainSuggestion';
 import { AvailabilityStatus } from '../AvailabilityStatus';
 import { SvgIcon } from '../ui/SvgIcon';
-
 interface CreateOrgModalProps {
   isOpen: boolean;
   isLoading: boolean;
@@ -28,53 +26,36 @@ export default function CreateOrgModal({
   const [companyName, setCompanyName] = useState('');
   const [subDomain, setSubDomain] = useState('');
   const [selectedProduct, setSelectedProduct] = useState('OI');
-  const [isGeneratingSuggestions, setIsGeneratingSuggestions] = useState(false);
-
+  const [isSuggestionSubdomain, setIsSuggestionSubdomain] = useState(false);
   const debouncedCompanyName = useDebounce(companyName.trim(), 800);
   const debouncedSubDomain = useDebounce(subDomain.trim(), 800);
   const isNameDebouncing = companyName.trim() !== debouncedCompanyName && companyName.trim().length > 0;
-  const isSubDomainDebouncing = subDomain.trim() !== debouncedSubDomain && subDomain.trim().length > 0;
-
-  // const { data: isNameAvailable, isFetching: checkingName, isError: nameError } =
-  //   useCheckOrganizationNameAvailability(debouncedCompanyName);
-
+  const isSubDomainDebouncing = !isSuggestionSubdomain && subDomain.trim() !== debouncedSubDomain && subDomain.trim().length > 0;
+  const shouldCheckAvailability = selectedProduct === 'OI' && debouncedSubDomain && !isSuggestionSubdomain;
   const { data: isSubAvailable, isFetching: checkingSub, isError: subError } =
-    useCheckSubDomainAvailability(selectedProduct === 'OI' ? debouncedSubDomain : '');
-
-  const subdomainSuggestions = useMemo(() => {
-    if (!companyName.trim() || companyName.trim().length < 2) return [];
-    return generateSubdomainSuggestions(companyName);
-  }, [companyName]);
-
-  // useEffect(() => {
-  //   if (subDomain === '' && subdomainSuggestions.length > 0 && selectedProduct === 'OI') {
-  //     setSubDomain(subdomainSuggestions[0]);
-  //   }
-  // }, [subdomainSuggestions, subDomain, selectedProduct]);
+    useCheckSubDomainAvailability(shouldCheckAvailability ? debouncedSubDomain : '');
+  const finalIsSubAvailable = isSuggestionSubdomain ? true : isSubAvailable;
+  const { data: suggestions, isPending: fetchingSubdomainSuggestions } = useGenerateSubdomainSuggestions(
+    !isNameDebouncing ? debouncedCompanyName : ''
+  );
 
   useEffect(() => {
-    if (companyName.trim().length > 1) {
-      setIsGeneratingSuggestions(true);
-      const timer = setTimeout(() => {
-        setIsGeneratingSuggestions(false);
-      }, 400);
-      return () => clearTimeout(timer);
-    } else {
-      setIsGeneratingSuggestions(false);
+    setSubDomain(suggestions?.[0] || '');
+    if (isSuggestionSubdomain && !suggestions?.includes(subDomain.trim())) {
+      setIsSuggestionSubdomain(false);
     }
-  }, [companyName]);
+  }, [subDomain, suggestions, isSuggestionSubdomain]);
 
   const handleSuggestionClick = (suggestion: string) => {
+    setIsSuggestionSubdomain(true);
     setSubDomain(suggestion);
   };
 
   const canSubmit = () => {
     if (!companyName.trim()) return false;
     if (selectedProduct === 'OI' && !subDomain.trim()) return false;
-    // if (isNameDebouncing || checkingName) return false;
     if (selectedProduct === 'OI' && (isSubDomainDebouncing || checkingSub)) return false;
-    // if (isNameAvailable === false) return false;
-    if (selectedProduct === 'OI' && isSubAvailable === false) return false;
+    if (selectedProduct === 'OI' && finalIsSubAvailable === false) return false;
     return true;
   };
 
@@ -95,7 +76,7 @@ export default function CreateOrgModal({
       setCompanyName('');
       setSubDomain('');
       setSelectedProduct('OI');
-      setIsGeneratingSuggestions(false);
+      setIsSuggestionSubdomain(false);
     }
   }, [isOpen]);
 
@@ -103,38 +84,7 @@ export default function CreateOrgModal({
     <Modal isOpen={isOpen} onClose={onClose} size="lg" ariaLabel="Create organization">
       {isLoading && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="relative bg-bg-secondary rounded-xl shadow-xl w-full max-w-xl mx-4 border animate-pulse">
-            <div className="p-4 ">
-              <div className="h-8 bg-skeleton rounded-lg w-56"></div>
-            </div>
-            <div className="p-4">
-              <div className="mb-6">
-                <div className="h-10 bg-gray-100 rounded-lg"></div>
-              </div>
-              <div className="mb-6">
-                <div className="grid grid-cols-2 gap-3">
-                  {[1, 2, 3, 4].map((item) => (
-                    <div
-                      key={item}
-                      className="flex items-center gap-3 border border-gray-200 rounded-lg px-2 py-3"
-                    >
-                      <div className="w-6 h-6 bg-skeleton rounded-full"></div>
-                      <div className="h-4 bg-skeleton rounded w-3/4"></div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="mb-2">
-                <div className="h-12 bg-gray-100 rounded-lg"></div>
-              </div>
-            </div>
-            <div className="p-6 border-t border-gray-200">
-              <div className="flex gap-3 w-full justify-end">
-                <div className="h-10 bg-skeleton rounded-lg w-24"></div>
-                <div className="h-10 bg-skeleton rounded-lg w-24"></div>
-              </div>
-            </div>
-          </div>
+          <Loader className="w-full max-w-xl mx-4" />
         </div>
       )}
 
@@ -147,14 +97,6 @@ export default function CreateOrgModal({
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
           />
-          {/* <AvailabilityStatus
-            isLoading={checkingName}
-            isAvailable={isNameAvailable}
-            isDebouncing={isNameDebouncing}
-            fieldName="Organization name"
-            value={companyName}
-            companyName={true}
-          /> */}
         </div>
 
         <label className="block text-body-small font-medium mb-2 ml-1">Products</label>
@@ -183,6 +125,7 @@ export default function CreateOrgModal({
               label="Sub-Domain"
               isRequired
               value={subDomain}
+              disabled={fetchingSubdomainSuggestions}
               onChange={(e) =>
                 setSubDomain(
                   e.target.value
@@ -193,16 +136,16 @@ export default function CreateOrgModal({
               } />
             <AvailabilityStatus
               isLoading={checkingSub}
-              isAvailable={isSubAvailable}
+              isAvailable={finalIsSubAvailable}
               isDebouncing={isSubDomainDebouncing}
               fieldName="Sub-domain"
               value={subDomain}
             />
             {companyName.trim().length > 1 && (
               <SubdomainSuggestion
-                suggestions={subdomainSuggestions}
+                suggestions={suggestions}
                 onSuggestionClick={handleSuggestionClick}
-                isLoading={isGeneratingSuggestions}
+                isLoading={fetchingSubdomainSuggestions}
               />
             )}
 

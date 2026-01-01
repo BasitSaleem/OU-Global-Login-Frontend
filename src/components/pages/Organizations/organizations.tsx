@@ -1,8 +1,8 @@
 type organizations = {
-    initials: string;
-    color: string;
-    title: string;
-    subtitle: string;
+  initials: string;
+  color: string;
+  title: string;
+  subtitle: string;
 }
 
 const OrgCard: React.FC<organizations> = ({ initials, color, title, subtitle }) => {

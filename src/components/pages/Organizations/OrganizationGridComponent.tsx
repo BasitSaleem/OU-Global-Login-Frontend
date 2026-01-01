@@ -112,10 +112,9 @@ export function OrganizationGridComponent({
         </div>
       </div>
 
-      <div className="mt-auto">
+      <div className="mt-auto bg-primary/10 rounded-lg">
         <div
-          className="flex items-center justify-between px-2 py-1.5 rounded"
-          style={{ backgroundColor: "rgba(121, 92, 245, 0.07)" }}
+          className="flex items-center justify-between px-2 py-1.5 "
         >
           <span className="text-[14px] font-medium text-primary">
             {org?.membersCount ? org?.membersCount : "0"} member{org?.membersCount ? "" : "s"}
@@ -123,16 +122,8 @@ export function OrganizationGridComponent({
           <div className="flex items-center -space-x-0.5">
             {org?.products?.map((product, index) => (
 
-              <Link key={product.id} href={generateProductLink(org?.products?.[index]?.oi_sub_domain!)} target="_blank" className="z-30">
+              <Link key={product.id} href={generateProductLink(org?.products?.[index]?.oi_sub_domain!)} target="_blank" className="z-30 hover:scale-110 duration-300 transition-all" onClick={(e) => e.stopPropagation()}>
                 <SvgIcon name={product.product_name as IconName} width={20} height={20} />
-                {/* <Image
-                  key={index}
-                  src={`/Icons/${product.product_name}_LOGO.svg`}
-                  alt={product.product_name ?? "OS"}
-                  width={20}
-                  height={20}
-                  className="w-6 h-6 rounded-full hover:scale-110 duration-300"
-                /> */}
               </Link>
             ))}
           </div>

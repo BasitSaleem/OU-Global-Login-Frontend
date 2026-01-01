@@ -86,6 +86,7 @@ function OrganizationsContent() {
     );
   };
 
+
   return (
     <div className="p-2 sm:p-8 bg-background ">
       <div className="max-w-xs sm:max-w-7xl mx-auto space-y-8">
@@ -95,19 +96,15 @@ function OrganizationsContent() {
           onOrganizationDeleted={handleOrganizationDeleted}
           loading={isOrgPending}
         />
-        {userOrgs?.totalCount! >= 10 ? <div className="mt-4 flex justify-end">
-          <button onClick={() => {
-            setPage((prev) => prev + 1)
-          }} >
-            <p className="text-primary-500 font-medium hover:underline cursor-pointer">View More</p>
-          </button>
-        </div> : <div className="mt-4 flex justify-end">
-          <button onClick={() => {
-            setPage((prev) => prev - 1)
-          }} >
-            <p className="text-primary-500 font-medium hover:underline cursor-pointer">View Less</p>
-          </button>
-        </div>}
+        {userOrgs?.meta?.totalCount! > 10 && (
+          <div className="mt-4 flex justify-end">
+            <button onClick={() => setPage((prev) => (page === 1 ? prev + 1 : prev - 1))}>
+              <p className="text-primary-500 font-medium hover:underline cursor-pointer">
+                {userOrgs?.meta.hasMore ? "View More" : "View Less"}
+              </p>
+            </button>
+          </div>
+        )}
 
         <PendingInvitations
           isLoading={isInvitationPending}

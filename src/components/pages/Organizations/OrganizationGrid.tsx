@@ -85,20 +85,28 @@ export default function OrganizationGrid({
             requiredPermissions="og:create::organization"
             fallback={
               <div key={idx} className="bg-bg-secondary p-3 py-6 rounded-xl border">
-                <div className="flex items-start gap-3 mb-2">
-                  <Skeleton width="40px" height="40px" circle />
-                  <div className="flex-1 min-w-0 space-y-2">
-                    <Skeleton width="60%" height="16px" />
-                    <Skeleton width="40%" height="12px" />
+                {idx === 0 ? (
+                  <div className="flex items-center justify-center w-full h-full">
+                    <div className="flex flex-col items-center justify-center ">
+                      <Plus size={50} color="#D1D5DB" />
+                      <h1 className="text-skeleton animate-pulse">Add new</h1>
+                    </div>
                   </div>
-                  <Skeleton width="24px" height="24px" circle />
-                </div>
-                <div className="mt-auto flex items-center justify-between px-2 py-1.5 rounded bg-skeleton">
-                  <Skeleton width="20%" height="12px" />
-                  <div className="flex space-x-1">
-                    <Skeleton width="24px" height="24px" circle count={3} />
-                  </div>
-                </div>
+                ) : (
+                  <>
+                    <div className="flex items-start gap-3 mb-2">
+                      <Skeleton width="40px" height="40px" circle />
+                      <div className="flex-1 min-w-0 space-y-2">
+                        <Skeleton width="60%" height="16px" />
+                        <Skeleton width="40%" height="12px" />
+                      </div>
+                      <Skeleton width="24px" height="24px" circle />
+                    </div>
+                    <div className="flex items-center justify-between px-2 py-1 rounded bg-skeleton -mb-3 mt-3.5">
+                      <Skeleton width="22px" height="22px" circle count={3} />
+                    </div>
+                  </>
+                )}
               </div>
             }
           >
@@ -120,11 +128,8 @@ export default function OrganizationGrid({
                     </div>
                     <Skeleton width="24px" height="24px" circle />
                   </div>
-                  <div className="mt-auto flex items-center justify-between px-2 py-1.5 rounded bg-skeleton">
-                    <Skeleton width="20%" height="12px" />
-                    <div className="flex space-x-1">
-                      <Skeleton width="24px" height="24px" circle count={3} />
-                    </div>
+                  <div className="flex items-center justify-between px-2 py-1 rounded bg-skeleton -mb-3 mt-3.5">
+                    <Skeleton width="22px" height="22px" circle count={3} />
                   </div>
                 </>
               )}
@@ -143,7 +148,7 @@ export default function OrganizationGrid({
               >
                 {org?.isAddNew ? (
                   <div
-                    className="flex flex-col items-center justify-center text-center h-full rounded-xl bg-primary/5 py-8"
+                    className="flex flex-col items-center justify-center text-center h-full rounded-xl bg-primary/5 "
                   >
                     <div className="text-primary">
                       <Plus size={50} />

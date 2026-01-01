@@ -22,7 +22,8 @@ const ENDPOINTS = {
       subDomain
     )}`,
   TOGGLE_FAVORITE: "/organization/favorite",
-  ORGANIZATION_PRODUCTS: (id: string) => `/organization/products/${id}`
+  ORGANIZATION_PRODUCTS: (id: string) => `/organization/products/${id}`,
+  GENERATE_SUBDOMAIN: (companyName: string) => `/organization/generate-subdomain-suggestions?companyName=${companyName}`,
 };
 
 // 1. CREATE ORGANIZATION
@@ -40,10 +41,6 @@ export const useCreateOrganization = () => {
     },
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ["organizations"] });
-      toast.success(
-        "Organization created",
-        "The organization has been created and lead registration is processing in the background."
-      );
     },
     retry: false,
     onError: (error: any) => {
@@ -56,14 +53,14 @@ export const useCreateOrganization = () => {
 // 2. GET ALL ORGANIZATIONS
 export const useGetOrganizations = (page: number, limit: number) => {
   return useQuery({
-    queryKey: ["organizations", page, limit],
+    queryKey: ["organizations", page],
     queryFn: async () => {
       const url = `${ENDPOINTS.ORGANIZATIONS}?page=${page}&limit=${limit}`;
       const res = await request<OgOrgResponse>(url, "GET");
       return res.data
     },
     select: (data) => ({
-      totalCount: data.totalCount,
+      meta: data.meta,
       organization: data.organizations
     }),
   });
@@ -204,5 +201,17 @@ export const useGetOrganizationProducts = (id: string) => {
     queryFn: () => request(ENDPOINTS.ORGANIZATION_PRODUCTS(id), "GET"),
     enabled: !!id,
     select: (data) => data.data,
+  });
+};
+
+// 10. GENERATE SUBDOMAIN SUGGESTIONS
+export const useGenerateSubdomainSuggestions = (companyName: string) => {
+  return useQuery({
+    queryKey: ["subdomainSuggestions", companyName],
+    queryFn: () => request(ENDPOINTS.GENERATE_SUBDOMAIN(companyName), "GET"),
+    select: (data) => data.data.suggestions,
+    enabled: !!companyName && companyName.length > 0,
+    retry: false,
+    refetchOnWindowFocus: false,
   });
 };

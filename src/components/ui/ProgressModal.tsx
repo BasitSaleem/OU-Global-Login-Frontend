@@ -179,13 +179,11 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
 
                     <button onClick={handleViewPortal} className="flex flex-row items-center sm:flex-row gap-3 cursor-pointer">
 
-                      {/* <Image src={Icons.ownerinventory} alt='ownerinventory' width={50} height={50} className="w-20 h-10" /> */}
                       <SvgIcon name='ownersInventory' width={5} height={5} className='text-for w-7 h-7' />
                       <h1 className='mt-1.5'> OwnersInventory</h1>
 
                     </button>
 
-                    {/* Portal Access Info */}
                     {organizationData?.data.leadRegistration?.subDomainName && (
                       <div className="mt-4 p-4 bg-bg-secondary border rounded-lg">
                         <h4 className="font-medium text-blue-900 mb-2">
@@ -204,22 +202,6 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                         </div>
                       </div>
                     )}
-                    {/* <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
-                      <Button
-                        variant='primary'
-                        onClick={handleGoHome}>
-                        Go to Dashboard
-                      </Button>
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={handleGoHome}
-                        className="flex items-center cursor-pointer justify-center gap-2 px-4 py-2  rounded-lg hover:bg-primary transition-colors"
-                      >
-                        <Home className="w-4 h-4" />
-                        Go to Dashboard
-                      </motion.button>
-                    </div> */}
                   </motion.div>
 
                 )}
@@ -247,14 +229,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                         onClick={handleGoHome}>
                         Go to Dashboard
                       </Button>
-                      {/* <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={handleGoHome}
-                        className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg hover:bg-primary/80 transition-colors"
-                      >
-                        <Home className="w-4 h-4" />
-                      </motion.button> */}
+
                     </div>
                   </motion.div>
                 )}

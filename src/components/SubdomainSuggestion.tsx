@@ -22,17 +22,17 @@ export const SubdomainSuggestion: React.FC<SubdomainSuggestionProps> = ({
                     <span>Generating suggestions...</span>
                 </div>
             </div>
-        );``
+        );
     }
 
-    if (suggestions.length === 0) {
+    if (suggestions?.length === 0) {
         return null;
     }
 
     return (
         <div className="bg-bg-secondary">
             <div className="flex flex-wrap gap-2">
-                {suggestions.map((suggestion, index) => (
+                {suggestions?.map((suggestion, index) => (
                     <button
                         key={index}
                         type="button"

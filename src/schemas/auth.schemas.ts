@@ -10,16 +10,17 @@ export const loginSchema = z.object({
 });
 export const signUpSchema = z
   .object({
-    first_name: z.string().nonempty("First name is required"),  
-    last_name: z.string().nonempty("Last name is required"),
+    first_name: z.string().min(3, "First name must be at least 3 characters long").nonempty("First name is required"),
+    last_name: z.string().min(3, "Last name must be at least 3 characters long").nonempty("Last name is required"),
     email: z
       .string()
       .nonempty("Email is required")
       .email("Please enter a valid email address."),
-    password: z.string().nonempty("Password is required"),
+    password: z.string().min(8, "Password must be at least 8 characters long").nonempty("Password is required"),
     confirmPassword: z.string().nonempty("Confirm password is required"),
     rememberMe: z.boolean().optional(),
   })
+
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],

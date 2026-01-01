@@ -3,7 +3,7 @@
 import { Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import ProfileMenu from "./ProfileMenu";
+import ProfileMenu from "./ProfiledDropDown";
 import { useAppSelector } from "@/redux/store";
 import { NotificationsDropdown } from "./NotificationDropdown";
 import { NotificationItemProps } from "./Header.types";

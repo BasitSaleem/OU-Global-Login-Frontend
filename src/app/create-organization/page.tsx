@@ -2,20 +2,21 @@
 import {
   useCheckSubDomainAvailability,
   useCreateOrganization,
+  useGenerateSubdomainSuggestions,
 } from "@/apiHooks.ts/organization/organization.api";
 import { CreateOrganizationData, CreateOrganizationResponse } from "@/apiHooks.ts/organization/organization.types";
 import { PRODUCTS, ROUTES } from "@/constants";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useRouter } from "next/navigation";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "@/hooks/useToast";
 import ProgressModal from "@/components/ui/ProgressModal";
 import { Button, Input, LoadingSpinner } from "@/components/ui";
 import { AuthGuard } from "@/components/HOCs/auth-guard";
-import { generateSubdomainSuggestions } from "@/utils/subdomainGenerator";
 import { SubdomainSuggestion } from "@/components/SubdomainSuggestion";
 import { AvailabilityStatus } from "@/components/AvailabilityStatus";
 import { CreateOrganizationGuard } from "@/components/HOCs/createOrgRoute.guard";
+import { SvgIcon } from "@/components/ui/SvgIcon";
 
 export default function CreateOrgPage() {
   const [companyName, setCompanyName] = useState("");
@@ -23,58 +24,45 @@ export default function CreateOrgPage() {
   const [selectedProduct, setSelectedProduct] = useState("OI");
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [organizationData, setOrganizationData] = useState<CreateOrganizationResponse | null>(null);
-  const [isGeneratingSuggestions, setIsGeneratingSuggestions] = useState(false);
+  const [isSuggestionSubdomain, setIsSuggestionSubdomain] = useState(false);
 
-  // const debouncedCompanyName = useDebounce(companyName.trim(), 1500);
+  const debouncedCompanyName = useDebounce(companyName.trim(), 1500);
   const debouncedSubDomain = useDebounce(subDomain.trim(), 1500);
 
-  // const isNameDebouncing = companyName.trim() !== debouncedCompanyName && companyName.trim().length > 0;
-  const isSubDomainDebouncing = subDomain.trim() !== debouncedSubDomain && subDomain.trim().length > 0;
+  const isNameDebouncing = companyName.trim() !== debouncedCompanyName && companyName.trim().length > 0;
+  const isSubDomainDebouncing = !isSuggestionSubdomain && subDomain.trim() !== debouncedSubDomain && subDomain.trim().length > 0;
+  const { data: suggestions, isPending: fetchingSubdomainSuggestions } = useGenerateSubdomainSuggestions(
+    !isNameDebouncing ? debouncedCompanyName : ''
+  );
 
   const createOrgMutation = useCreateOrganization();
   const router = useRouter();
 
-  // const { data: isNameAvailable, isFetching: checkingName, isError: nameError } =
-  //   useCheckOrganizationNameAvailability(debouncedCompanyName);
+  const shouldCheckAvailability = selectedProduct === "OI" && debouncedSubDomain && !isSuggestionSubdomain;
 
   const { data: isSubAvailable, isFetching: checkingSub, isError: subError } =
     useCheckSubDomainAvailability(
-      selectedProduct === "OI" ? debouncedSubDomain : ""
+      shouldCheckAvailability ? debouncedSubDomain : ""
     );
 
-  const subdomainSuggestions = useMemo(() => {
-    if (!companyName.trim() || companyName.trim().length < 2) return [];
-    return generateSubdomainSuggestions(companyName);
-  }, [companyName]);
+  const finalIsSubAvailable = isSuggestionSubdomain ? true : isSubAvailable;
 
   useEffect(() => {
-    if (subDomain === '' && subdomainSuggestions.length > 0 && selectedProduct === "OI") {
-      setSubDomain(subdomainSuggestions[0]);
+    if (isSuggestionSubdomain && !suggestions?.includes(subDomain.trim())) {
+      setIsSuggestionSubdomain(false);
     }
-  }, [subdomainSuggestions, subDomain, selectedProduct]);
-  useEffect(() => {
-    if (companyName.trim().length > 1) {
-      setIsGeneratingSuggestions(true);
-      const timer = setTimeout(() => {
-        setIsGeneratingSuggestions(false);
-      }, 500);
-      return () => clearTimeout(timer);
-    } else {
-      setIsGeneratingSuggestions(false);
-    }
-  }, [companyName]);
+  }, [subDomain, suggestions, isSuggestionSubdomain]);
 
   const handleSuggestionClick = (suggestion: string) => {
+    setIsSuggestionSubdomain(true);
     setSubDomain(suggestion);
   };
 
   const canSubmit = () => {
     if (!companyName.trim()) return false;
     if (selectedProduct === "OI" && !subDomain.trim()) return false;
-    // if (isNameDebouncing || checkingName) return false;
     if (selectedProduct === "OI" && (isSubDomainDebouncing || checkingSub)) return false;
-    // if (isNameAvailable === false) return false;
-    if (selectedProduct === "OI" && isSubAvailable === false) return false;
+    if (selectedProduct === "OI" && finalIsSubAvailable === false) return false;
     if (createOrgMutation.isPending) return false;
     return true;
   };
@@ -142,13 +130,6 @@ export default function CreateOrgPage() {
                 onChange={(e) => setCompanyName(e.target.value)}
                 placeholder="Enter company name"
               />
-              {/* <AvailabilityStatus
-                isLoading={checkingName}
-                isAvailable={isNameAvailable}
-                isDebouncing={isNameDebouncing}
-                fieldName="Organization name"
-                value={companyName}
-              /> */}
             </div>
 
             {/* Products */}
@@ -168,18 +149,13 @@ export default function CreateOrgPage() {
 
                     }
                   >
-                    <img
-                      src={product.icon}
-                      alt={product.name}
-                      className="w-6 h-6"
-                    />
+                    <SvgIcon name={product.icon} className="w-6 h-6" />
                     {product.fullname}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Sub-Domain */}
             <div className="mb-2">
               <Input
                 isRequired
@@ -194,23 +170,22 @@ export default function CreateOrgPage() {
                       .replace(/[^a-z0-9-]/g, "")
                   )
                 }
-                disabled={selectedProduct !== "OI"}
+                disabled={selectedProduct !== "OI" || fetchingSubdomainSuggestions}
                 placeholder="Enter sub-domain"
               />
 
-              {/* Subdomain Suggestions */}
               {selectedProduct === "OI" && companyName.trim().length > 1 && (
                 <SubdomainSuggestion
-                  suggestions={subdomainSuggestions}
+                  suggestions={suggestions}
                   onSuggestionClick={handleSuggestionClick}
-                  isLoading={isGeneratingSuggestions}
+                  isLoading={fetchingSubdomainSuggestions}
                 />
               )}
 
               {selectedProduct === "OI" && (
                 <AvailabilityStatus
                   isLoading={checkingSub}
-                  isAvailable={isSubAvailable}
+                  isAvailable={finalIsSubAvailable}
                   isDebouncing={isSubDomainDebouncing}
                   fieldName="Sub-domain"
                   value={subDomain}

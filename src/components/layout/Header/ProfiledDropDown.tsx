@@ -61,7 +61,9 @@ export default function ProfileMenu({ onClose, open }: ProfileMenuProps) {
                         </span>}
                 </div>
                 <div>
-                    <h3 className="text-body-medium-bold text-gray-900">{user?.first_name}</h3>
+                    <h3 className="text-body-medium-bold text-gray-900 capitalize">
+                        {user?.first_name} {user?.last_name}
+                    </h3>
                     <p className="text-xs text-text truncate">
                         {user?.email}
                     </p>

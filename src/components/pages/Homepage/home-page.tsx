@@ -12,7 +12,7 @@ import { useGetAllPermissions } from "@/apiHooks.ts/auth/auth.api";
 import Image from "next/image";
 export default function HomePage() {
   const { user } = useAppSelector((s) => s.auth);
-  const { data, isPending: loadingOrganizations } = useGetOrganizations(1, 20);
+  const { data, isPending: loadingOrganizations } = useGetOrganizations(1, 10);
   // const dispatch = useAppDispatch();
   const productCodes = ["OI", "OJ", "OM", "OA"];
   // useEffect(() => {
@@ -103,6 +103,7 @@ export default function HomePage() {
                 productCodes.map((code) => (
                   <OrganizationProductCard
                     organizations={data?.organization}
+                    metaData={data?.meta}
                     key={code}
                     code={code as any}
                   />

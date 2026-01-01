@@ -4,3 +4,4 @@ export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
 export { Loading, LoadingSkeleton, LoadingSpinner } from './loading';
 export { default as Logo } from './Logo';
 export { PhoneInput } from './phone-input';
+export { Loader } from './Loader';

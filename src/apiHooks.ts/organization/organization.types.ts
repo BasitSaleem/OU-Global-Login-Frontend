@@ -75,10 +75,12 @@ export interface OgProduct {
 }
 
 export interface OgOrgResponse {
-  totalCount: number,
   data: {
-    totalCount: number;
     organizations: OgOrganization[];
+    meta: {
+      totalCount: number;
+      hasMore: boolean;
+    }
   };
   message?: string
   success: boolean

@@ -78,7 +78,7 @@ export default function EmailSettingsPage() {
           </div>
 
           {/* Warning Message */}
-          <div
+          {/* <div
             className="flex flex-col sm:flex-row items-start sm:items-center gap-2 p-4  rounded bg-primary/10"
           >
             <TriangleAlert className="mb-6 opacity-60" />
@@ -86,7 +86,7 @@ export default function EmailSettingsPage() {
               Changing your email will disconnect your Google account. You'll need
               to reconnect it after confirming the new email address.
             </p>
-          </div>
+          </div> */}
 
           {/* Update Button */}
           <div className="flex justify-end">

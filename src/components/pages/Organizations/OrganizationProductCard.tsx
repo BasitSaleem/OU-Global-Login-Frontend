@@ -4,9 +4,12 @@ import { Button } from "@/components/ui";
 import { getColorFromId } from "@/utils/getRandomColors";
 import Link from "next/link";
 import { useState } from "react";
-
 interface CardProps {
     code: "OI" | "OJ" | "OM" | "OA";
+    metaData: {
+        totalCount: number;
+        hasMore: boolean;
+    } | undefined
     organizations: OgOrganization[] | undefined;
 }
 
@@ -22,7 +25,7 @@ export const generateProductLink = (subdomain: string) => {
 
 }
 
-const OrganizationProductCard = ({ code, organizations }: CardProps) => {
+const OrganizationProductCard = ({ code, organizations, metaData }: CardProps) => {
     const [viewMore, setViewMore] = useState(8);
     const PRODUCT_NAME_MAP: Record<string, string> = {
         OI: "Owners Inventory",
@@ -105,22 +108,29 @@ const OrganizationProductCard = ({ code, organizations }: CardProps) => {
                                 </PermissionGuard>
                             );
                         })}
-                        {filteredOrganizations.length > 8 && (
-                            <>
-                                {viewMore < filteredOrganizations?.length ? (
-                                    <Button
-                                        onClick={() => setViewMore(viewMore + 4)}
-                                        className="text-primary text-sm underline"
-                                    >
-                                        View More
-                                    </Button>
-                                ) : <Button
-                                    onClick={() => setViewMore(viewMore - 4)}
-                                    className="text-primary text-sm underline"
-                                >
-                                    View less
-                                </Button>}
-                            </>
+                        {metaData?.hasMore && (
+                            <Link
+                                href="/organizations"
+                                className="text-primary ml-5 text-sm underline hover:text-primary/80"
+                            >
+                                View all
+
+                            </Link>
+                            // <>
+                            //     {viewMore < metaData?.totalCount ? (
+                            //         <Button
+                            //             onClick={() => setViewMore(viewMore + 4)}
+                            //             className="text-primary text-sm underline"
+                            //         >
+                            //             View More
+                            //         </Button>
+                            //     ) : <Button
+                            //         onClick={() => setViewMore(viewMore - 4)}
+                            //         className="text-primary text-sm underline"
+                            //     >
+                            //         View less
+                            //     </Button>}
+                            // </>
                         )}
                     </div>
                 </div>
