@@ -3,7 +3,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ResendOtpData, signinData, signUpData, userProfile, VerifyOtpData } from "./auth.types";
 import { request } from "@/utils/requestFunction";
 import { toast } from "@/hooks/useToast";
-import { UserInfo } from "os";
 import { signInResponse } from "@/types/auth.types";
 import { PermissionTypeGenerator } from "@/utils/permissionTypeGenerator";
 const ENDPOINTS = {
