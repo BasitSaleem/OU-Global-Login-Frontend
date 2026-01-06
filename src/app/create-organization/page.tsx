@@ -53,6 +53,12 @@ export default function CreateOrgPage() {
     }
   }, [subDomain, suggestions, isSuggestionSubdomain]);
 
+  useEffect(() => {
+    if (suggestions && suggestions.length > 0 && !subDomain.trim()) {
+      setSubDomain(suggestions[0]);
+      setIsSuggestionSubdomain(true);
+    }
+  }, [suggestions,]);
   const handleSuggestionClick = (suggestion: string) => {
     setIsSuggestionSubdomain(true);
     setSubDomain(suggestion);

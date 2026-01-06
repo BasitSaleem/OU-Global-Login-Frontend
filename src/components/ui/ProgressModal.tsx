@@ -1,15 +1,16 @@
 "use client";
 import React, { useCallback, useEffect, } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { ProgressTracker } from './ProgressTracker';
 import { useCreateOrganizationProgress } from '@/hooks/useProgressTracking';
 import { CreateOrganizationResponse } from '@/apiHooks.ts/organization/organization.types';
-import { SvgIcon } from './SvgIcon';
 import { Button } from './button';
 import { useAppDispatch } from "@/redux/store";
 import { setOrganization } from '@/redux/slices/auth.slice';
 import { useRouter } from 'next/navigation';
+import { toast } from '@/hooks/useToast';
+import { useScrollLock } from '@/hooks/useScrollLock';
 
 interface ProgressModalProps {
   isOpen: boolean;
@@ -29,6 +30,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
   isFromMain
 }) => {
   const dispatch = useAppDispatch()
+  useScrollLock(isOpen)
   const router = useRouter()
   const handleProgress = useCallback((progress: any) => {
     console.log("Progress update:", progress);
@@ -37,6 +39,8 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
   const handleComplete = useCallback(
     (progress: any) => {
       onComplete?.();
+      toast.success("Created", "The organization has been successfully created.")
+      // onClose()
     },
     [onComplete]
   );
@@ -157,7 +161,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
               />
 
               {/* Action Buttons */}
-              <AnimatePresence>
+              {/* <AnimatePresence>
                 {isCompleted && !isFromMain && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -205,7 +209,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                   </motion.div>
 
                 )}
-              </AnimatePresence>
+              </AnimatePresence> */}
 
               {/* Error Actions */}
               <AnimatePresence>

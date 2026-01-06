@@ -2,6 +2,7 @@ import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
 import { PermissionGuard } from "@/components/HOCs/permission-guard";
 import { Button } from "@/components/ui";
 import { getColorFromId } from "@/utils/getRandomColors";
+import { organizationName } from "@/utils/organizationName";
 import Link from "next/link";
 import { useState } from "react";
 interface CardProps {
@@ -76,10 +77,7 @@ const OrganizationProductCard = ({ code, organizations, metaData }: CardProps) =
                                                 style={{ backgroundColor: bgColor }}
                                                 title={org.name}
                                             >
-                                                {org.name
-                                                    ? org.name.charAt(0).toUpperCase() +
-                                                    (org.name.charAt(1)?.toUpperCase() || "")
-                                                    : ""}
+                                                {organizationName(org.name ?? "")}
                                             </div>
                                         </div>
                                     }
@@ -97,10 +95,7 @@ const OrganizationProductCard = ({ code, organizations, metaData }: CardProps) =
                                                     style={{ backgroundColor: bgColor }}
                                                     title={org.name}
                                                 >
-                                                    {org.name
-                                                        ? org.name.charAt(0).toUpperCase() +
-                                                        (org.name.charAt(1)?.toUpperCase() || "")
-                                                        : ""}
+                                                    {organizationName(org.name ?? "")}
                                                 </div>
                                             </Link>
                                         ) : null

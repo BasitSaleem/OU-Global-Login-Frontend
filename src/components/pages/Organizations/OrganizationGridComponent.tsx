@@ -9,6 +9,7 @@ import { generateProductLink } from "./OrganizationProductCard";
 import { Button } from "@/components/ui";
 import { useRouter } from "next/navigation";
 import { IconName, SvgIcon } from "@/components/ui/SvgIcon";
+import { organizationName } from "@/utils/organizationName";
 interface OrganizationGridComponentProps {
   id: string;
   org: OgOrganization;
@@ -36,7 +37,6 @@ export function OrganizationGridComponent({
     router.push(`/organization-details/${org.id}`)
   }
   const data = org.permissionNames?.includes("og:delete::organization") ? "og:delete::organization" : undefined
-  console.log(data, "this is dataa");
 
   return (
     <div
@@ -48,9 +48,7 @@ export function OrganizationGridComponent({
           style={{ backgroundColor: bgColor }}
         >
           {org?.name
-            ? `${org.name.charAt(0).toUpperCase()}${org.name
-              .charAt(org.name.length - 1)
-              .toUpperCase()}`
+            ? `${organizationName(org.name)}`
             : ""}
         </div>
 

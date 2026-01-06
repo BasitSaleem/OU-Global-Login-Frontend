@@ -120,12 +120,13 @@ export const useResendOtp = () => {
   });
 };
 
-export const useGetMe = () => {
+export const useGetMe = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ["me"],
     queryFn: () =>
       request(ENDPOINTS.GET_ME, "GET", {}),
-    retry: false
+    retry: false,
+    ...options
   });
 };
 

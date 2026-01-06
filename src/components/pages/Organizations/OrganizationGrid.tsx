@@ -4,7 +4,7 @@ import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
 import { useDeleteOrganization, useIsFavorite } from "@/apiHooks.ts/organization/organization.api";
 import { useAppSelector } from "@/redux/store";
 import { DeleteOrganizationModal } from "@/components/modals/DeleteOrganizationModal";
-import { Skeleton } from "@/components/ui/skeletion";
+import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizationGridComponent } from "./OrganizationGridComponent";
 import { toast } from "@/hooks/useToast";
 import { LoadingSpinner } from "@/components/ui";
@@ -16,13 +16,15 @@ export interface OrganizationGridProps {
   onAddNew: () => void;
   onOrganizationDeleted?: (organizationId: string) => void;
   loading?: boolean;
+  metaData?: any;
 }
 
 export default function OrganizationGrid({
   organizations,
   onAddNew,
   onOrganizationDeleted,
-  loading
+  loading,
+  metaData
 }: OrganizationGridProps) {
   const { user, organization } = useAppSelector((s) => s.auth)
   const { mutate: toggleFavorite, isPending } = useIsFavorite()
@@ -43,10 +45,10 @@ export default function OrganizationGrid({
   };
   //2.DELETE
   const handleDeleteClick = (org: any) => {
-    if (org.id === organization?.id) {
-      toast.error('You cannot delete your current organization');
-      return
-    }
+    // if (org.id === organization?.id) {
+    //   toast.error('You cannot delete your current organization');
+    //   return
+    // }
     setSelectedOrg(org);
     setIsModalOpen(true);
   };
@@ -73,7 +75,7 @@ export default function OrganizationGrid({
           {!loading ? <div
             className="w-6 h-6 rounded-full flex items-center justify-center text-white font-medium bg-primary"
           >
-            {Math.max((organizations?.length || 0)) - 1}
+            {metaData?.totalCount!}
           </div> : <LoadingSpinner size={4} />}
         </div>
       </div>

@@ -40,11 +40,17 @@ export default function CreateOrgModal({
   );
 
   useEffect(() => {
-    setSubDomain(suggestions?.[0] || '');
     if (isSuggestionSubdomain && !suggestions?.includes(subDomain.trim())) {
       setIsSuggestionSubdomain(false);
     }
   }, [subDomain, suggestions, isSuggestionSubdomain]);
+
+  useEffect(() => {
+    if (suggestions && suggestions.length > 0 && !subDomain.trim()) {
+      setSubDomain(suggestions[0]);
+      setIsSuggestionSubdomain(true);
+    }
+  }, [suggestions]);
 
   const handleSuggestionClick = (suggestion: string) => {
     setIsSuggestionSubdomain(true);

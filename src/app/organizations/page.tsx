@@ -95,6 +95,7 @@ function OrganizationsContent() {
           onAddNew={() => setIsCreateModalOpen(true)}
           onOrganizationDeleted={handleOrganizationDeleted}
           loading={isOrgPending}
+          metaData={userOrgs?.meta}
         />
         {userOrgs?.meta?.totalCount! > 10 && (
           <div className="mt-4 flex justify-end">

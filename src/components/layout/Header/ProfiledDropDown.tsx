@@ -21,6 +21,7 @@ export default function ProfileMenu({ onClose, open }: ProfileMenuProps) {
     const dispatch = useAppDispatch();
     const router = useRouter();
     const handleLogout = () => {
+        <GlobalLoading text="Logging out" />
         logout(undefined, {
             onSuccess: () => {
                 onClose();
