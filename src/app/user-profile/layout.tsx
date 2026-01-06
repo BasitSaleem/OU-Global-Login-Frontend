@@ -118,19 +118,19 @@ export default function UserProfileLayout({
                 key={item.href}
                 onClick={() => router.push(item.href)}
                 className={`
-                  flex cursor-pointer items-center hover:bg-primary/10 hover:text-primary
+                  flex cursor-pointer items-center hover:text-primary
                   ${sidebarCollapsed ? "justify-center px-0" : "px-2"}
                   py-2 rounded-lg transition-colors
                   ${item.isActive
-                    ? "text-primary bg-primary/10"
-                    : " "
+                    ? "text-white bg-primary hover:bg-primary hover:text-white"
+                    : "hover:bg-primary/10 "
                   }
                   gap-2
                 `}
                 title={sidebarCollapsed ? item.label : ""}
               >
 
-                <SvgIcon name={item.icon} width={20} height={20} className="text-icon" />
+                <SvgIcon name={item.icon} width={20} height={20} className={`text-icon ${item.isActive ? "text-white" : ""}`} />
                 {!sidebarCollapsed && (
                   <span className=" font-medium">{item.label}</span>
                 )}
@@ -200,6 +200,7 @@ export default function UserProfileLayout({
           onToggleSidebar={toggleSidebar}
           onToggleMobileSidebar={toggleMobileSidebar}
           mobileSidebarOpen={mobileSidebarOpen}
+          collapsed={sidebarCollapsed}
         />
 
         {/* Page Content */}

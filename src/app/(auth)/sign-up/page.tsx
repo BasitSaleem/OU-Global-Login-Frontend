@@ -146,7 +146,7 @@ export default function SignUpPage() {
                     isLoading={isPending}
                     disabled={isPending || Object.keys(methods.formState.errors).length > 0}
                     variant="primary"
-                    className="w-full h-8 sm:h-9 text-white text-xs bg-[#947AF6] hover:bg-[#947AF6]/80 sm:text-sm font-bold rounded-full  cursor-pointer"
+                    className="w-full h-8 sm:h-9 text-white text-xs bg-primary hover:bg-primary/80 sm:text-sm font-bold rounded-full  cursor-pointer"
 
                   >
                     {isPending ? "Signing up .." : "Sign up"}
@@ -165,13 +165,20 @@ export default function SignUpPage() {
 
             {/* Social login buttons */}
             <div className="space-y-2 sm:space-y-5">
-              <button className="cursor-pointer hover:text-btn-text w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border  rounded-full hover:bg-primary/80 transition-colors">
+              <Button
+                variant="primary"
+                className="w-full border-primary/10 rounded-2xl bg-primary/0 hover:bg-primary/10 text-text hover:text-primary"
+              >
                 <Image src={Icons.google} alt="Google" width={20} height={20} />
                 <span className="text-xs sm:text-sm">
                   Continue with Google
                 </span>
-              </button>
-              <button className="cursor-pointer hover:text-btn-text w-full h-8 sm:h-9 flex items-center justify-center gap-1.5 sm:gap-2 border  rounded-full hover:bg-primary/80 transition-colors">
+              </Button>
+              <Button
+                variant="primary"
+                className="w-full border-primary/10 rounded-2xl bg-primary/0 hover:bg-primary/10 text-text hover:text-primary"
+
+              >
                 <Image
                   src={Icons.microsoft}
                   alt="Microsoft"
@@ -181,7 +188,7 @@ export default function SignUpPage() {
                 <span className="text-xs sm:text-sm">
                   Continue with Microsoft
                 </span>
-              </button>
+              </Button>
             </div>
 
             {/* Sign in link */}

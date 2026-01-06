@@ -88,7 +88,7 @@ const PaymentMethodsPage = () => {
         <div className="px-4 py-12 w-full mx-auto md:px-11">
             <div className="flex items-center gap-2 mb-6">
                 <h1 className="font-bold text-2xl">Payment Method</h1>
-                <div className="bg-[#8B5CF6] text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">
+                <div className="w-6 h-6 rounded-full flex items-center justify-center text-white font-medium bg-primary">
                     {paymentMethods.length}
                 </div>
             </div>

@@ -182,7 +182,7 @@ export class ErrorBoundary extends Component<Props, State> {
               {/* Footer */}
               <div className="text-center mt-6">
                 <p className="text-body-tiny text-text">
-                  © 2025 Owners Universe - All rights reserved
+                  © {new Date().getFullYear()} Owners Universe - All rights reserved
                 </p>
               </div>
             </div>

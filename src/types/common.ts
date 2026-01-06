@@ -48,6 +48,7 @@ export type Invitation = {
 
 
 
+<<<<<<< HEAD
 
 
 
@@ -67,18 +68,20 @@ export type Invitation = {
 
 
 
+=======
+>>>>>>> 69a3f3bef387ad8e70f7cd329d97beaeb08a068f
 export type Permission =
   | "og:create::organization"
   | "og:delete::organization"
   | "og:favorite::organization"
   | "og:edit::password"
   | "og:access::notification_preferences"
-  | "og:edit::email"
   | "og:access::setting"
   | "og:access::products"
   | "og:view::all_products"
   | "og:view::all_notifications"
   | "og:edit::profile"
+  | "og:edit::email"
 
 export interface WithPermissionsProps {
   userPermissions: Permission[];

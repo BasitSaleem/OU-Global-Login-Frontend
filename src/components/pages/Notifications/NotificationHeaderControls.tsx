@@ -1,4 +1,5 @@
 'use client';
+import { Button } from '@/components/ui';
 import React from 'react';
 import { HiMenu } from 'react-icons/hi';
 
@@ -40,19 +41,20 @@ export default function NotificationsHeaderControls({
         </span>
 
         {/* Pill switch */}
-        <div
+        <Button
           onClick={() => setOnlyUnread(!onlyUnread)}
-          className={`rounded-full p-0.5 cursor-pointer transition-colors ${onlyUnread ? 'bg-[#795CF5]' : 'bg-gray-200'
-            } w-8 h-4 sm:w-10 sm:h-5`}
+          variant='basic'
+          className={`w-12 h-6 rounded-full cursor-pointer p-1 hidden sm:flex items-center transition-colors border bg-primary ${onlyUnread ? "bg-primary" : "bg-gray-200"
+            }`}
           role="switch"
           aria-checked={onlyUnread}
           aria-label="Only show unread notifications"
         >
-          <div
-            className={`bg-white rounded-full shadow transition-transform w-3 h-3 sm:w-3.5 sm:h-3.5 ${onlyUnread ? 'translate-x-4 sm:translate-x-5' : 'translate-x-0'
+          <span
+            className={`w-4 h-4 bg-white rounded-full transition-transform mr-6  ${onlyUnread ? "translate-x-6" : "translate-x-0"
               }`}
           />
-        </div>
+        </Button>
       </div>
     </div>
   );

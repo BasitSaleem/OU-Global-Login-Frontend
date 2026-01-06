@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/constants';
 import { GlobalLoading } from '../ui/loading';
 import { useGetMe } from '@/apiHooks.ts/auth/auth.api';
+import { useAppSelector } from '@/redux/store';
 interface PublicRouteProps {
   children: React.ReactNode;
   redirectTo?: string;
@@ -15,37 +16,20 @@ export function PublicRoute({
   fallback
 }: PublicRouteProps) {
   const router = useRouter();
-  
-  // const searchParams = useSearchParams();
-  // const { isAuthenticated } = useAppSelector((state) => state.auth);
-  // const [isChecking, setIsChecking] = useState(true);
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     setIsChecking(false);
-  //   }, 100);
-  
-  //   return () => clearTimeout(timer);
-  // }, []);
-  const { data, isLoading, isError } = useGetMe()
-  // console.log(isError, );
+  const { isAuthenticated } = useAppSelector((s) => s.auth)
 
-  // useEffect(() => {
-    if (!isLoading && !isError && data?.data?.user) {
-      const destination = redirectTo;
-      console.log('Destination: ', destination);
-      router.replace(destination);
-
-    }
-  // }, [router, data, redirectTo]);
+  const { data, isLoading, isError } = useGetMe({ enabled: isAuthenticated })
+  if (isAuthenticated || (!isLoading && !isError && data?.data?.user)) {
+    router.replace(redirectTo);
+    return fallback || (
+      <GlobalLoading text='Redirecting...' />
+    );
+  }
 
   if (isLoading) {
     return fallback || (
       <GlobalLoading text='checking in the public guard' />
     );
   }
-
-  // if (isError && !data?.data?.user) {
-  //   return null;
-  // }
   return <>{children}</>;
 }

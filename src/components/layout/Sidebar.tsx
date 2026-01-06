@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { IconName, SvgIcon } from "../ui/SvgIcon";
 import { cn } from "@/utils/helpers";
 import Link from "next/link";
@@ -17,10 +16,7 @@ interface SidebarProps {
 
 interface NavigationItem {
   href: string;
-  type: "svg" | "image";
-  svgName?: IconName
-  image?: string;
-  activeImage?: string;
+  svgName: IconName
   label: string;
   isActive: boolean;
   hasExternal?: boolean;
@@ -41,41 +37,18 @@ export default function Sidebar({
   const navigationItems: NavigationItem[] = [
     {
       href: "/",
-      type: "svg",
       svgName: "home",
-      // image: Icons.home,
-      // activeImage: Icons.homewhite,
       label: "Home",
       isActive: currentPath === "/",
     },
     {
       href: "/organizations",
-      type: "svg",
       svgName: "organization",
-      // image: Icons.organization,
-      // activeImage: Icons.organizationwhite,
       label: "Organizations",
       isActive: currentPath === "/organizations",
     },
-    // {
-    //   href: "/payment-methods",
-    //   type: "svg",
-    //   svgName: "payment-methods",
-    //   // image: Icons.organization,
-    //   label: "Payment Methods",
-    //   isActive: currentPath === "/payment-methods",
-    // },
-    // {
-    //   href: "/billing",
-    //   type: "svg",
-    //   svgName: "billing",
-    //   // image: Icons.organization,
-    //   label: "billing",
-    //   isActive: currentPath === "/billing",`
-    // },
     {
       href: "https://ownersinventory.com/",
-      type: "svg",
       hasExternal: true,
       svgName: 'OI',
       label: "Inventory",
@@ -83,7 +56,6 @@ export default function Sidebar({
     },
     {
       href: "/marketplace",
-      type: "svg",
       svgName: 'OM',
       label: "Marketplace",
       hasTime: true,
@@ -91,7 +63,6 @@ export default function Sidebar({
     },
     {
       href: "/jungle",
-      type: "svg",
       svgName: 'OJ',
       label: "Jungle",
       hasTime: true,
@@ -99,22 +70,19 @@ export default function Sidebar({
     },
     {
       href: "/analytics",
-      type: "svg",
-      hasTime: true,
       svgName: 'OA',
       label: "Analytics",
-      hasBadge: true,
-      isActive: currentPath === "/analytics",
+      hasTime: true,
+      isActive: currentPath === "/analytics"
+
     },
   ];
 
   const handleItemClick = (item: NavigationItem, e: React.MouseEvent) => {
     e.preventDefault();
     if (item.hasTime) {
-      const iconNode = item.type === "svg" && item.svgName ? (
+      const iconNode = (
         <SvgIcon name={item.svgName} className="w-10 h-10" />
-      ) : (
-        <Image src={item.href} alt={item.label} className="w-10 h-10" />
       );
       onShowModal(iconNode);
     } else {
@@ -126,29 +94,13 @@ export default function Sidebar({
     }
   };
 
-  const renderIcon = (item: NavigationItem, isCollapsed: boolean) => {
-    const iconClass = cn(
-      "cursor-pointer transition-colors text-icon",
-    );
-
-    if (item.type === "svg" && item.svgName) {
-      return <SvgIcon name={item.svgName} className={iconClass} width={20} height={20} />;
-    }
-
-    return (
-      <SvgIcon name={item.svgName!} className={iconClass} width={20} height={20} />
-    );
-  };
-
   const renderRightSideContent = (item: NavigationItem) => {
     if (item.hasExternal) {
       return <SvgIcon name="expand" width={18} height={18} />;
     }
-    // #4B5563
     if (item.hasTime) {
       return <SvgIcon name="time" width={17} height={17} />;
     }
-
     if (item.hasBadge && !item.isActive) {
       return (
         <span
@@ -168,7 +120,7 @@ export default function Sidebar({
       {
         "justify-center px-0": collapsed,
         "px-2": !collapsed,
-        "bg-primary/10 text-primary": item.isActive,
+        "bg-primary text-white hover:bg-primary hover:text-white": item.isActive,
         "justify-between": !collapsed && (item.hasExternal || item.hasTime || item.hasBadge),
         "gap-2": !collapsed && !item.isActive,
       }
@@ -176,17 +128,18 @@ export default function Sidebar({
 
     return (
       <div
-        // target={item.hasExternal ? "_blank" : "_self"}
         onClick={(e) => handleItemClick(item, e)}
         className={itemClass}
         title={collapsed ? item.label : ""}
       >
         {collapsed ? (
-          renderIcon(item, true)
+          <SvgIcon name={item.svgName} width={20} height={20} />
         ) : (
           <>
             <div className="flex items-center gap-3 ">
-              {renderIcon(item, false)}
+              {/* {renderIcon(item, false)}
+               */}
+              <SvgIcon name={item.svgName} width={20} height={20} />
               <span className={cn("", { "font-medium": item.isActive })}>
                 {item.label}
               </span>
@@ -289,9 +242,7 @@ export default function Sidebar({
           ) : (
             <SvgIcon
               name="ownersUniverse"
-              className="text-foreground"
               width={130}
-              height={130}
             />
           )}
         </Link>

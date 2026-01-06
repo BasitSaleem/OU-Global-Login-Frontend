@@ -3,7 +3,7 @@
 import { Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import ProfileMenu from "./ProfileMenu";
+import ProfileMenu from "./ProfiledDropDown";
 import { useAppSelector } from "@/redux/store";
 import { NotificationsDropdown } from "./NotificationDropdown";
 import { NotificationItemProps } from "./Header.types";
@@ -14,12 +14,14 @@ interface HeaderProps {
   onToggleSidebar: () => void;
   onToggleMobileSidebar: () => void;
   mobileSidebarOpen: boolean;
+  collapsed: boolean;
 }
 
 export default function AppHeader({
   onToggleSidebar,
   onToggleMobileSidebar,
   mobileSidebarOpen,
+  collapsed,
 }: HeaderProps) {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -79,6 +81,7 @@ export default function AppHeader({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+  console.log(collapsed, "f_______________-");
 
   return (
     <header className="h-14 border-b bg-bg-secondary flex items-center justify-between px-4">
@@ -89,7 +92,7 @@ export default function AppHeader({
           className="hidden lg:flex hover:scale-105 cursor-pointer"
           title="Toggle sidebar"
         >
-          <SvgIcon name="hamburger" className="w-5 h-5 text-icon" />
+          <SvgIcon name={collapsed ? "hamburgerRight" : "hamburgerLeft"} className="w-5 h-5 text-icon" />
         </Button>
 
         <Button
@@ -125,13 +128,13 @@ export default function AppHeader({
             className="relative p-1 cursor-pointer"
             aria-label="Open notifications"
           >
-            <SvgIcon name="notification" width={20} height={20} />
-            {anyUnread && (
+            <SvgIcon name="notification" width={20} height={20} className="text-icon" />
+            {/* {anyUnread && (
               <div
                 className="absolute top-0 right-0 w-1.5 h-1.5 rounded-full"
                 style={{ backgroundColor: "#D1202D" }}
               />
-            )}
+            )} */}
           </Button>
 
           {notificationsOpen && (
@@ -152,14 +155,13 @@ export default function AppHeader({
           onClick={handleSettingsClick}
           className="p-1 cursor-pointer"
         >
-          <SvgIcon name="settings" width={20} height={20} />
+          <SvgIcon name="settings" width={20} height={20} className="text-icon" />
         </Button>
 
         <div className="relative" ref={profileDropdownRef}>
           <button
             onClick={toggleProfileDropdown}
-            className="w-8 h-8 rounded-full flex items-center justify-center hover:opacity-90 transition hover:scale-105 duration-300 cursor-pointer"
-            style={{ backgroundColor: "#795CF5" }}
+            className="w-8 h-8 rounded-full flex items-center justify-center hover:opacity-90 transition hover:scale-105 duration-300 cursor-pointer bg-primary"
             aria-label="Open profile menu"
           >
             {user?.profile_url ?
@@ -170,7 +172,7 @@ export default function AppHeader({
                 width={500}
                 height={500}
               />
-              : <span className="text-white mt-[2px] font-medium  cursor-pointer items-center">
+              : <span className="text-white  font-medium  cursor-pointer items-center">
                 {" "}
                 {`${user?.first_name?.charAt(0) ?? ""}${user?.last_name?.charAt(0) ?? ""
                   }`.toUpperCase()}

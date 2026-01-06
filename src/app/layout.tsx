@@ -19,7 +19,6 @@ export const metadata: Metadata = {
   description: "Global authentication and business management platform for Owners Global. Streamline your business operations with our suite of integrated products including Owners Inventory, Owners Jobs, Owners Marketplace, and more.",
   keywords: [
     "business management",
-    "authentication platform",
     "owners global",
     "global login",
     "business tools",
@@ -43,7 +42,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://ownersglobal.com",
+    url: "https://osglobal.ownersjungle.com",
     siteName: "Owners Global",
     title: "Owners Global - Global Login & Authentication Platform",
     description: "Global authentication and business management platform for Owners Global. Streamline your business operations with our suite of integrated products.",
@@ -77,8 +76,6 @@ export const metadata: Metadata = {
       { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
     ],
   },
-
-  // Theme and appearance
 
 
   // Verification and other metadata

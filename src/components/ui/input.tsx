@@ -113,7 +113,7 @@
 // components/ui/Input.tsx
 import { forwardRef, InputHTMLAttributes } from "react";
 import { cn } from "@/utils/helpers";
-import { Asterisk, BadgeInfo, Eye, EyeOff, Lock } from "lucide-react";
+import { Asterisk, Eye, EyeOff, Lock } from "lucide-react";
 import { useState } from "react";
 import { PermissionGuard } from "@/components/HOCs/permission-guard";
 import { Permission } from "@/types/common";
@@ -162,7 +162,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       : "";
 
     const disabledStyles = props.disabled
-      ? "bg-gray-100 text-gray-500 border-gray-300"
+      ? "bg-primary/20 text-gray-500 border-gray-300"
       : "";
 
     if (!permission) {
@@ -254,7 +254,7 @@ const BaseInput = forwardRef<HTMLInputElement, BaseInputProps>(
             {isRequired ? (
               <>
                 {label}
-                <Asterisk className="inline ml-1 mb-2" width={14} height={14} color="red" />
+                <Asterisk className="inline mb-2" width={14} height={14} color="red" />
               </>
             ) : (
               label
@@ -323,7 +323,7 @@ const LockedInput = forwardRef<HTMLInputElement, { label?: string; isRequired?: 
             {isRequired ? (
               <>
                 {label}
-                <Asterisk className="inline ml-1 mb-2" width={14} height={14} color="red" />
+                <Asterisk className="inline mb-2" width={14} height={14} color="red" />
               </>
             ) : (
               label

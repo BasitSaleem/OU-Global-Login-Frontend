@@ -1,7 +1,6 @@
 import { useLogout } from "@/apiHooks.ts/auth/auth.api";
 import { PermissionGuard } from "@/components/HOCs/permission-guard";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui";
 import { GlobalLoading } from "@/components/ui/loading";
 import { SvgIcon } from "@/components/ui/SvgIcon";
@@ -22,6 +21,7 @@ export default function ProfileMenu({ onClose, open }: ProfileMenuProps) {
     const dispatch = useAppDispatch();
     const router = useRouter();
     const handleLogout = () => {
+        <GlobalLoading text="Logging out" />
         logout(undefined, {
             onSuccess: () => {
                 onClose();
@@ -62,7 +62,9 @@ export default function ProfileMenu({ onClose, open }: ProfileMenuProps) {
                         </span>}
                 </div>
                 <div>
-                    <h3 className="text-body-medium-bold text-gray-900">{user?.first_name}</h3>
+                    <h3 className="text-body-medium-bold text-gray-900 capitalize">
+                        {user?.first_name} {user?.last_name}
+                    </h3>
                     <p className="text-xs text-text truncate">
                         {user?.email}
                     </p>
@@ -71,15 +73,15 @@ export default function ProfileMenu({ onClose, open }: ProfileMenuProps) {
 
             <div className="p-3 space-y-2">
                 <Link href={"/user-profile"}
-                    className="w-full flex items-center gap-2 px-2 py-1.5 hover:text-[#ffff] rounded-lg  hover:bg-primary/80  cursor-pointer"
+                    className="w-full flex items-center gap-2 px-2 py-1.5 hover:text-[#ffff] rounded-lg  hover:bg-primary  cursor-pointer"
                 >
                     <SvgIcon name="profile" width={20} height={20} />
-                    <span className=" ">Profile</span>
+                    <span>Profile</span>
                 </Link>
                 <PermissionGuard requiredPermissions="og:access::setting">
-                    <Link href="/account-setting" className="w-full flex items-center hover:text-[#ffff] gap-2 px-2 py-1.5 rounded-lg hover:bg-primary/80 cursor-pointer">
+                    <Link href="/account-setting" className="w-full flex items-center hover:text-[#ffff] gap-2 px-2 py-1.5 rounded-lg hover:bg-primary cursor-pointer">
                         <SvgIcon name="settings" width={20} height={20} />
-                        <span className="">Account settings</span>
+                        <span>Account settings</span>
                     </Link>
                 </PermissionGuard>
                 <ThemeSwitcher />
