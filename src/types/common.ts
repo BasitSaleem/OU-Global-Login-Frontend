@@ -48,6 +48,28 @@ export type Invitation = {
 
 
 
+<<<<<<< HEAD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=======
+>>>>>>> 69a3f3bef387ad8e70f7cd329d97beaeb08a068f
 export type Permission =
   | "og:create::organization"
   | "og:delete::organization"
