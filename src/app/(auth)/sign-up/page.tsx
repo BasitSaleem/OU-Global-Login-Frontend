@@ -108,6 +108,7 @@ export default function SignUpPage() {
                   id="email"
                   label="Email"
                   type="email"
+                  disabled={email && email.length > 0 ? true : false}
                   placeholder="Enter Email"
                   {...methods.register("email", {
                     required: "Email is required",
