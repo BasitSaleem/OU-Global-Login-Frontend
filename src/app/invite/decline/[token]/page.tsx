@@ -2,6 +2,8 @@
 
 import { useDeclineInvitation } from '@/apiHooks.ts/invitation/invitation.api';
 import { GlobalLoading } from '@/components/ui/loading';
+import { ROUTES } from '@/constants';
+import { toast } from '@/hooks/useToast';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -9,22 +11,22 @@ export default function DeclineInvitePage() {
     const params = useParams();
     const router = useRouter();
     const token = params.token as string;
-    const { mutate: declineInvitation, isPending: isDeclining } = useDeclineInvitation({
+    const { mutate: declineInvitation, isPending: isDeclining, error } = useDeclineInvitation({
         onSuccess: () => {
-            router.push('/');
+            router.push(ROUTES.LOGIN);
         }
     });
     useEffect(() => {
-        declineInvite();
-    }, []);
-
-    const declineInvite = () => {
-        if (token) {
-            declineInvitation(token)
+        if (!token) {
+            toast.info("Token not found", "Token not found")
+            router.push(ROUTES.LOGIN)
         }
-    }
+        declineInvitation(token);
+    }, []);
     if (isDeclining) {
         return <GlobalLoading text='Declining Invitation' />
     }
-
+    if (error) {
+        router.push(ROUTES.LOGIN)
+    }
 }

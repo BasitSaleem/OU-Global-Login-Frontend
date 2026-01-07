@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { SvgIcon, IconName } from './SvgIcon';
 
 interface LoaderProps {
+    text?: string;
     className?: string;
     iconSize?: number;
 }
@@ -13,7 +14,8 @@ const ICONS: IconName[] = ["OA", 'OI', 'OJ', 'OM'];
 
 export const Loader: React.FC<LoaderProps> = ({
     className = "",
-    iconSize = 80
+    iconSize = 80,
+    text
 }) => {
     const [currentIconIndex, setCurrentIconIndex] = useState(0);
 
@@ -63,16 +65,16 @@ export const Loader: React.FC<LoaderProps> = ({
                 />
             </div>
 
-            {/* <div className="absolute mt-32">
+            <div className="absolute mt-32">
                 <motion.p
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
                     className="font-medium text-sm animate-pulse"
                 >
-                    Creating Organization...
+                    {text}
                 </motion.p>
-            </div> */}
+            </div>
         </div>
     );
 };

@@ -46,11 +46,10 @@ export default function LoginPage() {
     }
   }, [router, searchParams]);
   const token = useSearchParams().get('token') || undefined
+  const email = useSearchParams().get('email') || undefined
   const methods = useForm({
     resolver: zodResolver(loginSchema),
   });
-  console.log(token);
-
   const { handleSubmit } = methods;
 
   const createOnSubmitData = (formData: any) => {
@@ -59,6 +58,9 @@ export default function LoginPage() {
       ...params,
     }
     return data;
+  }
+  if (email && email.length > 0) {
+    methods.setValue('email', email)
   }
   const onSubmit = async (data: signinData) => {
     login(createOnSubmitData({ ...data, token }), {
@@ -104,6 +106,7 @@ export default function LoginPage() {
                   id="email"
                   label="Email"
                   type="email"
+                  disabled={email && email.length > 0 ? true : false}
                   placeholder="Enter Email"
                   {...methods.register("email", {
                     required: "Email is required",

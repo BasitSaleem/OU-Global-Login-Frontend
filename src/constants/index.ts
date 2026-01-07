@@ -27,7 +27,7 @@ export const ROUTES = {
   HOME: '/',
   LOGIN: '/login?app=OG',
   CREATE_ORGANIZATION: "/create-organization",
-  REGISTER: '/sign-up',
+  REGISTER: '/sign-up?app=OG',
   FORGOT_PASSWORD: '/auth/forgot-password',
   RESET_PASSWORD: '/auth/reset-password',
   DASHBOARD: '/',
