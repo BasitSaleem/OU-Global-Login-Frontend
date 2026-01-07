@@ -54,7 +54,6 @@ export const useSignUp = () => {
       ),
     onSuccess: (user, data) => {
       queryClient.setQueryData(["user", user.id], user);
-      console.log(data, "response dataaa");
       toast.success(
         "Verification Email sent",
         `Verification email sent successfully to ${data.email}`
