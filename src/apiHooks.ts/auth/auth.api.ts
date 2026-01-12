@@ -5,6 +5,9 @@ import { request } from "@/utils/requestFunction";
 import { toast } from "@/hooks/useToast";
 import { signInResponse } from "@/types/auth.types";
 import { PermissionTypeGenerator } from "@/utils/permissionTypeGenerator";
+import { clearAuth } from "@/redux/slices/auth.slice";
+import { store } from "@/redux/store";
+
 const ENDPOINTS = {
   SIGN_IN: "/auth/sign-in",
   SIGN_UP: "/auth/sign-up",
@@ -123,6 +126,8 @@ export const useGetMe = (options?: { enabled?: boolean }) => {
     queryFn: () =>
       request(ENDPOINTS.GET_ME, "GET", {}),
     retry: false,
+    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 5, // 5 minutes
     ...options
   });
 };

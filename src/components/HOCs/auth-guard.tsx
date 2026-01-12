@@ -4,8 +4,9 @@ import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/constants';
 import { useGetMe } from '@/apiHooks.ts/auth/auth.api';
 import { useAppDispatch } from '@/redux/store';
-import { setOrganization } from '@/redux/slices/auth.slice';
-import { useEffect } from 'react';
+import { clearAuth, setOrganization } from '@/redux/slices/auth.slice';
+import { useEffect, useRef } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -13,8 +14,11 @@ interface AuthGuardProps {
 }
 
 export function AuthGuard({ children, fallback }: AuthGuardProps) {
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const hasRedirected = useRef(false);
+
   const {
     data,
     isLoading,
@@ -31,16 +35,21 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
   }, [data, isLoading, dispatch]);
 
   useEffect(() => {
-    if (!isLoading && isError && !data?.data?.user) {
+    if (!isLoading && isError && !hasRedirected.current) {
+      hasRedirected.current = true;
+      dispatch(clearAuth());
+      queryClient.clear();
+      localStorage.clear();
+      sessionStorage.clear();
       router.replace(ROUTES.LOGIN);
     }
-  }, [isLoading, isError, data, router]);
+  }, [isLoading, isError, router, dispatch, queryClient]);
 
   if (isLoading) {
     return fallback || null;
   }
 
-  if (isError && !data?.data?.user) {
+  if (isError) {
     return fallback || null;
   }
 
