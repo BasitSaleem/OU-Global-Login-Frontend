@@ -28,10 +28,9 @@ export const useLogin = () => {
       ),
     onSuccess: async (response) => {
       queryClient.setQueryData(["user", response?.data?.user.id], response?.data?.user);
-      if (process.env.NODE_ENV === 'development') {
-        await PermissionTypeGenerator.processSignInResponse(response?.data?.user!);
-      }
-
+      // if (process.env.NODE_ENV === 'development') {
+      //   await PermissionTypeGenerator.processSignInResponse(response?.data?.user!);
+      // }
       toast.success("Login successful!", `Welcome back ${response?.data?.user?.first_name} to Owners Universe`);
     },
     onError: (error: any) => {
