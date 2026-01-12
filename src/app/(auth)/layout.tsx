@@ -1,4 +1,5 @@
 "use client"
+import { AuthGuard } from '@/components/HOCs/auth-guard';
 import { PublicRoute } from '@/components/HOCs/publicRoute.guard';
 import { Logo } from '@/components/ui';
 import Link from 'next/link';
@@ -28,10 +29,11 @@ const AuthLayout = ({ children }: AuthLayoutProp) => {
                     </Link>
                 </div>
             </div>
-            <PublicRoute redirectTo="/">
+            <PublicRoute>
                 {children}
             </PublicRoute>
-            <div className="fixed bottom-[24px] inset-x-0 z-10 pb-2 sm:pb-0 flex justify-center">
+
+            <div className="mt-16 sm:mt-28 lg:mt-44 inset-x-0 z-10 pb-6 sm:pb-8 flex justify-center">
                 <p className="text-xs text-center">
                     © {new Date().getFullYear()} Owners Inventory - All rights reserved
                 </p>

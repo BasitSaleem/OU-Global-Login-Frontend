@@ -164,6 +164,7 @@ export default function CreateOrgModal({
         <Button
           onClick={onClose}
           variant="secondary"
+          disabled={isLoading}
         >
           Cancel
         </Button>

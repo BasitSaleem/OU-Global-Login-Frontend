@@ -3,7 +3,9 @@ import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/constants';
 import { GlobalLoading } from '../ui/loading';
 import { useGetMe } from '@/apiHooks.ts/auth/auth.api';
-import { useAppSelector } from '@/redux/store';
+import { useAppDispatch, useAppSelector } from '@/redux/store';
+import { useEffect } from 'react';
+import { setAuth } from '@/redux/slices/auth.slice';
 interface PublicRouteProps {
   children: React.ReactNode;
   redirectTo?: string;
@@ -16,20 +18,34 @@ export function PublicRoute({
   fallback
 }: PublicRouteProps) {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const { isAuthenticated } = useAppSelector((s) => s.auth)
 
   const { data, isLoading, isError } = useGetMe({ enabled: isAuthenticated })
-  if (isAuthenticated || (!isLoading && !isError && data?.data?.user)) {
-    router.replace(redirectTo);
+  console.log(isAuthenticated, "this is authenticated")
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace(redirectTo);
+    } else if (!isLoading && !isError && data?.data?.user) {
+      dispatch(setAuth({
+        user: data.data.user,
+        isAuthenticated: true,
+        isLoading: false,
+        error: null,
+        organization: data.data.user.organizations?.[0] ?? data.data.user.memberships?.[0]?.organization ?? null,
+        refreshToken: null
+      }));
+      router.replace(redirectTo);
+    }
+  }, [isAuthenticated, data, isLoading, isError, redirectTo, router, dispatch]);
+
+  if (isAuthenticated || isLoading || (!isError && data?.data?.user)) {
     return fallback || (
-      <GlobalLoading text='Redirecting...' />
+      <GlobalLoading text='Redirecting' />
     );
   }
 
-  if (isLoading) {
-    return fallback || (
-      <GlobalLoading text='checking in the public guard' />
-    );
-  }
+
+
   return <>{children}</>;
 }

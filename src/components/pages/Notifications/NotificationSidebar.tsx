@@ -49,10 +49,12 @@ export default function NotificationsSidebar({
             {sidebarFilters.map((filter) => (
               <Button
                 key={filter.id}
-                variant={activeSidebarFilter === filter.id ? 'primary' : 'basic'}
+                variant="basic"
                 onClick={() => setActiveSidebarFilter(filter.id)}
-                className={`h-8 bg-background hover:bg-primary/10 ${activeSidebarFilter === filter.id ? "text-primary bg-primary/10" : ''}  `}
-              >
+                className={`h-9 px-4 rounded-lg border transition-all duration-200 hover:bg-primary/5 ${activeSidebarFilter === filter.id
+                  ? "text-primary bg-primary/10 border-primary"
+                  : "text-gray-600 bg-transparent border-transparent"
+                  }  `}              >
                 {filter.label}
               </Button>
             ))}

@@ -99,7 +99,7 @@ function OrganizationsContent() {
         />
         {userOrgs?.meta?.totalCount! > 10 && (
           <div className="mt-4 flex justify-end">
-            <button onClick={() => setPage((prev) => (page === 1 ? prev + 1 : prev - 1))}>
+            <button onClick={() => setPage((prev) => (userOrgs?.meta.hasMore ? prev + 1 : 1))}>
               <p className="text-primary-500 font-medium hover:underline cursor-pointer">
                 {userOrgs?.meta.hasMore ? "View More" : "View Less"}
               </p>

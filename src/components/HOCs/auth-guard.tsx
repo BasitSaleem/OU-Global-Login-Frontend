@@ -5,6 +5,7 @@ import { ROUTES } from '@/constants';
 import { useGetMe } from '@/apiHooks.ts/auth/auth.api';
 import { useAppDispatch } from '@/redux/store';
 import { setOrganization } from '@/redux/slices/auth.slice';
+import { useEffect } from 'react';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -17,22 +18,32 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
   const {
     data,
     isLoading,
-    isError,
-    error
+    isError
   } = useGetMe();
-  const organization = data?.data?.user?.organizations?.[0] ?? data?.data?.user?.memberships?.[0]?.organization ?? undefined
-  if (organization !== undefined) {
-    dispatch(setOrganization(organization))
-  }
+
+  useEffect(() => {
+    if (!isLoading && data?.data?.user) {
+      const organization = data.data.user.organizations?.[0] ?? data.data.user.memberships?.[0]?.organization ?? undefined;
+      if (organization) {
+        dispatch(setOrganization(organization));
+      }
+    }
+  }, [data, isLoading, dispatch]);
+
+  useEffect(() => {
+    if (!isLoading && isError && !data?.data?.user) {
+      router.replace(ROUTES.LOGIN);
+    }
+  }, [isLoading, isError, data, router]);
+
   if (isLoading) {
-    return (
-      fallback
-    );
+    return fallback || null;
   }
-  if (!isLoading && isError && !data?.data.user) {
-    router.replace(ROUTES.LOGIN)
+
+  if (isError && !data?.data?.user) {
+    return fallback || null;
   }
-  else {
-    return <>{children}</>;
-  }
+
+  return <>{children}</>;
 }
+
