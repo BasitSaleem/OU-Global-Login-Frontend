@@ -2,10 +2,10 @@
 
 import { useAcceptInvitation, useGetInvitationStatus } from '@/apiHooks.ts/invitation/invitation.api';
 import { useParams, useRouter } from 'next/navigation';
-import { GlobalLoading } from '@/components/ui/loading';
 import { useGetMe } from '@/apiHooks.ts/auth/auth.api';
 import { ROUTES } from '@/constants';
 import { toast } from '@/hooks/useToast';
+import { Loader } from '@/components/ui';
 
 export default function AcceptInvitePage() {
     const params = useParams();
@@ -79,9 +79,9 @@ export default function AcceptInvitePage() {
     //     acceptInvitation(token)
     // }
     if (isStatusPending) {
-        return <GlobalLoading text='Checking Invitation Status' />
+        return <Loader text='Checking Invitation Status' />
     }
     if (isAccepting) {
-        return <GlobalLoading text='Accepting Invitation' />
+        return <Loader text='Accepting Invitation' />
     }
 }

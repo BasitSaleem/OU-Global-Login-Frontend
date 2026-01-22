@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SvgIcon, IconName } from './SvgIcon';
+import { Dots } from './Dots';
+import { cn } from '@/utils/helpers';
 
 interface LoaderProps {
     text?: string;
@@ -23,13 +25,18 @@ export const Loader: React.FC<LoaderProps> = ({
         const interval = setInterval(() => {
             setCurrentIconIndex((prev) => (prev + 1) % ICONS.length);
         }, 800);
-
         return () => clearInterval(interval);
     }, []);
 
     return (
-        <div className={`flex items-center justify-center w-full h-full min-h-[300px] ${className}`}>
-            <div className="relative flex items-center justify-center">
+        <div
+            className={cn(
+                "fixed inset-0 z-50 flex items-center justify-center pointer-events-auto bg-background/80 backdrop-blur-sm overflow-hidden",
+                className
+            )}
+            aria-modal="true"
+            role="status"
+        >            <div className="relative flex items-center justify-center">
                 <AnimatePresence mode="popLayout">
                     <motion.div
                         key={currentIconIndex}
@@ -42,7 +49,7 @@ export const Loader: React.FC<LoaderProps> = ({
                         }}
                         className="absolute"
                     >
-                        <div className={`flex items-center justify-center p-4 bg-white/10 backdrop-blur-sm rounded-full shadow-sm border border-gray-100/20`}>
+                        <div className={`flex items-center justify-center p-4 bg-background/10 backdrop-blur-sm rounded-full shadow-sm border border-gray-100/20`}>
                             <SvgIcon
                                 name={ICONS[currentIconIndex]}
                                 width={iconSize}
@@ -65,14 +72,15 @@ export const Loader: React.FC<LoaderProps> = ({
                 />
             </div>
 
-            <div className="absolute mt-32">
+            <div className="absolute mt-44">
                 <motion.p
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
-                    className="font-medium text-sm animate-pulse"
+                    className="flex items-center font-medium text-sm text-primary"
                 >
                     {text}
+                    <Dots dotSize="3px" className="text-primary gap-1 mt-1" />
                 </motion.p>
             </div>
         </div>

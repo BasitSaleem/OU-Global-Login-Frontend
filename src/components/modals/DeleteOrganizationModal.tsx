@@ -1,14 +1,12 @@
-"use client";
-
-import React from "react";
-import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import React, { useEffect, useMemo, useRef } from "react";
+import { Button, Loader } from "@/components/ui";
 import { Modal } from "./GenericModal";
-import { motion } from "framer-motion";
 import { useDeleteOrganizationProgress } from "@/hooks/useProgressTracking";
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
-import { JobProgress } from "@/types/progressTypes";
-import { LoadingSpinner } from "../ui";
+import { ProgressTracker } from "../ui/ProgressTracker";
+import { AnimatePresence, motion } from "framer-motion";
+import { useScrollLock } from "@/hooks/useScrollLock";
+import { toast } from "@/hooks/useToast";
 
 interface DeleteOrganizationModalProps {
     isOpen: boolean;
@@ -35,45 +33,80 @@ export const DeleteOrganizationModal: React.FC<DeleteOrganizationModalProps> = (
         error,
         reconnect
     } = useDeleteOrganizationProgress(
-        isDeleting ? organizationData.id || null : null,
+        (isDeleting || !!(organizationData.id)) ? organizationData.id : null,
     );
+    const toastShown = useRef(false);
+
+    const isJobStarted = !!progress;
+    const isCompleted = progress?.status === 'completed';
+    const isFailed = progress?.status === 'failed';
 
     const handleClose = () => {
-        if (!isDeleting) {
+        if (!isDeleting && !isJobStarted) {
             disconnect();
             onClose();
         }
     };
 
-    // Show progress bar only when deleting
-    if (isDeleting) {
+    useEffect(() => {
+        if (!isOpen) {
+            toastShown.current = false;
+            return;
+        }
+
+        if (isCompleted && !toastShown.current) {
+            toast.success("Organization deleted", "The organization is deleted successfully");
+            toastShown.current = true;
+            disconnect();
+            onClose();
+        } else if (isFailed && !toastShown.current) {
+            toast.error("Organization deletion failed", "The organization is not deleted successfully");
+            toastShown.current = true;
+            disconnect();
+            onClose();
+        }
+    }, [isCompleted, isFailed, disconnect, onClose, isOpen]);
+
+    useScrollLock(isOpen)
+
+    if (isOpen && isJobStarted) {
         return (
-            <Modal
-                isOpen={isOpen}
-                onClose={() => { }} // Prevent closing during deletion
-                size="md"
-                ariaLabel="Delete Organization Progress"
-            >
-                <div className="p-6">
-                    <div className="flex items-center gap-3 mb-6">
-                        <Trash2 className="w-6 h-6 text-red-600" />
-                        <h2 className="text-xl font-semibold">
-                            Deleting Organization
-                        </h2>
-                    </div>
+            <AnimatePresence>
+                <div className="fixed inset-0 z-50 flex items-center justify-center">
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 bg-background/70 backdrop-blur-sm"
+                        onClick={handleClose}
+                    />
 
-                    <div className="text-center mb-6">
-                        <p className=" mb-2">
-                            Deleting <span className="font-semibold">"{organizationData.name}"</span>
-                        </p>
-                        <p className="text-sm ">
-                            Please wait while we process the deletion...
-                        </p>
-                    </div>
+                    <div className="p-6 max-h-[calc(90vh-80px)] overflow-y-auto">
+                        <ProgressTracker
+                            progress={progress}
+                            isConnected={isConnected}
+                            isConnecting={isConnecting}
+                            error={error}
+                            onRetry={reconnect}
+                            title="Deleting Organization"
+                            iconName="OI"
+                        />
 
-                    {ProgressTracking(progress, onClose, reconnect, error, isConnecting, isConnected)}
+                        {/* {(isCompleted || isFailed) && (
+                        <div className="mt-8 flex justify-center">
+                            <Button
+                                onClick={handleClose}
+                                variant={isCompleted ? "primary" : "secondary"}
+                            >
+                                {isCompleted ? "Done" : "Close"}
+                            </Button>
+                        </div>
+                    )} */}
+
+                    </div>
                 </div>
-            </Modal>
+
+            </AnimatePresence>
         );
     }
 
@@ -84,11 +117,11 @@ export const DeleteOrganizationModal: React.FC<DeleteOrganizationModalProps> = (
             size="sm"
             ariaLabel="Delete Organization Modal"
         >
+            {isDeleting && (
+                <Loader text="Initializing deletion" />
+            )}
             <>
-                <Modal.Header>
-                    <Trash2 className="w-5 h-5 text-red-600" />
-                    <Modal.Title>Delete Organization</Modal.Title>
-                </Modal.Header>
+                <Modal.Title className="mb-2 text-heading-2">Delete Organization</Modal.Title>
 
                 <Modal.Body>
                     <p>
@@ -107,6 +140,7 @@ export const DeleteOrganizationModal: React.FC<DeleteOrganizationModalProps> = (
                     <Button
                         variant="secondary"
                         onClick={onClose}
+                        disabled={isDeleting}
                     >
                         Cancel
                     </Button>
@@ -114,6 +148,8 @@ export const DeleteOrganizationModal: React.FC<DeleteOrganizationModalProps> = (
                         variant="destructive"
                         onClick={onConfirm}
                         className="text-[#ffff]"
+                        isLoading={isDeleting}
+                        disabled={isDeleting}
                     >
                         Delete
                     </Button>
@@ -122,97 +158,3 @@ export const DeleteOrganizationModal: React.FC<DeleteOrganizationModalProps> = (
         </Modal>
     );
 };
-function ProgressTracking(progress: JobProgress | null, onClose: () => void, reconnect: () => void, error: string | null, isConnecting: boolean, isConnected: boolean) {
-    return <div className="space-y-4">
-        {progress ? (
-            <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">
-                        {progress.status === 'completed' ? 'Deletion Complete!' :
-                            progress.status === 'failed' ? 'Deletion Failed' :
-                                progress.status === 'queued' ? 'Queued for Deletion' :
-                                    'Deleting Organization...'}
-                    </span>
-                    <span className="text-sm ">
-                        {progress.progress}%
-                    </span>
-                </div>
-                <div className="w-full rounded-full h-2">
-                    <motion.div
-                        className={`h-2 rounded-full ${progress.status === 'completed' ? 'bg-primary' :
-                            progress.status === 'failed' ? 'bg-red-500' :
-                                'bg-red-600'}`}
-                        initial={{ width: 0 }}
-                        animate={{ width: `${progress.progress}%` }}
-                        transition={{ duration: 0.5, ease: "easeOut" }} />
-                </div>
-                {progress.status === 'completed' && (
-                    <div className="mt-4 text-center">
-                        <Button
-                            onClick={onClose}
-                            className="bg-primary hover:bg-primary"
-                        >
-                            Done
-                        </Button>
-                    </div>
-                )}
-                {progress.status === 'failed' && (
-                    <div className="mt-4 text-center space-x-2">
-                        <Button
-                            variant="secondary"
-                            onClick={onClose}
-                        >
-                            Close
-                        </Button>
-                        <Button
-                            onClick={reconnect}
-                            className="bg-red-600 hover:bg-red-700"
-                        >
-                            Retry
-                        </Button>
-                    </div>
-                )}
-            </div>
-        ) : (
-            <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-700">
-                        Initializing deletion...
-                    </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-red-600 h-2 rounded-full animate-pulse" style={{ width: '10%' }} />
-                </div>
-            </div>
-        )}
-
-        {error && (
-            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-800 text-sm">
-                    <strong>Error:</strong> {error}
-                </p>
-            </div>
-        )}
-
-        <div className="flex items-center justify-center gap-2 text-xs ">
-            {isConnecting ? (
-                <>
-                    <LoadingSpinner size={3} />
-                    <span>Connecting...</span>
-                </>
-            ) : isConnected ? (
-                <>
-                    <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                    <span>Connected</span>
-                </>
-            ) : (
-                <>
-                    <div className="w-2 h-2 bg-red-500 rounded-full" />
-                    <span>Disconnected</span>
-
-                </>
-            )}
-        </div>
-    </div>;
-}
-

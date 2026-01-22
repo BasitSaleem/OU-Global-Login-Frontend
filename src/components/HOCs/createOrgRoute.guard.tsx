@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/redux/store';
 import { ROUTES } from '@/constants';
-import { GlobalLoading } from '../ui/loading';
+import { Loader } from '../ui';
 
 interface CreateOrganizationGuardProps {
   children: React.ReactNode;
@@ -36,7 +36,7 @@ export function CreateOrganizationGuard({
     setIsLoading(false)
   }, [user, organization, requireAuth, router, redirectTo]);
   if (isLoading) {
-    return fallback || <GlobalLoading text="Checking organization..." />;
+    return fallback || <Loader text="Checking organization..." />;
   }
 
   return <>{children}</>;

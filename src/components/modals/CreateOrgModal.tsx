@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, } from 'react';
 import { Modal } from './GenericModal';
-import { Button, Input, Loader } from '../ui';
+import { Button, Dots, Input, Loader } from '../ui';
 import { PRODUCTS } from '@/constants';
 import { useCheckSubDomainAvailability, useGenerateSubdomainSuggestions } from '@/apiHooks.ts/organization/organization.api';
 import { useDebounce } from '@/hooks/useDebounce';
@@ -89,9 +89,7 @@ export default function CreateOrgModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg" ariaLabel="Create organization">
       {isLoading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <Loader className="w-full max-w-xl mx-4" />
-        </div>
+        <Loader text='Initializing organization creation' />
       )}
 
       <Modal.Title className="mb-2 text-heading-2">Create an Organization</Modal.Title>
@@ -137,7 +135,7 @@ export default function CreateOrgModal({
                   e.target.value
                     .toLocaleLowerCase()
                     .trim()
-                    .replace(/[^a-z0-9-]/g, "")
+                    .replace(/[^a-z0-9]/g, "")
                 )
               } />
             <AvailabilityStatus
@@ -173,8 +171,7 @@ export default function CreateOrgModal({
           variant='primary'
           isLoading={isLoading}
           disabled={isLoading || !canSubmit()}
-        >
-          Continue
+        > {isLoading ? (<span> Creating <Dots dotSize="3px" className="text-white gap-1 mt-1" /></span>) : 'Continue'}
         </Button>
       </Modal.Footer>
     </Modal>

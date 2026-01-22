@@ -1,8 +1,7 @@
 import { useLogout } from "@/apiHooks.ts/auth/auth.api";
 import { PermissionGuard } from "@/components/HOCs/permission-guard";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
-import { Button } from "@/components/ui";
-import { GlobalLoading } from "@/components/ui/loading";
+import { Button, Loader } from "@/components/ui";
 import { SvgIcon } from "@/components/ui/SvgIcon";
 import { clearAuth } from "@/redux/slices/auth.slice";
 import { useAppSelector, useAppDispatch } from "@/redux/store";
@@ -21,7 +20,7 @@ export default function ProfileMenu({ onClose, open }: ProfileMenuProps) {
     const dispatch = useAppDispatch();
     const router = useRouter();
     const handleLogout = () => {
-        <GlobalLoading text="Logging out" />
+        <Loader text="Logging out" />
         logout(undefined, {
             onSuccess: () => {
                 onClose();
@@ -39,7 +38,7 @@ export default function ProfileMenu({ onClose, open }: ProfileMenuProps) {
     return (
         <div className="absolute -right-3 sm:right-0 top-10 w-64 sm:w-72 bg-bg-secondary border  rounded-lg shadow-lg z-50">
             {isPending && (
-                <GlobalLoading text="Logging out" />
+                <Loader text="Logging out" />
             )}
 
             {/* User Info */}

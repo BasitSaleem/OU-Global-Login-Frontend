@@ -1,9 +1,9 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/constants';
-import { GlobalLoading } from '../ui/loading';
 import { useAppSelector } from '@/redux/store';
 import { useEffect } from 'react';
+import { Loader } from '../ui';
 
 interface PublicRouteProps {
   children: React.ReactNode;
@@ -28,7 +28,7 @@ export function PublicRoute({
 
   if (isAuthenticated) {
     return fallback || (
-      <GlobalLoading text='Redirecting' />
+      <Loader text='Redirecting' />
     );
   }
 

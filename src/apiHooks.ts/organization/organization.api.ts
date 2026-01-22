@@ -164,7 +164,6 @@ export const useDeleteOrganization = (onFinish?: () => void) => {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["organizations"] });
-      toast.success("Organization deleted", "The organization was deleted successfully");
     },
     onError: (error: any, deletedId: string, context) => {
       if (context?.previousOrganizations) {

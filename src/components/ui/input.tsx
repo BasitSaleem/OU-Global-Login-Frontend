@@ -108,7 +108,7 @@
 // );
 
 // Input.displayName = "Input";
-
+"use client"
 // export { Input };
 // components/ui/Input.tsx
 import { forwardRef, InputHTMLAttributes } from "react";

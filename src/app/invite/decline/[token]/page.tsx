@@ -1,7 +1,7 @@
 'use client';
 
 import { useDeclineInvitation } from '@/apiHooks.ts/invitation/invitation.api';
-import { GlobalLoading } from '@/components/ui/loading';
+import { Loader } from '@/components/ui';
 import { ROUTES } from '@/constants';
 import { toast } from '@/hooks/useToast';
 import { useParams, useRouter } from 'next/navigation';
@@ -24,7 +24,7 @@ export default function DeclineInvitePage() {
         declineInvitation(token);
     }, []);
     if (isDeclining) {
-        return <GlobalLoading text='Declining Invitation' />
+        return <Loader text='Declining Invitation' />
     }
     if (error) {
         router.push(ROUTES.LOGIN)

@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useForm, FormProvider } from "react-hook-form";
 import { Icons } from "@/components/utils/icons";
-import { Button, Input, Logo } from "@/components/ui";
+import { Button, Input } from "@/components/ui";
 import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/schemas/auth.schemas";
@@ -13,10 +13,10 @@ import { useEffect, useState } from "react";
 import { useAppDispatch } from "@/redux/store";
 import { setAuth } from "@/redux/slices/auth.slice";
 import { LoginSEO } from "@/components/SEO";
-import { PublicRoute } from "@/components/HOCs/publicRoute.guard";
 import { ROUTES } from "@/constants";
 import { signInResponse } from "@/types/auth.types";
 import { signinData } from "@/apiHooks.ts/auth/auth.types";
+import { AlertCircle } from "lucide-react";
 
 export default function LoginPage() {
   const { mutate: login, isPending, error } = useLogin();
@@ -25,6 +25,12 @@ export default function LoginPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [params, setParams] = useState<any>({});
+  const [isCapsLockOn, setIsCapsLockOn] = useState(false);
+
+  const checkCapsLock = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    setIsCapsLockOn(event.getModifierState("CapsLock"));
+  };
+
   useEffect(() => {
     const app = searchParams.get("app");
     if (searchParams.get('client_id') !== '') {
@@ -123,8 +129,16 @@ export default function LoginPage() {
                   {...methods.register("password", {
                     required: "Password is required",
                   })}
+                  onKeyUp={checkCapsLock}
                   error={methods.formState.errors.password?.message as string}
                 />
+
+                {isCapsLockOn && (
+                  <div className="flex items-center gap-2 text-text text-[10px] sm:text-xs font-medium bg-yellow-50 p-2 rounded-md border border-yellow-200 animate-pulse">
+                    <AlertCircle className="w-3.5 h-3.5 text-yellow-400 animate-pulse" />
+                    <span>Caps lock is on</span>
+                  </div>
+                )}
 
                 <div className="flex items-center justify-between pt-1 sm:pt-2">
                   <label className="flex items-center gap-1.5">

@@ -8,8 +8,8 @@ import { ToastProvider } from '@/hooks/useToast';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistor, store } from '@/redux/store';
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { GlobalLoading } from '@/components/ui/loading';
 
+import { Loader } from '@/components/ui';
 interface ProvidersProps {
   children: ReactNode;
 }
@@ -27,13 +27,13 @@ export function Providers({ children }: ProvidersProps) {
   return (
     <ThemeProvider>
       <ReduxProvider store={store}>
-        <PersistGate loading={<GlobalLoading />} persistor={persistor}>
+        <PersistGate loading={<Loader />} persistor={persistor}>
           <QueryClientProvider client={queryClient}>
             <ReactQueryDevtools initialIsOpen={false} />
             {/* <CreateOrganizationGuard> */}
-              <ToastProvider>
-                {children}
-              </ToastProvider>
+            <ToastProvider>
+              {children}
+            </ToastProvider>
             {/* </CreateOrganizationGuard> */}
           </QueryClientProvider>
         </PersistGate>

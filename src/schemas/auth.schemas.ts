@@ -10,8 +10,8 @@ export const loginSchema = z.object({
 });
 export const signUpSchema = z
   .object({
-    first_name: z.string().min(3, "First name must be at least 3 characters long").nonempty("First name is required"),
-    last_name: z.string().min(3, "Last name must be at least 3 characters long").nonempty("Last name is required"),
+    first_name: z.string().min(2, "First name must be at least 2 characters long").nonempty("First name is required"),
+    last_name: z.string().min(2, "Last name must be at least 2 characters long").nonempty("Last name is required"),
     email: z
       .string()
       .nonempty("Email is required")

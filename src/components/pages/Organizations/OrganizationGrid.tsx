@@ -32,10 +32,7 @@ export default function OrganizationGrid({
   const [selectedOrg, setSelectedOrg] = useState<any | null>(null);
 
   // DELETE API HOOK
-  const { mutate: deleteOrg, isPending: deleteLoading } = useDeleteOrganization(() => {
-    setIsModalOpen(false);
-    setSelectedOrg(null);
-  });
+  const { mutate: deleteOrg, isPending: deleteLoading } = useDeleteOrganization();
 
   //1.TOGGLE FAVORITE
   const handleFavoriteClick = (e: React.MouseEvent, orgId: string) => {
@@ -188,7 +185,10 @@ export default function OrganizationGrid({
       >      {selectedOrg && (
         <DeleteOrganizationModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedOrg(null);
+          }}
           onConfirm={handleConfirmDelete}
           organizationData={selectedOrg}
           extraDetails={`${selectedOrg.memberships?.length || 0} member${selectedOrg?.memberships?.length === 1 ? "" : "s"} • ${selectedOrg.products?.length || 0} product${selectedOrg.products?.length === 1 ? "" : "s"}`}

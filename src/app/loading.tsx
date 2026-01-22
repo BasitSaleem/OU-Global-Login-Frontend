@@ -1,10 +1,10 @@
-import { GlobalLoading } from '@/components/ui/loading'
+import { Loader } from '@/components/ui'
 import React from 'react'
 
 const Loading = () => {
   return (
     <>
-      <GlobalLoading />
+      <Loader />
     </>
   )
 }

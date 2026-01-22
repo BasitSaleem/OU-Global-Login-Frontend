@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { toast } from "@/hooks/useToast";
 import ProgressModal from "@/components/ui/ProgressModal";
-import { Button, Input, LoadingSpinner } from "@/components/ui";
+import { Button, Dots, Input, Loader, LoadingSpinner } from "@/components/ui";
 import { AuthGuard } from "@/components/HOCs/auth-guard";
 import { SubdomainSuggestion } from "@/components/SubdomainSuggestion";
 import { AvailabilityStatus } from "@/components/AvailabilityStatus";
@@ -35,7 +35,7 @@ export default function CreateOrgPage() {
     !isNameDebouncing ? debouncedCompanyName : ''
   );
 
-  const createOrgMutation = useCreateOrganization();
+  const { mutate: createOrgMutation, isPending: creatingOrg } = useCreateOrganization();
   const router = useRouter();
 
   const shouldCheckAvailability = selectedProduct === "OI" && debouncedSubDomain && !isSuggestionSubdomain;
@@ -69,7 +69,7 @@ export default function CreateOrgPage() {
     if (selectedProduct === "OI" && !subDomain.trim()) return false;
     if (selectedProduct === "OI" && (isSubDomainDebouncing || checkingSub)) return false;
     if (selectedProduct === "OI" && finalIsSubAvailable === false) return false;
-    if (createOrgMutation.isPending) return false;
+    if (creatingOrg) return false;
     return true;
   };
 
@@ -82,7 +82,7 @@ export default function CreateOrgPage() {
       product: [selectedProduct],
     };
 
-    createOrgMutation.mutate(payload, {
+    createOrgMutation(payload, {
       onSuccess: (data) => {
         setOrganizationData({
           data: {
@@ -119,6 +119,9 @@ export default function CreateOrgPage() {
 
   return (
     <AuthGuard>
+      {creatingOrg &&
+        <Loader text='Initializing organization creation' />
+      }
       <CreateOrganizationGuard>
         <div className="min-h-screen w-full flex items-center justify-center bg-background p-4 sm:p-8">
           <div className="bg-bg-secondary rounded-xl shadow-lg p-6 sm:p-12 w-full max-w-2xl border">
@@ -209,7 +212,7 @@ export default function CreateOrgPage() {
                   setSubDomain("");
                   setSelectedProduct("OI");
                 }}
-                disabled={createOrgMutation.isPending}
+                disabled={creatingOrg}
               >
                 Reset
               </Button>
@@ -219,10 +222,12 @@ export default function CreateOrgPage() {
                 className="py-5"
                 disabled={!canSubmit()}
               >
-                {createOrgMutation.isPending ? (
+                {creatingOrg ? (
                   <div className="flex items-center gap-2">
-                    <LoadingSpinner size={4} />
-                    <span>Creating...</span>
+                    <LoadingSpinner size={4} className="border-white" />
+                    <span>Creating
+                      <Dots dotSize="3px" className="text-white gap-1 mt-1" />
+                    </span>
                   </div>
                 ) : (
                   "Continue"

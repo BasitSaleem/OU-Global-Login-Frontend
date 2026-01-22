@@ -5,7 +5,7 @@ import Sidebar from './Sidebar';
 import AppHeader from './Header/Header';
 import ComingSoonModal from '../modals/ComingSoonModal';
 import { AuthGuard } from '../HOCs/auth-guard';
-import { GlobalLoading } from '../ui/loading';
+import { Loader } from '../ui';
 
 
 interface DashboardLayoutProps {
@@ -27,7 +27,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     setMobileSidebarOpen(!mobileSidebarOpen);
   };
   return (
-    <AuthGuard fallback={<GlobalLoading text='Authenticating' />}>
+    <AuthGuard fallback={<Loader text='Authenticating' />}>
 
       <div className="min-h-screen bg-background flex font-inter">
         <Sidebar
