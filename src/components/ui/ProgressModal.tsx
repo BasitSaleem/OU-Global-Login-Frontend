@@ -39,13 +39,17 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
   const handleComplete = useCallback(
     (progress: any) => {
       onComplete?.();
-      toast.success("Created", "The organization has been successfully created.")
-      onClose()
+      toast.success("Created", "The organization has been successfully created.");
+
       if (isFromMain) {
-        router.push(ROUTES.DASHBOARD)
+        if (organizationData) {
+          dispatch(setOrganization(organizationData));
+        }
+        router.push(ROUTES.DASHBOARD);
       }
+      onClose();
     },
-    [onComplete]
+    [onComplete, isFromMain, organizationData, dispatch, router, onClose]
   );
 
   const handleError = useCallback((err: any) => {
@@ -74,18 +78,11 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
     }
   };
 
-  const handleGoHome = () => {
-    onGoHome?.();
-  };
   useEffect(() => {
-
-    if (isFromMain && isCompleted) {
-      console.log("/setting the organization data here in this ");
-      dispatch(setOrganization(organizationData))
-      router.push('/organizations')
+    if (isCompleted) {
+      console.log("Organization creation completed successfully");
     }
-
-  }, [progress?.status])
+  }, [isCompleted]);
 
   return (
     <AnimatePresence>
@@ -107,35 +104,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
               onRetry={reconnect}
               title="Creating Organization"
             />
-            {/* Error Actions */}
-            <AnimatePresence>
-              {isFailed && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="mt-8 bg-white rounded-xl border border-red-200 p-6"
-                >
-                  <h3 className="text-lg font-semibold text-red-700 mb-4">
-                    Registration Failed
-                  </h3>
-                  <p className="text-red-600 text-sm mb-4">
-                    There was an issue setting up your organization. Please try again or contact support.
-                  </p>
-
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <Button
-                      variant='primary'
-                      onClick={handleGoHome}>
-                      Go to Dashboard
-                    </Button>
-
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
-          {/* </motion.div> */}
         </div>
       )}
     </AnimatePresence>

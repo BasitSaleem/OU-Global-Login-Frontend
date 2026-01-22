@@ -52,6 +52,7 @@ export const useProgressTracking = (
       console.log("⚠️ SSE connection already exists or invalid URL");
       return;
     }
+    setProgress(null);
     setIsConnecting(true);
     setError(null);
 

@@ -16,9 +16,11 @@ const ENDPOINTS = {
   RESENT_OTP: "/auth/resend-otp",
   GET_ME: "/auth/me",
   PROFILE: "/profile/complete-profile",
-  PERMISSIONS: "/auth/permissions"
+  PERMISSIONS: "/auth/permissions",
+  DELETE_ACCOUNT: "/auth/delete-account"
 };
-
+//=================API HOOKS==================
+//1.LOGIN
 export const useLogin = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -42,7 +44,7 @@ export const useLogin = () => {
     },
   });
 };
-
+//2.SIGN UP
 export const useSignUp = () => {
   const queryClient = useQueryClient();
 
@@ -67,7 +69,7 @@ export const useSignUp = () => {
     },
   });
 };
-
+//3.LOG OUT
 export const useLogout = () => {
   const queryClient = useQueryClient();
 
@@ -90,7 +92,7 @@ export const useLogout = () => {
     },
   });
 };
-
+//4.VERIFY OTP
 export const useVerifyOtp = () => {
   return useMutation({
     mutationFn: (data: VerifyOtpData) =>
@@ -104,7 +106,7 @@ export const useVerifyOtp = () => {
     }
   });
 };
-
+//5.RESEND OTP
 export const useResendOtp = () => {
   return useMutation({
     mutationFn: (data: ResendOtpData) =>
@@ -119,7 +121,7 @@ export const useResendOtp = () => {
     }
   });
 };
-
+//6.GET ME
 export const useGetMe = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ["me"],
@@ -131,7 +133,7 @@ export const useGetMe = (options?: { enabled?: boolean }) => {
     ...options
   });
 };
-
+//7.UPDATE PROFILE
 export const useUpdateProfile = () => {
   return useMutation({
     mutationFn: (profileData: userProfile) => {
@@ -143,6 +145,7 @@ export const useUpdateProfile = () => {
     }
   })
 }
+//8.GET ALL PERMISSIONS
 export const useGetAllPermissions = (role_id: string) => {
   return useQuery({
     queryKey: ["permissions", role_id],
@@ -150,5 +153,18 @@ export const useGetAllPermissions = (role_id: string) => {
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
     retry: 2,
+  });
+};
+//9.DELETE ACCOUNT
+export const useDeleteAccount = () => {
+  return useMutation({
+    mutationFn: () => request(ENDPOINTS.DELETE_ACCOUNT, "DELETE"),
+    onSuccess: () => {
+      toast.success("Account deleted successfully");
+    },
+    onError: (error: any) => {
+      const message = (error as Error)?.message || "Account deletion failed";
+      toast.error("Account deletion failed", message);
+    },
   });
 };

@@ -10,6 +10,7 @@ import { useEffect, useRef, useState, useMemo, RefObject } from 'react';
 import isEqual from 'lodash/isEqual';
 import { Check, Image as ImageIcon } from 'lucide-react';
 import { useClickOutside } from '@/hooks/useClickOutSide';
+import { DeleteAccountModal } from '@/components/modals/DeleteAccountModal';
 export default function UserProfilePage() {
 
   const { mutate: updateUser, isPending, isError } = useUpdateProfile()
@@ -29,6 +30,7 @@ export default function UserProfilePage() {
     emergency_contact_no: user?.emergency_contact_no
 
   });
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
   const originalData = useRef<userProfile | null>(null);
@@ -94,7 +96,7 @@ export default function UserProfilePage() {
                   </div>
                 </div>
               ) : (
-                <div className="w-23 h-23 rounded-full flex items-center justify-center bg-[#795CF512]">
+                <div className="w-23 h-23 rounded-full flex items-center justify-center bg-primary/10">
                   <ImageIcon color='gray' />
                 </div>
               )}
@@ -129,7 +131,19 @@ export default function UserProfilePage() {
                 <p className="text-body-medium-bold">{user?.contact ?? "0145678"}</p>
               </div>
             </div>
+            <Button
+              className="w-full text-red-500 hover:text-white hover:bg-red-500 border border-red-500"
+              onClick={() => setIsDeleteModalOpen(true)}
+            >
+              Delete Account
+            </Button>
           </div>
+
+          <DeleteAccountModal
+            isOpen={isDeleteModalOpen}
+            onClose={() => setIsDeleteModalOpen(false)}
+            userEmail={user?.email || ''}
+          />
 
           <div className="flex-1 border rounded-lg w-full bg-bg-secondary shadow-sm">
             <div className="flex items-center justify-between p-5 border-b">
