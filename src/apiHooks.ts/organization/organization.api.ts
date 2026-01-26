@@ -39,8 +39,10 @@ export const useCreateOrganization = () => {
       )
       return res.data
     },
-    onSuccess: (result) => {
+    onSuccess: (result, data) => {
       queryClient.invalidateQueries({ queryKey: ["organizations"] });
+      queryClient.removeQueries({ queryKey: ["subdomainSuggestions"] });
+      queryClient.removeQueries({ queryKey: ["subDomainAvailability"] });
     },
     retry: false,
     onError: (error: any) => {

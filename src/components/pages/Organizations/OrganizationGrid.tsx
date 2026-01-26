@@ -26,6 +26,32 @@ export default function OrganizationGrid({
   loading,
   metaData
 }: OrganizationGridProps) {
+  const OrganizationSkeleton = ({ isAddNew = false }: { isAddNew?: boolean }) => (
+    <div className="bg-bg-secondary p-3 py-6 rounded-xl border">
+      {isAddNew ? (
+        <div className="flex items-center justify-center w-full h-full">
+          <div className="flex flex-col items-center justify-center ">
+            <Plus size={50} color="#D1D5DB" />
+            <h1 className="text-skeleton animate-pulse">Add new</h1>
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="flex items-start gap-3 mb-2">
+            <Skeleton width="40px" height="40px" circle />
+            <div className="flex-1 min-w-0 space-y-2">
+              <Skeleton width="60%" height="16px" />
+              <Skeleton width="40%" height="12px" />
+            </div>
+            <Skeleton width="24px" height="24px" circle />
+          </div>
+          <div className="flex items-center justify-between px-2 py-1 rounded bg-skeleton -mb-3 mt-3.5">
+            <Skeleton width="22px" height="22px" circle count={3} />
+          </div>
+        </>
+      )}
+    </div>
+  )
   const { user, organization } = useAppSelector((s) => s.auth)
   const { mutate: toggleFavorite, isPending } = useIsFavorite()
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -79,64 +105,21 @@ export default function OrganizationGrid({
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
 
-        {loading ? Array.from({ length: 6 }).map((_, idx) => (
-          <PermissionGuard
-            requiredPermissions="og:create::organization"
-            fallback={
-              <div key={idx} className="bg-bg-secondary p-3 py-6 rounded-xl border">
-                {idx === 0 ? (
-                  <div className="flex items-center justify-center w-full h-full">
-                    <div className="flex flex-col items-center justify-center ">
-                      <Plus size={50} color="#D1D5DB" />
-                      <h1 className="text-skeleton animate-pulse">Add new</h1>
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <div className="flex items-start gap-3 mb-2">
-                      <Skeleton width="40px" height="40px" circle />
-                      <div className="flex-1 min-w-0 space-y-2">
-                        <Skeleton width="60%" height="16px" />
-                        <Skeleton width="40%" height="12px" />
-                      </div>
-                      <Skeleton width="24px" height="24px" circle />
-                    </div>
-                    <div className="flex items-center justify-between px-2 py-1 rounded bg-skeleton -mb-3 mt-3.5">
-                      <Skeleton width="22px" height="22px" circle count={3} />
-                    </div>
-                  </>
-                )}
-              </div>
-            }
-          >
-            <div key={idx} className="bg-bg-secondary p-3 py-6 rounded-xl border">
-              {idx === 0 ? (
-                <div className="flex items-center justify-center w-full h-full">
-                  <div className="flex flex-col items-center justify-center ">
-                    <Plus size={50} color="#D1D5DB" />
-                    <h1 className="text-skeleton animate-pulse">Add new</h1>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <div className="flex items-start gap-3 mb-2">
-                    <Skeleton width="40px" height="40px" circle />
-                    <div className="flex-1 min-w-0 space-y-2">
-                      <Skeleton width="60%" height="16px" />
-                      <Skeleton width="40%" height="12px" />
-                    </div>
-                    <Skeleton width="24px" height="24px" circle />
-                  </div>
-                  <div className="flex items-center justify-between px-2 py-1 rounded bg-skeleton -mb-3 mt-3.5">
-                    <Skeleton width="22px" height="22px" circle count={3} />
-                  </div>
-                </>
-              )}
-            </div>
-          </PermissionGuard>
-
-        ))
-          : <>
+        {loading ? (
+          <>
+            <PermissionGuard
+              key="add-new-skeleton"
+              requiredPermissions="og:create::organization"
+              fallback={<OrganizationSkeleton isAddNew={false} />}
+            >
+              <OrganizationSkeleton isAddNew={true} />
+            </PermissionGuard>
+            {Array.from({ length: 5 }).map((_, idx) => (
+              <OrganizationSkeleton key={idx + 1} isAddNew={false} />
+            ))}
+          </>
+        ) : (
+          <>
             {organizations?.map((org) => (
               <div
                 key={org?.id}
@@ -177,7 +160,9 @@ export default function OrganizationGrid({
                   </div>
                 )}
               </div>
-            ))}</>}
+            ))}
+          </>
+        )}
       </div>
 
       <PermissionGuard

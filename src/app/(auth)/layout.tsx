@@ -10,6 +10,7 @@ interface AuthLayoutProp {
 const AuthLayout = ({ children }: AuthLayoutProp) => {
     const searchParams = useSearchParams();
     const app = searchParams.get("app") || "OG";
+    const params = searchParams.get("redirect_uri") || "/";
     return (
         <div className="min-h-screen bg-card relative overflow-hidden">
             <div className="absolute inset-0 opacity-40">
@@ -29,7 +30,7 @@ const AuthLayout = ({ children }: AuthLayoutProp) => {
                     </Link>
                 </div>
             </div>
-            <PublicRoute>
+            <PublicRoute redirectTo={typeof params === 'string' && params.length > 0 ? params : "/"}>
                 {children}
             </PublicRoute>
 
