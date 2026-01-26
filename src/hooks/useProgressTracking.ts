@@ -155,6 +155,9 @@ export const useProgressTracking = (
 
   useEffect(() => {
     if (url) {
+      setProgress(null);
+      setError(null);
+      cleanup();
       connect();
     }
 
