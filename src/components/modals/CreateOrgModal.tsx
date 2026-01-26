@@ -99,7 +99,8 @@ export default function CreateOrgModal({
             label="Company Name"
             isRequired
             value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
+            onChange={(e) => setCompanyName(e.target.value
+              .replace(/[^a-zA-Z0-9 ]/g, ""))}
           />
         </div>
 
