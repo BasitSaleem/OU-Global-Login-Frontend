@@ -124,7 +124,7 @@ export default function OrganizationGrid({
               <div
                 key={org?.id}
                 onClick={() => org?.isAddNew && onAddNew()}
-                className={`relative group ${org?.isAddNew ? "" : "bg-bg-secondary border border-border rounded-xl"
+                className={`relative group h-30 ${org?.isAddNew ? "" : "bg-bg-secondary border border-border rounded-xl"
                   }  ${org?.isAddNew ? "" : "p-3"
                   } hover:shadow-sm transition-shadow cursor-pointer rounded-xl`}
               >

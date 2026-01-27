@@ -1,16 +1,106 @@
 "use client"
-import { AuthGuard } from '@/components/HOCs/auth-guard';
 import { PublicRoute } from '@/components/HOCs/publicRoute.guard';
 import { Logo } from '@/components/ui';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import { useLogin } from "@/apiHooks.ts/auth/auth.api";
+import { useAppDispatch } from "@/redux/store";
+import { setAuth } from "@/redux/slices/auth.slice";
+import { ROUTES } from "@/constants";
+import { signInResponse } from "@/types/auth.types";
+import { signinData } from "@/apiHooks.ts/auth/auth.types";
+import { createContext, useContext } from 'react';
+
+interface AuthContextType {
+    onSubmit: (data: signinData) => void;
+    isPending: boolean;
+    error: any;
+}
+
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const useAuthContext = () => {
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error('useAuthContext must be used within an AuthProvider');
+    }
+    return context;
+};
 interface AuthLayoutProp {
     children: React.ReactNode;
 }
 const AuthLayout = ({ children }: AuthLayoutProp) => {
+    const { mutate: login, isPending, error } = useLogin();
     const searchParams = useSearchParams();
+    const router = useRouter();
+    const dispatch = useAppDispatch();
+    const [oauthParams, setOauthParams] = useState<any>({});
+
     const app = searchParams.get("app") || "OG";
-    const params = searchParams.get("redirect_uri") || "/";
+    const redirectUrlParam = searchParams.get("redirect_url") || searchParams.get("redirect_uri")
+
+    useEffect(() => {
+        if (searchParams.get('client_id')) {
+            const data = {
+                client_id: searchParams.get('client_id'),
+                redirect_uri: searchParams.get('redirect_uri'),
+                scope: searchParams.get('scope'),
+                state: searchParams.get('state'),
+                nonce: searchParams.get('nonce'),
+                response_type: searchParams.get('response_type'),
+                code_challenge: searchParams.get('code_challenge'),
+                code_challenge_method: searchParams.get('code_challenge_method'),
+                subdomain: searchParams.get('subdomain'),
+            }
+            setOauthParams(data);
+        }
+    }, [searchParams]);
+
+    const onSubmit = (formData: signinData) => {
+        const fullData = {
+            ...formData,
+            ...oauthParams,
+        };
+
+        login(fullData, {
+            onSuccess: (response: signInResponse) => {
+                const response_redirect_url = response.data?.redirect_url;
+                const search_redirect_uri = searchParams.get("redirect_uri");
+                dispatch(
+                    setAuth({
+                        user: response.data?.user!,
+                        isAuthenticated: true,
+                        isLoading: false,
+                        error: null,
+                    })
+                );
+                if (response_redirect_url) {
+                    console.log(response_redirect_url, "response_redirect_url");
+                    router.replace(response_redirect_url);
+                } else if (search_redirect_uri) {
+                    console.log(search_redirect_uri, "search_redirect_uri");
+
+                    router.push(search_redirect_uri);
+                } else {
+                    console.log("ROUTES.DASHBOARD");
+
+                    router.push(ROUTES.DASHBOARD);
+                }
+            },
+        });
+    }
+
+    const contextValue = {
+        onSubmit,
+        isPending,
+        error
+    };
+    const Content = (
+        <AuthContext.Provider value={contextValue}>
+            {children}
+        </AuthContext.Provider>
+    );
     return (
         <div className="min-h-screen bg-card relative overflow-hidden">
             <div className="absolute inset-0 opacity-40">
@@ -30,9 +120,13 @@ const AuthLayout = ({ children }: AuthLayoutProp) => {
                     </Link>
                 </div>
             </div>
-            <PublicRoute redirectTo={typeof params === 'string' && params.length > 0 ? params : "/"}>
-                {children}
-            </PublicRoute>
+            {!redirectUrlParam ? (
+                <PublicRoute >
+                    {Content}
+                </PublicRoute>
+            ) : (
+                Content
+            )}
 
             <div className="mt-16 sm:mt-28 lg:mt-44 inset-x-0 z-10 pb-6 sm:pb-8 flex justify-center">
                 <p className="text-xs text-center">

@@ -22,6 +22,8 @@ export function PublicRoute({
 
   useEffect(() => {
     if (isAuthenticated) {
+      console.log("isAuthenticated");
+      console.log(redirectTo, "redirectTo");
       router.replace(redirectTo);
     }
   }, [isAuthenticated, redirectTo, router]);

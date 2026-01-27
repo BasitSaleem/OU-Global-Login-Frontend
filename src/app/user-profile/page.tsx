@@ -132,7 +132,7 @@ export default function UserProfilePage() {
               </div>
             </div>
             <Button
-              className="w-full text-red-500 hover:text-white hover:bg-red-500 border border-red-500"
+              className="w-full py-4 text-red-500 hover:text-white hover:bg-red-500 border border-red-500"
               onClick={() => setIsDeleteModalOpen(true)}
             >
               Delete Account

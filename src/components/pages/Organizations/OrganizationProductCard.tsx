@@ -17,7 +17,7 @@ interface CardProps {
 export const generateProductLink = (subdomain: string) => {
     let url = '';
     if (process.env.NODE_ENV === 'development') {
-        url = `http://${subdomain}.localhost:8000/login?sso_login=true`
+        url = `http://${subdomain}.localhost:8001/login?sso_login=true`
     } else {
         url = `https://${subdomain}.${process.env.NEXT_PUBLIC_OI_PRODUCT_DOMAIN}/login?sso_login=true`
     }

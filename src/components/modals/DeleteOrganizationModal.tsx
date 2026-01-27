@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef } from "react";
-import { Button, Loader } from "@/components/ui";
+import React, { useEffect, useState, useRef } from "react";
+import { Button, Loader, Input } from "@/components/ui";
 import { Modal } from "./GenericModal";
 import { useDeleteOrganizationProgress } from "@/hooks/useProgressTracking";
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
@@ -7,6 +7,7 @@ import { ProgressTracker } from "../ui/ProgressTracker";
 import { AnimatePresence, motion } from "framer-motion";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { toast } from "@/hooks/useToast";
+import { AlertTriangle } from "lucide-react";
 
 interface DeleteOrganizationModalProps {
     isOpen: boolean;
@@ -25,6 +26,11 @@ export const DeleteOrganizationModal: React.FC<DeleteOrganizationModalProps> = (
     extraDetails,
     isDeleting = false,
 }) => {
+    const [confirm1, setConfirm1] = useState('');
+    const [confirm2, setConfirm2] = useState('');
+    const [error1, setError1] = useState('');
+    const [error2, setError2] = useState('');
+
     const {
         progress,
         isConnected,
@@ -40,6 +46,30 @@ export const DeleteOrganizationModal: React.FC<DeleteOrganizationModalProps> = (
     const isJobStarted = !!progress;
     const isCompleted = progress?.status === 'completed';
     const isFailed = progress?.status === 'failed';
+
+    const expectedText = `delete ${organizationData.name}`;
+
+    const handleConfirm = () => {
+        let hasError = false;
+        if (confirm1 !== expectedText) {
+            setError1('Input doesn\'t match');
+            hasError = true;
+        } else {
+            setError1('');
+        }
+
+        if (confirm2 !== expectedText) {
+            setError2('Input doesn\'t match');
+            hasError = true;
+        } else {
+            setError2('');
+        }
+
+        if (hasError) return;
+        onConfirm();
+    };
+
+    const isFormValid = confirm1 === expectedText && confirm2 === expectedText;
 
     const handleClose = () => {
         if (!isDeleting && !isJobStarted) {
@@ -114,31 +144,60 @@ export const DeleteOrganizationModal: React.FC<DeleteOrganizationModalProps> = (
         <Modal
             isOpen={isOpen}
             onClose={handleClose}
-            size="sm"
+            size="md"
             ariaLabel="Delete Organization Modal"
         >
             {isDeleting && (
                 <Loader text="Initializing deletion" />
             )}
             <>
-                <Modal.Title className="mb-2 text-heading-2">Delete Organization</Modal.Title>
+                <Modal.Header>
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red/10">
+                        <AlertTriangle className="h-6 w-6 text-red" />
+                    </div>
+                    <Modal.Title className="text-red">Delete Organization</Modal.Title>
+                </Modal.Header>
 
-                <Modal.Body>
-                    <p>
+                <Modal.Body className="space-y-4">
+                    <p className="text-body-medium">
                         Are you sure you want to delete <span className="font-semibold">"{organizationData.name}"</span>?
+                        This action is <span className="font-bold">permanent</span> and cannot be undone.
+                        All organization data will be cleared from our servers.
                     </p>
+
                     {extraDetails && (
-                        <p className="mt-2 text-sm text-[var(--color-primary-900)]">{extraDetails}</p>
+                        <p className="text-sm text-[var(--color-primary-900)]">{extraDetails}</p>
                     )}
 
-                    <p className="mt-2 text-sm ">
-                        This action cannot be undone.
-                    </p>
+                    <div className="bg-bg-secondary p-3 rounded-lg border border-red/20 border-dashed">
+                        <p className="text-body-small text-gray-500">
+                            To confirm, please type <span className="font-mono font-bold text-red">delete {organizationData.name}</span> in both fields below.
+                        </p>
+                    </div>
+
+                    <div className="space-y-3">
+                        <Input
+                            label="Confirmation Field 1"
+                            placeholder={`delete ${organizationData.name}`}
+                            value={confirm1}
+                            onChange={(e) => setConfirm1(e.target.value)}
+                            error={error1}
+                            disabled={isDeleting}
+                        />
+                        <Input
+                            label="Confirmation Field 2"
+                            placeholder={`delete ${organizationData.name}`}
+                            value={confirm2}
+                            onChange={(e) => setConfirm2(e.target.value)}
+                            error={error2}
+                            disabled={isDeleting}
+                        />
+                    </div>
                 </Modal.Body>
 
                 <Modal.Footer>
                     <Button
-                        variant="secondary"
+                        variant="ghost"
                         onClick={onClose}
                         disabled={isDeleting}
                     >
@@ -146,12 +205,12 @@ export const DeleteOrganizationModal: React.FC<DeleteOrganizationModalProps> = (
                     </Button>
                     <Button
                         variant="destructive"
-                        onClick={onConfirm}
+                        onClick={handleConfirm}
                         className="text-[#ffff]"
                         isLoading={isDeleting}
-                        disabled={isDeleting}
+                        disabled={!isFormValid || isDeleting}
                     >
-                        Delete
+                        Delete Organization
                     </Button>
                 </Modal.Footer>
             </>
