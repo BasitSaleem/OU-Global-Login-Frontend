@@ -10,7 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/schemas/auth.schemas";
 import { useState } from "react";
 import { AlertCircle } from "lucide-react";
-import { useAuthContext } from "@/app/(auth)/layout";
+import { useAuthContext } from "@/contexts/auth-context";
 
 export default function LoginPage() {
   const { onSubmit, isPending, error: loginError } = useAuthContext();
