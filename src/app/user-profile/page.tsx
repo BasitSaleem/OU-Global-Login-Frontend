@@ -84,28 +84,21 @@ export default function UserProfilePage() {
         <div className="flex flex-col sm:flex-row items-start gap-5 p-8">
           <div className="flex flex-col mx-auto w-full md:w-[286px] gap-3 p-3 border rounded-lg bg-bg-secondary shadow-sm py-5">
             <div className="flex flex-col items-center gap-7">
-              {userData.profile_url || user?.profile_url ? (
-                <div className="relative">
-                  <img
-                    src={userData.profile_url || user?.profile_url}
-                    alt="Profile"
-                    className="w-23 h-23 rounded-full object-cover border-2 border-primary"
-                  />
-                  <div className="absolute -bottom-1 -right-1 bg-primary rounded-full p-1 border-2 border-white">
-                    <Check color='white' size={15} />
-                  </div>
-                </div>
-              ) : (
-                <div className="w-23 h-23 rounded-full flex items-center justify-center bg-primary/10">
-                  <ImageIcon color='gray' />
-                </div>
-              )}
-
               <div className="w-full">
                 <ImageUpload
+                  imageUrl={userData.profile_url || user?.profile_url}
                   onUploadComplete={(imageUrl: string) => {
                     const freshUrl = `${imageUrl}?t=${Date.now()}`;
                     setUserData(prev => ({ ...prev, profile_url: freshUrl }));
+                    if (user) {
+                      dispatch(setProfile({ ...user, profile_url: freshUrl }));
+                    }
+                  }}
+                  onDelete={() => {
+                    setUserData(prev => ({ ...prev, profile_url: undefined }));
+                    if (user) {
+                      dispatch(setProfile({ ...user, profile_url: undefined }));
+                    }
                   }}
                   maxSize={2}
                   acceptedFiles="image/jpeg,image/png,image/webp"

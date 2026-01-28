@@ -5,8 +5,6 @@ import { request } from "@/utils/requestFunction";
 import { toast } from "@/hooks/useToast";
 import { signInResponse } from "@/types/auth.types";
 import { PermissionTypeGenerator } from "@/utils/permissionTypeGenerator";
-import { clearAuth } from "@/redux/slices/auth.slice";
-import { store } from "@/redux/store";
 
 const ENDPOINTS = {
   SIGN_IN: "/auth/sign-in",
@@ -17,7 +15,9 @@ const ENDPOINTS = {
   GET_ME: "/auth/me",
   PROFILE: "/profile/complete-profile",
   PERMISSIONS: "/auth/permissions",
-  DELETE_ACCOUNT: "/auth/delete-account"
+  DELETE_ACCOUNT: "/auth/delete-account",
+  REMOVE_IMAGE: "/profile/remove-image",
+  UPLOAD_IMAGE: "/profile/upload-image"
 };
 //=================API HOOKS==================
 //1.LOGIN
@@ -145,6 +145,7 @@ export const useUpdateProfile = () => {
     }
   })
 }
+
 //8.GET ALL PERMISSIONS
 export const useGetAllPermissions = (role_id: string) => {
   return useQuery({
@@ -165,6 +166,39 @@ export const useDeleteAccount = () => {
     onError: (error: any) => {
       const message = (error as Error)?.message || "Account deletion failed";
       toast.error("Account deletion failed", message);
+    },
+  });
+};
+
+//10.REMOVE PROFILE IMAGE
+export const useRemoveProfileImage = () => {
+  return useMutation({
+    mutationFn: () => request(ENDPOINTS.REMOVE_IMAGE, "DELETE"),
+    onSuccess: () => {
+      toast.success("Profile image removed successfully");
+    },
+    onError: (error: any) => {
+      const message = (error as Error)?.message || "Failed to remove profile image";
+      toast.error("Profile image removal failed", message);
+    },
+  });
+};
+//11.UPLOAD PROFILE IMAGE
+export const useUploadProfileImage = () => {
+  return useMutation({
+    mutationFn: (formData: FormData) =>
+      request<{ success: boolean; url?: string; error?: string }>(
+        ENDPOINTS.UPLOAD_IMAGE,
+        "POST",
+        {},
+        formData
+      ),
+    onSuccess: () => {
+      toast.success("Profile image uploaded successfully");
+    },
+    onError: (error: any) => {
+      const message = (error as Error)?.message || "Failed to upload profile image";
+      toast.error("Profile image upload failed", message);
     },
   });
 };

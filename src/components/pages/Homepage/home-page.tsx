@@ -8,7 +8,6 @@ import { useGetOrganizations } from "@/apiHooks.ts/organization/organization.api
 import { LoadingSpinner } from "@/components/ui";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
-import { useGetAllPermissions } from "@/apiHooks.ts/auth/auth.api";
 import Image from "next/image";
 export default function HomePage() {
   const { user } = useAppSelector((s) => s.auth);
