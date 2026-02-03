@@ -54,6 +54,7 @@ const page = () => {
                                     id="newPassword"
                                     label="Enter New Password"
                                     type="password"
+                                    isPassword={true}
                                     placeholder="Enter New Password"
                                     {...methods.register("newPassword", {
                                         required: "New Password is required",
@@ -64,6 +65,7 @@ const page = () => {
                                     id="confirmPassword"
                                     label="Confirm New Password"
                                     type="password"
+                                    isPassword={true}
                                     placeholder="Confirm New Password"
                                     {...methods.register("confirmPassword", {
                                         required: "Confirm Password is required",
