@@ -3,7 +3,74 @@
 import Image from "next/image";
 import { Icons } from "@/components/utils/icons";
 import { Button, Input } from "@/components/ui";
+import { useChangePassword } from "@/apiHooks.ts/auth/auth.api";
+import { toast } from "@/hooks/useToast";
+import { useState } from "react";
 export default function ChangePasswordPage() {
+  const { mutateAsync: changePassword, isPending } = useChangePassword();
+  const [formState, setFormState] = useState({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [error, setError] = useState({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  })
+
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormState({
+      ...formState,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formState.oldPassword || !formState.newPassword || !formState.confirmPassword) {
+      setError({
+        oldPassword: !formState.oldPassword ? "Please enter your old password" : "",
+        newPassword: !formState.newPassword ? "Please enter your new password" : "",
+        confirmPassword: !formState.confirmPassword ? "Please enter your confirm password" : "",
+      })
+      return;
+    }
+
+    if (formState.newPassword !== formState.confirmPassword) {
+      setError({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: "Passwords do not match",
+      })
+      return;
+    }
+
+    if (formState.newPassword.length < 8) {
+      setError({
+        oldPassword: "",
+        newPassword: "New password must be at least 8 characters long",
+        confirmPassword: "",
+      })
+      return;
+    }
+
+    try {
+      await changePassword({
+        oldPassword: formState.oldPassword,
+        newPassword: formState.newPassword,
+      });
+      setFormState({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+    } catch (error) {
+      // Error handled by mutation onError
+    }
+  };
+
   return (
     <main className="p-3">
       <div className="flex items-center justify-center">
@@ -39,37 +106,49 @@ export default function ChangePasswordPage() {
                 </p>
               </div>
 
-              <div className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Current Password */}
                 <div className="space-y-1">
                   <div className="relative">
                     <Input
                       isPassword
                       label="Current Password"
+                      name="oldPassword"
+                      value={formState.oldPassword}
+                      onChange={handleFormChange}
+                      required
+                      error={error.oldPassword}
                     />
                   </div>
                 </div>
 
                 {/* New Password */}
                 <div className="space-y-1">
-
                   <div className="relative">
                     <Input
                       isPassword
                       label="New Password"
+                      name="newPassword"
+                      value={formState.newPassword}
+                      onChange={handleFormChange}
+                      required
+                      error={error.newPassword}
                     />
                   </div>
                 </div>
 
                 {/* Confirm Password */}
                 <div className="space-y-1">
-
                   <div className="relative">
                     <Input
                       isPassword
                       label="Confirm New Password"
+                      name="confirmPassword"
+                      value={formState.confirmPassword}
+                      onChange={handleFormChange}
+                      required
+                      error={error.confirmPassword}
                     />
-
                   </div>
                 </div>
 
@@ -77,15 +156,17 @@ export default function ChangePasswordPage() {
                 <Button
                   className="w-full bg-primary text-white hover:bg-primary/70"
                   variant="primary"
-
+                  type="submit"
+                  disabled={isPending}
                 >
-                  Update Password
+                  {isPending ? "Updating..." : "Update Password"}
                 </Button>
-              </div>
+              </form>
             </div>
           </div>
         </div>
       </div>
     </main>
   );
+
 }

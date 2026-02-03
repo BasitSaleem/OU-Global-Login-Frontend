@@ -28,8 +28,8 @@ export const ROUTES = {
   LOGIN: '/login?app=OG',
   CREATE_ORGANIZATION: "/create-organization",
   REGISTER: '/sign-up?app=OG',
-  FORGOT_PASSWORD: '/auth/forgot-password',
-  RESET_PASSWORD: '/auth/reset-password',
+  FORGOT_PASSWORD: '/forgot-password',
+  RESET_PASSWORD: '/reset-password',
   DASHBOARD: '/',
   PROFILE: '/profile',
   SETTINGS: '/settings'

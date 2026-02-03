@@ -56,6 +56,9 @@ export function OrganizationGridComponent({
           <h3 className="truncate text-body-medium-bold text-black leading-tight pt-1">
             {org?.name}
           </h3>
+          <p className="text-body-tiny text-gray-500 truncate">
+            {org?.packageName || org?.products?.[0]?.plan || "Basic Plan"}
+          </p>
         </div>
         <div className="flex-shrink-0 flex ">
 

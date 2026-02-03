@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ResendOtpData, signinData, signUpData, userProfile, VerifyOtpData } from "./auth.types";
 import { request } from "@/utils/requestFunction";
 import { toast } from "@/hooks/useToast";
-import { signInResponse } from "@/types/auth.types";
+import { changePasswordData, forgotPasswordData, resetPasswordData, signInResponse } from "@/types/auth.types";
 import { PermissionTypeGenerator } from "@/utils/permissionTypeGenerator";
 
 const ENDPOINTS = {
@@ -17,7 +17,10 @@ const ENDPOINTS = {
   PERMISSIONS: "/auth/permissions",
   DELETE_ACCOUNT: "/auth/delete-account",
   REMOVE_IMAGE: "/profile/remove-image",
-  UPLOAD_IMAGE: "/profile/upload-image"
+  UPLOAD_IMAGE: "/profile/upload-image",
+  CHANGE_PASSWORD: "/auth/change-password",
+  FORGOT_PASSWORD: "/auth/forgot-password",
+  RESET_PASSWORD: "/auth/reset-password",
 };
 //=================API HOOKS==================
 //1.LOGIN
@@ -202,3 +205,43 @@ export const useUploadProfileImage = () => {
     },
   });
 };
+//12.CHANGE PASSWORD
+export const useChangePassword = () => {
+  return useMutation({
+    mutationFn: (data: changePasswordData) => request(ENDPOINTS.CHANGE_PASSWORD, "POST", {}, data),
+    onSuccess: () => {
+      toast.success("Password changed successfully");
+    },
+    onError: (error: any) => {
+      const message = (error as Error)?.message || "Failed to change password";
+      toast.error("Password change failed", message);
+    },
+  });
+}
+//13.FORGOT PASSWORD
+export const useForgotPassword = () => {
+  return useMutation({
+    mutationFn: (data: forgotPasswordData) => request(ENDPOINTS.FORGOT_PASSWORD, "POST", {}, data),
+    onSuccess: () => {
+      toast.success("Password reset email sent successfully");
+    },
+    onError: (error: any) => {
+      const message = (error as Error)?.message || "Failed to send password reset email";
+      toast.error("Password reset failed", message);
+    },
+  });
+}
+//14.RESET PASSWORD
+export const useResetPassword = () => {
+  return useMutation({
+    mutationFn: (data: resetPasswordData) => request(ENDPOINTS.RESET_PASSWORD, "POST", {}, data),
+    onSuccess: () => {
+      toast.success("Password reset successfully");
+    },
+    onError: (error: any) => {
+      const message = (error as Error)?.message || "Failed to reset password";
+      toast.error("Password reset failed", message);
+    },
+  });
+}
+

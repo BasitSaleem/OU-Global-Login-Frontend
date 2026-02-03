@@ -2,7 +2,7 @@
 import { PublicRoute } from '@/components/HOCs/publicRoute.guard';
 import { Logo } from '@/components/ui';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useLogin } from "@/apiHooks.ts/auth/auth.api";
 import { useAppDispatch } from "@/redux/store";
@@ -37,6 +37,7 @@ const AuthLayout = ({ children }: AuthLayoutProp) => {
     const dispatch = useAppDispatch();
     const [oauthParams, setOauthParams] = useState<any>({});
 
+    const pathname = usePathname();
     const app = searchParams.get("app") || "OG";
     const redirectUrlParam = searchParams.get("redirect_url") || searchParams.get("redirect_uri")
 
@@ -109,15 +110,30 @@ const AuthLayout = ({ children }: AuthLayoutProp) => {
             <div className="relative z-10 flex items-center  justify-between p-4 sm:p-6 lg:p-8">
                 <Logo Icon="ownersInventory" className='cursor-pointer' />
                 <div className="flex items-center gap-2 sm:gap-3">
-                    <span className="text-xs sm:text-sm hidden sm:block">
-                        Already have an account?
-                    </span>
-                    <Link
-                        href={`/login?app=${app}`}
-                        className="bg-primary border hover:bg-primary/80 text-btn-text text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition-colors"
-                    >
-                        Sign In
-                    </Link>
+                    {pathname === "/login" ? (
+                        <span className="text-xs sm:text-sm hidden sm:block">
+                            Don't have an account?
+                        </span>
+                    ) : (
+                        <span className="text-xs sm:text-sm hidden sm:block">
+                            Already have an account?
+                        </span>
+                    )}
+                    {pathname === "/login" ? (
+                        <Link
+                            href={`/sign-up?app=${app}`}
+                            className="bg-primary border hover:bg-primary/80 text-btn-text text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition-colors"
+                        >
+                            Sign Up
+                        </Link>
+                    ) : (
+                        <Link
+                            href={`/login?app=${app}`}
+                            className="bg-primary border hover:bg-primary/80 text-btn-text text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition-colors"
+                        >
+                            Sign In
+                        </Link>
+                    )}
                 </div>
             </div>
             {!redirectUrlParam ? (

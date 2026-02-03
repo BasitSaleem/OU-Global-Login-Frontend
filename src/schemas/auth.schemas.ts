@@ -8,6 +8,12 @@ export const loginSchema = z.object({
   password: z.string().nonempty("Password is required"),
   rememberMe: z.boolean().optional(),
 });
+export const forgotPasswordSchema = z.object({
+  email: z
+    .string()
+    .email("Please enter a valid email address.")
+    .nonempty("Email is required"),
+});
 export const signUpSchema = z
   .object({
     first_name: z.string().min(2, "First name must be at least 2 characters long").nonempty("First name is required"),
@@ -33,4 +39,12 @@ export const otpSchema = z.object({
     .string()
     .length(6, "OTP must be exactly 6 digits")
     .regex(/^\d+$/, "OTP must contain only numbers"),
+});
+export const resetPasswordSchema = z.object({
+  token: z.string().nonempty("Token is required"),
+  newPassword: z.string().min(8, "Password must be at least 8 characters long").nonempty("Password is required"),
+  confirmPassword: z.string().nonempty("Confirm password is required"),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
 });

@@ -27,9 +27,7 @@ export const DeleteOrganizationModal: React.FC<DeleteOrganizationModalProps> = (
     isDeleting = false,
 }) => {
     const [confirm1, setConfirm1] = useState('');
-    const [confirm2, setConfirm2] = useState('');
     const [error1, setError1] = useState('');
-    const [error2, setError2] = useState('');
 
     const {
         progress,
@@ -50,26 +48,15 @@ export const DeleteOrganizationModal: React.FC<DeleteOrganizationModalProps> = (
     const expectedText = `delete ${organizationData.name}`;
 
     const handleConfirm = () => {
-        let hasError = false;
         if (confirm1 !== expectedText) {
             setError1('Input doesn\'t match');
-            hasError = true;
-        } else {
-            setError1('');
+            return;
         }
-
-        if (confirm2 !== expectedText) {
-            setError2('Input doesn\'t match');
-            hasError = true;
-        } else {
-            setError2('');
-        }
-
-        if (hasError) return;
+        setError1('');
         onConfirm();
     };
 
-    const isFormValid = confirm1 === expectedText && confirm2 === expectedText;
+    const isFormValid = confirm1 === expectedText;
 
     const handleClose = () => {
         if (!isDeleting && !isJobStarted) {
@@ -171,25 +158,17 @@ export const DeleteOrganizationModal: React.FC<DeleteOrganizationModalProps> = (
 
                     <div className="bg-bg-secondary p-3 rounded-lg border border-red/20 border-dashed">
                         <p className="text-body-small text-gray-500">
-                            To confirm, please type <span className="font-mono font-bold text-red">delete {organizationData.name}</span> in both fields below.
+                            To confirm, please type <span className="font-mono font-bold text-red">delete {organizationData.name}</span> in the field below.
                         </p>
                     </div>
 
                     <div className="space-y-3">
                         <Input
-                            label="Confirmation Field 1"
+                            label="Confirmation Field"
                             placeholder={`delete ${organizationData.name}`}
                             value={confirm1}
                             onChange={(e) => setConfirm1(e.target.value)}
                             error={error1}
-                            disabled={isDeleting}
-                        />
-                        <Input
-                            label="Confirmation Field 2"
-                            placeholder={`delete ${organizationData.name}`}
-                            value={confirm2}
-                            onChange={(e) => setConfirm2(e.target.value)}
-                            error={error2}
                             disabled={isDeleting}
                         />
                     </div>

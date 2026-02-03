@@ -91,3 +91,14 @@ export interface signInResponse {
   message: string,
   success: boolean
 }
+export interface changePasswordData {
+  newPassword: string;
+  oldPassword: string;
+}
+export interface forgotPasswordData {
+  email: string;
+}
+export interface resetPasswordData {
+  token: string;
+  newPassword: string;
+}

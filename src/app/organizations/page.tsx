@@ -10,6 +10,7 @@ import PendingInvitations from "@/components/pages/Organizations/PendingInvitati
 import ProgressModal from "@/components/ui/ProgressModal";
 import { toast } from "@/hooks/useToast";
 import { useAppSelector } from "@/redux/store";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 function OrganizationsContent() {
@@ -21,6 +22,8 @@ function OrganizationsContent() {
   ];
 
   const { user } = useAppSelector((s) => s.auth);
+  const searchParams = useSearchParams();
+  const filter = searchParams.get('filter');
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [organizations, setOrganizations] = useState<any>(organizationsList);
@@ -42,7 +45,15 @@ function OrganizationsContent() {
           (org, i, arr) => i === arr.findIndex(o => o.id === org.id)
         );
         const addNewCard = unique.filter(org => org.isAddNew);
-        const regularOrgs = unique.filter(org => !org.isAddNew);
+        let regularOrgs = unique.filter(org => !org.isAddNew);
+
+        if (filter === 'owned') {
+          regularOrgs = regularOrgs.filter(org =>
+            org.ogUserId === user?.id ||
+            org.memberships?.some((m: any) => m.user_id === user?.id && m.role === 'OWNER')
+          );
+        }
+
         const sorted = regularOrgs.sort((a, b) => {
           const aIsFavorite = a.favorites?.some((fav: any) => fav.userId === user?.id) || false;
           const bIsFavorite = b.favorites?.some((fav: any) => fav.userId === user?.id) || false;
@@ -54,7 +65,7 @@ function OrganizationsContent() {
         return [...addNewCard, ...sorted];
       });
     }
-  }, [orgStatus, userOrgs, page, user?.id]);
+  }, [orgStatus, userOrgs, page, user?.id, filter]);
 
   const handleCreateOrg = (data: CreateOrganizationData) => {
     createOrg(data, {

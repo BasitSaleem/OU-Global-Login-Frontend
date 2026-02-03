@@ -83,10 +83,12 @@ function ViewAllProductsPage() {
                         Open
                       </a> : "Coming Soon"}
                     </span>
-                    <ChevronRight
-                      className="w-3 h-3"
-                      style={{ color: '#795CF5' }}
-                    />
+                    {product.available && (
+                      <ChevronRight
+                        className="w-3 h-3"
+                        style={{ color: '#795CF5' }}
+                      />
+                    )}
                   </div>
                 </div>
               </div>

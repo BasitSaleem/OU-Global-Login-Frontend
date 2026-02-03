@@ -60,6 +60,7 @@ export interface OgOrganization {
   products?: OgProduct[];
   membersCount?: number;
   permissionNames?: Permission[];
+  packageName?: string;
 }
 
 export interface OgProduct {
