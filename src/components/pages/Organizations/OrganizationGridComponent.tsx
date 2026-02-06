@@ -59,7 +59,7 @@ export function OrganizationGridComponent({
           <p className="text-body-tiny text-gray-500 truncate">
             {org?.packageName || org?.products?.[0]?.plan || "Basic"}
           </p>
-        </div>``
+        </div>
         <div className="flex-shrink-0 flex ">
 
           <Button

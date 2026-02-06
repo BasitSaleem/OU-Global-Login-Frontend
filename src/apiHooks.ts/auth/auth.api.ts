@@ -21,6 +21,12 @@ const ENDPOINTS = {
   CHANGE_PASSWORD: "/auth/change-password",
   FORGOT_PASSWORD: "/auth/forgot-password",
   RESET_PASSWORD: "/auth/reset-password",
+  // ACCEPT_EMAIL_CHANGE: "/auth/send-otp-for-change-email",
+  VALIDATE_ACCEPT_EMAIL_TOKEN: "/auth/verify-change-email-token",
+  VERIFY_PASSWORD: "/auth/verify-password",
+  CHANGE_EMAIL: "/auth/change-email-final",
+  SEND_CHANGE_EMAIL_VERIFICATION: "/auth/send-change-email-verification",
+  SEND_OTP_FOR_CHANGE_EMAIL: "/auth/send-otp-for-change-email",
 };
 //=================API HOOKS==================
 //1.LOGIN
@@ -241,6 +247,57 @@ export const useResetPassword = () => {
     onError: (error: any) => {
       const message = (error as Error)?.message || "Failed to reset password";
       toast.error("Password reset failed", message);
+    },
+  });
+}
+//15 SEND EMAIL FOR CHANGE EMAIL
+export const useSendChangeEmailVerification = () => {
+  return useMutation({
+    mutationFn: (data: { newEmail: string }) => request(ENDPOINTS.SEND_CHANGE_EMAIL_VERIFICATION, "POST", {}, data),
+    onSuccess: () => {
+      toast.success("Email verification sent successfully");
+    },
+    onError: (error: any) => {
+      const message = (error as Error)?.message || "Failed to send email verification";
+      toast.error("Email send failed", message);
+    },
+  });
+}
+//16.SEND OTP FOR CHANGE EMAIL
+export const useSendOtpForChangeEmail = () => {
+  return useMutation({
+    mutationFn: (data: { token: string }) => request(ENDPOINTS.SEND_OTP_FOR_CHANGE_EMAIL, "POST", {}, data),
+    onSuccess: () => {
+      toast.success("OTP sent successfully");
+    },
+    onError: (error: any) => {
+      const message = (error as Error)?.message || "Failed to send OTP";
+      toast.error("OTP send failed", message);
+    },
+  });
+}
+//17.VALIDATE ACCEPT EMAIL TOKEN
+export const useValidateAcceptEmailToken = () => {
+  return useMutation({
+    mutationFn: (data: { token: string }) => request(ENDPOINTS.VALIDATE_ACCEPT_EMAIL_TOKEN, "POST", {}, data),
+  });
+}
+//18.VERIFY PASSWORD
+export const useVerifyPassword = () => {
+  return useMutation({
+    mutationFn: (data: { email: string; password: string }) => request(ENDPOINTS.VERIFY_PASSWORD, "POST", {}, data),
+  });
+}
+//20.CHANGE EMAIL FINAL
+export const useChangeEmailFinal = () => {
+  return useMutation({
+    mutationFn: (data: { token: string, otp: string }) => request(ENDPOINTS.CHANGE_EMAIL, "POST", {}, data),
+    onSuccess: () => {
+      toast.success("Email changed successfully");
+    },
+    onError: (error: any) => {
+      const message = (error as Error)?.message || "Failed to change email";
+      toast.error("Email change failed", message);
     },
   });
 }

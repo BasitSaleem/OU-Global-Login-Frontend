@@ -120,7 +120,6 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                         opacity: 1;
                     }
                 }
-                
                 @keyframes toast-slide-out {
                     from {
                         transform: translateX(0);
@@ -131,7 +130,6 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                         opacity: 0;
                     }
                 }
-                
                 @keyframes progress-bar {
                     from {
                         width: 100%;
@@ -140,17 +138,12 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                         width: 0%;
                     }
                 }
-                
                 .animate-toast-slide-in {
                     animation: toast-slide-in 0.3s ease-out;
                 }
-                
                 .animate-toast-slide-out {
                     animation: toast-slide-out 0.3s ease-in;
                 }
-                
-            
-                
                 /* Responsive design */
                 @media (max-width: 640px) {
                     .toast-container {
@@ -160,7 +153,6 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                         max-width: calc(100vw - 32px) !important;
                     }
                 }
-                
                 /* Utility classes */
                 .line-clamp-2 {
                     display: -webkit-box;

@@ -93,6 +93,7 @@ export const DeleteAccountModal = ({
                             href="/organizations?filter=owned"
                             className="text-body-small font-bold text-primary hover:underline"
                             onClick={onClose}
+                            target='_blank'
                         >
                             View All
                         </Link>

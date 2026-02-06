@@ -181,7 +181,7 @@ export default function UserProfilePage() {
                 <Input
                   label="Contact"
                   permission="og:edit::profile"
-                  isRequired
+                  // isRequired
                   type="tel"
                   error={userData.contact === "" ? "Contact is required" : ""}
                   value={userData?.contact ?? ""}

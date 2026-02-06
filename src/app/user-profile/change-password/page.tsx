@@ -4,7 +4,6 @@ import Image from "next/image";
 import { Icons } from "@/components/utils/icons";
 import { Button, Input } from "@/components/ui";
 import { useChangePassword } from "@/apiHooks.ts/auth/auth.api";
-import { toast } from "@/hooks/useToast";
 import { useState } from "react";
 export default function ChangePasswordPage() {
   const { mutateAsync: changePassword, isPending } = useChangePassword();
@@ -154,7 +153,7 @@ export default function ChangePasswordPage() {
 
                 {/* Update Button */}
                 <Button
-                  className="w-full bg-primary text-white hover:bg-primary/70"
+                  className="w-full bg-primary text-white hover:bg-primary/70 py-5"
                   variant="primary"
                   type="submit"
                   disabled={isPending}

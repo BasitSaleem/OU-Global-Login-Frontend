@@ -50,10 +50,10 @@ export default function UserProfileLayout({
     },
     {
       label: "Email",
-      href: "/user-profile/email",
+      href: "/user-profile/change-email",
       icon: "email",
       activeIcon: Icons.emailwhite,
-      isActive: pathname === "/user-profile/email",
+      isActive: pathname === "/user-profile/change-email",
     },
     {
       label: "Change Password",
@@ -79,6 +79,7 @@ export default function UserProfileLayout({
   }, []);
 
   return (
+
     <div className="min-h-screen bg-background flex font-inter">
       {/* Desktop Sidebar */}
       <div
