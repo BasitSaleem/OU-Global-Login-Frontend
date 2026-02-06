@@ -77,12 +77,12 @@ export default function ProfileMenu({ onClose, open }: ProfileMenuProps) {
                     <SvgIcon name="profile" width={20} height={20} />
                     <span>Profile</span>
                 </Link>
-                <PermissionGuard requiredPermissions="og:access::setting">
+                {/* <PermissionGuard requiredPermissions="og:access::setting">
                     <Link href="/account-setting" className="w-full flex items-center hover:text-[#ffff] gap-2 px-2 py-1.5 rounded-lg hover:bg-primary cursor-pointer">
                         <SvgIcon name="settings" width={20} height={20} />
                         <span>Account settings</span>
                     </Link>
-                </PermissionGuard>
+                </PermissionGuard> */}
                 <ThemeSwitcher />
 
                 <Button

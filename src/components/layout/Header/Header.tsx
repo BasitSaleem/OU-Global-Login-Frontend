@@ -81,7 +81,7 @@ export default function AppHeader({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-  console.log(collapsed, "f_______________-");
+ 
 
   return (
     <header className="h-14 border-b bg-bg-secondary flex items-center justify-between px-4">
@@ -149,14 +149,14 @@ export default function AppHeader({
             />
           )}
         </div>
-        <Button
+        {/* <Button
           permission="og:access::setting"
           variant="basic"
           onClick={handleSettingsClick}
           className="p-1 cursor-pointer"
         >
           <SvgIcon name="settings" width={20} height={20} className="text-icon" />
-        </Button>
+        </Button> */}
 
         <div className="relative" ref={profileDropdownRef}>
           <button

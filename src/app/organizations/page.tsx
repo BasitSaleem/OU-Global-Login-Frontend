@@ -27,7 +27,7 @@ function OrganizationsContent() {
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [organizations, setOrganizations] = useState<any>(organizationsList);
-  // const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
+
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [organizationData, setOrganizationData] = useState<CreateOrganizationResponse | null>(null);
   const [page, setPage] = useState(1)

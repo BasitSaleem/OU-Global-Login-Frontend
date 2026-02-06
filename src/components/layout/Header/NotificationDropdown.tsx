@@ -25,30 +25,33 @@ export function NotificationsDropdown({
             {/* Header */}
             <div className="flex items-center justify-between p-3 border-b ">
                 <h2 className="text-heading-2 font-bold ">Notifications</h2>
-                <Link
+                {/* <Link
                     href="/notifications"
                     className="text-[14px] text-primary font-medium underline hover:no-underline"
                 >
                     View All
-                </Link>
+                </Link> */}
             </div>
 
             {/* Controls */}
-            <NotificationsControlsRow
+            {/* <NotificationsControlsRow
                 anyUnread={anyUnread}
                 onMarkAllAsRead={onMarkAllAsRead}
                 unreadOnly={unreadOnly}
                 setUnreadOnly={setUnreadOnly}
-            />
+            /> */}
 
             {/* List */}
             <div className="max-h-[600px] overflow-y-auto cursor-pointer">
                 {filteredNotifications.length === 0 ? (
-                    <div className="p-6 text-sm text-gray-500">
-                        {unreadOnly
-                            ? "You're all caught up! No unread notifications."
-                            : "No notifications to show."}
+                     <div className="p-6 flex items-center font-semibold justify-center text-sm text-primary">
+                       Coming Soon
                     </div>
+                    // <div className="p-6 text-sm text-gray-500">
+                    //     {unreadOnly
+                    //         ? "You're all caught up! No unread notifications."
+                    //         : "No notifications to show."}
+                    // </div>
                 ) : (
                     filteredNotifications.map((item, index) => {
                         // map index back to original list index for per-item mark-as-read

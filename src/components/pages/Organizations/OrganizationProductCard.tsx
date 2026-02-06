@@ -1,10 +1,11 @@
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
 import { PermissionGuard } from "@/components/HOCs/permission-guard";
-import { Button } from "@/components/ui";
+
 import { getColorFromId } from "@/utils/getRandomColors";
 import { organizationName } from "@/utils/organizationName";
 import Link from "next/link";
 import { useState } from "react";
+import OrganizationProductItem from "./OrganizationProductItem";
 interface CardProps {
     code: "OI" | "OJ" | "OM" | "OA";
     metaData: {
@@ -56,7 +57,7 @@ const OrganizationProductCard = ({ code, organizations, metaData }: CardProps) =
                 </div>
 
                 <div className="flex-1 min-w-0">
-                    <h3 className="text-heading-2 mb-2">{getProductDisplayName(code)}</h3>
+                    <h3 className="text-heading-2 mb-2">{getProductDisplayName(code)}</h3> 
                     <p className="text-body-small text-gray-600 mb-2">
                         Manage your inventory
                     </p>
@@ -66,6 +67,7 @@ const OrganizationProductCard = ({ code, organizations, metaData }: CardProps) =
                             const bgColor = getColorFromId(org.id ?? "");
                             return (
                                 <PermissionGuard
+                                key={org.id}
                                     requiredPermissions="og:access::products"
                                     fallback={
                                         <div
@@ -77,27 +79,15 @@ const OrganizationProductCard = ({ code, organizations, metaData }: CardProps) =
                                                 style={{ backgroundColor: bgColor }}
                                                 title={org.name}
                                             >
-                                                {organizationName(org.name ?? "")}
+                                                {organizationName(org.name ?? "")} 
                                             </div>
                                         </div>
                                     }
                                 >
                                     {org.products?.filter(p => p.product_name === code).map((product) => (
                                         product.oi_sub_domain ? (
-                                            <Link
-                                                key={product.oi_sub_domain}
-                                                href={generateProductLink(product.oi_sub_domain)}
-                                                target="_blank"
-                                                className="group"
-                                            >
-                                                <div
-                                                    className="w-7 h-7 rounded-lg flex items-center justify-center text-white font-semibold text-sm hover:scale-110 transition-transform duration-300 cursor-pointer"
-                                                    style={{ backgroundColor: bgColor }}
-                                                    title={org.name}
-                                                >
-                                                    {organizationName(org.name ?? "")}
-                                                </div>
-                                            </Link>
+                                            <OrganizationProductItem key={product.oi_sub_domain} product={product} bgColor={bgColor} org={org} />
+                                           
                                         ) : null
                                     ))}
                                 </PermissionGuard>

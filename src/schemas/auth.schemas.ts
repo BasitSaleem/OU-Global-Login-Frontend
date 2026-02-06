@@ -1,11 +1,13 @@
 import z from "zod";
+import { passwordValidation } from "./password.schema";
+
 
 export const loginSchema = z.object({
   email: z
     .string()
     .email("Please enter a valid email address.")
     .nonempty("Email is required"),
-  password: z.string().nonempty("Password is required"),
+  password: passwordValidation(),
   rememberMe: z.boolean().optional(),
 });
 export const forgotPasswordSchema = z.object({
@@ -22,7 +24,7 @@ export const signUpSchema = z
       .string()
       .nonempty("Email is required")
       .email("Please enter a valid email address."),
-    password: z.string().min(8, "Password must be at least 8 characters long").nonempty("Password is required"),
+    password: passwordValidation("Password"),
     confirmPassword: z.string().nonempty("Confirm password is required"),
     rememberMe: z.boolean().optional(),
   })
@@ -42,9 +44,29 @@ export const otpSchema = z.object({
 });
 export const resetPasswordSchema = z.object({
   token: z.string().nonempty("Token is required"),
-  newPassword: z.string().min(8, "Password must be at least 8 characters long").nonempty("Password is required"),
-  confirmPassword: z.string().nonempty("Confirm password is required"),
+  newPassword: passwordValidation("New Password"),
+  confirmPassword:z.string().nonempty("Confirm password is required"),
 }).refine((data) => data.newPassword === data.confirmPassword, {
   message: "Passwords do not match",
   path: ["confirmPassword"],
 });
+
+
+export const changePasswordSchema = z
+  .object({
+    oldPassword: passwordValidation("Old Password"),
+    newPassword: passwordValidation("New Password"),
+    confirmPassword: z.string().nonempty("Confirm password is required"),
+  })
+  // new password must be different from old password
+  .refine((data) => data.oldPassword !== data.newPassword, {
+    message: "New password must be different from old password",
+    path: ["newPassword"],
+  })
+  // new password and confirm password must match
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+export type ChangePasswordSchemaType = z.infer<typeof changePasswordSchema>;
