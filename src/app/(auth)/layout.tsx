@@ -144,7 +144,7 @@ const AuthLayout = ({ children }: AuthLayoutProp) => {
                 Content
             )}
 
-            <div className="mt-16 sm:mt-14 lg:mt-22 inset-x-0 z-10 pb-6 sm:pb-4 flex justify-center">
+            <div className="mt-14 sm:mt-24 lg:mt-36 inset-x-0 z-10 pb-6 sm:pb-8 flex justify-center">
                 <p className="text-xs text-center">
                     © {new Date().getFullYear()} Owners Inventory - All rights reserved
                 </p>

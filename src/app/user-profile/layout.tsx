@@ -6,6 +6,7 @@ import AppHeader from "../../components/layout/Header/Header";
 import { Icons } from "@/components/utils/icons";
 import { IconName, SvgIcon } from "@/components/ui/SvgIcon";
 import Link from "next/link";
+import { AuthGuard } from "@/components/HOCs/auth-guard";
 
 interface UserProfileLayoutProps {
   children: React.ReactNode;
@@ -81,6 +82,9 @@ export default function UserProfileLayout({
   return (
 
     <div className="min-h-screen bg-background flex font-inter">
+      <AuthGuard>
+
+    
       {/* Desktop Sidebar */}
       <div
         className={`${sidebarCollapsed ? "w-17" : "w-70"
@@ -207,6 +211,7 @@ export default function UserProfileLayout({
         {/* Page Content */}
         <main className="flex-1">{children}</main>
       </div>
+      </AuthGuard>
     </div>
   );
 }

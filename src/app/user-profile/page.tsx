@@ -1,83 +1,80 @@
-'use client';
-import { useUpdateProfile } from '@/apiHooks.ts/auth/auth.api';
-import { userProfile } from '@/apiHooks.ts/auth/auth.types';
-import { Button, Input } from '@/components/ui';
-import ImageUpload from '@/components/UploadImage';
-import { setProfile } from '@/redux/slices/auth.slice';
-import { useAppDispatch, useAppSelector } from '@/redux/store';
-import { User } from '@/types/auth.types';
-import { useEffect, useRef, useState, useMemo, RefObject } from 'react';
-import isEqual from 'lodash/isEqual';
-import { Check, Image as ImageIcon } from 'lucide-react';
-import { useClickOutside } from '@/hooks/useClickOutSide';
-import { DeleteAccountModal } from '@/components/modals/DeleteAccountModal';
+"use client";
+import { useUpdateProfile } from "@/apiHooks.ts/auth/auth.api";
+import { userProfile } from "@/apiHooks.ts/auth/auth.types";
+import { Button, Input } from "@/components/ui";
+import ImageUpload from "@/components/UploadImage";
+import { setProfile } from "@/redux/slices/auth.slice";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { User } from "@/types/auth.types";
+import { useRef, useState, RefObject } from "react";
+
+
+import { useClickOutside } from "@/hooks/useClickOutSide";
+import { DeleteAccountModal } from "@/components/modals/DeleteAccountModal";
+import { FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import userProfileSchema from "@/schemas/user-profile.schema";
+
 export default function UserProfilePage() {
+  const { mutate: updateUser, isPending, } = useUpdateProfile();
+  const { user } = useAppSelector((s) => s.auth);
 
-  const { mutate: updateUser, isPending, isError } = useUpdateProfile()
-  const { user } = useAppSelector((s) => s.auth)
-  const [userData, setUserData] = useState<userProfile>({
-    profile_url: user?.profile_url,
-    first_name: user?.first_name,
-    last_name: user?.last_name,
-    contact: user?.contact,
-    street_address: user?.street_address,
-    city: user?.city,
-    state: user?.state,
-    zip_code: user?.zip_code,
-    country: user?.country,
-    tax_vat_number: user?.tax_vat_number,
-    emergency_contact_name: user?.emergency_contact_name,
-    emergency_contact_no: user?.emergency_contact_no
-
+  const methods = useForm({
+    resolver: zodResolver(userProfileSchema),
+    defaultValues: {
+      profile_url: user?.profile_url,
+      first_name: user?.first_name,
+      last_name: user?.last_name,
+      email: user?.email,
+      contact: user?.contact,
+      street_address: user?.street_address,
+      city: user?.city,
+      state: user?.state,
+      zip_code: user?.zip_code,
+      country: user?.country,
+      tax_vat_number: user?.tax_vat_number,
+      emergency_contact_name: user?.emergency_contact_name,
+      emergency_contact_no: user?.emergency_contact_no,
+    },
   });
+
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
-  const originalData = useRef<userProfile | null>(null);
 
-  useEffect(() => {
-    if (user && !originalData.current) {
-      originalData.current = {
-        profile_url: user?.profile_url,
-        first_name: user?.first_name,
-        last_name: user?.last_name,
-        contact: user?.contact,
-        street_address: user?.street_address,
-        city: user?.city,
-        state: user?.state,
-        zip_code: user?.zip_code,
-        country: user?.country,
-        tax_vat_number: user?.tax_vat_number,
-        emergency_contact_name: user?.emergency_contact_name,
-        emergency_contact_no: user?.emergency_contact_no
-      };
-    }
-  }, [user]);
 
-  const isChanged = useMemo(() => {
-    if (!originalData.current) return false;
-    if (!userData.first_name?.trim() || !userData.last_name?.trim() || !userData.contact?.trim()) return false;
-    return !isEqual(originalData.current, userData);
-  }, [userData]);
 
-  const dispatch = useAppDispatch()
+
+  const dispatch = useAppDispatch();
   useClickOutside(
-    [profileDropdownRef as RefObject<HTMLDivElement>, notificationsRef as RefObject<HTMLDivElement>],
-    () => {
-    }
+    [
+      profileDropdownRef as RefObject<HTMLDivElement>,
+      notificationsRef as RefObject<HTMLDivElement>,
+    ],
+    () => { }
   );
 
-  const handleInputChange = (field: string, value: string) => {
-    setUserData(prev => ({
-      ...prev,
-      ...(prev),
-      [field]: value
-    }));
-  };
   const handleSaveChanges = async () => {
-    updateUser(userData)
-    dispatch(setProfile({ ...userData, email: user?.email, id: user?.id, role_id: user?.role_id, role: user?.role, status: user?.status } as User))
+    const values = methods.getValues() as userProfile;
+
+    updateUser(values);
+    dispatch(
+      setProfile({
+        ...values,
+        email: user?.email,
+        id: user?.id,
+        role_id: user?.role_id,
+        role: user?.role,
+        status: user?.status,
+      } as User)
+    );
+
+    // After a successful submit, treat current values as the new baseline
+    // so the form is no longer dirty until the user changes something again.
+    methods.reset(values);
   };
+
+
   return (
     <div className="min-h-screen w-full bg-background flex font-inter">
       <main className="flex-1">
@@ -86,16 +83,22 @@ export default function UserProfilePage() {
             <div className="flex flex-col items-center gap-7">
               <div className="w-full">
                 <ImageUpload
-                  imageUrl={userData.profile_url || user?.profile_url}
+                  imageUrl={user?.profile_url || user?.profile_url}
                   onUploadComplete={(imageUrl: string) => {
                     const freshUrl = `${imageUrl}?t=${Date.now()}`;
-                    setUserData(prev => ({ ...prev, profile_url: freshUrl }));
+                    methods.setValue("profile_url", freshUrl, {
+                      shouldDirty: true,
+                      shouldTouch: true,
+                    });
                     if (user) {
                       dispatch(setProfile({ ...user, profile_url: freshUrl }));
                     }
                   }}
                   onDelete={() => {
-                    setUserData(prev => ({ ...prev, profile_url: undefined }));
+                    methods.setValue("profile_url", null, {
+                      shouldDirty: true,
+                      shouldTouch: true,
+                    });
                     if (user) {
                       dispatch(setProfile({ ...user, profile_url: undefined }));
                     }
@@ -112,16 +115,20 @@ export default function UserProfilePage() {
               <div>
                 <label className="text-body-small">Name</label>
                 <p className="text-body-medium-bold">
-                  {userData.first_name} {userData.last_name}
+                  {user?.first_name} {user?.last_name}
                 </p>
               </div>
               <div>
                 <label className="text-body-small">Email</label>
-                <p className="text-body-medium-bold overflow-ellipsis">{user?.email}</p>
+                <p className="text-body-medium-bold overflow-ellipsis">
+                  {user?.email}
+                </p>
               </div>
               <div>
                 <label className="text-body-small">Contact</label>
-                <p className="text-body-medium-bold">{user?.contact ?? "0145678"}</p>
+                <p className="text-body-medium-bold">
+                  {user?.contact ?? "0145678"}
+                </p>
               </div>
             </div>
             <Button
@@ -135,156 +142,187 @@ export default function UserProfilePage() {
           <DeleteAccountModal
             isOpen={isDeleteModalOpen}
             onClose={() => setIsDeleteModalOpen(false)}
-            userEmail={user?.email || ''}
+            userEmail={user?.email || ""}
           />
 
           <div className="flex-1 border rounded-lg w-full bg-bg-secondary shadow-sm">
             <div className="flex items-center justify-between p-5 border-b">
-              <h1 className="text-heading-1 font-bold text-black">Profile Information</h1>
+              <h1 className="text-heading-1 font-bold text-black">
+                Profile Information
+              </h1>
             </div>
 
             {/* Form Content */}
-            <div className="p-6 space-y-8">
-              {/* Basic Information */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                <Input
-                  label="First Name"
-                  error={userData.first_name === "" ? "First name is required" : ""}
-                  isRequired
-                  permission="og:edit::profile"
-                  type="text"
-                  value={userData.first_name}
-                  onChange={(e) => handleInputChange('first_name', e.target.value)}
-                />
-
-                <Input
-                  isRequired
-                  permission="og:edit::profile"
-                  label="Last Name"
-                  error={userData.last_name === "" ? "Last name is required" : ""}
-                  type="text"
-                  value={userData.last_name}
-                  onChange={(e) => handleInputChange('last_name', e.target.value)}
-                />
-
-                <Input
-                  label="Email"
-                  permission="og:edit::profile"
-                  isRequired
-                  type="email"
-                  error={userData.email === "" ? "Email is required" : ""}
-                  value={user?.email}
-                  disabled
-                // onChange={(e) => handleInputChange('email', e.target.value)}
-                />
-
-                <Input
-                  label="Contact"
-                  permission="og:edit::profile"
-                  // isRequired
-                  type="tel"
-                  error={userData.contact === "" ? "Contact is required" : ""}
-                  value={userData?.contact ?? ""}
-                  onChange={(e) => handleInputChange('contact', e.target.value.replace(/[^0-9^+]/g, ''))}
-                />
-              </div>
-
-              {/* Address Information */}
-              <div>
-                <h2 className="text-heading-2 font-bold text-black mb-2">Address Information</h2>
+            <FormProvider {...methods}>
+              <form
+                onSubmit={methods.handleSubmit(handleSaveChanges)}
+                className="p-6 space-y-8"
+              >
+                {/* Basic Information */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                   <Input
-                    label="Street Address"
+                    label="First Name"
+                    error={methods.formState.errors.first_name?.message}
+                    isRequired
                     permission="og:edit::profile"
                     type="text"
-                    value={userData?.street_address ?? ""}
-                    onChange={(e) => handleInputChange('street_address', e.target.value)}
+                    {...methods.register("first_name", {
+                      required: "First name is required",
+                    })}
                   />
 
                   <Input
-                    label="City"
+                    isRequired
                     permission="og:edit::profile"
+                    label="Last Name"
+                    error={methods.formState.errors.last_name?.message}
                     type="text"
-                    value={userData?.city ?? ""}
-                    onChange={(e) => handleInputChange('city', e.target.value)}
+                    {...methods.register("last_name", {
+                      required: "Last name is required",
+                    })}
                   />
 
                   <Input
-                    label="State"
+                    label="Email"
                     permission="og:edit::profile"
-                    type="text"
-                    value={userData?.state ?? ""}
-                    onChange={(e) => handleInputChange('state', e.target.value)}
+                    isRequired
+                    type="email"
+                    error={methods.formState.errors.email?.message}
+                    {...methods.register("email", {
+                      required: "Email is required",
+                    })}
+                    disabled
                   />
 
                   <Input
-                    label="Zip Code"
-                    permission="og:edit::profile"
-                    type="text"
-                    value={userData?.zip_code ?? ""}
-                    onChange={(e) => handleInputChange('zip_code', e.target.value)}
-                  />
-
-                  <Input
-                    label="Country"
-                    permission="og:edit::profile"
-                    type="text"
-                    value={userData?.country ?? ""}
-                    onChange={(e) => handleInputChange('country', e.target.value)}
-                  />
-
-                  <Input
-                    label="Tax/VAT Number"
+                    label="Contact"
                     permission="og:edit::profile"
                     type="tel"
-                    value={userData?.tax_vat_number ?? ""}
-                    onChange={(e) => handleInputChange('tax_vat_number', e.target.value)}
+                    error={methods.formState.errors.contact?.message}
+                    {...methods.register("contact", {
+                      required: "Contact is required",
+                    })}
                   />
                 </div>
-              </div>
 
-              {/* Emergency Contact */}
-              <div>
-                <h2 className="text-heading-2 font-bold text-black mb-2">Emergency Contact</h2>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                  <Input
-                    label="Emergency Contact Name"
-                    permission="og:edit::profile"
-                    type="text"
-                    value={userData?.emergency_contact_name ?? ""}
-                    onChange={(e) => handleInputChange('emergency_contact_name', e.target.value)}
-                  />
+                {/* Address Information */}
+                <div>
+                  <h2 className="text-heading-2 font-bold text-black mb-2">
+                    Address Information
+                  </h2>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                    <Input
+                      label="Street Address"
+                      permission="og:edit::profile"
+                      type="text"
+                      {...methods.register("street_address", {
+                        required: "Street address is required",
+                      })}
+                    />
 
-                  <Input
-                    label="Emergency Contact Number"
-                    permission="og:edit::profile"
-                    type="tel"
-                    value={userData?.emergency_contact_no ?? ""}
-                    onChange={(e) => handleInputChange('emergency_contact_no', e.target.value)}
-                  />
+                    <Input
+                      label="City"
+                      permission="og:edit::profile"
+                      type="text"
+                      {...methods.register("city", {
+                        required: "City is required",
+                      })}
+                    />
+
+                    <Input
+                      label="State"
+                      permission="og:edit::profile"
+                      type="text"
+                      value={methods.getValues().state ?? ""}
+                      {...methods.register("state", {
+                        required: "State is required",
+                      })}
+                    />
+
+                    <Input
+                      label="Zip Code"
+                      permission="og:edit::profile"
+                      type="text"
+                      value={methods.getValues().zip_code ?? ""}
+                      {...methods.register("zip_code", {
+                        required: "Zip code is required",
+                      })}
+                    />
+
+                    <Input
+                      label="Country"
+                      permission="og:edit::profile"
+                      type="text"
+                      value={methods.getValues().country ?? ""}
+                      {...methods.register("country", {
+                        required: "Country is required",
+                      })}
+                    />
+
+                    <Input
+                      label="Tax/VAT Number"
+                      permission="og:edit::profile"
+                      type="tel"
+                      value={methods.getValues().tax_vat_number ?? ""}
+                      {...methods.register("tax_vat_number", {
+                        required: "Tax/VAT number is required",
+                      })}
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex justify-end">
-                <Button
-                  variant="primary"
-                  className=" bg-primary text-white hover:bg-primary/70"
+                {/* Emergency Contact */}
+                <div>
+                  <h2 className="text-heading-2 font-bold text-black mb-2">
+                    Emergency Contact
+                  </h2>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                    <Input
+                      label="Emergency Contact Name"
+                      permission="og:edit::profile"
+                      type="text"
+                      value={methods.getValues().emergency_contact_name ?? ""}
+                      {...methods.register("emergency_contact_name", {
+                        required: "Emergency contact name is required",
+                      })}
+                    />
 
-                  permission="og:edit::profile"
-                  onClick={handleSaveChanges}
-                  disabled={isPending || !isChanged}
-                >
-                  {isPending ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>Saving...</span>
-                    </div>
-                  ) : (
-                    'Save Changes'
-                  )}
-                </Button>
-              </div>
-            </div>
+                    <Input
+                      label="Emergency Contact Number"
+                      permission="og:edit::profile"
+                      type="tel"
+                      value={methods.getValues().emergency_contact_no ?? ""}
+                      {...methods.register("emergency_contact_no", {
+                        required: "Emergency contact number is required",
+                      })}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end">
+                  <Button
+                    variant="primary"
+                    className=" bg-primary text-white hover:bg-primary/70"
+                    permission="og:edit::profile"
+                    type="submit"
+                    disabled={
+                      methods.formState.isSubmitting ||
+                      !methods.formState.isValid ||
+                      !methods.formState.isDirty
+                    }
+                  >
+                    {isPending ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span>Saving...</span>
+                      </div>
+                    ) : (
+                      "Save Changes"
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </FormProvider>
           </div>
         </div>
       </main>
