@@ -113,7 +113,7 @@
 // components/ui/Input.tsx
 import { forwardRef, InputHTMLAttributes } from "react";
 import { cn } from "@/utils/helpers";
-import { Asterisk, Eye, EyeOff, Lock } from "lucide-react";
+import { Asterisk, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { PermissionGuard } from "@/components/HOCs/permission-guard";
 import { Permission } from "@/types/common";
@@ -328,7 +328,7 @@ const LockedInput = forwardRef<HTMLInputElement, { label?: string; isRequired?: 
             ) : (
               label
             )}
-            <Lock className="inline ml-2 mb-1" width={14} height={14} color="#6B7280" />
+            {/* <Lock className="inline ml-2 mb-1" width={14} height={14} color="#6B7280" /> */}
           </label>
         )}
         <div className="relative">
@@ -339,7 +339,7 @@ const LockedInput = forwardRef<HTMLInputElement, { label?: string; isRequired?: 
             className="flex h-10 w-full mt-1.5 text-gray-500 rounded-lg border bg-gray-100 px-3 py-2 text-sm cursor-not-allowed opacity-50"
           />
           <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-            <Lock className="h-4 w-4 text-gray-500" />
+            {/* <Lock className="h-4 w-4 text-gray-500" /> */}
           </div>
         </div>
         <p className="text-sm text-gray-500">No permission to edit this field</p>

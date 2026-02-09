@@ -29,9 +29,6 @@ export default function EmailSettingsPage() {
         methods.reset();
         setShowModal(true);
       },
-      onError: (error) => {
-        toast.error(error?.response?.data?.message || "Failed to send email verification");
-      }
     });
   }
   return (

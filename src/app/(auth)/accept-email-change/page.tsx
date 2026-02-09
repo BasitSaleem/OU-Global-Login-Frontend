@@ -116,6 +116,7 @@ export default function AcceptEmailChangePage() {
                             <p className=" font-semibold text-center ">to</p>
                             <p className="text-sm font-bold truncate text-center text-primary">{tokenData?.newEmail || "..."}</p>
                         </div>
+                        <p className="text-sm font-semibold text-center text-text mt-2">Please click on the button below to request an OTP to confirm the change</p>
                     </div>
 
                     <FormProvider {...methods}>
@@ -146,7 +147,7 @@ export default function AcceptEmailChangePage() {
                                 variant="primary"
                                 className="w-full h-12 text-white text-sm bg-primary hover:bg-primary/90 font-bold rounded-2xl transition-all active:scale-[0.98] mt-2"
                             >
-                                {!isVerifyingPassword ? "Update Email Address" : "Updating..."}
+                                {!isVerifyingPassword ? "Request OTP" : "Requesting OTP..."}
                             </Button>
                         </form>
                     </FormProvider>

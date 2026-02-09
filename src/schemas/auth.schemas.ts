@@ -7,7 +7,7 @@ export const loginSchema = z.object({
     .string()
     .email("Please enter a valid email address.")
     .nonempty("Email is required"),
-  password: passwordValidation(),
+  password: z.string().nonempty("Password is required"),
   rememberMe: z.boolean().optional(),
 });
 export const forgotPasswordSchema = z.object({

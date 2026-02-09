@@ -13,7 +13,7 @@ import { AlertCircle } from "lucide-react";
 import { useAuthContext } from "@/contexts/auth-context";
 
 export default function LoginPage() {
-  const { onSubmit, isPending, error: loginError } = useAuthContext();
+  const { onSubmit, isPending } = useAuthContext();
   const searchParams = useSearchParams();
   const app = searchParams.get("app") || "OG";
   const [isCapsLockOn, setIsCapsLockOn] = useState(false);

@@ -5,13 +5,18 @@ import { useForm, FormProvider } from "react-hook-form";
 import { Button } from "@/components/ui";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { otpSchema } from "@/schemas/auth.schemas";
-import { useChangeEmailFinal, useSendOtpForChangeEmail } from "@/apiHooks.ts/auth/auth.api";
+import { useChangeEmailFinal, useLogout, useSendOtpForChangeEmail } from "@/apiHooks.ts/auth/auth.api";
 import { OTPInput } from "@/components/ui/otp-input";
 import { ArrowLeft, Mail } from "lucide-react";
 import { ROUTES } from "@/constants";
 import { useEffect, useState } from "react";
+import { clearAuth } from "@/redux/slices/auth.slice";
+import { useAppDispatch } from "@/redux/store";
+import { toast } from "@/hooks/useToast";
 
 export default function VerifyChangeEmailOTPPage() {
+    const { mutate: logout, isPending } = useLogout();
+    const dispatch = useAppDispatch();
     const { mutate: changeEmail, isPending: isVerifying } = useChangeEmailFinal();
     const { mutate: resendOtp, isPending: isResending } = useSendOtpForChangeEmail();
     const searchParams = useSearchParams();
@@ -60,7 +65,13 @@ export default function VerifyChangeEmailOTPPage() {
             { token, otp: data.otp },
             {
                 onSuccess: () => {
-                    router.push(ROUTES.LOGIN);
+                    logout(undefined, {
+                        onSuccess: () => {
+                            dispatch(clearAuth());
+                            toast.success("Email changed successfully", "Please login with new email");
+                            router.push(ROUTES.LOGIN);
+                        },
+                    });
                 },
                 onError: (error) => {
                     console.error("Email change failed:", error);

@@ -1,5 +1,4 @@
 import { useLogout } from "@/apiHooks.ts/auth/auth.api";
-import { PermissionGuard } from "@/components/HOCs/permission-guard";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import { Button, Loader } from "@/components/ui";
 import { SvgIcon } from "@/components/ui/SvgIcon";
