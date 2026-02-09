@@ -68,5 +68,18 @@ export const changePasswordSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
-
+export const changeEmailSchema = z.object({
+  newEmail: z
+    .string()
+    .email("Please enter a valid email address.")
+    .nonempty("Email is required"),
+  confirmEmail: z
+    .string()
+    .email("Please enter a valid email address.")
+    .nonempty("Email is required"),
+}).refine((data) => data.newEmail === data.confirmEmail, {
+  message: "Emails do not match",
+  path: ["confirmEmail"],
+});
 export type ChangePasswordSchemaType = z.infer<typeof changePasswordSchema>;
+export type ChangeEmailSchemaType = z.infer<typeof changeEmailSchema>;

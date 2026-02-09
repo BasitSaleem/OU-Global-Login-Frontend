@@ -5,11 +5,11 @@ import { Button, Input } from "@/components/ui";
 import { SvgIcon } from "@/components/ui/SvgIcon";
 import { toast } from "@/hooks/useToast";
 import { useAppSelector } from "@/redux/store";
-import { changeEmailSchema } from "@/schemas/auth.schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
+import { changeEmailSchema } from "@/schemas/auth.schemas";
 
 export default function EmailSettingsPage() {
   const { mutate: sendChangeEmailVerification, isPending } = useSendChangeEmailVerification();
@@ -67,13 +67,6 @@ export default function EmailSettingsPage() {
                       Your change email verification has been sent to your email <span className="font-bold text-primary">{user?.email}</span>. Please confirm it to change your email.
                     </p>
                   </div>
-                  {/* <Button
-                    className="w-full bg-primary text-white hover:bg-primary/70 py-5 mt-4"
-                    variant="primary"
-                    onClick={() => setShowModal(false)}
-                  >
-                    Change Another Email
-                  </Button> */}
                 </div>
               ) : (
                 <>
