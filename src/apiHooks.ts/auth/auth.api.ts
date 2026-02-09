@@ -27,6 +27,7 @@ const ENDPOINTS = {
   CHANGE_EMAIL: "/auth/change-email-final",
   SEND_CHANGE_EMAIL_VERIFICATION: "/auth/send-change-email-verification",
   SEND_OTP_FOR_CHANGE_EMAIL: "/auth/send-otp-for-change-email",
+  DECLINE_CHANGE_EMAIL: "/auth/decline-change-email"
 };
 //=================API HOOKS==================
 //1.LOGIN
@@ -298,6 +299,19 @@ export const useChangeEmailFinal = () => {
     onError: (error: any) => {
       const message = (error as Error)?.message || "Failed to change email";
       toast.error("Email change failed", message);
+    },
+  });
+}
+//21.DECLINE CHANGE EMAIL
+export const useDeclineChangeEmail = () => {
+  return useMutation({
+    mutationFn: (data: { token: string }) => request(ENDPOINTS.DECLINE_CHANGE_EMAIL, "POST", {}, data),
+    onSuccess: () => {
+      toast.success("Email change declined successfully");
+    },
+    onError: (error: any) => {
+      const message = (error as Error)?.message || "Failed to decline email change";
+      toast.error("Email decline failed", message);
     },
   });
 }
