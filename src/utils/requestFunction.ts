@@ -42,10 +42,14 @@ export const request = async <T = any>(
   }
 
   const response = await fetch(raw, fetchOptions);
-  const responseBody = await response.json();
+
+  // Handle empty responses (e.g. 204 No Content)
+  const responseText = await response.text();
+  const responseBody = responseText ? JSON.parse(responseText) : {};
+
   if (!response.ok) {
     const message =
-      (responseBody as any)?.message ||
+      responseBody?.message ||
       response.statusText ||
       "Something went wrong";
     throw new Error(message);

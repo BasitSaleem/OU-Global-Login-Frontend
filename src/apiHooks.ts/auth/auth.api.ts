@@ -268,6 +268,7 @@ export const useSendChangeEmailVerification = () => {
 export const useSendOtpForChangeEmail = () => {
   return useMutation({
     mutationFn: (data: { token: string }) => request(ENDPOINTS.SEND_OTP_FOR_CHANGE_EMAIL, "POST", {}, data),
+    mutationKey: ['send-otp-for-change-email'],
     onSuccess: () => {
       toast.success("OTP sent successfully");
     },
@@ -281,18 +282,21 @@ export const useSendOtpForChangeEmail = () => {
 export const useValidateAcceptEmailToken = () => {
   return useMutation({
     mutationFn: (data: { token: string }) => request(ENDPOINTS.VALIDATE_ACCEPT_EMAIL_TOKEN, "POST", {}, data),
+    mutationKey: ['validate-accept-email-token'],
   });
 }
 //18.VERIFY PASSWORD
 export const useVerifyPassword = () => {
   return useMutation({
     mutationFn: (data: { email: string; password: string }) => request(ENDPOINTS.VERIFY_PASSWORD, "POST", {}, data),
+    mutationKey: ['verify-password'],
   });
 }
 //20.CHANGE EMAIL FINAL
 export const useChangeEmailFinal = () => {
   return useMutation({
     mutationFn: (data: { token: string, otp: string }) => request(ENDPOINTS.CHANGE_EMAIL, "POST", {}, data),
+    mutationKey: ['change-email'],
     onSuccess: () => {
       toast.success("Email changed successfully");
     },
@@ -302,17 +306,19 @@ export const useChangeEmailFinal = () => {
     },
   });
 }
-//21.DECLINE CHANGE EMAIL
 export const useDeclineChangeEmail = () => {
   return useMutation({
-    mutationFn: (data: { token: string }) => request(ENDPOINTS.DECLINE_CHANGE_EMAIL, "POST", {}, data),
+    mutationKey: ['decline-change-email'],
+    mutationFn: (data: { token: string }) =>
+      request(ENDPOINTS.DECLINE_CHANGE_EMAIL, "POST", {}, data),
     onSuccess: () => {
       toast.success("Email change declined successfully");
     },
     onError: (error: any) => {
       const message = (error as Error)?.message || "Failed to decline email change";
-      toast.error("Email decline failed", message);
+      toast.error(message);
     },
   });
-}
+};
+
 

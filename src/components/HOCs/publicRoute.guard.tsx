@@ -20,14 +20,22 @@ export function PublicRoute({
   const router = useRouter();
   const { isAuthenticated } = useAppSelector((s) => s.auth);
   const pathName = usePathname();
+  const isAllowedPath = [
+    "/accept-email-change",
+    "/verify-change-email-otp",
+    "/decline-email-change",
+    redirectTo,
+    ROUTES.HOME,
+    ROUTES.DASHBOARD
+  ].includes(pathName);
 
   useEffect(() => {
-    if (isAuthenticated && pathName !== "/accept-email-change" && pathName !== "/verify-change-email-otp") {
+    if (isAuthenticated && !isAllowedPath) {
       router.replace(redirectTo);
     }
-  }, [isAuthenticated, redirectTo, router]);
+  }, [isAuthenticated, redirectTo, router, isAllowedPath]);
 
-  if (isAuthenticated && pathName !== "/accept-email-change" && pathName !== "/verify-change-email-otp") {
+  if (isAuthenticated && !isAllowedPath) {
     return fallback || (
       <Loader text='Redirecting' />
     );
