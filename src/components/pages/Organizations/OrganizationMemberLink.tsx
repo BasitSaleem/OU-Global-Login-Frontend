@@ -4,12 +4,12 @@ import React, { useEffect, useState } from "react";
 import { generateProductLink } from "./OrganizationProductCard";
 import { IconName, SvgIcon } from "@/components/ui/SvgIcon";
 
-interface OrganizationMemberLinkProps {
+interface OILinkProps {
   id: string;
   org: OgOrganization;
 }
 
-const OrganizationMemberLink = ({ id, org }: OrganizationMemberLinkProps) => {
+const OILink = ({ id, org }: OILinkProps) => {
   const [isDisabled, setIsDisabled] = useState<boolean>(() => {
     if (!org?.created_at) return false;
 
@@ -39,7 +39,7 @@ const OrganizationMemberLink = ({ id, org }: OrganizationMemberLinkProps) => {
       }
     };
 
-   
+
     updateDisabledState();
 
     const intervalId = setInterval(updateDisabledState, 1000);
@@ -49,18 +49,15 @@ const OrganizationMemberLink = ({ id, org }: OrganizationMemberLinkProps) => {
 
   return (
     <div
-      className={`flex items-center -space-x-0.5 ${
-        isDisabled ? "" : "bg-primary/10"
-      } `}
+      className="flex items-center -space-x-0.5"
     >
       {org?.products?.map((product, index) => (
         <Link
           key={index}
           href={generateProductLink(org?.products?.[index]?.oi_sub_domain!)}
           target="_blank"
-          className={`relative z-30 group/member duration-300 transition-all ${
-            isDisabled ? "cursor-not-allowed" : "hover:scale-110"
-          }`}
+          className={`relative z-30 group/member duration-300 transition-all ${isDisabled ? "cursor-not-allowed" : "hover:scale-110"
+            }`}
           onClick={(e) => {
             e.stopPropagation();
             if (isDisabled) {
@@ -71,8 +68,8 @@ const OrganizationMemberLink = ({ id, org }: OrganizationMemberLinkProps) => {
           <span className={isDisabled ? "opacity-50" : ""}>
             <SvgIcon
               name={product.product_name as IconName}
-              width={20}
-              height={20}
+              width={24}
+              height={24}
             />
           </span>
 
@@ -89,4 +86,4 @@ const OrganizationMemberLink = ({ id, org }: OrganizationMemberLinkProps) => {
   );
 };
 
-export default OrganizationMemberLink;
+export default OILink;
