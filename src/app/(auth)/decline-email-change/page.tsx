@@ -21,7 +21,7 @@ const Page = () => {
                 <div className="text-center space-y-4 bg-bg-secondary p-8 rounded-3xl border border-red-100 shadow-sm max-w-sm w-full">
                     <p className="text-red-500 font-bold text-lg">Invalid Session</p>
                     <p className="text-text-secondary text-sm">Please restart the email change process from your settings.</p>
-                    <Button onClick={() => router.push(ROUTES.DASHBOARD)} variant="primary" className="w-full rounded-2xl">
+                    <Button onClick={() => router.push(ROUTES.DASHBOARD)} variant="primary" className="w-full rounded-2xl py-2">
                         Back to Login
                     </Button>
                 </div>
@@ -40,14 +40,14 @@ const Page = () => {
                         <Button
                             onClick={handleDecline}
                             isLoading={isPending}
-                            className="w-full rounded-2xl bg-red-500 hover:bg-red-600 text-white cursor-pointer"
+                            className="w-full rounded-2xl bg-red-500 hover:bg-red-600 text-white cursor-pointer py-2"
                         >
                             Confirm Decline
                         </Button>
                         <Button
                             onClick={() => router.push(ROUTES.DASHBOARD)}
                             disabled={isPending}
-                            className="w-full rounded-2xl bg-bg-secondary border border-border-primary text-text hover:bg-bg-hover"
+                            className="w-full rounded-2xl bg-bg-secondary border border-border-primary text-text hover:bg-bg-hover py-2"
                         >
                             Cancel & Go to Login
                         </Button>
@@ -59,8 +59,9 @@ const Page = () => {
                     <>
                         <div className="text-green-500 text-5xl flex justify-center">✓</div>
                         <p className="text-lg font-bold text-green-600">Successfully Declined</p>
-                        <p className="text-sm">The email change request has been cancelled. Redirecting to login...</p>
-                    </>
+                        <Button onClick={() => router.push(ROUTES.LOGIN)} variant="primary" className="w-full rounded-2xl py-2">
+                            Back to Login
+                        </Button>                    </>
                 )}
 
                 {mutationStatus === 'error' && (
@@ -72,7 +73,7 @@ const Page = () => {
                                 ? "This decline link is invalid or has already been used. Redirecting to login..."
                                 : "We couldn't process your request. Please try again or contact support."}
                         </p>
-                        <Button onClick={() => router.push(ROUTES.LOGIN)} variant="primary" className="w-full rounded-2xl">
+                        <Button onClick={() => router.push(ROUTES.LOGIN)} variant="primary" className="w-full rounded-2xl py-2">
                             Back to Login
                         </Button>
                     </>
