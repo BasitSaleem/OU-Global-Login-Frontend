@@ -126,6 +126,7 @@ const AuthLayout = ({ children }: AuthLayoutProp) => {
                         >
                             Sign Up
                         </Link>
+
                     ) : (
                         <Link
                             href={`/login?app=${app}`}
