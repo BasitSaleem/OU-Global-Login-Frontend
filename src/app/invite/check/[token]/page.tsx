@@ -6,82 +6,105 @@ import { useGetMe } from '@/apiHooks.ts/auth/auth.api';
 import { ROUTES } from '@/constants';
 import { toast } from '@/hooks/useToast';
 import { Loader } from '@/components/ui';
+import { useEffect } from 'react';
 
 export default function AcceptInvitePage() {
     const params = useParams();
     const router = useRouter();
     const token = params.token as string;
-    const { data: statusData, isPending: isStatusPending, error } = useGetInvitationStatus(token)
-    const { data: me } = useGetMe()
-    const { mutate: acceptInvitation, isPending: isAccepting } = useAcceptInvitation({
-        onSuccess: () => {
-            router.push('/organizations');
-        },
-    });
-    if (error) {
-        toast.info("Invitation not found", "Invitation not found")
-        router.push(ROUTES.LOGIN)
-    }
-    const handleAccept = () => {
-        if (token) {
-            acceptInvitation(token);
-        }
-    };
-    if (me?.data?.user) {
-        if (statusData?.inviteStatus === "ACCEPTED") {
-            toast.info("Already Accepted", "Invitation already accepted")
-            router.push(ROUTES.DASHBOARD);
-        }
-        if (statusData?.inviteStatus === "PENDING") {
-            handleAccept()
-        }
-    }
-    if (!me?.data?.user && statusData?.inviteStatus === "PENDING") {
 
-        if (statusData?.userStatus === "EXIST") {
-            router.push(ROUTES.LOGIN + (token ? `&token=${encodeURIComponent(token)}` : '') + (statusData.email ? `&email=${encodeURIComponent(statusData.email)}` : ""))
+    const { data: statusData, isPending: isStatusPending, error } =
+        useGetInvitationStatus(token);
+
+    const { data: me, isPending: isMePending } = useGetMe();
+
+    const { mutate: acceptInvitation, isPending: isAccepting } =
+        useAcceptInvitation({
+            onSuccess: () => {
+                router.replace(ROUTES.DASHBOARD);
+            },
+        });
+
+    useEffect(() => {
+        if (isStatusPending || isMePending || isAccepting) return;
+
+        if (error) {
+            toast.info('Invitation not found', 'Invitation not found');
+            router.replace(ROUTES.LOGIN);
+            return;
         }
-        if (statusData?.userStatus === "NOT_EXIST") {
-            router.push(ROUTES.REGISTER + (token ? `&token=${encodeURIComponent(token)}` : '') + (statusData.email ? `&email=${encodeURIComponent(statusData.email)}` : ""))
+
+        if (!statusData) return;
+
+        const { inviteStatus, userStatus, email } = statusData;
+        const currentPath = `/invite/check/${token}`;
+
+        // USER LOGGED IN
+        if (me?.data?.user) {
+            if (inviteStatus === 'PENDING') {
+                acceptInvitation(token);
+                return;
+            }
+
+            if (inviteStatus === 'ACCEPTED') {
+                toast.info('Already Accepted', 'Invitation already accepted');
+                router.replace(ROUTES.DASHBOARD);
+                return;
+            }
+
+            if (inviteStatus === 'REJECTED') {
+                toast.info('Already Declined', 'Invitation already declined');
+                router.replace(ROUTES.DASHBOARD);
+                return;
+            }
         }
-    }
-    if (!me?.data?.user && statusData?.inviteStatus === "ACCEPTED") {
-        toast.info("Already Accepted", "Invitation already accepted")
-        router.push(ROUTES.LOGIN);
-    }
-    if (!me?.data?.user && statusData?.inviteStatus === "REJECTED") {
-        toast.info("Already Declined", "Invitation already declined")
-        router.push(ROUTES.LOGIN);
-    }
 
-    // For new users, redirect to signup with email pre-filled
-    // const handleSignupToAccept = () => 
-    //     if (emailParam) {
-    //         router.push(`/signup?email=${encodeURIComponent(emailParam)}&redirect=/invite/accept/${token}`);
-    //     }
-    // };
+        // USER NOT LOGGED IN
+        const redirectParams =
+            `?token=${encodeURIComponent(token)}` +
+            `${email ? `&email=${encodeURIComponent(email)}` : ''}` +
+            `&redirect_uri=${encodeURIComponent(currentPath)}`;
 
+        if (inviteStatus === 'PENDING') {
+            router.replace(
+                userStatus === 'EXIST'
+                    ? `${ROUTES.LOGIN}${redirectParams}`
+                    : `${ROUTES.REGISTER}${redirectParams}`
+            );
+            return;
+        }
 
+        if (inviteStatus === 'ACCEPTED') {
+            toast.info('Already Accepted', 'Invitation already accepted');
+            router.replace(ROUTES.LOGIN);
+            return;
+        }
 
-    // useEffect(() => {
-    //     checkAuth()
-    // }, [])
-    // const checkAuth = () => {
-    //     if (!me?.data?.user) {
-    //         router.push(ROUTES.LOGIN + (token ? `&token=${token}` : ''))
-    //     }
-    //     else {
-    //         acceptInvite()
-    //         router.push('/organizations')
-    //     }
-    // }
-    // const acceptInvite = () => {
-    //     acceptInvitation(token)
-    // }
-    if (isStatusPending) {
-        return <Loader text='Checking Invitation Status' />
-    }
-    if (isAccepting) {
-        return <Loader text='Accepting Invitation' />
-    }
+        if (inviteStatus === 'REJECTED') {
+            toast.info('Already Declined', 'Invitation already declined');
+            router.replace(ROUTES.LOGIN);
+        }
+    }, [
+        statusData,
+        me,
+        isStatusPending,
+        isMePending,
+        isAccepting,
+        error,
+        token,
+        router,
+        acceptInvitation,
+    ]);
+
+    return (
+        <Loader
+            text={
+                isAccepting
+                    ? 'Accepting Invitation'
+                    : isStatusPending || isMePending
+                        ? 'Checking Invitation Status'
+                        : 'Redirecting'
+            }
+        />
+    );
 }

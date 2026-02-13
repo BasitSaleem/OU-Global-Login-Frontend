@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'next/image';
 import { IconName, SvgIcon } from './SvgIcon';
 interface LogoProps {
 

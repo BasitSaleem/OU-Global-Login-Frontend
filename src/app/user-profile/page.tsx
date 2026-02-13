@@ -1,12 +1,12 @@
 "use client";
 import { useUpdateProfile } from "@/apiHooks.ts/auth/auth.api";
 import { userProfile } from "@/apiHooks.ts/auth/auth.types";
-import { Button, Input } from "@/components/ui";
+import { Button, Input, LoadingSpinner, useCoachMark } from "@/components/ui";
 import ImageUpload from "@/components/UploadImage";
 import { setProfile } from "@/redux/slices/auth.slice";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { User } from "@/types/auth.types";
-import { useRef, useState, RefObject } from "react";
+import { useRef, useState, useEffect, RefObject } from "react";
 
 
 import { useClickOutside } from "@/hooks/useClickOutSide";
@@ -14,10 +14,25 @@ import { DeleteAccountModal } from "@/components/modals/DeleteAccountModal";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import userProfileSchema from "@/schemas/user-profile.schema";
+import { MapPin } from "lucide-react";
+import { toast } from "react-toastify";
 
 export default function UserProfilePage() {
   const { mutate: updateUser, isPending, } = useUpdateProfile();
+  const [isLocating, setIsLocating] = useState(false);
   const { user } = useAppSelector((s) => s.auth);
+  const { startTour } = useCoachMark();
+
+  useEffect(() => {
+    startTour([
+      {
+        target: "#location-button",
+        title: "Get Current Location",
+        description: "Click this button to automatically fill in your address based on your current GPS location.",
+        position: "left",
+      },
+    ]);
+  }, [startTour]);
 
   const methods = useForm({
     resolver: zodResolver(userProfileSchema),
@@ -41,10 +56,6 @@ export default function UserProfilePage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
-
-
-
-
   const dispatch = useAppDispatch();
   useClickOutside(
     [
@@ -54,24 +65,74 @@ export default function UserProfilePage() {
     () => { }
   );
 
+  const handleGetCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported by your browser");
+      return;
+    }
+
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`
+          );
+          const data = await response.json();
+
+          if (data.address) {
+            const { address } = data;
+            const streetAddress = [
+              address.road,
+              address.suburb,
+              address.neighbourhood
+            ].filter(Boolean).join(", ");
+
+            methods.setValue("street_address", streetAddress || address.display_name, { shouldDirty: true, shouldTouch: true });
+            methods.setValue("city", address.city || address.town || address.village || address.suburb || "", { shouldDirty: true, shouldTouch: true });
+            methods.setValue("state", address.state || "", { shouldDirty: true, shouldTouch: true });
+            methods.setValue("zip_code", address.postcode || "", { shouldDirty: true, shouldTouch: true });
+            methods.setValue("country", address.country || "", { shouldDirty: true, shouldTouch: true });
+
+            toast.success("Location detected successfully!");
+          } else {
+            toast.error("Could not retrieve address details.");
+          }
+        } catch (error) {
+          console.error("Error fetching location data:", error);
+          toast.error("Failed to fetch location data.");
+        } finally {
+          setIsLocating(false);
+        }
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        toast.error("Permission denied or location not found.");
+        setIsLocating(false);
+      },
+      { enableHighAccuracy: true }
+    );
+  };
+
   const handleSaveChanges = async () => {
     const values = methods.getValues() as userProfile;
 
-    updateUser(values);
-    dispatch(
-      setProfile({
-        ...values,
-        email: user?.email,
-        id: user?.id,
-        role_id: user?.role_id,
-        role: user?.role,
-        status: user?.status,
-      } as User)
-    );
-
-    // After a successful submit, treat current values as the new baseline
-    // so the form is no longer dirty until the user changes something again.
-    methods.reset(values);
+    updateUser(values, {
+      onSuccess: () => {
+        dispatch(
+          setProfile({
+            ...values,
+            email: user?.email,
+            id: user?.id,
+            role_id: user?.role_id,
+            role: user?.role,
+            status: user?.status,
+          } as User)
+        );
+        methods.reset(values);
+      }
+    })
   };
 
 
@@ -127,7 +188,7 @@ export default function UserProfilePage() {
               <div>
                 <label className="text-body-small">Contact</label>
                 <p className="text-body-medium-bold">
-                  {user?.contact ?? "0145678"}
+                  {user?.contact ?? ""}
                 </p>
               </div>
             </div>
@@ -207,9 +268,25 @@ export default function UserProfilePage() {
 
                 {/* Address Information */}
                 <div>
-                  <h2 className="text-heading-2 font-bold text-black mb-2">
-                    Address Information
-                  </h2>
+                  <div className="flex items-center justify-between mb-2">
+                    <h2 className="text-heading-2 font-bold text-black">
+                      Address Information
+                    </h2>
+                    <Button
+                      type="button"
+                      id="location-button"
+                      tooltip={isLocating ? "Loading..." : "Get Current Location"}
+                      tooltipPosition="left"
+                      onClick={handleGetCurrentLocation}
+                      disabled={isLocating}
+                    >
+                      {isLocating ? (
+                        <LoadingSpinner className="w-6 h-6" />
+                      ) : (
+                        <MapPin className="w-6 h-6 text-primary" />
+                      )}
+                    </Button>
+                  </div>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                     <Input
                       label="Street Address"

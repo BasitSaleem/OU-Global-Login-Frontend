@@ -54,7 +54,11 @@ export default function ChangePasswordPage() {
   };
 
   const handleFormSubmit = (formData: ChangePasswordSchemaType) => {
-    changePassword(formData);
+    changePassword(formData, {
+      onSuccess: () => {
+        methods.reset();
+      }
+    });
   };
 
   return (

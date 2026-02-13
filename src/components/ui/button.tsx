@@ -78,6 +78,7 @@ import { LoadingSpinner } from './loading';
 import { PermissionGuard } from '@/components/HOCs/permission-guard';
 import { Permission } from '@/types/common';
 import { Lock } from 'lucide-react';
+import { Tooltip, TooltipPosition } from './Tooltip';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive' | "basic";
@@ -89,6 +90,8 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   checkAllPermissions?: boolean;
   permissionFallback?: React.ReactNode;
   ariaLabel?: string;
+  tooltip?: string | React.ReactNode;
+  tooltipPosition?: TooltipPosition;
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -112,7 +115,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const variants = {
       primary: 'bg-primary py-4 text-white hover:bg-primary/80 rounded-lg border border-primary',
       secondary: 'bg-bg-secondary py-4 hover:bg-primary border-primary hover:!text-btn-text border rounded-lg',
-      outline: 'border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50 focus:ring-gray-500 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800',
+      outline: 'border border-gray-300 bg-transparent text-primary hover:bg-gray-50 focus:ring-gray-500',
       ghost: 'text-gray-700 py-4 hover:bg-primary/80 rounded-lg focus:ring-gray-500 border rounded-lg hover:!text-btn-text ',
       destructive: 'bg-red py-4 !text-btn-text hover:bg-red-700 focus:ring-red-500 rounded-lg border-red border',
       basic: ''
@@ -193,9 +196,11 @@ const BaseButton = forwardRef<HTMLButtonElement, BaseButtonProps>(
     baseStyles,
     variants,
     sizes,
+    tooltip,
+    tooltipPosition,
     ...props
   }, ref) => {
-    return (
+    const buttonElement = (
       <button
         aria-label={ariaLabel}
         className={cn(
@@ -218,6 +223,16 @@ const BaseButton = forwardRef<HTMLButtonElement, BaseButtonProps>(
         {!isLoading && rightIcon && rightIcon}
       </button>
     );
+
+    if (tooltip) {
+      return (
+        <Tooltip content={tooltip} position={tooltipPosition}>
+          {buttonElement}
+        </Tooltip>
+      );
+    }
+
+    return buttonElement;
   }
 );
 

@@ -21,7 +21,12 @@ export default function DeclineInvitePage() {
             toast.info("Token not found", "Token not found")
             router.push(ROUTES.LOGIN)
         }
-        declineInvitation(token);
+        declineInvitation(token, {
+            onSuccess: () => toast.success(
+                "Invitation declined",
+                "The invitation has been declined."
+            )
+        });
     }, []);
     if (isDeclining) {
         return <Loader text='Declining Invitation' />

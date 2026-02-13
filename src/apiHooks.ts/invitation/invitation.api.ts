@@ -109,10 +109,6 @@ export const useDeclineInvitation = (callbacks?: { onSuccess?: () => void }) => 
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["invitations"] });
-            toast.success(
-                "Invitation declined",
-                "The invitation has been declined."
-            );
             callbacks?.onSuccess?.();
         },
         retry: false,

@@ -6,3 +6,6 @@ export { default as Logo } from './Logo';
 export { PhoneInput } from './phone-input';
 export { Loader } from './Loader';
 export { Dots } from './Dots';
+export { CoachMarkTour } from './CoachMark';
+export { CoachMarkProvider, useCoachMark } from './CoachMarkProvider';
+export { Tooltip } from './Tooltip';

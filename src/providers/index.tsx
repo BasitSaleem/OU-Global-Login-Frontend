@@ -9,7 +9,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { persistor, store } from '@/redux/store';
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-import { Loader } from '@/components/ui';
+import { Loader, CoachMarkProvider } from '@/components/ui';
 interface ProvidersProps {
   children: ReactNode;
 }
@@ -32,7 +32,9 @@ export function Providers({ children }: ProvidersProps) {
             <ReactQueryDevtools initialIsOpen={false} />
             {/* <CreateOrganizationGuard> */}
             <ToastProvider>
-              {children}
+              <CoachMarkProvider>
+                {children}
+              </CoachMarkProvider>
             </ToastProvider>
             {/* </CreateOrganizationGuard> */}
           </QueryClientProvider>
