@@ -1,13 +1,12 @@
 "use client";
 import { useUpdateProfile } from "@/apiHooks.ts/auth/auth.api";
 import { userProfile } from "@/apiHooks.ts/auth/auth.types";
-import { Button, Input, LoadingSpinner, useCoachMark } from "@/components/ui";
+import { Button, Input, LoadingSpinner } from "@/components/ui";
 import ImageUpload from "@/components/UploadImage";
 import { setProfile } from "@/redux/slices/auth.slice";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { User } from "@/types/auth.types";
-import { useRef, useState, useEffect, RefObject } from "react";
-
+import { useRef, useState, RefObject } from "react";
 
 import { useClickOutside } from "@/hooks/useClickOutSide";
 import { DeleteAccountModal } from "@/components/modals/DeleteAccountModal";
@@ -18,21 +17,9 @@ import { MapPin } from "lucide-react";
 import { toast } from "react-toastify";
 
 export default function UserProfilePage() {
-  const { mutate: updateUser, isPending, } = useUpdateProfile();
+  const { mutate: updateUser, isPending } = useUpdateProfile();
   const [isLocating, setIsLocating] = useState(false);
   const { user } = useAppSelector((s) => s.auth);
-  const { startTour } = useCoachMark();
-
-  useEffect(() => {
-    startTour([
-      {
-        target: "#location-button",
-        title: "Get Current Location",
-        description: "Click this button to automatically fill in your address based on your current GPS location.",
-        position: "left",
-      },
-    ]);
-  }, [startTour]);
 
   const methods = useForm({
     resolver: zodResolver(userProfileSchema),
@@ -62,7 +49,7 @@ export default function UserProfilePage() {
       profileDropdownRef as RefObject<HTMLDivElement>,
       notificationsRef as RefObject<HTMLDivElement>,
     ],
-    () => { }
+    () => {},
   );
 
   const handleGetCurrentLocation = () => {
@@ -77,7 +64,7 @@ export default function UserProfilePage() {
         const { latitude, longitude } = position.coords;
         try {
           const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`,
           );
           const data = await response.json();
 
@@ -86,14 +73,37 @@ export default function UserProfilePage() {
             const streetAddress = [
               address.road,
               address.suburb,
-              address.neighbourhood
-            ].filter(Boolean).join(", ");
+              address.neighbourhood,
+            ]
+              .filter(Boolean)
+              .join(", ");
 
-            methods.setValue("street_address", streetAddress || address.display_name, { shouldDirty: true, shouldTouch: true });
-            methods.setValue("city", address.city || address.town || address.village || address.suburb || "", { shouldDirty: true, shouldTouch: true });
-            methods.setValue("state", address.state || "", { shouldDirty: true, shouldTouch: true });
-            methods.setValue("zip_code", address.postcode || "", { shouldDirty: true, shouldTouch: true });
-            methods.setValue("country", address.country || "", { shouldDirty: true, shouldTouch: true });
+            methods.setValue(
+              "street_address",
+              streetAddress || address.display_name,
+              { shouldDirty: true, shouldTouch: true },
+            );
+            methods.setValue(
+              "city",
+              address.city ||
+                address.town ||
+                address.village ||
+                address.suburb ||
+                "",
+              { shouldDirty: true, shouldTouch: true },
+            );
+            methods.setValue("state", address.state || "", {
+              shouldDirty: true,
+              shouldTouch: true,
+            });
+            methods.setValue("zip_code", address.postcode || "", {
+              shouldDirty: true,
+              shouldTouch: true,
+            });
+            methods.setValue("country", address.country || "", {
+              shouldDirty: true,
+              shouldTouch: true,
+            });
 
             toast.success("Location detected successfully!");
           } else {
@@ -111,7 +121,7 @@ export default function UserProfilePage() {
         toast.error("Permission denied or location not found.");
         setIsLocating(false);
       },
-      { enableHighAccuracy: true }
+      { enableHighAccuracy: true },
     );
   };
 
@@ -128,13 +138,12 @@ export default function UserProfilePage() {
             role_id: user?.role_id,
             role: user?.role,
             status: user?.status,
-          } as User)
+          } as User),
         );
         methods.reset(values);
-      }
-    })
+      },
+    });
   };
-
 
   return (
     <div className="min-h-screen w-full bg-background flex font-inter">
@@ -147,19 +156,13 @@ export default function UserProfilePage() {
                   imageUrl={user?.profile_url || user?.profile_url}
                   onUploadComplete={(imageUrl: string) => {
                     const freshUrl = `${imageUrl}?t=${Date.now()}`;
-                    methods.setValue("profile_url", freshUrl, {
-                      shouldDirty: true,
-                      shouldTouch: true,
-                    });
+                    methods.setValue("profile_url", freshUrl);
                     if (user) {
                       dispatch(setProfile({ ...user, profile_url: freshUrl }));
                     }
                   }}
                   onDelete={() => {
-                    methods.setValue("profile_url", null, {
-                      shouldDirty: true,
-                      shouldTouch: true,
-                    });
+                    methods.setValue("profile_url", null);
                     if (user) {
                       dispatch(setProfile({ ...user, profile_url: undefined }));
                     }
@@ -185,12 +188,12 @@ export default function UserProfilePage() {
                   {user?.email}
                 </p>
               </div>
-              <div>
-                <label className="text-body-small">Contact</label>
-                <p className="text-body-medium-bold">
-                  {user?.contact ?? ""}
-                </p>
-              </div>
+              {user?.contact && (
+                <div>
+                  <label className="text-body-small">Contact</label>
+                  <p className="text-body-medium-bold">{user?.contact ?? ""}</p>
+                </div>
+              )}
             </div>
             <Button
               className="w-full py-4 text-red-500 hover:text-white hover:bg-red-500 border border-red-500"
@@ -268,22 +271,19 @@ export default function UserProfilePage() {
 
                 {/* Address Information */}
                 <div>
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center  mb-2">
                     <h2 className="text-heading-2 font-bold text-black">
                       Address Information
                     </h2>
                     <Button
                       type="button"
-                      id="location-button"
-                      tooltip={isLocating ? "Loading..." : "Get Current Location"}
-                      tooltipPosition="left"
                       onClick={handleGetCurrentLocation}
                       disabled={isLocating}
                     >
                       {isLocating ? (
                         <LoadingSpinner className="w-6 h-6" />
                       ) : (
-                        <MapPin className="w-6 h-6 text-primary" />
+                        <MapPin className="w-5 h-5 text-primary" />
                       )}
                     </Button>
                   </div>
@@ -310,7 +310,6 @@ export default function UserProfilePage() {
                       label="State"
                       permission="og:edit::profile"
                       type="text"
-                      value={methods.getValues().state ?? ""}
                       {...methods.register("state", {
                         required: "State is required",
                       })}
@@ -320,7 +319,6 @@ export default function UserProfilePage() {
                       label="Zip Code"
                       permission="og:edit::profile"
                       type="text"
-                      value={methods.getValues().zip_code ?? ""}
                       {...methods.register("zip_code", {
                         required: "Zip code is required",
                       })}
@@ -330,7 +328,6 @@ export default function UserProfilePage() {
                       label="Country"
                       permission="og:edit::profile"
                       type="text"
-                      value={methods.getValues().country ?? ""}
                       {...methods.register("country", {
                         required: "Country is required",
                       })}
@@ -340,7 +337,6 @@ export default function UserProfilePage() {
                       label="Tax/VAT Number"
                       permission="og:edit::profile"
                       type="tel"
-                      value={methods.getValues().tax_vat_number ?? ""}
                       {...methods.register("tax_vat_number", {
                         required: "Tax/VAT number is required",
                       })}
@@ -358,7 +354,6 @@ export default function UserProfilePage() {
                       label="Emergency Contact Name"
                       permission="og:edit::profile"
                       type="text"
-                      value={methods.getValues().emergency_contact_name ?? ""}
                       {...methods.register("emergency_contact_name", {
                         required: "Emergency contact name is required",
                       })}
@@ -368,7 +363,6 @@ export default function UserProfilePage() {
                       label="Emergency Contact Number"
                       permission="og:edit::profile"
                       type="tel"
-                      value={methods.getValues().emergency_contact_no ?? ""}
                       {...methods.register("emergency_contact_no", {
                         required: "Emergency contact number is required",
                       })}

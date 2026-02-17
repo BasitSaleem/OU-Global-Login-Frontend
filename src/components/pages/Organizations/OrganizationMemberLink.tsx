@@ -17,9 +17,9 @@ const OILink = ({ id, org }: OILinkProps) => {
     if (isNaN(createdAt.getTime())) return false;
 
     const diffMs = Date.now() - createdAt.getTime();
-    const ONE_MINUTE_MS = 60 * 1000;
+    const THIRTY_SECOND_MS = 30 * 1000;
 
-    return diffMs < ONE_MINUTE_MS;
+    return diffMs < THIRTY_SECOND_MS;
   });
 
   useEffect(() => {
@@ -28,17 +28,16 @@ const OILink = ({ id, org }: OILinkProps) => {
     const createdAt = new Date(org.created_at);
     if (isNaN(createdAt.getTime())) return;
 
-    const ONE_MINUTE_MS = 60 * 1000;
+    const THIRTY_SECOND_MS = 30 * 1000;
 
     const updateDisabledState = () => {
       const diffMs = Date.now() - createdAt.getTime();
-      if (diffMs < ONE_MINUTE_MS) {
+      if (diffMs < THIRTY_SECOND_MS) {
         setIsDisabled(true);
       } else {
         setIsDisabled(false);
       }
     };
-
 
     updateDisabledState();
 
@@ -48,16 +47,15 @@ const OILink = ({ id, org }: OILinkProps) => {
   }, [org?.created_at]);
 
   return (
-    <div
-      className="flex items-center -space-x-0.5"
-    >
+    <div className="flex items-center -space-x-0.5">
       {org?.products?.map((product, index) => (
         <Link
           key={index}
           href={generateProductLink(org?.products?.[index]?.oi_sub_domain!)}
           target="_blank"
-          className={`relative z-30 group/member duration-300 transition-all ${isDisabled ? "cursor-not-allowed" : "hover:scale-110"
-            }`}
+          className={`relative z-30 group/member duration-300 transition-all ${
+            isDisabled ? "cursor-not-allowed" : "hover:scale-110"
+          }`}
           onClick={(e) => {
             e.stopPropagation();
             if (isDisabled) {
