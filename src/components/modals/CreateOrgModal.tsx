@@ -1,15 +1,18 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState, } from 'react';
-import { Modal } from './GenericModal';
-import { Button, Dots, Input, Loader } from '../ui';
-import { PRODUCTS } from '@/constants';
-import { useCheckSubDomainAvailability, useGenerateSubdomainSuggestions } from '@/apiHooks.ts/organization/organization.api';
-import { useDebounce } from '@/hooks/useDebounce';
-import { CreateOrganizationData } from '@/apiHooks.ts/organization/organization.types';
-import { SubdomainSuggestion } from '../SubdomainSuggestion';
-import { AvailabilityStatus } from '../AvailabilityStatus';
-import { SvgIcon } from '../ui/SvgIcon';
+import React, { useEffect, useState } from "react";
+import { Modal } from "./GenericModal";
+import { Button, Dots, Input, Loader } from "../ui";
+import { PRODUCTS } from "@/constants";
+import {
+  useCheckSubDomainAvailability,
+  useGenerateSubdomainSuggestions,
+} from "@/apiHooks.ts/organization/organization.api";
+import { useDebounce } from "@/hooks/useDebounce";
+import { CreateOrganizationData } from "@/apiHooks.ts/organization/organization.types";
+import { SubdomainSuggestion } from "../SubdomainSuggestion";
+import { AvailabilityStatus } from "../AvailabilityStatus";
+import { SvgIcon } from "../ui/SvgIcon";
 interface CreateOrgModalProps {
   isOpen: boolean;
   isLoading: boolean;
@@ -21,23 +24,35 @@ export default function CreateOrgModal({
   isOpen,
   isLoading,
   onClose,
-  onSubmit
+  onSubmit,
 }: CreateOrgModalProps) {
-  const [companyName, setCompanyName] = useState('');
-  const [subDomain, setSubDomain] = useState('');
-  const [selectedProduct, setSelectedProduct] = useState('OI');
+  const [companyName, setCompanyName] = useState("");
+  const [subDomain, setSubDomain] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState("OI");
   const [isSuggestionSubdomain, setIsSuggestionSubdomain] = useState(false);
   const debouncedCompanyName = useDebounce(companyName.trim(), 800);
   const debouncedSubDomain = useDebounce(subDomain.trim(), 800);
-  const isNameDebouncing = companyName.trim() !== debouncedCompanyName && companyName.trim().length > 0;
-  const isSubDomainDebouncing = !isSuggestionSubdomain && subDomain.trim() !== debouncedSubDomain && subDomain.trim().length > 0;
-  const shouldCheckAvailability = selectedProduct === 'OI' && debouncedSubDomain && !isSuggestionSubdomain;
-  const { data: isSubAvailable, isFetching: checkingSub, isError: subError } =
-    useCheckSubDomainAvailability(shouldCheckAvailability ? debouncedSubDomain : '');
-  const finalIsSubAvailable = isSuggestionSubdomain ? true : isSubAvailable;
-  const { data: suggestions, isPending: fetchingSubdomainSuggestions } = useGenerateSubdomainSuggestions(
-    !isNameDebouncing ? debouncedCompanyName : ''
+  const isNameDebouncing =
+    companyName.trim() !== debouncedCompanyName &&
+    companyName.trim().length > 0;
+  const isSubDomainDebouncing =
+    !isSuggestionSubdomain &&
+    subDomain.trim() !== debouncedSubDomain &&
+    subDomain.trim().length > 0;
+  const shouldCheckAvailability =
+    selectedProduct === "OI" && debouncedSubDomain && !isSuggestionSubdomain;
+  const {
+    data: isSubAvailable,
+    isFetching: checkingSub,
+    isError: subError,
+  } = useCheckSubDomainAvailability(
+    shouldCheckAvailability ? debouncedSubDomain : "",
   );
+  const finalIsSubAvailable = isSuggestionSubdomain ? true : isSubAvailable;
+  const { data: suggestions, isPending: fetchingSubdomainSuggestions } =
+    useGenerateSubdomainSuggestions(
+      !isNameDebouncing ? debouncedCompanyName : "",
+    );
 
   useEffect(() => {
     if (isSuggestionSubdomain && !suggestions?.includes(subDomain.trim())) {
@@ -59,9 +74,10 @@ export default function CreateOrgModal({
 
   const canSubmit = () => {
     if (!companyName.trim()) return false;
-    if (selectedProduct === 'OI' && !subDomain.trim()) return false;
-    if (selectedProduct === 'OI' && (isSubDomainDebouncing || checkingSub)) return false;
-    if (selectedProduct === 'OI' && finalIsSubAvailable === false) return false;
+    if (selectedProduct === "OI" && !subDomain.trim()) return false;
+    if (selectedProduct === "OI" && (isSubDomainDebouncing || checkingSub))
+      return false;
+    if (selectedProduct === "OI" && finalIsSubAvailable === false) return false;
     return true;
   };
 
@@ -79,44 +95,55 @@ export default function CreateOrgModal({
 
   useEffect(() => {
     if (!isOpen) {
-      setCompanyName('');
-      setSubDomain('');
-      setSelectedProduct('OI');
+      setCompanyName("");
+      setSubDomain("");
+      setSelectedProduct("OI");
       setIsSuggestionSubdomain(false);
     }
   }, [isOpen]);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="lg" ariaLabel="Create organization">
-      {isLoading && (
-        <Loader text='Initializing organization creation' />
-      )}
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="lg"
+      ariaLabel="Create organization"
+    >
+      {isLoading && <Loader text="Initializing organization creation" />}
 
-      <Modal.Title className="mb-2 text-heading-2">Create an Organization</Modal.Title>
+      <Modal.Title className="mb-2 text-heading-2">
+        Create an Organization
+      </Modal.Title>
       <Modal.Body>
         <div className="mb-4">
           <Input
             label="Company Name"
             isRequired
             value={companyName}
-            onChange={(e) => setCompanyName(e.target.value
-              .replace(/[^a-zA-Z0-9 ]/g, ""))}
+            onChange={(e) =>
+              setCompanyName(e.target.value.replace(/[^a-zA-Z0-9 ]/g, ""))
+            }
           />
         </div>
 
-        <label className="block text-body-small font-medium mb-2 ml-1">Products</label>
+        <label className="block text-body-small font-medium mb-2 ml-1">
+          Products
+        </label>
         <div className="grid grid-cols-2 gap-1 mb-2">
           {PRODUCTS.map((product) => (
             <button
               key={product.id}
               onClick={() => setSelectedProduct(product.name)}
               disabled={product.isDisabled}
-              className={`flex items-center gap-2 border  justify-start  rounded-lg px-3 py-3 text-base font-medium transition mb-1 ${selectedProduct === product.name
-                ? 'border-primary bg-bg-secondary text-primary'
-                : 'border text-text bg-bg-secondary hover:bg-primary/10'
-                } ${product.isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}
-                  ${product.isDisabled ? "bg-primary/10" : ""}
-                `}
+              className={`flex items-center gap-2 border justify-start rounded-lg px-3 py-3 text-base font-medium transition mb-1 ${
+                selectedProduct === product.name
+                  ? "border-primary bg-bg-secondary text-primary"
+                  : "border text-text bg-bg-secondary hover:bg-primary/10"
+              } ${
+                product.isDisabled
+                  ? "cursor-not-allowed opacity-50  bg-primary/10"
+                  : "cursor-pointer"
+              }`}
             >
               <SvgIcon name={product.icon} width={16} height={16} />
               {product.fullname}
@@ -124,7 +151,7 @@ export default function CreateOrgModal({
           ))}
         </div>
 
-        {selectedProduct === 'OI' && (
+        {selectedProduct === "OI" && (
           <div className="mb-4">
             <Input
               label="Sub-Domain"
@@ -136,9 +163,10 @@ export default function CreateOrgModal({
                   e.target.value
                     .toLocaleLowerCase()
                     .trim()
-                    .replace(/[^a-z0-9]/g, "")
+                    .replace(/[^a-z0-9]/g, ""),
                 )
-              } />
+              }
+            />
             <AvailabilityStatus
               isLoading={checkingSub}
               isAvailable={finalIsSubAvailable}
@@ -153,26 +181,29 @@ export default function CreateOrgModal({
                 isLoading={fetchingSubdomainSuggestions}
               />
             )}
-
-
           </div>
         )}
       </Modal.Body>
 
       <Modal.Footer>
-        <Button
-          onClick={onClose}
-          variant="secondary"
-          disabled={isLoading}
-        >
+        <Button onClick={onClose} variant="secondary" disabled={isLoading}>
           Cancel
         </Button>
         <Button
           onClick={handleSubmit}
-          variant='primary'
+          variant="primary"
           isLoading={isLoading}
           disabled={isLoading || !canSubmit()}
-        > {isLoading ? (<span> Creating <Dots dotSize="3px" className="text-white gap-1 mt-1" /></span>) : 'Continue'}
+        >
+          {" "}
+          {isLoading ? (
+            <span>
+              {" "}
+              Creating <Dots dotSize="3px" className="text-white gap-1 mt-1" />
+            </span>
+          ) : (
+            "Continue"
+          )}
         </Button>
       </Modal.Footer>
     </Modal>
