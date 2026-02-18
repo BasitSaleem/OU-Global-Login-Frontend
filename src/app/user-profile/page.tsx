@@ -49,7 +49,7 @@ export default function UserProfilePage() {
       profileDropdownRef as RefObject<HTMLDivElement>,
       notificationsRef as RefObject<HTMLDivElement>,
     ],
-    () => {},
+    () => { },
   );
 
   const handleGetCurrentLocation = () => {
@@ -86,10 +86,10 @@ export default function UserProfilePage() {
             methods.setValue(
               "city",
               address.city ||
-                address.town ||
-                address.village ||
-                address.suburb ||
-                "",
+              address.town ||
+              address.village ||
+              address.suburb ||
+              "",
               { shouldDirty: true, shouldTouch: true },
             );
             methods.setValue("state", address.state || "", {
@@ -277,11 +277,13 @@ export default function UserProfilePage() {
                     </h2>
                     <Button
                       type="button"
+                      tooltip="Click to autofill the location"
+                      tooltipPosition="right"
                       onClick={handleGetCurrentLocation}
                       disabled={isLocating}
                     >
                       {isLocating ? (
-                        <LoadingSpinner className="w-6 h-6" />
+                        <LoadingSpinner className="w-4 h-4" />
                       ) : (
                         <MapPin className="w-5 h-5 text-primary" />
                       )}

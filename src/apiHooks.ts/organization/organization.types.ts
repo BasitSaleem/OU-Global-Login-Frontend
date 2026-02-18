@@ -56,12 +56,15 @@ export interface OgOrganization {
     userId: string,
     organizationId: string
   }[];
+  _count?: {
+    memberships: any;
+  };
   ogUserId?: string;
   products?: OgProduct[];
   membersCount?: number;
   permissionNames?: Permission[];
   packageName?: string;
-  
+
 }
 
 export interface OgProduct {
