@@ -19,7 +19,6 @@ const OrganizationProductItem = ({
   bgColor,
   org,
 }: OrganizationProductItemProps) => {
-  // Track whether this product link should be disabled based on org creation time
   const [isDisabled, setIsDisabled] = useState<boolean>(() => {
     if (!org?.created_at) return false;
 
@@ -32,7 +31,6 @@ const OrganizationProductItem = ({
     return diffMs < THIRTY_SECONDS_MS;
   });
 
-  // Auto-enable after 1 minute without needing a page refresh
   useEffect(() => {
     if (!org?.created_at) return;
 
@@ -50,7 +48,6 @@ const OrganizationProductItem = ({
       }
     };
 
-    // Run immediately on mount/update
     updateDisabledState();
 
     const intervalId = setInterval(updateDisabledState, 1000);
