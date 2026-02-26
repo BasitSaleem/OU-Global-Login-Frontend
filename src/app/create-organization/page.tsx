@@ -20,9 +20,11 @@ import { SubdomainSuggestion } from "@/components/SubdomainSuggestion";
 import { AvailabilityStatus } from "@/components/AvailabilityStatus";
 import { CreateOrganizationGuard } from "@/components/HOCs/createOrgRoute.guard";
 import { SvgIcon } from "@/components/ui/SvgIcon";
+import OgPlanSelector from "@/components/pages/Organizations/OgPlanSelector";
 
 export default function CreateOrgPage() {
   const [companyName, setCompanyName] = useState("");
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [subDomain, setSubDomain] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("OI");
   const [showProgressModal, setShowProgressModal] = useState(false);
@@ -52,13 +54,10 @@ export default function CreateOrgPage() {
   const shouldCheckAvailability =
     selectedProduct === "OI" && debouncedSubDomain && !isSuggestionSubdomain;
 
-  const {
-    data: isSubAvailable,
-    isFetching: checkingSub,
-    isError: subError,
-  } = useCheckSubDomainAvailability(
-    shouldCheckAvailability ? debouncedSubDomain : "",
-  );
+  const { data: isSubAvailable, isFetching: checkingSub } =
+    useCheckSubDomainAvailability(
+      shouldCheckAvailability ? debouncedSubDomain : "",
+    );
 
   const finalIsSubAvailable = isSuggestionSubdomain ? true : isSubAvailable;
 
@@ -96,6 +95,7 @@ export default function CreateOrgPage() {
       name: trimmedName,
       subDomainName: trimmedSubDomain,
       product: [selectedProduct],
+      packageId: selectedPlan,
     };
 
     createOrgMutation(payload, {
@@ -221,6 +221,11 @@ export default function CreateOrgPage() {
                   value={subDomain}
                 />
               )}
+
+              <OgPlanSelector
+                selectedPlane={selectedPlan}
+                setSelectedPlan={setSelectedPlan}
+              />
             </div>
 
             {/* Actions */}
@@ -241,7 +246,7 @@ export default function CreateOrgPage() {
                 onClick={handleSubmit}
                 variant="primary"
                 className="py-5"
-                disabled={!canSubmit()}
+                disabled={!canSubmit() || !selectedPlan}
               >
                 {creatingOrg ? (
                   <div className="flex items-center gap-2">

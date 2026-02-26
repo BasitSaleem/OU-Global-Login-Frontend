@@ -46,6 +46,7 @@ export const Icons = {
   changePasswordwhite: "/Icons/Change Passwordwhite.svg",
   homepageimage: "/Icons/Welcome-cuate.svg",
   OI: "/Icons/OI.svg",
+  freeTrial: "/Icons/trail.svg",
 } as const;
 
 export type IconName = keyof typeof Icons;
@@ -60,13 +61,6 @@ export function IconComponent({
 } & React.ImgHTMLAttributes<HTMLImageElement>) {
   const iconPath = Icons[name];
   if (!iconPath) return null;
-  
-  return (
-    <img 
-      src={iconPath} 
-      alt={name} 
-      className={className} 
-      {...props}
-    />
-  );
+
+  return <img src={iconPath} alt={name} className={className} {...props} />;
 }

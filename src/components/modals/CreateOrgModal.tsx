@@ -13,6 +13,8 @@ import { CreateOrganizationData } from "@/apiHooks.ts/organization/organization.
 import { SubdomainSuggestion } from "../SubdomainSuggestion";
 import { AvailabilityStatus } from "../AvailabilityStatus";
 import { SvgIcon } from "../ui/SvgIcon";
+import OgPlanSelector from "../pages/Organizations/OgPlanSelector";
+
 interface CreateOrgModalProps {
   isOpen: boolean;
   isLoading: boolean;
@@ -27,6 +29,7 @@ export default function CreateOrgModal({
   onSubmit,
 }: CreateOrgModalProps) {
   const [companyName, setCompanyName] = useState("");
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [subDomain, setSubDomain] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("OI");
   const [isSuggestionSubdomain, setIsSuggestionSubdomain] = useState(false);
@@ -88,6 +91,7 @@ export default function CreateOrgModal({
       name: trimmedName,
       subDomainName: trimmedSubDomain,
       product: [selectedProduct],
+      packageId: selectedPlan,
     };
 
     onSubmit(payload);
@@ -183,6 +187,11 @@ export default function CreateOrgModal({
             )}
           </div>
         )}
+
+        <OgPlanSelector
+          selectedPlane={selectedPlan}
+          setSelectedPlan={setSelectedPlan}
+        />
       </Modal.Body>
 
       <Modal.Footer>
@@ -193,7 +202,7 @@ export default function CreateOrgModal({
           onClick={handleSubmit}
           variant="primary"
           isLoading={isLoading}
-          disabled={isLoading || !canSubmit()}
+          disabled={isLoading || !canSubmit() || !selectedPlan}
         >
           {" "}
           {isLoading ? (

@@ -1,7 +1,7 @@
 import React from 'react';
 export type IconName = 'ownersUniverse' | 'search' | 'calendar' | 'dashboard' | 'settings' | 'profile' | 'notification' | 'logout' | 'home' | 'organization' | 'email' | 'changePassword' | 'hamburgerLeft' | 'hamburgerRight' | 'ownersInventory' | 'ownersUniverseColl' | "AllProducts" | "billing" | "visa" | "payment-methods" | "mastercard" | "time" | "OA" | "OI" | "OM" | "OJ" | "expand" | "ownersInventory";
 interface SvgIconProps {
-  name: IconName;
+  name: IconName | string;
   className?: string;
   width?: number;
   height?: number;

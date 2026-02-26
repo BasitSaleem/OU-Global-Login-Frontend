@@ -9,8 +9,30 @@ export interface Organization {
   [key: string]: any;
 }
 
+export type Subscription = {
+  id: string;
+  billing_cycle: "MONTHLY" | "YEARLY";
+  cancel_at_period_end: boolean;
+  cancelled_at: string | null;
+  current_period_start: string; // ISO date
+  current_period_end: string; // ISO date
+  trial_ends_at: string | null;
+  status: "TRIAL" | "ACTIVE" | "CANCELLED" | "PAST_DUE";
+  payment_method: string | null;
+  oiPackage: Package;
+};
+
+export type Package = {
+  id: string;
+  package_name: string;
+  currency: string;
+  free_trial_days: number;
+  monthly_price: string;
+  yearly_price: string;
+};
 export interface CreateOrganizationData {
   name: string;
+  packageId: string | null;
   address?: string;
   city?: string;
   province?: string;
@@ -53,15 +75,15 @@ export interface OgOrganization {
   updated_at?: string; // Made optional to support "Add New" items
   is_blocked?: boolean; // Made optional to support "Add New" items
   favorites?: {
-    userId: string,
-    organizationId: string
+    userId: string;
+    organizationId: string;
   }[];
   ogUserId?: string;
   products?: OgProduct[];
   membersCount?: number;
   permissionNames?: Permission[];
   packageName?: string;
-  
+  subscriptions: Subscription[];
 }
 
 export interface OgProduct {
@@ -82,22 +104,22 @@ export interface OgOrgResponse {
     meta: {
       totalCount: number;
       hasMore: boolean;
-    }
+    };
   };
-  message?: string
-  success: boolean
+  message?: string;
+  success: boolean;
 }
 export interface OgOrgDetailResponse {
   data: {
     organization: OgOrganization;
   };
-  message?: string
-  success: boolean
+  message?: string;
+  success: boolean;
 }
 
 export interface LeadRegistrationResponse {
   jobId: string;
-  status: 'queued' | 'in-progress' | 'completed' | 'failed';
+  status: "queued" | "in-progress" | "completed" | "failed";
   message: string;
   subDomainName: string;
   progressUrl?: string;
@@ -110,7 +132,7 @@ export interface CreateOrganizationResponse {
     organization: OgOrganization;
     product?: OgProduct;
     leadRegistration?: LeadRegistrationResponse | null;
-  }
-  message?: string
-  success?: boolean
+  };
+  message?: string;
+  success?: boolean;
 }

@@ -1,91 +1,121 @@
-import React from 'react';
-import { Plus, Trash2, Edit2 } from 'lucide-react';
-import { SvgIcon } from '@/components/ui/SvgIcon';
-import { Button } from '@/components/ui';
+import React from "react";
+import { Plus, Trash2, Edit2, Loader2 } from "lucide-react";
+import { SvgIcon } from "@/components/ui/SvgIcon";
+import { Button } from "@/components/ui";
+
+const brandMap: Record<string, any> = {
+  VISA: "visa",
+  MASTERCARD: "mastercard",
+  AMEX: "amex",
+  DISCOVER: "discover",
+  JCB: "jcb",
+  DINERS: "diners",
+  UNIONPAY: "unionpay",
+};
 
 interface PaymentMethodCardProps {
-    variant: 'display' | 'add';
-    cardType?: 'visa' | 'mastercard';
-    last4?: string;
-    expiry?: string;
-    isPrimary?: boolean;
-    onEdit?: () => void;
-    onDelete?: () => void;
-    onMakePrimary?: () => void;
-    onAdd?: () => void;
+  variant: "display" | "add";
+  cardType?:
+    | "VISA"
+    | "MASTERCARD"
+    | "AMEX"
+    | "DISCOVER"
+    | "JCB"
+    | "DINERS"
+    | "UNIONPAY";
+  last4?: string;
+  expiry?: string;
+  isPrimary?: boolean;
+  isMakePrimaryLoading?: boolean;
+  onEdit?: () => void;
+  onDelete?: () => void;
+  onMakePrimary?: () => void;
+  onAdd?: () => void;
 }
 
 const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
-    variant,
-    cardType,
-    last4,
-    expiry,
-    isPrimary,
-    onEdit,
-    onDelete,
-    onMakePrimary,
-    onAdd
+  variant,
+  cardType,
+  last4,
+  expiry,
+  isPrimary,
+  // onEdit,
+  onDelete,
+  onMakePrimary,
+  isMakePrimaryLoading = false,
+  onAdd,
 }) => {
-    if (variant === 'add') {
-        return (
-            <div
-                onClick={onAdd}
-                className="flex flex-col items-center justify-center w-full h-[180px]  rounded-xl cursor-pointer bg-primary/5 transition-colors"
-            >
-                <Plus strokeWidth={1.5} className="w-30 h-30 text-primary mb-2" />
-                <span className="text-primary font-bold">Add New</span>
-            </div>
-        );
-    }
-
+  if (variant === "add") {
     return (
-        <div className="relative w-full h-[180px] bg-bg-secondary rounded-xl p-6 m-0 border flex flex-col justify-between hover:shadow-md transition-shadow cursor-pointer">
-            <div className="flex justify-between items-start">
-                <div className="flex items-center gap-3">
-                    {cardType && <SvgIcon name={cardType} width={48} height={48} />}
-                    <div>
-                        <p className="font-semibold">....{last4}</p>
-                        <p className="text-sm">Expires {expiry}</p>
-                    </div>
-                </div>
-                {isPrimary && (
-                    <span className="text-primary text-xs px-3 py-1 rounded-full font-medium">
-                        Primary
-                    </span>
-                )}
-            </div>
-
-            <div className="flex justify-between items-end">
-                {!isPrimary ? (
-                    <Button
-                        onClick={onMakePrimary}
-                        variant='basic'
-                        className='text-primary'
-                    >
-                        Make Primary
-                    </Button>
-                ) : (
-                    <div></div>
-                )}
-
-                <div className="flex items-center gap-3">
-                    <Button
-                        onClick={onEdit}
-                        variant='basic'
-                        className='hover:scale-110 transition-all duration-300'
-                    >
-                        <Edit2 size={18} />
-                    </Button>
-                    <Button
-                        variant='basic'
-                        className='hover:scale-110 transition-all duration-300'
-                        onClick={onDelete}                    >
-                        <Trash2 size={18} color='red' />
-                    </Button>
-                </div>
-            </div>
-        </div>
+      <div
+        onClick={onAdd}
+        className="flex flex-col items-center justify-center w-full h-[180px]  rounded-xl cursor-pointer bg-primary/5 transition-colors"
+      >
+        <Plus strokeWidth={1.5} className="w-30 h-30 text-primary mb-2" />
+        <span className="text-primary font-bold">Add New</span>
+      </div>
     );
+  }
+
+  return (
+    <div className="relative w-full h-[180px] bg-bg-secondary rounded-xl p-6 m-0 border flex flex-col justify-between hover:shadow-md transition-shadow cursor-pointer">
+      <div className="flex justify-between items-start">
+        <div className="flex items-center gap-3">
+          {cardType && (
+            <SvgIcon name={brandMap[cardType]} width={48} height={48} />
+          )}
+          <div>
+            <p className="font-semibold">....{last4}</p>
+            <p className="text-sm">Expires {expiry}</p>
+          </div>
+        </div>
+        {isPrimary && (
+          <span className="text-primary text-xs px-3 py-1 rounded-full font-medium">
+            Primary
+          </span>
+        )}
+      </div>
+
+      <div className="flex justify-between items-end">
+        {!isPrimary ? (
+          <Button
+            onClick={onMakePrimary}
+            variant="basic"
+            className="text-primary"
+            disabled={isMakePrimaryLoading}
+          >
+            {isMakePrimaryLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Please wait...
+              </>
+            ) : (
+              "Make Primary"
+            )}
+          </Button>
+        ) : (
+          <div />
+        )}
+
+        <div className="flex items-center ">
+          {/* <Button
+            onClick={onEdit}
+            variant="basic"
+            className="hover:scale-110 transition-all duration-300"
+          >
+            <Edit2 size={18} />
+          </Button> */}
+          <Button
+            variant="basic"
+            className="hover:scale-110 transition-all duration-300"
+            onClick={onDelete}
+          >
+            <Trash2 size={18} color="red" />
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default PaymentMethodCard;
