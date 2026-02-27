@@ -23,13 +23,13 @@ const TrialBanner = ({ subscription }: { subscription?: Subscription }) => {
     return diffDays >= 0 ? diffDays : 0;
   }, [subscription?.trial_ends_at]);
 
-  // Show banner for any plan with active trial (7 days or less remaining)
+  // Show banner for any plan with active trial (15 days or less remaining)
   const shouldShowBanner =
     isVisible &&
     subscription?.status === "TRIAL" &&
     subscription?.trial_ends_at &&
     daysRemaining !== null &&
-    daysRemaining <= 12;
+    daysRemaining <= 15;
 
   if (!shouldShowBanner) return null;
 
