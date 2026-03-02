@@ -241,7 +241,7 @@ export default function Sidebar({
             </div>
           ) : (
             <SvgIcon
-              name="ownersUniverse"
+              name="ownersInventory"
               width={130}
             />
           )}
