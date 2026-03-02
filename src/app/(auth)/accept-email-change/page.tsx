@@ -104,7 +104,7 @@ export default function AcceptEmailChangePage() {
                         <h1 className="text-2xl sm:text-3xl font-extrabold text-text tracking-tight">
                             Verify Email Change
                         </h1>
-                        <p className="text-text-secondary text-sm mt-2 font-medium">
+                        <p className="text-text text-sm mt-2 font-medium">
                             Please confirm your identity to complete the change
                         </p>
                     </div>

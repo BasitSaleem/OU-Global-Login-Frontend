@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ProgressTracker } from './ProgressTracker';
 import { useCreateOrganizationProgress } from '@/hooks/useProgressTracking';
 import { CreateOrganizationResponse } from '@/apiHooks.ts/organization/organization.types';
-import { Button } from './button';
 import { useAppDispatch } from "@/redux/store";
 import { setOrganization } from '@/redux/slices/auth.slice';
 import { useRouter } from 'next/navigation';
@@ -40,7 +39,6 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
     (progress: any) => {
       onComplete?.();
       toast.success("Created", "The organization has been successfully created.");
-
       if (isFromMain) {
         if (organizationData) {
           dispatch(setOrganization(organizationData));
