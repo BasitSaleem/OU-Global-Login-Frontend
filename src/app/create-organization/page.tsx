@@ -167,15 +167,13 @@ export default function CreateOrgPage() {
                     type="button"
                     disabled={product.isDisabled}
                     onClick={() => setSelectedProduct(product.name)}
-                    className={`flex items-center gap-2 border rounded-lg px-3 py-3 text-base font-medium transition ${
-                      selectedProduct === product.name
+                    className={`flex items-center gap-2 border rounded-lg px-3 py-3 text-base font-medium transition ${selectedProduct === product.name
                         ? "border-primary bg-bg-secondary hover:text-text hover:bg-primary/70 text-primary"
                         : "border text-text"
-                    } ${
-                      product.isDisabled
+                      } ${product.isDisabled
                         ? "cursor-not-allowed opacity-50 "
                         : "cursor-pointer"
-                    }`}
+                      }`}
                   >
                     <SvgIcon name={product.icon} className="w-6 h-6" />
                     {product.fullname}
