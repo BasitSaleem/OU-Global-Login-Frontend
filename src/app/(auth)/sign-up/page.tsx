@@ -108,6 +108,7 @@ export default function SignUpPage() {
                   id="email"
                   label="Email"
                   type="email"
+                  autoComplete="username"
                   disabled={email && email.length > 0 ? true : false}
                   placeholder="Enter Email"
                   {...methods.register("email", {
@@ -121,6 +122,7 @@ export default function SignUpPage() {
                   label="Password"
                   placeholder="Enter Password"
                   isPassword={true}
+                  autoComplete="new-password"
                   {...methods.register("password", {
                     required: "Password is required",
                   })}
@@ -132,6 +134,7 @@ export default function SignUpPage() {
                   type="password"
                   placeholder="Confirm Password"
                   isPassword={true}
+                  autoComplete="new-password"
                   {...methods.register("confirmPassword", {
                     required: "confirm password is required",
                   })}

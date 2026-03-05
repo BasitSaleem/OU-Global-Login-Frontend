@@ -4,7 +4,23 @@ import DashboardLayout from "@/components/layout/dashboard-layout";
 import NotificationsHeaderControls from "@/components/pages/Notifications/NotificationHeaderControls";
 import NotificationItem from "@/components/pages/Notifications/NotificationItems";
 import NotificationsSidebar from "@/components/pages/Notifications/NotificationSidebar";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { useGetInvitations } from "@/apiHooks.ts/invitation/invitation.api";
+
+const getTimeAgo = (dateString: string) => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffMins < 1) return "Just now";
+  if (diffMins < 60) return `${diffMins} mins ago`;
+  if (diffHours < 24) return `${diffHours} hours ago`;
+  if (diffDays === 1) return "1 day ago";
+  return `${diffDays} days ago`;
+};
 
 function NotificationsPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -25,88 +41,34 @@ function NotificationsPage() {
     { id: "owners-marketplace", label: "Owners Marketplace" },
   ];
 
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      avatar: "BS",
-      avatarColor: "#137F6A",
-      name: "Basit Saleem",
-      action: "updated a page",
-      title: "Owners AI Bot",
-      subtitle: "Al-Asif • Owners Inventory",
-      updates: "+3 updates from Basit Saleem",
-      time: "Just now",
-      hasUnreadDot: true,
-      hasMarkAsRead: true,
-    },
-    {
-      id: 2,
-      avatar: "JS",
-      avatarColor: "#B11E67",
-      name: "John Smith",
-      action: "updated a page",
-      title: "Editors AI Bot",
-      subtitle: "Sportifi • Owners Inventory",
-      updates: "+2 updates from John Smith",
-      time: "2 mins ago",
-      hasUnreadDot: true,
-      hasMarkAsRead: false,
-    },
-    {
-      id: 3,
-      avatar: "AS",
-      avatarColor: "#1AD1B9",
-      name: "Alice Sanders",
-      action: "updated a page",
-      title: "Managers AI Bot",
-      subtitle: "RS-Managers-Inventory",
-      updates: "+1 update from Alice Sanders",
-      time: "1 days ago",
-      hasUnreadDot: false,
-      hasMarkAsRead: false,
-    },
-    {
-      id: 4,
-      avatar: "TH",
-      avatarColor: "#FF7C3B",
-      name: "Tom Hanks",
-      action: "updated a page",
-      title: "Admins AI Bot",
-      subtitle: "owners Marketplace",
-      updates: "+5 updates from Tom Hanks",
-      time: "1 week ago",
-      hasUnreadDot: false,
-      hasMarkAsRead: false,
-    },
-    {
-      id: 5,
-      avatar: "DS",
-      // avatarColor: "#F95C5B",
-      name: "David Smith",
-      action: "updated a page",
-      title: "Supervisors AI Bot",
-      subtitle: "RS-Supervisors-Inventory",
-      updates: "+4 updates from David Smith",
-      time: "2 weeks ago",
-      hasUnreadDot: true,
-      hasMarkAsRead: false,
-    },
-    {
-      id: 6,
-      avatar: "EM",
-      avatarColor: "#795CF5",
-      name: "Emma Moore",
-      action: "updated a page",
-      title: "Developers AI Bot",
-      titleColor: "#795CF5",
-      subtitle: "RS-Developers-Inventory",
-      updates: "+6 updates from Emma Moore",
-      updatesColor: "#795CF5",
-      time: "1 month ago",
-      hasUnreadDot: true,
-      hasMarkAsRead: false,
-    },
-  ]);
+  const { data: invitesResp, isLoading, isSuccess } = useGetInvitations();
+  const [notifications, setNotifications] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (isSuccess && invitesResp) {
+      const colors = ["#137F6A", "#B11E67", "#1AD1B9", "#FF7C3B", "#795CF5"];
+      const mapped = invitesResp.map((invite, index) => {
+        const fName = invite.inviter?.first_name || "";
+        const lName = invite.inviter?.last_name || "";
+        const initials = `${fName.charAt(0)}${lName.charAt(0)}`.toUpperCase() || "IN";
+
+        return {
+          id: invite.id,
+          avatar: initials,
+          avatarColor: colors[index % colors.length],
+          name: `${fName} ${lName}`.trim() || "Unknown User",
+          action: "invited you to organization",
+          title: invite.organization?.name || "Organization",
+          subtitle: "Organization Invitation",
+          updates: "",
+          time: getTimeAgo(invite.createdAt),
+          hasUnreadDot: true,
+          hasMarkAsRead: false,
+        };
+      });
+      setNotifications(mapped);
+    }
+  }, [invitesResp]);
 
   const markAllAsRead = () => {
     setNotifications((prev) =>
@@ -161,7 +123,9 @@ function NotificationsPage() {
         <div className="flex-1 overflow-y-auto">
           <div className="p-1 sm:p-3 pt-2">
             <div className="space-y-1">
-              {filteredNotifications.length > 0 ? (
+              {isLoading ? (
+                <div className="text-center py-4">Loading notifications...</div>
+              ) : filteredNotifications.length > 0 ? (
                 filteredNotifications.map((n) => (
                   <NotificationItem
                     key={n.id}
