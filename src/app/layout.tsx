@@ -68,7 +68,7 @@ export const metadata: Metadata = {
   // App icons and favicons
   icons: {
     icon: [
-      { url: "/favicon.ico" },
+      { url: "/OI_LOGO.svg" },
       { url: "/icon-16x16.png", sizes: "16x16", type: "image/png" },
       { url: "/icon-32x32.png", sizes: "32x32", type: "image/png" },
     ],

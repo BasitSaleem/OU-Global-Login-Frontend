@@ -87,7 +87,7 @@ export function SEO({
     additionalLinkTags: [
       {
         rel: 'icon',
-        href: '/favicon.ico',
+        href: '/OI_LOGO.svg',
       },
       {
         rel: 'apple-touch-icon',
@@ -128,7 +128,7 @@ export function SEO({
         <meta name="copyright" content={APP_CONFIG.name} />
         <meta name="language" content="English" />
         <meta name="revisit-after" content="7 days" />
-        
+
         {/* Schema.org structured data */}
         <script
           type="application/ld+json"
@@ -147,7 +147,7 @@ export function SEO({
             }),
           }}
         />
-        
+
         {/* Organization Schema */}
         <script
           type="application/ld+json"
@@ -178,7 +178,7 @@ export function SEO({
             }),
           }}
         />
-        
+
         {children}
       </Head>
     </>
