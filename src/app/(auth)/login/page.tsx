@@ -159,7 +159,7 @@ export default function LoginPage() {
                 Don't have an account{" "}
               </span>
               <Link
-                href={`/sign-up?app=${app}`}
+                href={`/sign-up?app=${app}${token ? `&token=${token}` : ""}${emailParam ? `&email=${emailParam}` : ""}`}
                 className="underline text-xs sm:text-sm font-bold text-primary hover:underline"
               >
                 Sign Up

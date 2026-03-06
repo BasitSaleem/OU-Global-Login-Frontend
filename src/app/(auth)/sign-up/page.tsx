@@ -40,18 +40,6 @@ export default function SignUpPage() {
       { first_name: data.first_name, last_name: data.last_name, email: data.email, password: data.password } as signUpData,
       {
         onSuccess: (response) => {
-          // const { user, refreshToken, } = response.data;
-          // const organization = user.organizations?.[0] ?? null;
-          // dispatch(
-          //   setAuth({
-          //     user,
-          //     organization,
-          //     isAuthenticated: true,
-          //     refreshToken,
-          //     isLoading: false,
-          //     error: null,
-          //   })
-          // );
           router.push(`/otp?email=${encodeURIComponent(response.data.email)}${token ? `&token=${token}` : ""}`);
         },
       }

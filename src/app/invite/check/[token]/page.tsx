@@ -61,7 +61,7 @@ export default function AcceptInvitePage() {
 
         // USER NOT LOGGED IN
         const redirectParams =
-            `?token=${encodeURIComponent(token)}` +
+            `?app=OG&token=${encodeURIComponent(token)}` +
             `${email ? `&email=${encodeURIComponent(email)}` : ''}` +
             `&redirect_uri=${encodeURIComponent(currentPath)}`;
 

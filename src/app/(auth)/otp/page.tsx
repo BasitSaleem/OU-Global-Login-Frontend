@@ -66,13 +66,11 @@ export default function OTPPage() {
   const handleResendOtp = () => {
     if (canResend && email) {
       resendOtp(
-        { email },
+        { email, token },
         {
           onSuccess: (response) => {
-
             setCountdown(60);
             setCanResend(false);
-
           },
         }
       );
