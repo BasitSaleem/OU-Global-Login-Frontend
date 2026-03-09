@@ -6,13 +6,12 @@ import dynamic from "next/dynamic";
 const OrganizationProductCard = dynamic(() => import("../Organizations/OrganizationProductCard"));
 import { useGetOrganizations } from "@/apiHooks.ts/organization/organization.api";
 import { LoadingSpinner } from "@/components/ui";
-import { Skeleton } from "@/components/ui/skeletion";
+import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
-import { useGetAllPermissions } from "@/apiHooks.ts/auth/auth.api";
 import Image from "next/image";
 export default function HomePage() {
   const { user } = useAppSelector((s) => s.auth);
-  const { data, isPending: loadingOrganizations } = useGetOrganizations(1, 20);
+  const { data, isPending: loadingOrganizations } = useGetOrganizations(1, 10);
   // const dispatch = useAppDispatch();
   const productCodes = ["OI", "OJ", "OM", "OA"];
   // useEffect(() => {
@@ -103,6 +102,7 @@ export default function HomePage() {
                 productCodes.map((code) => (
                   <OrganizationProductCard
                     organizations={data?.organization}
+                    metaData={data?.meta}
                     key={code}
                     code={code as any}
                   />
@@ -133,7 +133,7 @@ export default function HomePage() {
             </div>
 
             <Link
-              href="/view-all-products"
+              href="/view-all-product"
               className="w-auto text-center text-white px-3 py-2  hover:opacity-90 transition-opacity hover:bg-primary bg-primary rounded-xl"
             >
               Explore All Products

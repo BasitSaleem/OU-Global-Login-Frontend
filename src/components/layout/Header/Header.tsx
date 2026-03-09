@@ -3,7 +3,7 @@
 import { Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import ProfileMenu from "./ProfileMenu";
+import ProfileMenu from "./ProfiledDropDown";
 import { useAppSelector } from "@/redux/store";
 import { NotificationsDropdown } from "./NotificationDropdown";
 import { NotificationItemProps } from "./Header.types";
@@ -14,12 +14,14 @@ interface HeaderProps {
   onToggleSidebar: () => void;
   onToggleMobileSidebar: () => void;
   mobileSidebarOpen: boolean;
+  collapsed: boolean;
 }
 
 export default function AppHeader({
   onToggleSidebar,
   onToggleMobileSidebar,
   mobileSidebarOpen,
+  collapsed,
 }: HeaderProps) {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -80,6 +82,7 @@ export default function AppHeader({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+
   return (
     <header className="h-14 border-b bg-bg-secondary flex items-center justify-between px-4">
       <div className="flex items-center gap-4 flex-1 max-w-2xl">
@@ -89,7 +92,7 @@ export default function AppHeader({
           className="hidden lg:flex hover:scale-105 cursor-pointer"
           title="Toggle sidebar"
         >
-          <SvgIcon name="hamburger" className="w-5 h-5 text-gray-600" />
+          <SvgIcon name={collapsed ? "hamburgerRight" : "hamburgerLeft"} className="w-5 h-5 text-icon" />
         </Button>
 
         <Button
@@ -98,9 +101,9 @@ export default function AppHeader({
           className="lg:hidden hover:bg-bg-secondary rounded transition-colors cursor-pointer"
         >
           {mobileSidebarOpen ? (
-            <X className="w-4 h-4 text-gray-600" />
+            <X className="w-4 h-4 text-icon" />
           ) : (
-            <Menu className="w-4 h-4 text-gray-600" />
+            <Menu className="w-4 h-4 text-icon" />
           )}
         </Button>
 
@@ -125,13 +128,13 @@ export default function AppHeader({
             className="relative p-1 cursor-pointer"
             aria-label="Open notifications"
           >
-            <SvgIcon name="notification" width={20} height={20} />
-            {anyUnread && (
+            <SvgIcon name="notification" width={20} height={20} className="text-icon" />
+            {/* {anyUnread && (
               <div
                 className="absolute top-0 right-0 w-1.5 h-1.5 rounded-full"
                 style={{ backgroundColor: "#D1202D" }}
               />
-            )}
+            )} */}
           </Button>
 
           {notificationsOpen && (
@@ -146,21 +149,19 @@ export default function AppHeader({
             />
           )}
         </div>
-        <Button
+        {/* <Button
           permission="og:access::setting"
           variant="basic"
           onClick={handleSettingsClick}
           className="p-1 cursor-pointer"
         >
-          <SvgIcon name="settings" width={20} height={20} />
-        </Button>
+          <SvgIcon name="settings" width={20} height={20} className="text-icon" />
+        </Button> */}
 
         <div className="relative" ref={profileDropdownRef}>
-          <Button
+          <button
             onClick={toggleProfileDropdown}
-            variant="basic"
-            className="w-8 h-8  rounded-full flex items-center justify-center hover:opacity-90 transition-opacity"
-            style={{ backgroundColor: "#795CF5" }}
+            className="w-8 h-8 rounded-full flex items-center justify-center hover:opacity-90 transition hover:scale-105 duration-300 cursor-pointer bg-primary"
             aria-label="Open profile menu"
           >
             {user?.profile_url ?
@@ -168,15 +169,15 @@ export default function AppHeader({
                 className="w-8 h-8 rounded-full"
                 src={user?.profile_url}
                 alt="profile"
-                width={200}
-                height={200}
+                width={500}
+                height={500}
               />
-              : <span className="text-white mt-[2px] font-medium  cursor-pointer items-center">
+              : <span className="text-white  font-medium  cursor-pointer items-center">
                 {" "}
                 {`${user?.first_name?.charAt(0) ?? ""}${user?.last_name?.charAt(0) ?? ""
                   }`.toUpperCase()}
               </span>}
-          </Button>
+          </button>
 
           <ProfileMenu onClose={() => setProfileDropdownOpen(false)} open={profileDropdownOpen} />
 

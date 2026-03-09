@@ -8,6 +8,11 @@ export async function uploadImageServer(formData: FormData, Id: string) {
     try {
         const file = formData.get('image') as File;
 
+        if (!process.env.OG_AWS_S3_BUCKET_NAME || !process.env.OG_AWS_REGION) {
+            console.error('Missing AWS configuration');
+            return { success: false, error: 'Server configuration error' };
+        }
+
         if (!file) {
             return { success: false, error: 'No file provided' };
         }
@@ -16,8 +21,8 @@ export async function uploadImageServer(formData: FormData, Id: string) {
             return { success: false, error: 'File must be an image' };
         }
 
-        if (file.size > 5 * 1024 * 1024) {
-            return { success: false, error: 'File size must be less than 5MB' };
+        if (file.size > 2 * 1024 * 1024) {
+            return { success: false, error: 'File size must be less than 2MB' };
         }
 
         const buffer = await file.arrayBuffer();
@@ -45,9 +50,9 @@ export async function uploadImageServer(formData: FormData, Id: string) {
             url: publicUrl,
             message: 'image updated successfully'
         };
-    } catch (error) {
+    } catch (error: any) {
         console.error('Upload error:', error);
-        return { success: false, error: 'Failed to upload image' };
+        return { success: false, error: `Failed to upload image: ${error.message || 'Unknown error'}` };
     }
 }
 export async function getImageWithId(Id: string) {
@@ -62,10 +67,14 @@ export async function deleteImageWithId(id: string) {
             Key: `uploads/${id}.jpg`,
         });
 
+        if (!process.env.OG_AWS_S3_BUCKET_NAME) {
+            throw new Error('Bucket name is not defined');
+        }
+
         await s3Client.send(command);
         return { success: true, message: 'Profile image deleted' };
-    } catch (error) {
+    } catch (error: any) {
         console.error('Delete error:', error);
-        return { success: false, error: 'Failed to delete image' };
+        return { success: false, error: `Failed to delete image: ${error.message || 'Unknown error'}` };
     }
 }

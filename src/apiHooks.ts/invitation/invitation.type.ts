@@ -36,6 +36,7 @@ export interface inviteData {
         id: string
         first_name: string
         last_name: string
+        profile_url: string
     }
     organization: {
         name: string;
@@ -50,3 +51,14 @@ export interface GetInvitationByTokenResponse {
     message?: string;
     success?: boolean;
 }
+export interface inviteStatusType {
+    statusCode: number;
+    data: {
+        inviteStatus: string;
+        email: string;
+        userStatus: "EXIST" | "NOT_EXIST"
+    };
+    message: string;
+    success: boolean;
+}
+

@@ -33,7 +33,6 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         const toast: Toast = { id: Math.random().toString(36).slice(2), ...t };
         setToasts((prev) => {
             const newToasts = [...prev, toast];
-            // Limit to 5 toasts maximum
             return newToasts.slice(-5);
         });
         const duration = t.duration ?? 6000; // Changed default to 5000
@@ -58,7 +57,6 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     return (
         <ToastContext.Provider value={value}>
             {children}
-            {/* Toast Container - positioned top-right to match toastify config */}
             <div className="pointer-events-none fixed bottom-4 right-4 z-[9999] flex w-full max-w-[420px] flex-col gap-3">
                 {toasts.map((t) => {
                     const Icon =
@@ -74,7 +72,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                                 ? "text-red-600"
                                 : "text-blue-600";
                     const bgColor =
-                        t.type === "success"
+                        t.type === "success" || "info"
                             ? "bg-card border"
                             : t.type === "error"
                                 ? "bg-red-50 border-red-200"
@@ -122,7 +120,6 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                         opacity: 1;
                     }
                 }
-                
                 @keyframes toast-slide-out {
                     from {
                         transform: translateX(0);
@@ -133,7 +130,6 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                         opacity: 0;
                     }
                 }
-                
                 @keyframes progress-bar {
                     from {
                         width: 100%;
@@ -142,17 +138,12 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                         width: 0%;
                     }
                 }
-                
                 .animate-toast-slide-in {
                     animation: toast-slide-in 0.3s ease-out;
                 }
-                
                 .animate-toast-slide-out {
                     animation: toast-slide-out 0.3s ease-in;
                 }
-                
-            
-                
                 /* Responsive design */
                 @media (max-width: 640px) {
                     .toast-container {
@@ -162,7 +153,6 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                         max-width: calc(100vw - 32px) !important;
                     }
                 }
-                
                 /* Utility classes */
                 .line-clamp-2 {
                     display: -webkit-box;

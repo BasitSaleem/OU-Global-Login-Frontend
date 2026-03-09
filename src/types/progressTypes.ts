@@ -13,6 +13,7 @@ export interface JobProgress {
   createdAt: string;
   updatedAt: string;
   errorMessage?: string;
+  operationType?: 'registration' | 'deletion';
 }
 
 export interface LeadRegistrationStep {

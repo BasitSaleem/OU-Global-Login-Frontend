@@ -49,12 +49,12 @@ export default function OrgSidebar({ collapsed, className, organizationDetails }
                 )}
             >
                 {collapsed ? (
-                    <div className="w-9 h-9 rounded flex items-center justify-center bg-primary/10">
-                        <SvgIcon name="ownersUniverseColl" className=" w-[18px] h-[18px]" />
+                    <div className="w-9 h-9 rounded flex items-center justify-center">
+                        <SvgIcon name="OI" width={30} height={30} />
                     </div>
                 ) : (
                     <SvgIcon
-                        name="ownersUniverse"
+                        name="ownersInventory"
                         className="text-foreground"
                         width={130}
                         height={130}
@@ -62,7 +62,27 @@ export default function OrgSidebar({ collapsed, className, organizationDetails }
                 )}
             </Link>
             <nav className="px-3 py-1.5 space-y-1 ">
-                <p className="text-sm font-medium ml-4 py-1 text-gray-600">{organizationDetails?.name}</p>
+                <div
+                    className={cn(
+                        "flex items-center text-sm font-medium rounded-lg transition-colors p-2 mb-2 text-icon",
+                        collapsed
+                            ? "justify-center bg-primary/10 "
+                            : "ml-1"
+                    )}
+                >
+                    {collapsed ? (
+                        <span className="w-8 h-8 flex items-center justify-center text-xs font-semibold">
+                            {organizationDetails?.name
+                                ?.split(" ")
+                                .map((n) => n[0])
+                                .join("")
+                                .toUpperCase()
+                                .substring(0, 2)}
+                        </span>
+                    ) : (
+                        organizationDetails?.name
+                    )}
+                </div>
                 {sidebarItems.map((item) => {
                     const href = item.href(organizationDetails?.id);
                     const isActive = pathname === href;
@@ -75,15 +95,15 @@ export default function OrgSidebar({ collapsed, className, organizationDetails }
                                 "flex items-center text-sm font-medium rounded-lg transition-colors p-2",
                                 collapsed ? "justify-center px-0" : "p-3",
                                 isActive
-                                    ? "bg-primary/10 text-primary"
+                                    ? "bg-primary text-white"
                                     : "hover:bg-primary/10 hover:text-primary"
                             )}
                         >
                             {collapsed ? (
-                                <SvgIcon name={item.icon} width={20} height={20} className='text-[#4B5563]' />
+                                <SvgIcon name={item.icon} width={20} height={20} className={`text-icon ${isActive ? "text-white" : ""}`} />
                             ) : (
                                 <span className='flex items-center w-full gap-3'>
-                                    <SvgIcon name={item.icon} width={20} height={20} className='text-[#4B5563] ' />
+                                    <SvgIcon name={item.icon} width={20} height={20} className={`text-icon ${isActive ? "text-white" : ""}`} />
                                     <span className="truncate">{item.label}</span>
                                 </span>
                             )}

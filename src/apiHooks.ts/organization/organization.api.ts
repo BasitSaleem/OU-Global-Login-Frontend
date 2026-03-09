@@ -22,7 +22,8 @@ const ENDPOINTS = {
       subDomain
     )}`,
   TOGGLE_FAVORITE: "/organization/favorite",
-  ORGANIZATION_PRODUCTS: (id: string) => `/organization/products/${id}`
+  ORGANIZATION_PRODUCTS: (id: string) => `/organization/products/${id}`,
+  GENERATE_SUBDOMAIN: (companyName: string) => `/organization/generate-subdomain-suggestions?companyName=${companyName}`,
 };
 
 // 1. CREATE ORGANIZATION
@@ -38,12 +39,10 @@ export const useCreateOrganization = () => {
       )
       return res.data
     },
-    onSuccess: (result) => {
+    onSuccess: (result, data) => {
       queryClient.invalidateQueries({ queryKey: ["organizations"] });
-      toast.success(
-        "Organization created",
-        "The organization has been created and lead registration is processing in the background."
-      );
+      queryClient.removeQueries({ queryKey: ["subdomainSuggestions"] });
+      queryClient.removeQueries({ queryKey: ["subDomainAvailability"] });
     },
     retry: false,
     onError: (error: any) => {
@@ -56,16 +55,16 @@ export const useCreateOrganization = () => {
 // 2. GET ALL ORGANIZATIONS
 export const useGetOrganizations = (page: number, limit: number) => {
   return useQuery({
-    queryKey: ["organizations"],
+    queryKey: ["organizations", page],
     queryFn: async () => {
       const url = `${ENDPOINTS.ORGANIZATIONS}?page=${page}&limit=${limit}`;
       const res = await request<OgOrgResponse>(url, "GET");
       return res.data
     },
     select: (data) => ({
-      totalCount: data.totalCounts,
+      meta: data.meta,
       organization: data.organizations
-    })
+    }),
   });
 };
 
@@ -126,14 +125,16 @@ export const useIsFavorite = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: { userId: string; orgId: string }) =>
-      request<{ favorited: boolean; favoriteCount: number }>(
-        "/organization/favorite",
+      request<{ data: { favorite_d: boolean; favoriteCount: number }, message: string }>(
+        ENDPOINTS.TOGGLE_FAVORITE,
         "POST",
         {},
         payload
       ),
 
-    onSuccess: () => toast.info("Favorited", "The organization is added to favorite"),
+    onSuccess: (data) => {
+      toast.info(`${data?.data?.favorite_d ? "Favorited" : "Unfavorited"}`, data?.message)
+    },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["organizations"] });
     },
@@ -165,7 +166,6 @@ export const useDeleteOrganization = (onFinish?: () => void) => {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["organizations"] });
-      toast.success("Organization deleted", "The organization was deleted successfully");
     },
     onError: (error: any, deletedId: string, context) => {
       if (context?.previousOrganizations) {
@@ -202,5 +202,17 @@ export const useGetOrganizationProducts = (id: string) => {
     queryFn: () => request(ENDPOINTS.ORGANIZATION_PRODUCTS(id), "GET"),
     enabled: !!id,
     select: (data) => data.data,
+  });
+};
+
+// 10. GENERATE SUBDOMAIN SUGGESTIONS
+export const useGenerateSubdomainSuggestions = (companyName: string) => {
+  return useQuery({
+    queryKey: ["subdomainSuggestions", companyName],
+    queryFn: () => request(ENDPOINTS.GENERATE_SUBDOMAIN(companyName), "GET"),
+    select: (data) => data.data.suggestions,
+    enabled: !!companyName && companyName.length > 0,
+    retry: false,
+    refetchOnWindowFocus: false,
   });
 };

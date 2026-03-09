@@ -21,10 +21,10 @@ const BillingContent = () => {
                 <div className="flex items-center gap-2 mb-3">
                     <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('inventory')}>
                         <Image
-                            src={Icons.owneranalytics}
-                            alt="owner analytics"
-                            width={16}
-                            height={16}
+                            src={Icons.ownerinventory}
+                            alt="owner inventory"
+                            width={20}
+                            height={20}
                             className={`w-8 h-8 rounded-lg p-1 transition border ${selectedOwner === 'inventory'
                                 ? 'border-primary bg-bg-secondary'
                                 : 'border-transparent'

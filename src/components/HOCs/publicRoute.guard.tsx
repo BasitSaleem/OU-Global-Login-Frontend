@@ -1,51 +1,45 @@
 'use client';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { ROUTES } from '@/constants';
-import { GlobalLoading } from '../ui/loading';
-import { useGetMe } from '@/apiHooks.ts/auth/auth.api';
+import { useAppSelector } from '@/redux/store';
+import { useEffect } from 'react';
+import { Loader } from '../ui';
+
 interface PublicRouteProps {
   children: React.ReactNode;
   redirectTo?: string;
   fallback?: React.ReactNode;
 }
-//PUBLIC ROTE WRAPPER THAT WILL BE SHOWN WHEN A USER IS AUTHENTICATED
+
+// PUBLIC ROUTE WRAPPER - Redirects authenticated users away from public pages (like login)
 export function PublicRoute({
   children,
   redirectTo = ROUTES.HOME,
   fallback
 }: PublicRouteProps) {
   const router = useRouter();
-  
-  // const searchParams = useSearchParams();
-  // const { isAuthenticated } = useAppSelector((state) => state.auth);
-  // const [isChecking, setIsChecking] = useState(true);
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     setIsChecking(false);
-  //   }, 100);
-  
-  //   return () => clearTimeout(timer);
-  // }, []);
-  const { data, isLoading, isError } = useGetMe()
-  // console.log(isError, );
+  const { isAuthenticated } = useAppSelector((s) => s.auth);
+  const pathName = usePathname();
+  const isAllowedPath = [
+    "/accept-email-change",
+    "/verify-change-email-otp",
+    "/decline-email-change",
+    redirectTo,
+    ROUTES.HOME,
+    ROUTES.DASHBOARD
+  ].includes(pathName);
 
-  // useEffect(() => {
-    if (!isLoading && !isError && data?.data?.user) {
-      const destination = redirectTo;
-      console.log('Destination: ', destination);
-      router.replace(destination);
-
+  useEffect(() => {
+    if (isAuthenticated && !isAllowedPath) {
+      router.replace(redirectTo);
     }
-  // }, [router, data, redirectTo]);
+  }, [isAuthenticated, redirectTo, router, isAllowedPath]);
 
-  if (isLoading) {
+  if (isAuthenticated && !isAllowedPath) {
     return fallback || (
-      <GlobalLoading text='checking in the public guard' />
+      <Loader text='Redirecting' />
     );
   }
 
-  // if (isError && !data?.data?.user) {
-  //   return null;
-  // }
   return <>{children}</>;
 }

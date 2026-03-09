@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { request } from "@/utils/requestFunction";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CreateInvitationData, CreateInvitationResponse, GetInvitationsResponse, GetInvitationByTokenResponse } from "./invitation.type";
+import { CreateInvitationData, CreateInvitationResponse, GetInvitationsResponse, GetInvitationByTokenResponse, inviteStatusType } from "./invitation.type";
 import { toast } from "@/hooks/useToast";
 
 //ENDPOINTS
@@ -11,6 +11,7 @@ const ENDPOINTS = {
     CREATE_INVITATION: `/invite/create`,
     ACCEPT_INVITATION: `/invite/accept`,
     DECLINE_INVITATION: `/invite/decline`,
+    CHECK_STATUS: "/invite/check-status"
 };
 // 1. CREATE INVITATION
 export const useCreateInvitation = () => {
@@ -93,7 +94,7 @@ export const useAcceptInvitation = (callbacks?: { onSuccess?: () => void }) => {
         },
     });
 };
-
+// 5. DECLINE INVITATION
 export const useDeclineInvitation = (callbacks?: { onSuccess?: () => void }) => {
     const queryClient = useQueryClient();
     return useMutation({
@@ -108,10 +109,6 @@ export const useDeclineInvitation = (callbacks?: { onSuccess?: () => void }) => 
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["invitations"] });
-            toast.success(
-                "Invitation declined",
-                "The invitation has been declined."
-            );
             callbacks?.onSuccess?.();
         },
         retry: false,
@@ -122,3 +119,21 @@ export const useDeclineInvitation = (callbacks?: { onSuccess?: () => void }) => 
         },
     });
 };
+// 6. GET INVITATION STATUS
+export const useGetInvitationStatus = (token: string) => {
+    return useQuery({
+        queryKey: ["invitationStatus", token],
+        queryFn: async () => {
+            const res = await request<inviteStatusType>(
+                ENDPOINTS.CHECK_STATUS,
+                "POST",
+                {},
+                { token }
+            );
+            return res.data;
+        },
+        enabled: !!token,
+        staleTime: 0,
+        gcTime: 0,
+    });
+}

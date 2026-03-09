@@ -1,14 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { Icons } from "@/components/utils/icons";
 import { IconName, SvgIcon } from "../ui/SvgIcon";
 import { cn } from "@/utils/helpers";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Button } from "../ui";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -20,10 +16,7 @@ interface SidebarProps {
 
 interface NavigationItem {
   href: string;
-  type: "svg" | "image";
-  svgName?: IconName
-  image?: string;
-  activeImage?: string;
+  svgName: IconName
   label: string;
   isActive: boolean;
   hasExternal?: boolean;
@@ -44,41 +37,18 @@ export default function Sidebar({
   const navigationItems: NavigationItem[] = [
     {
       href: "/",
-      type: "svg",
       svgName: "home",
-      // image: Icons.home,
-      // activeImage: Icons.homewhite,
       label: "Home",
       isActive: currentPath === "/",
     },
     {
       href: "/organizations",
-      type: "svg",
       svgName: "organization",
-      // image: Icons.organization,
-      // activeImage: Icons.organizationwhite,
       label: "Organizations",
       isActive: currentPath === "/organizations",
     },
-    // {
-    //   href: "/payment-methods",
-    //   type: "svg",
-    //   svgName: "payment-methods",
-    //   // image: Icons.organization,
-    //   label: "Payment Methods",
-    //   isActive: currentPath === "/payment-methods",
-    // },
-    // {
-    //   href: "/billing",
-    //   type: "svg",
-    //   svgName: "billing",
-    //   // image: Icons.organization,
-    //   label: "billing",
-    //   isActive: currentPath === "/billing",`
-    // },
     {
       href: "https://ownersinventory.com/",
-      type: "svg",
       hasExternal: true,
       svgName: 'OI',
       label: "Inventory",
@@ -86,7 +56,6 @@ export default function Sidebar({
     },
     {
       href: "/marketplace",
-      type: "svg",
       svgName: 'OM',
       label: "Marketplace",
       hasTime: true,
@@ -94,7 +63,6 @@ export default function Sidebar({
     },
     {
       href: "/jungle",
-      type: "svg",
       svgName: 'OJ',
       label: "Jungle",
       hasTime: true,
@@ -102,22 +70,19 @@ export default function Sidebar({
     },
     {
       href: "/analytics",
-      type: "svg",
-      hasTime: true,
       svgName: 'OA',
       label: "Analytics",
-      hasBadge: true,
-      isActive: currentPath === "/analytics",
+      hasTime: true,
+      isActive: currentPath === "/analytics"
+
     },
   ];
 
   const handleItemClick = (item: NavigationItem, e: React.MouseEvent) => {
     e.preventDefault();
     if (item.hasTime) {
-      const iconNode = item.type === "svg" && item.svgName ? (
+      const iconNode = (
         <SvgIcon name={item.svgName} className="w-10 h-10" />
-      ) : (
-        <Image src={item.href} alt={item.label} className="w-10 h-10" />
       );
       onShowModal(iconNode);
     } else {
@@ -129,41 +94,13 @@ export default function Sidebar({
     }
   };
 
-  const renderIcon = (item: NavigationItem, isCollapsed: boolean) => {
-    const iconSrc = item.isActive && item.activeImage ? item.activeImage : item.image;
-    const iconClass = cn(
-      "cursor-pointer transition-colors text-[#4B5563]",
-      // {
-      //   "text-[#4B5563]": item.isActive,
-      //   "text-foreground": !item.isActive,
-      // }
-    );
-
-    if (item.type === "svg" && item.svgName) {
-      return <SvgIcon name={item.svgName} className={iconClass} width={20} height={20} />;
-    }
-
-    return (
-      <SvgIcon name={item.svgName!} className={iconClass} width={20} height={20} />
-      // <img
-      //   src={iconSrc}
-      //   alt={item.label}
-      //   className={cn("w-6 h-6", {
-      //     "brightness-0 invert": item.isActive && item.type === "image",
-      //   })}
-      // />
-    );
-  };
-
   const renderRightSideContent = (item: NavigationItem) => {
     if (item.hasExternal) {
       return <SvgIcon name="expand" width={18} height={18} />;
     }
-    // #4B5563
     if (item.hasTime) {
       return <SvgIcon name="time" width={17} height={17} />;
     }
-
     if (item.hasBadge && !item.isActive) {
       return (
         <span
@@ -183,7 +120,7 @@ export default function Sidebar({
       {
         "justify-center px-0": collapsed,
         "px-2": !collapsed,
-        "bg-primary/10 text-[#795CF5]": item.isActive,
+        "bg-primary text-white hover:bg-primary hover:text-white": item.isActive,
         "justify-between": !collapsed && (item.hasExternal || item.hasTime || item.hasBadge),
         "gap-2": !collapsed && !item.isActive,
       }
@@ -191,17 +128,18 @@ export default function Sidebar({
 
     return (
       <div
-        // target={item.hasExternal ? "_blank" : "_self"}
         onClick={(e) => handleItemClick(item, e)}
         className={itemClass}
         title={collapsed ? item.label : ""}
       >
         {collapsed ? (
-          renderIcon(item, true)
+          <SvgIcon name={item.svgName} width={20} height={20} />
         ) : (
           <>
             <div className="flex items-center gap-3 ">
-              {renderIcon(item, false)}
+              {/* {renderIcon(item, false)}
+               */}
+              <SvgIcon name={item.svgName} width={20} height={20} />
               <span className={cn("", { "font-medium": item.isActive })}>
                 {item.label}
               </span>
@@ -290,25 +228,24 @@ export default function Sidebar({
         )}
       >
         {/* Header */}
-        <div
+        <Link
+          href="/"
           className={cn(
-            "h-14 flex items-center justify-start border-b cursor-pointer",
+            "h-14  flex items-center justify-start border-b cursor-pointer",
             collapsed ? "px-3" : "px-3"
           )}
         >
           {collapsed ? (
-            <div className="w-9 h-9 rounded flex items-center justify-center bg-primary/50">
-              <SvgIcon name="ownersUniverseColl" className=" w-[18px] h-[18px]" />
+            <div className="w-20 h-10 rounded-lg flex items-center justify-center">
+              <SvgIcon name="OI" width={30} height={30} />
             </div>
           ) : (
             <SvgIcon
-              name="ownersUniverse"
-              className="text-foreground"
+              name="ownersInventory"
               width={130}
-              height={130}
             />
           )}
-        </div>
+        </Link>
 
         {/* Navigation */}
         <nav className="px-3 py-1.5 space-y-1 ">

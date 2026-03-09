@@ -1,81 +1,91 @@
-'use client';
+"use client";
 import {
   useCheckSubDomainAvailability,
   useCreateOrganization,
+  useGenerateSubdomainSuggestions,
 } from "@/apiHooks.ts/organization/organization.api";
-import { CreateOrganizationData, CreateOrganizationResponse } from "@/apiHooks.ts/organization/organization.types";
+import {
+  CreateOrganizationData,
+  CreateOrganizationResponse,
+} from "@/apiHooks.ts/organization/organization.types";
 import { PRODUCTS, ROUTES } from "@/constants";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useRouter } from "next/navigation";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "@/hooks/useToast";
 import ProgressModal from "@/components/ui/ProgressModal";
-import { Button, Input, LoadingSpinner } from "@/components/ui";
+import { Button, Dots, Input, Loader, LoadingSpinner } from "@/components/ui";
 import { AuthGuard } from "@/components/HOCs/auth-guard";
-import { generateSubdomainSuggestions } from "@/utils/subdomainGenerator";
 import { SubdomainSuggestion } from "@/components/SubdomainSuggestion";
 import { AvailabilityStatus } from "@/components/AvailabilityStatus";
 import { CreateOrganizationGuard } from "@/components/HOCs/createOrgRoute.guard";
+import { SvgIcon } from "@/components/ui/SvgIcon";
 
 export default function CreateOrgPage() {
   const [companyName, setCompanyName] = useState("");
   const [subDomain, setSubDomain] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("OI");
   const [showProgressModal, setShowProgressModal] = useState(false);
-  const [organizationData, setOrganizationData] = useState<CreateOrganizationResponse | null>(null);
-  const [isGeneratingSuggestions, setIsGeneratingSuggestions] = useState(false);
+  const [organizationData, setOrganizationData] =
+    useState<CreateOrganizationResponse | null>(null);
+  const [isSuggestionSubdomain, setIsSuggestionSubdomain] = useState(false);
 
-  // const debouncedCompanyName = useDebounce(companyName.trim(), 1500);
+  const debouncedCompanyName = useDebounce(companyName.trim(), 1500);
   const debouncedSubDomain = useDebounce(subDomain.trim(), 1500);
 
-  // const isNameDebouncing = companyName.trim() !== debouncedCompanyName && companyName.trim().length > 0;
-  const isSubDomainDebouncing = subDomain.trim() !== debouncedSubDomain && subDomain.trim().length > 0;
-
-  const createOrgMutation = useCreateOrganization();
-  const router = useRouter();
-
-  // const { data: isNameAvailable, isFetching: checkingName, isError: nameError } =
-  //   useCheckOrganizationNameAvailability(debouncedCompanyName);
-
-  const { data: isSubAvailable, isFetching: checkingSub, isError: subError } =
-    useCheckSubDomainAvailability(
-      selectedProduct === "OI" ? debouncedSubDomain : ""
+  const isNameDebouncing =
+    companyName.trim() !== debouncedCompanyName &&
+    companyName.trim().length > 0;
+  const isSubDomainDebouncing =
+    !isSuggestionSubdomain &&
+    subDomain.trim() !== debouncedSubDomain &&
+    subDomain.trim().length > 0;
+  const { data: suggestions, isPending: fetchingSubdomainSuggestions } =
+    useGenerateSubdomainSuggestions(
+      !isNameDebouncing ? debouncedCompanyName : "",
     );
 
-  const subdomainSuggestions = useMemo(() => {
-    if (!companyName.trim() || companyName.trim().length < 2) return [];
-    return generateSubdomainSuggestions(companyName);
-  }, [companyName]);
+  const { mutate: createOrgMutation, isPending: creatingOrg } =
+    useCreateOrganization();
+  const router = useRouter();
+
+  const shouldCheckAvailability =
+    selectedProduct === "OI" && debouncedSubDomain && !isSuggestionSubdomain;
+
+  const {
+    data: isSubAvailable,
+    isFetching: checkingSub,
+    isError: subError,
+  } = useCheckSubDomainAvailability(
+    shouldCheckAvailability ? debouncedSubDomain : "",
+  );
+
+  const finalIsSubAvailable = isSuggestionSubdomain ? true : isSubAvailable;
 
   useEffect(() => {
-    if (subDomain === '' && subdomainSuggestions.length > 0 && selectedProduct === "OI") {
-      setSubDomain(subdomainSuggestions[0]);
+    if (isSuggestionSubdomain && !suggestions?.includes(subDomain.trim())) {
+      setIsSuggestionSubdomain(false);
     }
-  }, [subdomainSuggestions, subDomain, selectedProduct]);
-  useEffect(() => {
-    if (companyName.trim().length > 1) {
-      setIsGeneratingSuggestions(true);
-      const timer = setTimeout(() => {
-        setIsGeneratingSuggestions(false);
-      }, 500);
-      return () => clearTimeout(timer);
-    } else {
-      setIsGeneratingSuggestions(false);
-    }
-  }, [companyName]);
+  }, [subDomain, suggestions, isSuggestionSubdomain]);
 
+  useEffect(() => {
+    if (suggestions && suggestions.length > 0 && !subDomain.trim()) {
+      setSubDomain(suggestions[0]);
+      setIsSuggestionSubdomain(true);
+    }
+  }, [suggestions]);
   const handleSuggestionClick = (suggestion: string) => {
+    setIsSuggestionSubdomain(true);
     setSubDomain(suggestion);
   };
 
   const canSubmit = () => {
     if (!companyName.trim()) return false;
     if (selectedProduct === "OI" && !subDomain.trim()) return false;
-    // if (isNameDebouncing || checkingName) return false;
-    if (selectedProduct === "OI" && (isSubDomainDebouncing || checkingSub)) return false;
-    // if (isNameAvailable === false) return false;
-    if (selectedProduct === "OI" && isSubAvailable === false) return false;
-    if (createOrgMutation.isPending) return false;
+    if (selectedProduct === "OI" && (isSubDomainDebouncing || checkingSub))
+      return false;
+    if (selectedProduct === "OI" && finalIsSubAvailable === false) return false;
+    if (creatingOrg) return false;
     return true;
   };
 
@@ -88,7 +98,7 @@ export default function CreateOrgPage() {
       product: [selectedProduct],
     };
 
-    createOrgMutation.mutate(payload, {
+    createOrgMutation(payload, {
       onSuccess: (data) => {
         setOrganizationData({
           data: {
@@ -100,21 +110,22 @@ export default function CreateOrgPage() {
         setShowProgressModal(true);
       },
       onError: (error: any) => {
-        const message = (error as Error)?.message || 'Organization creation failed';
-        toast.error('Failed to create organization', message);
-        console.error('Organization creation failed:', error);
-      }
+        const message =
+          (error as Error)?.message || "Organization creation failed";
+        toast.error("Failed to create organization", message);
+        console.error("Organization creation failed:", error);
+      },
     });
   };
 
   const handleModalClose = () => {
     setShowProgressModal(false);
     setOrganizationData(null);
-    router.push(ROUTES.DASHBOARD)
+    router.push(ROUTES.DASHBOARD);
   };
 
   const handleProgressComplete = () => {
-    console.log("handleProgressComplete")
+    console.log("handleProgressComplete");
   };
 
   const handleGoHome = () => {
@@ -125,10 +136,10 @@ export default function CreateOrgPage() {
 
   return (
     <AuthGuard>
+      {creatingOrg && <Loader text="Initializing organization creation" />}
       <CreateOrganizationGuard>
         <div className="min-h-screen w-full flex items-center justify-center bg-background p-4 sm:p-8">
           <div className="bg-bg-secondary rounded-xl shadow-lg p-6 sm:p-12 w-full max-w-2xl border">
-
             <h1 className="mb-8 text-2xl sm:text-3xl font-bold text-center ">
               Create an Organization
             </h1>
@@ -142,18 +153,13 @@ export default function CreateOrgPage() {
                 onChange={(e) => setCompanyName(e.target.value)}
                 placeholder="Enter company name"
               />
-              {/* <AvailabilityStatus
-                isLoading={checkingName}
-                isAvailable={isNameAvailable}
-                isDebouncing={isNameDebouncing}
-                fieldName="Organization name"
-                value={companyName}
-              /> */}
             </div>
 
             {/* Products */}
             <div className="mb-6">
-              <label className="block text-base font-medium mb-3">Products</label>
+              <label className="block text-base font-medium mb-3">
+                Products
+              </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {PRODUCTS.map((product) => (
                   <button
@@ -162,22 +168,20 @@ export default function CreateOrgPage() {
                     disabled={product.isDisabled}
                     onClick={() => setSelectedProduct(product.name)}
                     className={`flex items-center gap-2 border rounded-lg px-3 py-3 text-base font-medium transition ${selectedProduct === product.name
-                      ? "border-primary bg-bg-secondary hover:text-text hover:bg-primary/70 text-primary"
-                      : "border text-text"
-                      } ${product.isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                        ? "border-primary bg-bg-secondary hover:text-text hover:bg-primary/70 text-primary"
+                        : "border text-text"
+                      } ${product.isDisabled
+                        ? "cursor-not-allowed opacity-50 "
+                        : "cursor-pointer"
+                      }`}
                   >
-                    <img
-                      src={product.icon}
-                      alt={product.name}
-                      className="w-6 h-6"
-                    />
+                    <SvgIcon name={product.icon} className="w-6 h-6" />
                     {product.fullname}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Sub-Domain */}
             <div className="mb-2">
               <Input
                 isRequired
@@ -189,26 +193,27 @@ export default function CreateOrgPage() {
                     e.target.value
                       .toLocaleLowerCase()
                       .trim()
-                      .replace(/[^a-z0-9-]/g, "")
+                      .replace(/[^a-z0-9-]/g, ""),
                   )
                 }
-                disabled={selectedProduct !== "OI"}
+                disabled={
+                  selectedProduct !== "OI" || fetchingSubdomainSuggestions
+                }
                 placeholder="Enter sub-domain"
               />
 
-              {/* Subdomain Suggestions */}
               {selectedProduct === "OI" && companyName.trim().length > 1 && (
                 <SubdomainSuggestion
-                  suggestions={subdomainSuggestions}
+                  suggestions={suggestions}
                   onSuggestionClick={handleSuggestionClick}
-                  isLoading={isGeneratingSuggestions}
+                  isLoading={fetchingSubdomainSuggestions}
                 />
               )}
 
               {selectedProduct === "OI" && (
                 <AvailabilityStatus
                   isLoading={checkingSub}
-                  isAvailable={isSubAvailable}
+                  isAvailable={finalIsSubAvailable}
                   isDebouncing={isSubDomainDebouncing}
                   fieldName="Sub-domain"
                   value={subDomain}
@@ -226,7 +231,7 @@ export default function CreateOrgPage() {
                   setSubDomain("");
                   setSelectedProduct("OI");
                 }}
-                disabled={createOrgMutation.isPending}
+                disabled={creatingOrg}
               >
                 Reset
               </Button>
@@ -236,10 +241,13 @@ export default function CreateOrgPage() {
                 className="py-5"
                 disabled={!canSubmit()}
               >
-                {createOrgMutation.isPending ? (
+                {creatingOrg ? (
                   <div className="flex items-center gap-2">
-                    <LoadingSpinner size={4} />
-                    <span>Creating...</span>
+                    <LoadingSpinner size={4} className="border-white" />
+                    <span>
+                      Creating
+                      <Dots dotSize="3px" className="text-white gap-1 mt-1" />
+                    </span>
                   </div>
                 ) : (
                   "Continue"

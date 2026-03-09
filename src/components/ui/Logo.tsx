@@ -1,42 +1,21 @@
 import React from 'react';
-import Image from 'next/image';
-import { StaticImport } from 'next/dist/shared/lib/get-img-props';
-import { SvgIcon } from './SvgIcon';
+import { IconName, SvgIcon } from './SvgIcon';
 interface LogoProps {
-  /**
-   * Width of the logo in pixels
-   * @default 120
-   */
+
   width?: number;
-  /**
-   * Height of the logo in pixels
-   * @default 40
-   */
+
   height?: number;
-  /**
-   * Alternative text for the logo
-   * @default "Owner Universe Logo"
-   */
+
   alt?: string;
-  /**
-   * Additional CSS classes to apply to the logo container
-   */
+
   className?: string;
-  /**
-   * Whether the logo should be clickable and link to home
-   * @default false
-   */
+
   isClickable?: boolean;
-  /**
-   * Priority loading for the image (useful for above-the-fold logos)
-   * @default true
-   */
+
   priority?: boolean;
-  /**
-   * Custom onClick handler
-   */
+
   onClick?: () => void;
-  Icon?: string | StaticImport;
+  Icon?: IconName;
 }
 
 const Logo: React.FC<LogoProps> = ({
@@ -55,7 +34,7 @@ const Logo: React.FC<LogoProps> = ({
       onClick={onClick}
     >
       <SvgIcon
-        name="ownersUniverse"
+        name={Icon!}
         className="text-foreground"
         width={width}
         height={height}

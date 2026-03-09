@@ -7,9 +7,9 @@ export default function NotFound() {
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 relative overflow-hidden">
       {/* Background decorative image */}
       <div className="absolute inset-0 opacity-40">
-        <img 
-          src="https://api.builder.io/api/v1/image/assets/TEMP/c50393b05848b5d4a774880c9a82dc541689594f?width=3660" 
-          alt="" 
+        <img
+          src="https://api.builder.io/api/v1/image/assets/TEMP/c50393b05848b5d4a774880c9a82dc541689594f?width=3660"
+          alt=""
           className="w-full h-full object-cover"
         />
       </div>
@@ -17,9 +17,9 @@ export default function NotFound() {
       {/* Header with logo and home button */}
       <div className="relative z-10 flex items-center justify-between p-4 sm:p-6">
         <Link href="/">
-          <img 
-            src="https://api.builder.io/api/v1/image/assets/TEMP/b6883933800beaaed00fccc27c64d8d36242d8ba?width=278" 
-            alt="Owners Universe Logo" 
+          <img
+            src="https://api.builder.io/api/v1/image/assets/TEMP/b6883933800beaaed00fccc27c64d8d36242d8ba?width=278"
+            alt="Owners Universe Logo"
             className="h-6 sm:h-8 cursor-pointer"
           />
         </Link>
@@ -82,7 +82,7 @@ export default function NotFound() {
 
       {/* Footer */}
       <div className="text-center relative z-10 pb-2 sm:pb-4">
-        <p className="text-xs text-gray-700">©2025 Owners Inventory - All rights reserved</p>
+        <p className="text-xs text-gray-700">© {new Date().getFullYear()} Owners Inventory - All rights reserved</p>
       </div>
     </div>
   );

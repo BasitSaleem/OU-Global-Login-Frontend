@@ -109,8 +109,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                     Cancel
                 </Button>
                 <Button
-                    variant='primary'
                     type="submit"
+                    variant='primary'
                 >
                     {mode === 'add' ? 'Add Card' : 'Save Changes'}
                 </Button>
