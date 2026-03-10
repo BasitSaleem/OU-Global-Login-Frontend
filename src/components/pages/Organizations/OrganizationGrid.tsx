@@ -7,7 +7,7 @@ import { DeleteOrganizationModal } from "@/components/modals/DeleteOrganizationM
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizationGridComponent } from "./OrganizationGridComponent";
 import { toast } from "@/hooks/useToast";
-import { LoadingSpinner } from "@/components/ui";
+import { LoadingSpinner, Tooltip } from "@/components/ui";
 import { Plus } from "lucide-react";
 import { PermissionGuard } from "@/components/HOCs/permission-guard";
 
@@ -121,45 +121,40 @@ export default function OrganizationGrid({
         ) : (
           <>
             {organizations?.map((org) => (
-              <div
+              <Tooltip
                 key={org?.id}
-                onClick={() => org?.isAddNew && onAddNew()}
-                className={`relative group h-30 ${org?.isAddNew ? "" : "bg-bg-secondary border border-border rounded-xl"
-                  }  ${org?.isAddNew ? "" : "p-3"
-                  } hover:shadow-sm transition-shadow cursor-pointer rounded-xl`}
+                content={org?.isAddNew ? "Coming soon" : org?.name}
+                position="top"
+                wrapperClassName="w-full"
               >
-                {org?.isAddNew ? (
-                  <div
-                    className="flex flex-col items-center justify-center text-center h-full rounded-xl bg-primary/5 "
-                  >
-                    <div className="text-primary">
-                      <Plus size={50} />
+                <div
+                  className={`relative group h-30 w-full ${org?.isAddNew ? "" : "bg-bg-secondary border border-border rounded-xl"
+                    }  ${org?.isAddNew ? "" : "p-3"
+                    } hover:shadow-sm transition-shadow cursor-pointer rounded-xl`}
+                >
+                  {org?.isAddNew ? (
+                    <div
+                      className="flex flex-col items-center justify-center text-center h-full rounded-xl bg-primary/5 cursor-not-allowed w-full"
+                    >
+                      <div className="text-text">
+                        <Plus size={50} />
+                      </div>
+                      <span className=" text-text font-bold">
+                        Add New
+                      </span>
                     </div>
-                    <span className=" text-primary font-bold">
-                      Add New
-                    </span>
-                  </div>
-                ) : (
-                  <OrganizationGridComponent
-                    id={org?.id}
-                    org={org}
-                    isPending={isPending}
-                    handleFavoriteClick={handleFavoriteClick}
-                    user={user}
-                    handleDeleteClick={handleDeleteClick}
-                  />
-                )}
-
-                {/* Tooltip */}
-                {!org?.isAddNew && (
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block">
-                    <div className="relative bg-bg-secondary border shadow-md rounded px-2 py-0.5 text-body-tiny  whitespace-nowrap">
-                      {org?.name}
-                      <div className="absolute top-full left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-bg-secondary border-l border-t  rotate-45"></div>
-                    </div>
-                  </div>
-                )}
-              </div>
+                  ) : (
+                    <OrganizationGridComponent
+                      id={org?.id}
+                      org={org}
+                      isPending={isPending}
+                      handleFavoriteClick={handleFavoriteClick}
+                      user={user}
+                      handleDeleteClick={handleDeleteClick}
+                    />
+                  )}
+                </div>
+              </Tooltip>
             ))}
           </>
         )}
