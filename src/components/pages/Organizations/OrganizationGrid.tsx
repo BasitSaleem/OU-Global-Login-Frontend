@@ -134,7 +134,8 @@ export default function OrganizationGrid({
                 >
                   {org?.isAddNew ? (
                     <div
-                      className="flex flex-col items-center justify-center text-center h-full rounded-xl bg-primary/5 cursor-not-allowed w-full"
+                      className="flex flex-col items-center justify-center text-center h-full rounded-xl bg-primary/5 cursor-not-allowed  w-full"
+                    // onClick={onAddNew}
                     >
                       <div className="text-text">
                         <Plus size={50} />
