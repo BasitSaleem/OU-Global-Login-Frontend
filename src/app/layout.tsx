@@ -13,8 +13,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Owners Universe - Global Login & Authentication Platform",
-    template: "%s | Owners Universe"
+    default: "Owners Inventory",
+    template: "%s | Owners Inventory"
   },
   description: "Global authentication and business management platform for Owners Inventory. Streamline your business operations with our suite of integrated products including Owners Inventory, Owners Jobs, Owners Marketplace, and more.",
   keywords: [
@@ -69,11 +69,11 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/OI_LOGO.svg" },
-      { url: "/icon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/icon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/og-image.png", sizes: "16x16", type: "image/png" },
+      { url: "/og-image.png", sizes: "32x32", type: "image/png" },
     ],
     apple: [
-      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+      { url: "/og-image.png", sizes: "180x180", type: "image/png" },
     ],
   },
 
