@@ -123,6 +123,7 @@ export default function SignUpPage() {
                   placeholder="Confirm Password"
                   isPassword={true}
                   autoComplete="new-password"
+
                   {...methods.register("confirmPassword", {
                     required: "confirm password is required",
                   })}
@@ -185,7 +186,7 @@ export default function SignUpPage() {
 
             {/* Sign in link */}
             <div className="mt-3 sm:mt-4 text-center">
-              <span className="text-xs sm:text-sm">
+              <span className="text-xs sm:text-sm text-text">
                 Already have an account{" "}
               </span>
               <Link
