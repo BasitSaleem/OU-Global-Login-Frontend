@@ -29,11 +29,6 @@ export function OrganizationGridComponent({
   const [isUpdate, setIsUpdate] = useState<boolean>(
     org?.favorites?.some((fUser) => fUser.userId === user?.id) ?? false
   );
-
-
-
-
-
   const bgColor = useMemo(() => getColorFromId(org.id), [org.id]);
   const router = useRouter();
   const onClick = (e: React.MouseEvent) => {
@@ -45,7 +40,9 @@ export function OrganizationGridComponent({
     : undefined;
 
   return (
-    <div onClick={onClick} key={id} className="flex flex-col h-[100px]">
+    <div key={id} className="flex flex-col h-[100px]"
+    // onClick={onClick}
+    >
       <div key={org.id} className="flex items-start gap-3 mb-2">
         <div
           className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-medium"
