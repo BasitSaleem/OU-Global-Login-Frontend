@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { request } from "@/utils/requestFunction";
+import { request, ApiError } from "@/utils/requestFunction";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CreateInvitationData, CreateInvitationResponse, GetInvitationsResponse, GetInvitationByTokenResponse, inviteStatusType } from "./invitation.type";
 import { toast } from "@/hooks/useToast";
@@ -67,7 +67,7 @@ export const useGetInvitationByToken = (token: string, enabled: boolean = true) 
 // 4. ACCEPT INVITATION
 export const useAcceptInvitation = (callbacks?: { onSuccess?: () => void }) => {
     const queryClient = useQueryClient();
-    return useMutation({
+    return useMutation<any, ApiError, string>({
         mutationFn: async (token: string) => {
             const res = await request(
                 ENDPOINTS.ACCEPT_INVITATION,
@@ -89,9 +89,11 @@ export const useAcceptInvitation = (callbacks?: { onSuccess?: () => void }) => {
         },
         retry: false,
         onError: (error: any) => {
-            const message =
-                (error as Error)?.message || "Invitation acceptance failed";
-            toast.error("Failed to accept invitation", message);
+            if (error instanceof ApiError) {
+                toast.error("Failed to accept invitation", error.message);
+            } else {
+                toast.error("Failed to accept invitation", error.message || "Invitation acceptance failed");
+            }
         },
     });
 };

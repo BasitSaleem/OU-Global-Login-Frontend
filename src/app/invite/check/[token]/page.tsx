@@ -19,7 +19,7 @@ export default function AcceptInvitePage() {
 
     const { data: me, isPending: isMePending } = useGetMe();
 
-    const { mutate: acceptInvitation, isPending: isAccepting } =
+    const { mutate: acceptInvitation, isPending: isAccepting, error: acceptError } =
         useAcceptInvitation({
             onSuccess: () => {
                 router.replace(ROUTES.DASHBOARD);
@@ -27,13 +27,13 @@ export default function AcceptInvitePage() {
         });
 
     useEffect(() => {
-        if (isStatusPending || isMePending || isAccepting || isAcceptingRef.current) return;
-
-        if (error) {
-            toast.info('Invitation not found', 'Invitation not found');
+        if (acceptError) {
             router.replace(ROUTES.LOGIN);
             return;
         }
+
+        if (isStatusPending || isMePending || isAccepting || isAcceptingRef.current) return;
+
 
         if (!statusData) return;
 
@@ -59,6 +59,12 @@ export default function AcceptInvitePage() {
                 router.replace(ROUTES.DASHBOARD);
                 return;
             }
+            if (inviteStatus === 'EXPIRED') {
+                toast.info('Invitation Expired', 'Invitation has expired');
+                router.replace(ROUTES.LOGIN);
+                return;
+            }
+
         }
 
         // USER NOT LOGGED IN
@@ -85,6 +91,7 @@ export default function AcceptInvitePage() {
         if (inviteStatus === 'REJECTED') {
             toast.info('Already Declined', 'Invitation already declined');
             router.replace(ROUTES.LOGIN);
+            return
         }
     }, [
         statusData,
@@ -96,6 +103,7 @@ export default function AcceptInvitePage() {
         token,
         router,
         acceptInvitation,
+        acceptError,
     ]);
 
     return (
