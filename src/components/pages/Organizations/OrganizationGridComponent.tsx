@@ -29,6 +29,10 @@ export function OrganizationGridComponent({
   const [isUpdate, setIsUpdate] = useState<boolean>(
     org?.favorites?.some((fUser) => fUser.userId === user?.id) ?? false
   );
+
+
+
+
   const bgColor = useMemo(() => getColorFromId(org.id), [org.id]);
   const router = useRouter();
   const onClick = (e: React.MouseEvent) => {

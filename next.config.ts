@@ -2,7 +2,11 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ["owners-universe.s3.us-west-2.amazonaws.com", "d3ehuwavfiyehw.cloudfront.net", 'https://owners-universe-prod.s3.ap-southeast-1.amazonaws.com'],
+    domains: [
+      "owners-universe.s3.us-west-2.amazonaws.com",
+      "d3ehuwavfiyehw.cloudfront.net",
+      "owners-universe-prod.s3.ap-southeast-1.amazonaws.com"
+    ],
   },
 
   webpack: (config) => {
