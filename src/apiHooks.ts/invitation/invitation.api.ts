@@ -77,9 +77,10 @@ export const useAcceptInvitation = (callbacks?: { onSuccess?: () => void }) => {
             )
             return res.data
         },
-        onSuccess: () => {
+        onSuccess: (_data, token) => {
             queryClient.invalidateQueries({ queryKey: ["invitations"] });
             queryClient.invalidateQueries({ queryKey: ["organizations"] });
+            queryClient.invalidateQueries({ queryKey: ["invitationStatus", token] });
             toast.success(
                 "Invitation accepted",
                 "The invitation has been accepted."
@@ -107,8 +108,9 @@ export const useDeclineInvitation = (callbacks?: { onSuccess?: () => void }) => 
             )
             return res.data
         },
-        onSuccess: () => {
+        onSuccess: (_data, token) => {
             queryClient.invalidateQueries({ queryKey: ["invitations"] });
+            queryClient.invalidateQueries({ queryKey: ["invitationStatus", token] });
             callbacks?.onSuccess?.();
         },
         retry: false,

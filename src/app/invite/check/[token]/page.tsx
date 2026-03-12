@@ -1,17 +1,18 @@
-'use client';
 
+'use client';
 import { useAcceptInvitation, useGetInvitationStatus } from '@/apiHooks.ts/invitation/invitation.api';
 import { useParams, useRouter } from 'next/navigation';
 import { useGetMe } from '@/apiHooks.ts/auth/auth.api';
 import { ROUTES } from '@/constants';
 import { toast } from '@/hooks/useToast';
 import { Loader } from '@/components/ui';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 export default function AcceptInvitePage() {
     const params = useParams();
     const router = useRouter();
     const token = params.token as string;
+    const isAcceptingRef = useRef(false);
 
     const { data: statusData, isPending: isStatusPending, error } =
         useGetInvitationStatus(token);
@@ -26,7 +27,7 @@ export default function AcceptInvitePage() {
         });
 
     useEffect(() => {
-        if (isStatusPending || isMePending || isAccepting) return;
+        if (isStatusPending || isMePending || isAccepting || isAcceptingRef.current) return;
 
         if (error) {
             toast.info('Invitation not found', 'Invitation not found');
@@ -42,6 +43,7 @@ export default function AcceptInvitePage() {
         // USER LOGGED IN
         if (me?.data?.user) {
             if (inviteStatus === 'PENDING') {
+                isAcceptingRef.current = true;
                 acceptInvitation(token);
                 return;
             }
@@ -108,3 +110,4 @@ export default function AcceptInvitePage() {
         />
     );
 }
+
