@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { Providers } from "@/providers";
-import { SEO } from "@/components/SEO";
 
 
 const inter = Inter({
@@ -68,7 +67,7 @@ export const metadata: Metadata = {
   // App icons and favicons
   icons: {
     icon: [
-      { url: "/OI_LOGO.svg" },
+      { url: "/OI_LOGO.svg", sizes: "26x26", type: "image/svg+xml" },
       { url: "/og-image.png", sizes: "16x16", type: "image/png" },
       { url: "/og-image.png", sizes: "32x32", type: "image/png" },
     ],
