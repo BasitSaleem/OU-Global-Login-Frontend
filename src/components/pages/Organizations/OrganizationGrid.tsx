@@ -134,13 +134,13 @@ export default function OrganizationGrid({
                 >
                   {org?.isAddNew ? (
                     <div
-                      className="flex flex-col items-center justify-center text-center h-full rounded-xl bg-primary/5 cursor-not-allowed  w-full"
-                    // onClick={onAddNew}
+                      className="flex flex-col items-center justify-center text-center h-full rounded-xl bg-primary/5  w-full"
+                      onClick={onAddNew}
                     >
-                      <div className="text-text">
+                      <div className="text-primary">
                         <Plus size={50} />
                       </div>
-                      <span className=" text-text font-bold">
+                      <span className=" text-primary font-bold">
                         Add New
                       </span>
                     </div>

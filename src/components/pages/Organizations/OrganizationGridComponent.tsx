@@ -41,7 +41,7 @@ export function OrganizationGridComponent({
 
   return (
     <div key={id} className="flex flex-col h-[100px]"
-    // onClick={onClick}
+      onClick={onClick}
     >
       <div key={org.id} className="flex items-start gap-3 mb-2">
         <div
@@ -92,7 +92,7 @@ export function OrganizationGridComponent({
               <path d="M9.04907 2.92705C9.34843 2.00574 10.6518 2.00574 10.9511 2.92705L12.0207 6.21885C12.1546 6.63087 12.5386 6.90983 12.9718 6.90983H16.433C17.4017 6.90983 17.8045 8.14945 17.0208 8.71885L14.2206 10.7533C13.8701 11.0079 13.7235 11.4593 13.8573 11.8713L14.9269 15.1631C15.2263 16.0844 14.1718 16.8506 13.3881 16.2812L10.5879 14.2467C10.2374 13.9921 9.76279 13.9921 9.4123 14.2467L6.61213 16.2812C5.82842 16.8506 4.77394 16.0844 5.07329 15.1631L6.14286 11.8713C6.27673 11.4593 6.13007 11.0079 5.77958 10.7533L2.97941 8.71885C2.19569 8.14945 2.59847 6.90983 3.56719 6.90983H7.02839C7.46161 6.90983 7.84557 6.63087 7.97944 6.21885L9.04907 2.92705Z" />
             </svg>
           </Button>
-          {/* {org.permissionNames?.includes("og:delete::organization") && org.memberships?.some((membership) => membership.role === "OWNER") && (
+          {org.permissionNames?.includes("og:delete::organization") && org.memberships?.some((membership) => membership.role === "OWNER") && (
             <Button
               variant="basic"
               className="z-40 hover:scale-110 duration-300"
@@ -104,7 +104,7 @@ export function OrganizationGridComponent({
             >
               <Trash color="red" fill="red" size={20} />
             </Button>
-          )} */}
+          )}
         </div>
       </div>
 
