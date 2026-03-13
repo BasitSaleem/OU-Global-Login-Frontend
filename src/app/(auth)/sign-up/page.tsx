@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Icons } from "@/components/utils/icons";
 import Image from "next/image";
@@ -9,8 +9,9 @@ import { useSignUp } from "@/apiHooks.ts/auth/auth.api";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema } from "@/schemas/auth.schemas";
-import { Button, Input, } from "@/components/ui";
+import { Button, Input, Checkbox, Tooltip } from "@/components/ui";
 import { signUpData } from "@/apiHooks.ts/auth/auth.types";
+import { Info } from "lucide-react";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -37,7 +38,7 @@ export default function SignUpPage() {
   }, [email, methods]);
   const onSubmit = async (data: signUpData) => {
     signUp(
-      { first_name: data.first_name, last_name: data.last_name, email: data.email, password: data.password } as signUpData,
+      { first_name: data.first_name, last_name: data.last_name, email: data.email, password: data.password, acceptTerms: data.acceptTerms } as signUpData,
       {
         onSuccess: (response) => {
           router.push(`/otp?email=${encodeURIComponent(response.data.email)}${token ? `&token=${token}` : ""}`);
@@ -132,6 +133,28 @@ export default function SignUpPage() {
                   }
                 />
 
+                <div className="pt-2">
+                  <Checkbox
+                    id="acceptTerms"
+                    {...methods.register("acceptTerms")}
+                    label={
+                      <div className="flex flex-wrap gap-1 leading-tight text-sm">
+                        <span>I agree to the</span>
+                        <Link href="https://ownersinventory.com/terms-and-conditions" target="_blank" className="text-primary  hover:underline">
+                          Terms & Conditions
+                        </Link>
+                        <span>and</span>
+                        <Link href="https://ownersinventory.com/privacy-policy" className="text-primary  hover:underline">
+                          Privacy Policy
+                        </Link>
+                        <Tooltip position="right" content={<div className="text-xs">By signing up, you agree to receive occasional product updates.<br />Unsubscribe anytime.</div>} children={<Info size={20} className="mt-[2px] text-text" />
+                        } />
+                      </div>
+                    }
+                    error={methods.formState.errors.acceptTerms?.message as string}
+                  />
+                </div>
+
                 {/* Sign Up button */}
                 <div className="pt-2 sm:pt-3 sm:mt-5">
                   <Button
@@ -139,8 +162,7 @@ export default function SignUpPage() {
                     isLoading={isPending}
                     disabled={isPending || Object.keys(methods.formState.errors).length > 0}
                     variant="primary"
-                    className="w-full h-8 sm:h-9 text-white text-xs bg-primary hover:bg-primary/80 sm:text-sm font-bold rounded-full  cursor-pointer"
-
+                    className="w-full h-8 sm:h-9 text-white text-xs bg-primary hover:bg-primary/80 sm:text-sm font-bold rounded-full cursor-pointer"
                   >
                     {isPending ? "Signing up .." : "Sign up"}
                   </Button>
