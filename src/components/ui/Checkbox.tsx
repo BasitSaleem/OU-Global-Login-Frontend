@@ -17,7 +17,7 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
                         <input
                             type="checkbox"
                             className={cn(
-                                "peer h-4 w-4 shrink-0 rounded border border-primary bg-transparent text-primary focus:ring-1 focus:ring-primary focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50",
+                                "peer h-4 w-4 shrink-0 rounded-md border border-primary  text-primary  focus:ring-primary focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50",
                                 error && "border-red-500",
                                 className
                             )}
@@ -26,13 +26,13 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
                         />
                     </div>
                     {label && (
-                        <span className="text-xs sm:text-sm text-text font-medium select-none">
+                        <span className="text-xs sm:text-sm text-text font-medium select-none mt-0.5">
                             {label}
                         </span>
                     )}
                 </label>
                 {error && (
-                    <p className="text-[10px] sm:text-xs text-red-600 ml-6">{error}</p>
+                    <p className="text-[10px] sm:text-xs text-red-600">{error}</p>
                 )}
             </div>
         );

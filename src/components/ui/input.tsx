@@ -190,7 +190,7 @@ const BaseInput = forwardRef<HTMLInputElement, BaseInputProps>(
           )}
         </div>
         {error && (
-          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          <p className="text-[10px] sm:text-xs text-red-600">{error}</p>
         )}
         {helperText && !error && (
           <p className="text-sm text-gray-500">
