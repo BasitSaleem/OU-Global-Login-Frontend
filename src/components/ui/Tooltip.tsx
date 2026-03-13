@@ -84,7 +84,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
                             delay: delay,
                         }}
                         className={cn(
-                            "pointer-events-none absolute z-[9999] whitespace-normal w-max max-w-[300px] rounded-lg border border-border/50 bg-bg-secondary/95 px-3 py-2 text-body-tiny font-medium text-text shadow-xl backdrop-blur-md",
+                            "pointer-events-none absolute z-[9999]  w-max max-w-[302px] rounded-lg border border-border/50 bg-bg-secondary/95 px-3 py-2 text-body-tiny font-medium text-text shadow-xl backdrop-blur-md",
                             positionClasses[position],
                             className
                         )}
