@@ -147,7 +147,7 @@ export default function SignUpPage() {
                         <Link href="https://ownersinventory.com/privacy-policy" className="text-primary  hover:underline">
                           Privacy Policy
                         </Link>
-                        <Tooltip position="right" content={<div className="text-xs">By signing up, you agree to receive occasional product updates.<br />Unsubscribe anytime.</div>} children={<Info size={20} className="mt-[2px] text-text" />
+                        <Tooltip position="right" content={<div className="text-xs">By signing up, you agree to receive occasional<br /> product updates.Unsubscribe anytime.</div>} children={<Info size={16} className="mt-[3px] text-text" />
                         } />
                       </div>
                     }
