@@ -9,3 +9,4 @@ export { Dots } from './Dots';
 export { CoachMarkTour } from './CoachMark';
 export { CoachMarkProvider, useCoachMark } from './CoachMarkProvider';
 export { Tooltip } from './Tooltip';
+export { Checkbox } from './Checkbox';

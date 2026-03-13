@@ -32,6 +32,9 @@ export const signUpSchema = z
     password: passwordValidation("Password"),
     confirmPassword: z.string().nonempty("Confirm password is required"),
     rememberMe: z.boolean().optional(),
+    acceptTerms: z.boolean().refine((val) => val === true, {
+      message: "You must accept the terms and conditions to continue",
+    }),
   })
 
   .refine((data) => data.password === data.confirmPassword, {
