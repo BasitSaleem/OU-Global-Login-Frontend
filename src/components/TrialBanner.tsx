@@ -20,11 +20,12 @@ const TrialBanner = ({
     if (!subscription?.trial_ends_at) return null;
 
     const endDate = new Date(subscription.trial_ends_at);
+    endDate.setHours(0, 0, 0, 0);
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time for accurate day difference
+    today.setHours(0, 0, 0, 0);
 
     const diffTime = endDate.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
     return diffDays >= 0 ? diffDays : 0;
   }, [subscription?.trial_ends_at]);

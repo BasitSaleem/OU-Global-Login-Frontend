@@ -1,7 +1,10 @@
 "use client";
 import React, { useState } from "react";
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
-import { useDeleteOrganization, useIsFavorite } from "@/apiHooks.ts/organization/organization.api";
+import {
+  useDeleteOrganization,
+  useIsFavorite,
+} from "@/apiHooks.ts/organization/organization.api";
 import { useAppSelector } from "@/redux/store";
 import { DeleteOrganizationModal } from "@/components/modals/DeleteOrganizationModal";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -24,9 +27,13 @@ export default function OrganizationGrid({
   onAddNew,
   onOrganizationDeleted,
   loading,
-  metaData
+  metaData,
 }: OrganizationGridProps) {
-  const OrganizationSkeleton = ({ isAddNew = false }: { isAddNew?: boolean }) => (
+  const OrganizationSkeleton = ({
+    isAddNew = false,
+  }: {
+    isAddNew?: boolean;
+  }) => (
     <div className="bg-bg-secondary p-3 py-6 rounded-xl border">
       {isAddNew ? (
         <div className="flex items-center justify-center w-full h-full">
@@ -51,14 +58,15 @@ export default function OrganizationGrid({
         </>
       )}
     </div>
-  )
-  const { user, organization } = useAppSelector((s) => s.auth)
-  const { mutate: toggleFavorite, isPending } = useIsFavorite()
+  );
+  const { user } = useAppSelector((s) => s.auth);
+  const { mutate: toggleFavorite, isPending } = useIsFavorite();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrg, setSelectedOrg] = useState<any | null>(null);
 
   // DELETE API HOOK
-  const { mutate: deleteOrg, isPending: deleteLoading } = useDeleteOrganization();
+  const { mutate: deleteOrg, isPending: deleteLoading } =
+    useDeleteOrganization();
 
   //1.TOGGLE FAVORITE
   const handleFavoriteClick = (e: React.MouseEvent, orgId: string) => {
@@ -83,28 +91,28 @@ export default function OrganizationGrid({
         if (onOrganizationDeleted) {
           onOrganizationDeleted(selectedOrg.id);
         }
-      }
+      },
     });
   };
   return (
     <div>
-
       {/* Header with count */}
       <div className="flex items-center justify-between mb-3 ">
         <div className="flex items-center gap-2">
           <h1 className="text-heading-1 font-bold text-black">
             {loading ? "Loading Organizations" : "Your Organizations"}
           </h1>
-          {!loading ? <div
-            className="w-6 h-6 rounded-full flex items-center justify-center text-white font-medium bg-primary"
-          >
-            {metaData?.totalCount!}
-          </div> : <LoadingSpinner size={4} />}
+          {!loading ? (
+            <div className="w-6 h-6 rounded-full flex items-center justify-center text-white font-medium bg-primary">
+              {metaData?.totalCount!}
+            </div>
+          ) : (
+            <LoadingSpinner size={4} />
+          )}
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-
         {loading ? (
           <>
             <PermissionGuard
@@ -124,20 +132,20 @@ export default function OrganizationGrid({
               <div
                 key={org?.id}
                 onClick={() => org?.isAddNew && onAddNew()}
-                className={`relative group h-30 ${org?.isAddNew ? "" : "bg-bg-secondary border border-border rounded-xl"
-                  }  ${org?.isAddNew ? "" : "p-3"
-                  } hover:shadow-sm transition-shadow cursor-pointer rounded-xl`}
+                className={`relative group h-30 ${
+                  org?.isAddNew
+                    ? ""
+                    : "bg-bg-secondary border border-border rounded-xl"
+                }  ${
+                  org?.isAddNew ? "" : "p-3"
+                } hover:shadow-sm transition-shadow cursor-pointer rounded-xl`}
               >
                 {org?.isAddNew ? (
-                  <div
-                    className="flex flex-col items-center justify-center text-center h-full rounded-xl bg-primary/5 "
-                  >
+                  <div className="flex flex-col items-center justify-center text-center h-full rounded-xl bg-primary/5 ">
                     <div className="text-primary">
                       <Plus size={50} />
                     </div>
-                    <span className=" text-primary font-bold">
-                      Add New
-                    </span>
+                    <span className=" text-primary font-bold">Add New</span>
                   </div>
                 ) : (
                   <OrganizationGridComponent
@@ -165,24 +173,22 @@ export default function OrganizationGrid({
         )}
       </div>
 
-      <PermissionGuard
-        requiredPermissions="og:delete::organization"
-      >      {selectedOrg && (
-        <DeleteOrganizationModal
-          isOpen={isModalOpen}
-          onClose={() => {
-            setIsModalOpen(false);
-            setSelectedOrg(null);
-          }}
-          onConfirm={handleConfirmDelete}
-          organizationData={selectedOrg}
-          extraDetails={`${selectedOrg.memberships?.length || 0} member${selectedOrg?.memberships?.length === 1 ? "" : "s"} • ${selectedOrg.products?.length || 0} product${selectedOrg.products?.length === 1 ? "" : "s"}`}
-          isDeleting={deleteLoading}
-        />
-      )}
+      <PermissionGuard requiredPermissions="og:delete::organization">
+        {" "}
+        {selectedOrg && (
+          <DeleteOrganizationModal
+            isOpen={isModalOpen}
+            onClose={() => {
+              setIsModalOpen(false);
+              setSelectedOrg(null);
+            }}
+            onConfirm={handleConfirmDelete}
+            organizationData={selectedOrg}
+            extraDetails={`${selectedOrg.memberships?.length || 0} member${selectedOrg?.memberships?.length === 1 ? "" : "s"} • ${selectedOrg.products?.length || 0} product${selectedOrg.products?.length === 1 ? "" : "s"}`}
+            isDeleting={deleteLoading}
+          />
+        )}
       </PermissionGuard>
-
     </div>
   );
 }
-

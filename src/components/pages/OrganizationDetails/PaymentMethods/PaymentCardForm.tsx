@@ -30,7 +30,6 @@ const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [billingAddress, setBillingAddress] = useState("");
   const [cardHolderName, setCardHolderName] = useState("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -38,9 +37,6 @@ const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
     const newErrors: { [key: string]: string } = {};
     if (!cardHolderName.trim()) {
       newErrors.cardHolderName = "Card holder name is required.";
-    }
-    if (!billingAddress.trim()) {
-      newErrors.billingAddress = "Billing address is required.";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -75,9 +71,6 @@ const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
           type: "card",
           card: cardNumberElement,
           billing_details: {
-            address: {
-              line1: billingAddress,
-            },
             name: cardHolderName,
           },
         });
@@ -160,11 +153,11 @@ const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
             className={`space-y-2 ${isFetchingSecret ? "opacity-50 pointer-events-none" : ""}`}
           >
             <label className="text-sm text-text ml-1">
-              Card Number{" "}
+              Card Number
               <Asterisk
                 className="inline mb-2"
-                width={14}
-                height={14}
+                width={10}
+                height={10}
                 color="red"
               />
             </label>
@@ -181,11 +174,11 @@ const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
           >
             <div className="space-y-2">
               <label className="text-sm text-text ml-1">
-                Expiry Date{" "}
+                Expiry Date
                 <Asterisk
                   className="inline mb-2"
-                  width={14}
-                  height={14}
+                  width={10}
+                  height={10}
                   color="red"
                 />
               </label>
@@ -198,8 +191,8 @@ const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
                 CVC/CVV{" "}
                 <Asterisk
                   className="inline mb-2"
-                  width={14}
-                  height={14}
+                  width={10}
+                  height={10}
                   color="red"
                 />
               </label>
@@ -208,16 +201,6 @@ const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
               </div>
             </div>
           </div>
-
-          <Input
-            label="Billing Address"
-            placeholder="123 Main St, City, Country"
-            value={billingAddress}
-            onChange={(e) => setBillingAddress(e.target.value)}
-            error={errors.billingAddress}
-            isRequired
-            disabled={isFetchingSecret || loading}
-          />
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
 

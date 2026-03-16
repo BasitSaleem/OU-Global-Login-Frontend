@@ -7,6 +7,7 @@ import { Button } from "@/components/ui";
 import { useRouter } from "next/navigation";
 import { organizationName } from "@/utils/organizationName";
 import OILink from "./OrganizationMemberLink";
+import { SUBSCRIPTION_STATUS_COLOR } from "@/utils/ColorClasses";
 
 interface OrganizationGridComponentProps {
   id: string;
@@ -35,9 +36,6 @@ export function OrganizationGridComponent({
     e.stopPropagation();
     router.push(`/organization-details/${org.id}/billing`);
   };
-  const data = org.permissionNames?.includes("og:delete::organization")
-    ? "og:delete::organization"
-    : undefined;
 
   return (
     <div onClick={onClick} key={id} className="flex flex-col h-[100px]">
@@ -56,9 +54,14 @@ export function OrganizationGridComponent({
             <p className="text-body-tiny text-gray-500 truncate">
               {org?.subscriptions?.[0]?.oiPackage?.package_name || "Basic"}
             </p>
-            {org?.subscriptions?.[0]?.status === "TRIAL" && (
-              <span className="px-1.5 py-0.5 text-[9px] font-bold bg-primary/20 text-primary rounded-full uppercase whitespace-nowrap">
-                Trial
+            {org?.subscriptions?.[0]?.status && (
+              <span
+                className={`px-1.5 py-0.5 text-[9px] font-bold rounded-full uppercase whitespace-nowrap ${
+                  SUBSCRIPTION_STATUS_COLOR[org.subscriptions[0].status] ||
+                  "bg-gray-100 text-gray-700"
+                }`}
+              >
+                {org.subscriptions[0].status}
               </span>
             )}
           </div>
@@ -121,7 +124,7 @@ export function OrganizationGridComponent({
             {org?.membersCount ? org?.membersCount : "0"} member
             {org?.membersCount ? "" : "s"}
           </span>
-          <OILink id={id} org={org} />
+          <OILink org={org} subscription={org?.subscriptions?.[0]} />
         </div>
       </div>
     </div>

@@ -10,6 +10,7 @@ import PricingSkeleton from "@/components/PricingSkeleton";
 import ErrorMessage from "@/components/ErrorMessage";
 import PlanCard from "@/components/PlanCard";
 import CancelSubscriptionButton from "./CancelSubscriptionButton";
+import { SUBSCRIPTION_STATUS_COLOR } from "@/utils/ColorClasses";
 
 const DUMMY_PRICING_PLANS = [
   {
@@ -208,9 +209,20 @@ const PlanSection = ({ organization }: { organization: OgOrganization }) => {
     if (!data?.plans) return [];
 
     const typeOrder = ["RETAIL", "MANUFACTURING", "ECOMMERCE", "HYBRID"];
+    const packageOrder = ["BASIC", "PRO", "PREMIUM"];
 
     return [...data.plans].sort((a, b) => {
-      return typeOrder.indexOf(a.type) - typeOrder.indexOf(b.type);
+      const typeDiff = typeOrder.indexOf(a.type) - typeOrder.indexOf(b.type);
+      if (typeDiff !== 0) return typeDiff;
+
+      // Secondary sort: Basic -> Pro -> Premium
+      const aName = a.package_name.toUpperCase();
+      const bName = b.package_name.toUpperCase();
+
+      const aLevel = packageOrder.findIndex((p) => aName.includes(p));
+      const bLevel = packageOrder.findIndex((p) => bName.includes(p));
+
+      return aLevel - bLevel;
     });
   }, [data?.plans]);
 
@@ -256,15 +268,9 @@ const PlanSection = ({ organization }: { organization: OgOrganization }) => {
 
           <span
             className={`px-1.5 py-1 rounded-full text-xs font-semibold capitalize ${
-              organization.subscriptions?.[0]?.status === "ACTIVE"
-                ? "bg-green-100 text-green-700"
-                : organization.subscriptions?.[0]?.status === "TRIAL"
-                  ? "bg-blue-100 text-blue-700"
-                  : organization.subscriptions?.[0]?.status === "PAST_DUE"
-                    ? "bg-red-100 text-red-700"
-                    : organization.subscriptions?.[0]?.status === "CANCELLED"
-                      ? "bg-gray-100 text-gray-500"
-                      : "bg-gray-100 text-gray-400"
+              SUBSCRIPTION_STATUS_COLOR[
+                organization.subscriptions?.[0]?.status ?? ""
+              ]
             }`}
           >
             {organization.subscriptions?.[0]?.status ?? "No Subscription"}

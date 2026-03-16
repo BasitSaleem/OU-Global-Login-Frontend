@@ -26,6 +26,14 @@ const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
         {invoice.invoice_number}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm">
+        {"$"}
+        {invoice.payment?.subtotal || invoice.amount}
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm">
+        {"$"}
+        {invoice.payment?.tax_amount || "0.00"}
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm">
         {/* {invoice.currency.toUpperCase()} */}
         {"$"}
         {invoice.amount}

@@ -13,7 +13,6 @@ import {
 } from "@/apiHooks.ts/subscription/subscribtion.api";
 import { PaymentMethod } from "@/apiHooks.ts/paymentMethod/paymentMethod.types";
 import { packageAddOnsType } from "@/apiHooks.ts/plans/plans.types";
-import { ArrowLeft } from "lucide-react";
 import {
   PlanCard,
   AddOnsSection,
@@ -264,6 +263,7 @@ function CheckoutPage() {
       router.push(`/organization-details/${orgId}/payment/success`);
     } catch (error) {
       console.error("Checkout error:", error);
+      // router.push(`/organization-details/${orgId}/payment/failed`);
     }
   };
 
