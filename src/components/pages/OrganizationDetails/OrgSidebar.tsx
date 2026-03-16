@@ -17,11 +17,12 @@ const sidebarItems: {
   href: (orgId: string) => string;
   icon: IconName;
 }[] = [
-  // {
-  //     label: 'Payment Methods',
-  //     href: (orgId) => `/organization-details/${orgId}/payment-methods`,
-  //     icon: 'payment-methods'
-  // },
+  {
+    label: "Payment Cards",
+    href: (orgId) => `/organization-details/${orgId}/payment-cards`,
+    icon: "payment-methods",
+    // isActive: currentPath === "/payment-cards",
+  },
   {
     label: "Billings",
     href: (orgId) => `/organization-details/${orgId}/billing`,

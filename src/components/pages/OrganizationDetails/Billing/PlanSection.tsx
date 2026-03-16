@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { PricingCard } from "@/components/PricingCard";
+
 import { Button } from "@/components/ui";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
@@ -9,6 +9,7 @@ import { useGetAllPlans } from "@/apiHooks.ts/plans/plans.api";
 import PricingSkeleton from "@/components/PricingSkeleton";
 import ErrorMessage from "@/components/ErrorMessage";
 import PlanCard from "@/components/PlanCard";
+import CancelSubscriptionButton from "./CancelSubscriptionButton";
 
 const DUMMY_PRICING_PLANS = [
   {
@@ -203,6 +204,16 @@ const PlanSection = ({ organization }: { organization: OgOrganization }) => {
 
   const planCount = data?.plans?.length ?? 0;
 
+  const sortedPlans = React.useMemo(() => {
+    if (!data?.plans) return [];
+
+    const typeOrder = ["RETAIL", "MANUFACTURING", "ECOMMERCE", "HYBRID"];
+
+    return [...data.plans].sort((a, b) => {
+      return typeOrder.indexOf(a.type) - typeOrder.indexOf(b.type);
+    });
+  }, [data?.plans]);
+
   React.useEffect(() => {
     const updateMaxIndex = () => {
       if (containerRef.current) {
@@ -218,10 +229,6 @@ const PlanSection = ({ organization }: { organization: OgOrganization }) => {
     return () => window.removeEventListener("resize", updateMaxIndex);
   }, [planCount, TOTAL_MOVE]);
 
-  // Calculate maxOffset based on dynamic maxIndex
-  // If we scroll to maxIndex, the offset is -maxIndex * TOTAL_MOVE.
-  // This aligns the card at `maxIndex` to the left.
-  // If `maxIndex` is correct, the remaining cards + this one should fill the screen or end exactly at the right.
   const maxOffset = -(maxIndex * TOTAL_MOVE);
 
   const handleNext = () => {
@@ -238,18 +245,58 @@ const PlanSection = ({ organization }: { organization: OgOrganization }) => {
 
   return (
     <div className="text-center md:text-left">
-      <h1 className="text-heading-1 font-bold mb-1 pt-8 pb-4">Your plan</h1>
-      <p className="text-body-small">
-        Your Organization is currently on the
-        <strong className="text-primary">
-          {" "}
-          {organization.subscriptions?.[0]?.oiPackage?.package_name}{" "}
-        </strong>
-        Plan.
+      <div className="flex justify-between items-center gap-2 ">
+        <div className="flex gap-2 ">
+          <h1 className="text-heading-1 font-bold">
+            Your plan{" "}
+            <span className="text-primary font-semibold">
+              {organization.subscriptions?.[0]?.oiPackage?.package_name}
+            </span>{" "}
+          </h1>
+
+          <span
+            className={`px-1.5 py-1 rounded-full text-xs font-semibold capitalize ${
+              organization.subscriptions?.[0]?.status === "ACTIVE"
+                ? "bg-green-100 text-green-700"
+                : organization.subscriptions?.[0]?.status === "TRIAL"
+                  ? "bg-blue-100 text-blue-700"
+                  : organization.subscriptions?.[0]?.status === "PAST_DUE"
+                    ? "bg-red-100 text-red-700"
+                    : organization.subscriptions?.[0]?.status === "CANCELLED"
+                      ? "bg-gray-100 text-gray-500"
+                      : "bg-gray-100 text-gray-400"
+            }`}
+          >
+            {organization.subscriptions?.[0]?.status ?? "No Subscription"}
+          </span>
+        </div>
+        {organization.subscriptions?.[0]?.status !== "TRIAL" &&
+          organization.subscriptions?.[0]?.status !== "CANCELLED" && (
+            <CancelSubscriptionButton
+              subscriptionId={organization.subscriptions?.[0]?.id!}
+              orgId={organization.id as string}
+            />
+          )}
+      </div>
+      <p className="text-body-small mt-2">
+        {organization.subscriptions?.[0]?.status === "CANCELLED" ? (
+          "Your subscription has been cancelled."
+        ) : (
+          <>
+            Your Organization is currently on the{" "}
+            <span className="text-primary font-semibold">
+              {organization.subscriptions?.[0]?.oiPackage?.package_name}
+            </span>{" "}
+            Plan.
+          </>
+        )}
       </p>
 
       {/* Alert box for showing you are on free trail which will be end on the DATE if the status TRAIL */}
-      <TrialBanner subscription={organization.subscriptions?.[0]} />
+      <TrialBanner
+        subscription={organization.subscriptions?.[0]}
+        orgId={organization.id}
+      />
 
       <div
         className="mt-9 relative group w-full grid grid-cols-1"
@@ -304,7 +351,7 @@ const PlanSection = ({ organization }: { organization: OgOrganization }) => {
                 }
               }}
             >
-              {data?.plans?.map((plan) => (
+              {sortedPlans.map((plan) => (
                 <motion.div key={plan.id} className="flex-shrink-0 w-80">
                   <PlanCard
                     key={plan.id}
@@ -312,6 +359,8 @@ const PlanSection = ({ organization }: { organization: OgOrganization }) => {
                     isCurrentPlan={
                       plan.id === organization.subscriptions?.[0]?.oiPackage?.id
                     }
+                    subscriptionStatus={organization.subscriptions?.[0]?.status}
+                    subscriptionId={organization.subscriptions?.[0]?.id}
                   />
                 </motion.div>
               ))}

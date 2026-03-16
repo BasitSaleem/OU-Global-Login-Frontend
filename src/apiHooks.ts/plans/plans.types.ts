@@ -22,6 +22,7 @@ export interface OiPlanType {
   yearly_price: string;
   yearly_discount: string | null;
   currency: string;
+  free_trial_days: number;
   is_active: boolean;
 
   // Example flags (you have MANY)
@@ -54,6 +55,8 @@ export interface OiPlanType {
 
   owner: any | null;
   admin: any | null;
+
+  packageAddOns: packageAddOnsType[];
 }
 
 export interface OgPlansResponse {
@@ -62,4 +65,24 @@ export interface OgPlansResponse {
   };
   message?: string;
   success: boolean;
+}
+
+export interface packageAddOnsType {
+  id: string;
+  packageId: string;
+  addOnId: string;
+  addOn: {
+    id: string;
+    created_at: string | Date | null;
+    updated_at: string | Date | null;
+    name: string;
+    description: string;
+    stripe_product_id: string;
+    stripe_price_monthly_id: string;
+    stripe_price_yearly_id: string;
+    monthly_price: string;
+    yearly_price: string;
+    currency: string;
+    is_active: boolean;
+  };
 }

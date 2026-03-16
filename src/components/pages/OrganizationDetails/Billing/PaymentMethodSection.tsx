@@ -1,13 +1,13 @@
 import React from "react";
 import { SvgIcon } from "@/components/ui/SvgIcon";
-import { Button } from "@/components/ui";
+
 import { IdCard } from "lucide-react";
 import { useGetPaymentMethods } from "@/apiHooks.ts/paymentMethod/paymentMethod.api";
-import ErrorMessage from "@/components/ErrorMessage";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 const PaymentMethodSection = () => {
-  const { data, isLoading, error } = useGetPaymentMethods();
+  const { orgId } = useParams();
+  const { data, isLoading } = useGetPaymentMethods(orgId as string);
   const router = useRouter();
 
   if (isLoading) {
@@ -28,16 +28,12 @@ const PaymentMethodSection = () => {
     );
   }
 
-  if (error || !data) {
-    return <ErrorMessage message={error?.message} />;
-  }
-
   return (
     <>
       <div className="text-center md:text-left mb-6">
         <h1 className="text-heading-1 font-bold pt-8 pb-4">Payment method</h1>
       </div>
-      <div className="flex flex-col gap-y-4">
+      <div className="flex flex-col  gap-y-4">
         {data?.paymentMethods?.map((card) => (
           <div
             key={card.id}
@@ -64,7 +60,9 @@ const PaymentMethodSection = () => {
       </div>
       <div
         className="border flex justify-center items-center my-6 py-2 rounded-lg gap-2 text-gray-600 cursor-pointer hover:bg-gray-50 transition-colors"
-        onClick={() => router.push("/payment-cards")}
+        onClick={() =>
+          router.push(`/organization-details/${orgId}/payment-cards`)
+        }
       >
         <IdCard color="gray" />
         Add Card

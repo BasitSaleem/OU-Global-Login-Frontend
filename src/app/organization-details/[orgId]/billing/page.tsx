@@ -7,7 +7,7 @@ import InvoicesSection from "@/components/pages/OrganizationDetails/Billing/Invo
 import { useParams } from "next/navigation";
 import BillingSection from "@/components/pages/OrganizationDetails/Billing/BillingSection";
 import { useOrganizationDetails } from "@/apiHooks.ts/organization/organization.api";
-import ErrorMessage from "@/components/ErrorMessage";
+
 import PricingSkeleton from "@/components/PricingSkeleton";
 import NotFound from "@/components/NotFound";
 
@@ -38,7 +38,7 @@ function BillingPage() {
       <PlanSection organization={organization} />
       <RenewalSection organization={organization} />
       <PaymentMethodSection />
-      <InvoicesSection />
+      <InvoicesSection organization={organization} />
     </div>
   );
 }

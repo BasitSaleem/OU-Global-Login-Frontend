@@ -47,12 +47,12 @@ export default function Sidebar({
       label: "Organizations",
       isActive: currentPath === "/organizations",
     },
-    {
-      href: "/payment-cards",
-      svgName: "payment-methods",
-      label: "Payment Cards",
-      isActive: currentPath === "/payment-cards",
-    },
+    // {
+    //   href: "/payment-cards",
+    //   svgName: "payment-methods",
+    //   label: "Payment Cards",
+    //   isActive: currentPath === "/payment-cards",
+    // },
     {
       href: "https://ownersinventory.com/",
       hasExternal: true,

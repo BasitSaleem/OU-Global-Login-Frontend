@@ -10,7 +10,7 @@ import {
 } from "@/apiHooks.ts/organization/organization.types";
 import { PRODUCTS, ROUTES } from "@/constants";
 import { useDebounce } from "@/hooks/useDebounce";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { toast } from "@/hooks/useToast";
 import ProgressModal from "@/components/ui/ProgressModal";
@@ -23,14 +23,39 @@ import { SvgIcon } from "@/components/ui/SvgIcon";
 import OgPlanSelector from "@/components/pages/Organizations/OgPlanSelector";
 
 export default function CreateOrgPage() {
+  const searchParams = useSearchParams();
+  const queryPkgId = searchParams.get("pkgId");
+
+  // Resolve pkgId: prefer query params, fall back to localStorage
+  const pkgId =
+    queryPkgId ||
+    (typeof window !== "undefined" ? localStorage.getItem("pkgId") : null);
+
+  // Store pkgId in localStorage so it survives the auth redirect
+  useEffect(() => {
+    if (queryPkgId) {
+      localStorage.setItem("pkgId", queryPkgId);
+    }
+  }, [queryPkgId]);
+
+  return (
+    <AuthGuard>
+      <CreateOrgContent initialPkgId={pkgId} />
+    </AuthGuard>
+  );
+}
+
+function CreateOrgContent({ initialPkgId }: { initialPkgId: string | null }) {
   const [companyName, setCompanyName] = useState("");
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(initialPkgId);
   const [subDomain, setSubDomain] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("OI");
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [organizationData, setOrganizationData] =
     useState<CreateOrganizationResponse | null>(null);
   const [isSuggestionSubdomain, setIsSuggestionSubdomain] = useState(false);
+
+  console.log("initialPkgId", initialPkgId);
 
   const debouncedCompanyName = useDebounce(companyName.trim(), 1500);
   const debouncedSubDomain = useDebounce(subDomain.trim(), 1500);
@@ -135,7 +160,7 @@ export default function CreateOrgPage() {
   };
 
   return (
-    <AuthGuard>
+    <>
       {creatingOrg && <Loader text="Initializing organization creation" />}
       <CreateOrganizationGuard>
         <div className="min-h-screen w-full flex items-center justify-center bg-background p-4 sm:p-8">
@@ -272,6 +297,6 @@ export default function CreateOrgPage() {
         onGoHome={handleGoHome}
         isFromMain={true}
       />
-    </AuthGuard>
+    </>
   );
 }

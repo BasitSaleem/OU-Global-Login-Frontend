@@ -5,7 +5,13 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { IconComponent } from "./ui/Icons";
 
-const TrialBanner = ({ subscription }: { subscription?: Subscription }) => {
+const TrialBanner = ({
+  subscription,
+  orgId,
+}: {
+  subscription?: Subscription;
+  orgId: string;
+}) => {
   const router = useRouter();
   const [isVisible, setIsVisible] = React.useState(true);
 
@@ -23,30 +29,36 @@ const TrialBanner = ({ subscription }: { subscription?: Subscription }) => {
     return diffDays >= 0 ? diffDays : 0;
   }, [subscription?.trial_ends_at]);
 
-  // Show banner for any plan with active trial (15 days or less remaining)
-  const shouldShowBanner =
-    isVisible &&
-    subscription?.status === "TRIAL" &&
-    subscription?.trial_ends_at &&
-    daysRemaining !== null &&
-    daysRemaining <= 15;
+  // Show banner for any plan with active trial status
+  const shouldShowBanner = isVisible && subscription?.status === "TRIAL";
 
   if (!shouldShowBanner) return null;
+
+  const handleNavigation = () => {
+    router.push(
+      `/organization-details/${orgId}/billing/checkout/${subscription?.oiPackage?.id}`,
+    );
+  };
 
   return (
     <>
       <div className="w-full mt-4 bg-primary/10 border-primary/10 border-3 rounded-3xl px-6 mb-6 flex items-center justify-between">
         <div className="flex-1 py-4 md:py-0">
           <h2 className="text-xl font-semibold text-primary">
-            {daysRemaining === 0
-              ? "Your free trial ends today"
-              : `Your free trial ends in ${daysRemaining} ${daysRemaining === 1 ? "day" : "days"}`}
+            {daysRemaining === null
+              ? "You are currently on a free trial"
+              : daysRemaining === 0
+                ? "Your free trial ends today"
+                : `Your free trial ends in ${daysRemaining} ${daysRemaining === 1 ? "day" : "days"}`}
           </h2>
           <p className="text-[16px] text-gray-500 mb-4">
             Upgrade now to keep full access to all features
           </p>
           <div className="flex gap-3 items-center justify-center md:justify-start">
-            <button className="bg-primary text-white px-6 py-2 rounded-[8px] font-medium cursor-pointer text-sm hover:bg-primary/90 transition-colors">
+            <button
+              onClick={handleNavigation}
+              className="bg-primary text-white px-6 py-2 rounded-[8px] font-medium cursor-pointer text-sm hover:bg-primary/90 transition-colors"
+            >
               Upgrade now
             </button>
             <button

@@ -19,7 +19,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onDelete();
-    onClose();
   };
 
   return (

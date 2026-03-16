@@ -2,7 +2,7 @@ import React from "react";
 
 const PaymentCardSkeleton: React.FC = () => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+    <>
       {[1, 2].map((item) => (
         <div
           key={item}
@@ -39,7 +39,7 @@ const PaymentCardSkeleton: React.FC = () => {
           </div>
         </div>
       ))}
-    </div>
+    </>
   );
 };
 

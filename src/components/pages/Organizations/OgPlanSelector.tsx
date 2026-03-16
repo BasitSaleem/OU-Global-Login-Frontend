@@ -15,10 +15,8 @@ const OgPlanSelector = ({
   const { data, isPending, error } = useGetAllPlans(1, 11);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  /** ✅ Flatten plans array */
   const allPlans = data?.plans || [];
 
-  /** ✅ categories from API (unique types) */
   const categories = Array.from(new Set(allPlans.map((p) => p.type))).map(
     (type) => ({
       value: type,
@@ -33,7 +31,16 @@ const OgPlanSelector = ({
           .filter((p) => p.type === selectedCategory)
           .map((plan) => ({
             value: plan.id,
-            label: plan.package_name,
+            label: (
+              <span className="flex items-center justify-between w-full overflow-hidden">
+                <span className="truncate">{plan.package_name}</span>
+                {plan.free_trial_days > 0 && (
+                  <span className="ml-2 px-2 py-0.5 text-[10px] font-bold bg-primary/20 text-primary rounded-full uppercase whitespace-nowrap shrink-0">
+                    {plan.free_trial_days} Days Trial
+                  </span>
+                )}
+              </span>
+            ),
           }))
       : [];
 

@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { ROUTES } from '@/constants';
-import { useGetMe } from '@/apiHooks.ts/auth/auth.api';
-import { useAppDispatch } from '@/redux/store';
-import { clearAuth, setOrganization } from '@/redux/slices/auth.slice';
-import { useEffect, useRef } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from "next/navigation";
+import { ROUTES } from "@/constants";
+import { useGetMe } from "@/apiHooks.ts/auth/auth.api";
+import { useAppDispatch } from "@/redux/store";
+import { clearAuth, setOrganization } from "@/redux/slices/auth.slice";
+import { useEffect, useRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -19,15 +19,14 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
   const queryClient = useQueryClient();
   const hasRedirected = useRef(false);
 
-  const {
-    data,
-    isLoading,
-    isError
-  } = useGetMe();
+  const { data, isLoading, isError } = useGetMe();
 
   useEffect(() => {
     if (!isLoading && data?.data?.user) {
-      const organization = data.data.user.organizations?.[0] ?? data.data.user.memberships?.[0]?.organization ?? undefined;
+      const organization =
+        data.data.user.organizations?.[0] ??
+        data.data.user.memberships?.[0]?.organization ??
+        undefined;
       if (organization) {
         dispatch(setOrganization(organization));
       }
@@ -39,7 +38,12 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
       hasRedirected.current = true;
       dispatch(clearAuth());
       queryClient.clear();
+      // Preserve pkgId across auth redirect
+      const savedPkgId = localStorage.getItem("pkgId");
       localStorage.clear();
+      if (savedPkgId) {
+        localStorage.setItem("pkgId", savedPkgId);
+      }
       sessionStorage.clear();
       router.replace(ROUTES.LOGIN);
     }
@@ -55,4 +59,3 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
 
   return <>{children}</>;
 }
-

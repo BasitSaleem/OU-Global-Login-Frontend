@@ -6,7 +6,7 @@ import { cn } from "@/utils/helpers";
 
 export interface DropdownOption {
   value: string;
-  label: string;
+  label: string | React.ReactNode;
 }
 
 export interface DropdownProps {

@@ -82,6 +82,8 @@ export const useOrganizationDetails = (id: string) => {
     },
     select: (data) => data.organization,
     enabled: !!id,
+    retry: false,
+    refetchOnWindowFocus: false,
   });
 };
 

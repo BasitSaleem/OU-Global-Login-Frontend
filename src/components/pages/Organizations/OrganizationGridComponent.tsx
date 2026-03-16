@@ -52,9 +52,16 @@ export function OrganizationGridComponent({
           <h3 className="truncate text-body-medium-bold text-black leading-tight pt-1">
             {org?.name}
           </h3>
-          <p className="text-body-tiny text-gray-500 truncate">
-            {org?.packageName || org?.products?.[0]?.plan || "Basic"}
-          </p>
+          <div className="flex items-center gap-2 overflow-hidden">
+            <p className="text-body-tiny text-gray-500 truncate">
+              {org?.subscriptions?.[0]?.oiPackage?.package_name || "Basic"}
+            </p>
+            {org?.subscriptions?.[0]?.status === "TRIAL" && (
+              <span className="px-1.5 py-0.5 text-[9px] font-bold bg-primary/20 text-primary rounded-full uppercase whitespace-nowrap">
+                Trial
+              </span>
+            )}
+          </div>
         </div>
 
         <div className="flex-shrink-0 flex ">

@@ -1,17 +1,15 @@
 import React from "react";
 import { OiPlanType } from "@/apiHooks.ts/plans/plans.types";
+import { useParams, useRouter } from "next/navigation";
+import { useCancelSubscription } from "@/apiHooks.ts/subscription/subscribtion.api";
 
 interface PlanCardProps {
   plan: OiPlanType;
   isCurrentPlan?: boolean;
-  onButtonClick?: () => void;
+  subscriptionStatus?: string;
   className?: string;
+  subscriptionId?: string;
 }
-
-//  RETAIL;
-//  MANUFACTURING;
-//  ECOMMERCE;
-//  HYBRID;
 
 const getPlanStyles = (type: string) => {
   switch (type.toLowerCase()) {
@@ -62,10 +60,11 @@ const getPlanStyles = (type: string) => {
 const PlanCard: React.FC<PlanCardProps> = ({
   plan,
   isCurrentPlan = false,
-  onButtonClick,
   className = "",
 }) => {
   const styles = getPlanStyles(plan.type);
+  const { orgId } = useParams();
+  const router = useRouter();
 
   const renderFeatures = () => {
     const features = [
@@ -126,7 +125,7 @@ const PlanCard: React.FC<PlanCardProps> = ({
 
       <div className={`w-full flex flex-col items-center gap-2.5 mt-2.5`}>
         {/* Title */}
-        <div className="w-full text-center text-2xl font-semibold text-text">
+        <div className="w-full text-center text-xl font-semibold text-text">
           {plan.package_name}
         </div>
 
@@ -148,9 +147,14 @@ const PlanCard: React.FC<PlanCardProps> = ({
 
         {/* Button */}
         <div
-          className="w-full h-10 rounded-full flex items-center justify-center cursor-pointer transition-opacity hover:opacity-90"
+          className={`w-full h-10 rounded-full flex items-center justify-center ${isCurrentPlan ? "opacity-50 cursor-not-allowed" : "cursor-pointer transition-opacity hover:opacity-90"}`}
           style={{ backgroundColor: styles.buttonColor }}
-          onClick={onButtonClick}
+          onClick={() => {
+            if (isCurrentPlan) return;
+            router.push(
+              `/organization-details/${orgId}/billing/checkout/${plan.id}`,
+            );
+          }}
         >
           <div className="text-white text-base font-semibold font-inter">
             {isCurrentPlan ? "Activated" : "Upgrade Now"}

@@ -6,26 +6,27 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
+import { Asterisk } from "lucide-react";
 import { Button, Input } from "@/components/ui";
+import { SvgIcon } from "@/components/ui/SvgIcon";
 import { toast } from "@/hooks/useToast";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface AddPaymentCardFormProps {
   clientSecret: string; // from backend SetupIntent
   isFetchingSecret?: boolean;
-  isSubmitting?: boolean;
   onClose: () => void;
-  onSave: (paymentMethod: any) => void;
 }
 
 const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
   clientSecret,
   isFetchingSecret,
-  isSubmitting,
   onClose,
-  onSave,
 }) => {
   const stripe = useStripe();
   const elements = useElements();
+
+  const queryClient = useQueryClient();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -95,17 +96,13 @@ const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
       );
 
       if (setupError) {
-        console.error(
-          "AddPaymentCardForm: Setup confirmation failed:",
-          setupError,
-        );
         toast.error(setupError.message || "Failed to confirm card setup.");
         setError(setupError.message || "Failed to confirm card setup.");
       } else if (setupIntent?.status === "succeeded") {
-        onSave(paymentMethod.id);
-
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await queryClient.invalidateQueries({ queryKey: ["payment-methods"] });
+        toast.success("Card added successfully!");
         onClose();
-      } else {
       }
     } catch (err: any) {
       console.error("AddPaymentCardForm: Unexpected error:", err);
@@ -116,7 +113,7 @@ const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
     }
   };
 
-  const elementOptions = {
+  const baseStyle = {
     style: {
       base: {
         fontSize: "14px",
@@ -125,6 +122,13 @@ const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
       },
       invalid: { color: "#fa755a" },
     },
+  };
+
+  const cardNumberOptions = {
+    ...baseStyle,
+    showIcon: true,
+    iconStyle: "solid" as const,
+    disableLink: true,
   };
 
   return (
@@ -156,10 +160,19 @@ const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
             className={`space-y-2 ${isFetchingSecret ? "opacity-50 pointer-events-none" : ""}`}
           >
             <label className="text-sm text-text ml-1">
-              Card Number <span className="text-red-500 ml-1 mb-2">*</span>
+              Card Number{" "}
+              <Asterisk
+                className="inline mb-2"
+                width={14}
+                height={14}
+                color="red"
+              />
             </label>
-            <div className="flex h-10 w-full mt-1.5 text-text rounded-lg border bg-input-bg px-3 py-2 text-sm focus-within:ring-1 focus-within:ring-primary">
-              <CardNumberElement className="w-full" options={elementOptions} />
+            <div className="flex items-center h-10 w-full mt-1.5 text-text rounded-lg border bg-input-bg px-3 py-2 text-sm focus-within:ring-1 focus-within:ring-primary">
+              <CardNumberElement
+                className="w-full"
+                options={cardNumberOptions}
+              />
             </div>
           </div>
 
@@ -168,21 +181,30 @@ const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
           >
             <div className="space-y-2">
               <label className="text-sm text-text ml-1">
-                Expiry Date <span className="text-red-500 ml-1 mb-2">*</span>
+                Expiry Date{" "}
+                <Asterisk
+                  className="inline mb-2"
+                  width={14}
+                  height={14}
+                  color="red"
+                />
               </label>
               <div className="flex h-10 w-full mt-1.5 text-text rounded-lg border bg-input-bg px-3 py-2 text-sm focus-within:ring-1 focus-within:ring-primary">
-                <CardExpiryElement
-                  className="w-full"
-                  options={elementOptions}
-                />
+                <CardExpiryElement className="w-full" options={baseStyle} />
               </div>
             </div>
             <div className="space-y-2">
               <label className="text-sm text-text ml-1">
-                CVC/CVV <span className="text-red-500 ml-1 mb-2">*</span>
+                CVC/CVV{" "}
+                <Asterisk
+                  className="inline mb-2"
+                  width={14}
+                  height={14}
+                  color="red"
+                />
               </label>
               <div className="flex h-10 w-full mt-1.5 text-text rounded-lg border bg-input-bg px-3 py-2 text-sm focus-within:ring-1 focus-within:ring-primary">
-                <CardCvcElement className="w-full" options={elementOptions} />
+                <CardCvcElement className="w-full" options={baseStyle} />
               </div>
             </div>
           </div>
@@ -203,12 +225,8 @@ const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
             <Button variant="secondary" type="button" onClick={onClose}>
               Cancel
             </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              disabled={isFetchingSecret || loading || isSubmitting}
-            >
-              {loading || isSubmitting ? "Saving..." : "Save Card"}
+            <Button type="submit" variant="primary" disabled={isFetchingSecret}>
+              {loading ? "Saving..." : "Save Card"}
             </Button>
           </div>
         </form>

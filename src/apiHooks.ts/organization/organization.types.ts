@@ -1,11 +1,13 @@
 import { Permission } from "@/types/common";
 import { OgOrgMembership } from "../membership/membership.types";
+import { PaymentType } from "../subscription/subscribtion.types";
 
 export type products = "OI" | "OG" | "OA" | "OJ";
 export interface Organization {
   name: string;
   product: products;
   subDomainName: string;
+  subscriptions: Subscription[];
   [key: string]: any;
 }
 
@@ -20,6 +22,7 @@ export type Subscription = {
   status: "TRIAL" | "ACTIVE" | "CANCELLED" | "PAST_DUE";
   payment_method: string | null;
   oiPackage: Package;
+  payments: PaymentType[];
 };
 
 export type Package = {
@@ -74,6 +77,7 @@ export interface OgOrganization {
   memberships?: OgOrgMembership[];
   updated_at?: string; // Made optional to support "Add New" items
   is_blocked?: boolean; // Made optional to support "Add New" items
+
   favorites?: {
     userId: string;
     organizationId: string;

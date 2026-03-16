@@ -3,7 +3,7 @@ import { Plus, Trash2, Edit2, Loader2 } from "lucide-react";
 import { SvgIcon } from "@/components/ui/SvgIcon";
 import { Button } from "@/components/ui";
 
-const brandMap: Record<string, any> = {
+export const brandMap: Record<string, any> = {
   VISA: "visa",
   MASTERCARD: "mastercard",
   AMEX: "amex",
@@ -27,7 +27,6 @@ interface PaymentMethodCardProps {
   expiry?: string;
   isPrimary?: boolean;
   isMakePrimaryLoading?: boolean;
-  onEdit?: () => void;
   onDelete?: () => void;
   onMakePrimary?: () => void;
   onAdd?: () => void;
