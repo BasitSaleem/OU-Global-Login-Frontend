@@ -3,25 +3,27 @@
 import Image from "next/image";
 import { Icons } from "@/components/utils/icons";
 import { Button, Input } from "@/components/ui";
-import { useChangePassword } from "@/apiHooks.ts/auth/auth.api";
+import { useChangePassword, useCheckPassword, useCreatePassword } from "@/apiHooks.ts/auth/auth.api";
 import { useState } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   changePasswordSchema,
   ChangePasswordSchemaType,
+  createPasswordSchema,
+  CreatePasswordSchemaType,
 } from "@/schemas/auth.schemas";
 import { passwordValidation } from "@/schemas/password.schema";
 import ChangePasswordRuleItem from "@/components/ChangePasswordRuleItem";
 
-
-
-
-
 export default function ChangePasswordPage() {
   const { mutateAsync: changePassword, isPending } = useChangePassword();
-  const methods = useForm({
-    resolver: zodResolver(changePasswordSchema),
+  const { mutateAsync: createPassword, isPending: isCreatePending } = useCreatePassword();
+  const { data } = useCheckPassword();
+  const isPasswordSet = data?.isPasswordSet;
+
+  const methods = useForm<any>({
+    resolver: zodResolver(isPasswordSet ? changePasswordSchema : createPasswordSchema),
     defaultValues: {
       oldPassword: "",
       newPassword: "",
@@ -53,20 +55,15 @@ export default function ChangePasswordPage() {
     setIsCapsLockOn(event.getModifierState("CapsLock"));
   };
 
-  const handleFormSubmit = (formData: ChangePasswordSchemaType) => {
-    changePassword(formData, {
-      onSuccess: () => {
-        methods.reset();
-      }
-    });
+  const handleFormSubmit = (formData: ChangePasswordSchemaType | CreatePasswordSchemaType) => {
+    isPasswordSet ? changePassword(formData) : createPassword({ password: formData.newPassword });
   };
 
   return (
     <main className="p-3">
       <div className="flex items-center justify-center">
         <div className="flex flex-col lg:flex-row w-full max-w-6xl lg:m-10 border rounded-lg">
-          {/* Left Panel */}
-          <div className="w-full lg:w-[420px] flex flex-col bg-[#795CF512] justify-center border-r items-center p-6 rounded-t lg:rounded-l lg:rounded-tr-none lg:h-[550px] bg-bg-se">
+          <div className="w-full lg:w-[420px] flex flex-col bg-primary/10 justify-center border-r items-center p-6 rounded-t lg:rounded-l lg:rounded-tr-none ">
             <div className="flex flex-col items-center  text-center space-y-4">
               <Image
                 src={Icons.security}
@@ -77,12 +74,6 @@ export default function ChangePasswordPage() {
               <h2 className="text-heading-1 mt-10 font-bold ">
                 Password Security
               </h2>
-              {/* <ul className="mt-5 space-y-3 text-body-small ">
-                <li>• At least 8 characters</li>
-                <li>• Include numbers and symbols</li>
-                <li>• Mix uppercase & lowercase</li>
-              </ul> */}
-
               <ul className="mt-5 space-y-3 text-body-small">
                 <ChangePasswordRuleItem valid={passwordChecks.length}>
                   At least 8 characters
@@ -101,15 +92,16 @@ export default function ChangePasswordPage() {
             </div>
           </div>
 
-          {/* Right Panel */}
           <div className="flex-1 bg-bg-secondary p-9 rounded-b lg:rounded-r lg:rounded-bl-none flex items-center justify-center">
             <div className="w-full max-w-md space-y-5">
-              {/* Heading */}
               <div className="space-y-2">
-                <h1 className="text-heading-1 font-bold ">Change Password</h1>
-                <p className="leading-snug">
-                  Ensure your account stays secure with a strong password that
-                  you don’t use elsewhere.
+                <h1 className="text-heading-1 font-bold ">
+                  {isPasswordSet ? "Change Password" : "Create Password"}
+                </h1>
+                <p className="leading-snug text-text">
+                  {isPasswordSet
+                    ? "Ensure your account stays secure with a strong password that you don’t use elsewhere."
+                    : "You have signed up with Google. In order to change your password, you need to create a password first."}
                 </p>
               </div>
 
@@ -119,28 +111,28 @@ export default function ChangePasswordPage() {
                   className="space-y-4"
                   noValidate
                 >
-                  {/* Current Password */}
-                  <div className="space-y-1">
-                    <div className="relative">
-                      <Input
-                        id="oldPassword"
-                        label="Current Password"
-                        type="password"
-                        placeholder="Enter Current Password"
-                        isPassword={true}
-                        {...methods.register("oldPassword", {
-                          required: "current Password is required",
-                        })}
-                        onKeyUp={checkCapsLock}
-                        error={
-                          methods.formState.errors.oldPassword
-                            ?.message as string
-                        }
-                      />
+                  {isPasswordSet && (
+                    <div className="space-y-1">
+                      <div className="relative">
+                        <Input
+                          id="oldPassword"
+                          label="Current Password"
+                          type="password"
+                          placeholder="Enter Current Password"
+                          isPassword={true}
+                          {...methods.register("oldPassword", {
+                            required: "current Password is required",
+                          })}
+                          onKeyUp={checkCapsLock}
+                          error={
+                            methods.formState.errors.oldPassword
+                              ?.message as string
+                          }
+                        />
+                      </div>
                     </div>
-                  </div>
+                  )}
 
-                  {/* New Password */}
                   <div className="space-y-1">
                     <div className="relative">
                       <Input
@@ -161,7 +153,6 @@ export default function ChangePasswordPage() {
                     </div>
                   </div>
 
-                  {/* Confirm Password */}
                   <div className="space-y-1">
                     <div className="relative">
                       <Input
@@ -183,14 +174,17 @@ export default function ChangePasswordPage() {
                     </div>
                   </div>
 
-                  {/* Update Button */}
                   <Button
-                    className="w-full bg-primary text-white hover:bg-primary/70"
-                    variant="primary"
+                    className="flex h-10 w-full bg-primary text-white rounded-lg"
                     type="submit"
                     disabled={isPending}
+                    isLoading={isPending}
                   >
-                    {isPending ? "Updating..." : "Update Password"}
+                    {isPending
+                      ? isPasswordSet ? "Updating..." : "Creating..."
+                      : isPasswordSet
+                        ? "Update Password"
+                        : "Create Password"}
                   </Button>
                 </form>
               </FormProvider>
