@@ -50,7 +50,7 @@
   --color-bg-secondary: #ffffff;
   --color-icon: #4B5563;
   --color-invert: #131313;
-
+  --color-google-button: #ffff;
 }
 
 /* Dark theme colors */
@@ -64,6 +64,7 @@
   --color-primary-500: #985cff;
   --color-primary: #985cff;
   --gradient-primary-start: #9333EA;
+  --color-google-button: #131314;
   --gradient-primary-end: #2563EB;
   --color-skeleton: #4B5563;
   --color-input-bg: #1a222e;
@@ -125,6 +126,7 @@
   --color-btn-text: var(--color-text-btn);
   --color-icon: var(--color-icon);
   /* --color-hover: var(--color-primary-900); */
+  --color-google-button: var(--color-google-button);
   --color-card-secondary: var(--color-card-secondary);
   --color-text-secondary: var(--color-card-secondary);
   --color-bg-secondary: var(--color-bg-secondary);
@@ -378,4 +380,5 @@
     -webkit-text-fill-color: var(--color-foreground) !important;
     caret-color: var(--color-foreground) !important;
   }
+
 }

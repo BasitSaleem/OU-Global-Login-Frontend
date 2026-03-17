@@ -109,7 +109,7 @@ const AuthLayout = ({ children }: AuthLayoutProp) => {
         <Logo Icon="ownersInventory" className="cursor-pointer" />
         <div className="flex items-center gap-2 sm:gap-3">
           {pathname === "/login" ? (
-            <span className="text-xs sm:text-sm hidden sm:block">
+            <span className="text-xs sm:text-sm hidden sm:block text-text">
               Don't have an account?
             </span>
           ) : (

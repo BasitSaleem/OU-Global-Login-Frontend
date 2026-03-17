@@ -3,14 +3,13 @@
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useForm, FormProvider } from "react-hook-form";
-import { Icons } from "@/components/utils/icons";
 import { Button, Input } from "@/components/ui";
-import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/schemas/auth.schemas";
 import { useState } from "react";
 import { AlertCircle } from "lucide-react";
 import { useAuthContext } from "@/contexts/auth-context";
+import GoogleButton from "@/components/ui/GoogleButton";
 
 export default function LoginPage() {
   const { onSubmit, isPending } = useAuthContext();
@@ -39,7 +38,6 @@ export default function LoginPage() {
   const handleFormSubmit = (formData: any) => {
     onSubmit({ ...formData, token });
   }
-
   return (
     <>
       <main className="flex items-center justify-center px-6 pb-4 md:pt-1 pt-20">
@@ -112,7 +110,7 @@ export default function LoginPage() {
                     isLoading={isPending}
                     disabled={isPending || Object.keys(methods.formState.errors).length > 0}
                     variant="primary"
-                    className="w-full h-8 sm:h-9 text-white text-xs bg-primary hover:bg-primary/80 sm:text-sm font-bold rounded-full"
+                    className="w-full h-8 sm:h-9 text-white text-xs bg-primary hover:bg-primary/80 sm:text-sm font-bold rounded-full         hover:shadow-[0_1px_2px_0_rgba(60,64,67,0.30),0_1px_3px_1px_rgba(60,64,67,0.15)]"
                   >
                     {!isPending ? "Sign In" : "Signing in ..."}
                   </Button>
@@ -120,7 +118,7 @@ export default function LoginPage() {
               </form>
             </FormProvider>
 
-            <div className="my-3 sm:my-7 flex items-center">
+            <div className="my-2 sm:my-7 flex items-center">
               <div className="flex-1 border-t border"></div>
               <span className="px-2 sm:px-3 text-xs sm:text-sm">
                 Or
@@ -128,34 +126,13 @@ export default function LoginPage() {
               <div className="flex-1 border-t border"></div>
             </div>
 
-            <div className="space-y-2 sm:space-y-5">
-              <Button
-                variant="primary"
-                className="w-full border-primary/10 rounded-2xl bg-primary/0 hover:bg-primary/10 text-text hover:text-primary"
-              >
-                <Image src={Icons.google} alt="Google" width={20} height={20} />
-                <span className="text-xs sm:text-sm ">
-                  Continue with Google
-                </span>
-              </Button>
-              <Button
-                variant="primary"
-                className="w-full border-primary/10 rounded-2xl bg-primary/0 hover:bg-primary/10 text-text hover:text-primary"
-              >
-                <Image
-                  src={Icons.microsoft}
-                  alt="Microsoft"
-                  width={20}
-                  height={20}
-                />
-                <span className="text-xs sm:text-sm ">
-                  Continue with Microsoft
-                </span>
-              </Button>
-            </div>
+            <GoogleButton
+              text="Continue with Google"
+              className="w-full"
+            />
 
             <div className="mt-3 sm:mt-4 text-center">
-              <span className="text-xs sm:text-sm">
+              <span className="text-xs sm:text-sm text-text">
                 Don't have an account{" "}
               </span>
               <Link
@@ -167,7 +144,7 @@ export default function LoginPage() {
             </div>
           </div>
         </div>
-      </main>
+      </main >
     </>
   );
 }
