@@ -58,8 +58,6 @@ export const request = async <T = any>(
   if (data?.client_id) {
     raw.search = new URLSearchParams(params).toString();
   }
-  console.log(data, isFormData, "this is dataaa");
-
   if (isFormData) {
     delete (fetchOptions.headers as Record<string, string>)["Content-Type"];
   }
