@@ -114,11 +114,10 @@ export default function CreateOrgModal({
       ariaLabel="Create organization"
     >
       {isLoading && <Loader text="Initializing organization creation" />}
-
       <Modal.Title className="mb-2 text-heading-2">
         Create an Organization
       </Modal.Title>
-      <Modal.Body>
+      <Modal.Body className="pb-10">
         <div className="mb-4">
           <Input
             label="Company Name"
@@ -193,7 +192,6 @@ export default function CreateOrgModal({
           setSelectedPlan={setSelectedPlan}
         />
       </Modal.Body>
-
       <Modal.Footer>
         <Button onClick={onClose} variant="secondary" disabled={isLoading}>
           Cancel

@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Plus, Shield, Tag } from "lucide-react";
 import { Button, LoadingSpinner } from "@/components/ui";
 import { packageAddOnsType } from "@/apiHooks.ts/plans/plans.types";
+import { TaxData } from "@/apiHooks.ts/subscription/subscribtion.api";
+import DiscountAlert from "./DiscountAlert";
 
 type BillingCycle = "monthly" | "yearly";
 
@@ -17,8 +19,11 @@ interface OrderSummaryProps {
   availableAddOns: packageAddOnsType[];
   addOnsTotal: number;
   totalPrice: number;
+  taxDetails?: TaxData;
   isProcessing: boolean;
+  isCalculatingTax?: boolean;
   canCheckout: boolean;
+  country: string;
   onCheckout: () => void;
 }
 
@@ -30,16 +35,39 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   yearlyPerMonth,
   discount,
   yearlySavings,
+  country,
   selectedAddOns,
   availableAddOns,
   addOnsTotal,
   totalPrice,
+  taxDetails,
   isProcessing,
+  isCalculatingTax,
   canCheckout,
   onCheckout,
 }) => {
   const periodLabel = billingCycle === "monthly" ? "mo" : "yr";
   const numSelectedAddOns = Object.keys(selectedAddOns).length;
+
+  const finalTotal = isCalculatingTax
+    ? "..." // Tax is being calculated
+    : taxDetails?.total != null
+      ? taxDetails.total.toFixed(2) // Tax is calculated
+      : totalPrice.toFixed(2); // Fallback
+
+  const taxPercent = useMemo(() => {
+    if (!taxDetails) return "0";
+
+    // Try to get percentage from breakdown first
+    const percentage =
+      taxDetails.breakdown?.[0]?.tax_rate_details?.percentage_decimal;
+    if (percentage) {
+      return parseFloat(percentage).toFixed(1);
+    }
+
+    if (!taxDetails.subtotal || !taxDetails.tax) return "0";
+    return ((taxDetails.tax / taxDetails.subtotal) * 100).toFixed(1);
+  }, [taxDetails]);
 
   return (
     <div className="bg-bg-secondary border rounded-xl p-6 sticky top-8">
@@ -107,20 +135,60 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             })}
             <div className="flex justify-between text-sm border-t border-dashed pt-2">
               <span className="text-text">Add-ons subtotal</span>
-              <span className="font-medium">
-                {/* {currency}  */}${addOnsTotal.toFixed(2)}
-              </span>
+              <span className="font-medium">${addOnsTotal.toFixed(2)}</span>
             </div>
           </>
         )}
 
+        <div className="border-t pt-3 space-y-3">
+          <div className="flex justify-between text-sm">
+            <span className="text-text">Tax</span>
+            <span className="font-medium">
+              {isCalculatingTax && !taxDetails ? (
+                "..."
+              ) : (
+                <div className="text-right">
+                  <div>${(taxDetails?.tax ?? 0).toFixed(2)}</div>
+                  <div className="text-[10px] text-text-secondary">
+                    ({taxPercent}%)
+                  </div>
+                </div>
+              )}
+            </span>
+          </div>
+
+          {(taxDetails?.breakdown?.[0]?.tax_rate_details?.country ||
+            country) && (
+            <div className="flex justify-between text-sm">
+              <span className="text-text">
+                Applicable Tax Rate (
+                {taxDetails?.breakdown?.[0]?.tax_rate_details?.country ||
+                  country}
+                )
+              </span>
+              <span className="font-medium">
+                {taxDetails?.breakdown?.[0]?.tax_rate_details
+                  ?.percentage_decimal ?? 0}
+                %
+              </span>
+            </div>
+          )}
+        </div>
+
         {/* Total */}
         <div className="border-t pt-4">
           <div className="flex justify-between">
-            <span className="font-semibold">Total</span>
+            <div className="flex flex-col">
+              <span className="font-semibold">Total</span>
+              {isCalculatingTax && (
+                <span className="text-[10px] text-primary animate-pulse italic">
+                  Calculating tax...
+                </span>
+              )}
+            </div>
             <div className="text-right">
               <span className="text-2xl font-bold text-primary">
-                ${totalPrice.toFixed(2)}
+                ${finalTotal}
               </span>
               <span className="text-xs text-text block">/{periodLabel}</span>
             </div>
@@ -131,17 +199,13 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       {yearlySavings &&
         parseFloat(yearlySavings) > 0 &&
         billingCycle === "yearly" && (
-          <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 mb-6">
-            <p className="text-sm text-green-700 font-medium text-center">
-              🎉 You save ${yearlySavings}/year with annual billing!
-            </p>
-          </div>
+          <DiscountAlert yearlySavings={yearlySavings} />
         )}
 
       <Button
         variant="primary"
         className="w-full py-5 text-base"
-        disabled={!canCheckout || isProcessing}
+        disabled={!canCheckout || isProcessing || isCalculatingTax}
         onClick={onCheckout}
       >
         {isProcessing ? (
@@ -150,7 +214,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             Processing...
           </div>
         ) : (
-          `Subscribe  $${totalPrice.toFixed(2)}/${periodLabel}`
+          `Subscribe  $${finalTotal}/${periodLabel}`
         )}
       </Button>
 

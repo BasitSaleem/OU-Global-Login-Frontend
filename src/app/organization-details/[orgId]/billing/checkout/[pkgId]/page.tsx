@@ -9,6 +9,7 @@ import { useGetPaymentMethods } from "@/apiHooks.ts/paymentMethod/paymentMethod.
 import { useOrganizationDetails } from "@/apiHooks.ts/organization/organization.api";
 import {
   useBuyNewPlan,
+  useGetStripeTax,
   useUpgradePlan,
 } from "@/apiHooks.ts/subscription/subscribtion.api";
 import { PaymentMethod } from "@/apiHooks.ts/paymentMethod/paymentMethod.types";
@@ -41,43 +42,6 @@ function CheckoutPage() {
     {},
   );
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    watch,
-    setValue,
-    formState: { errors: formErrors },
-  } = useForm<CheckoutFormValues>({
-    resolver: zodResolver(checkoutSchema),
-    defaultValues: {
-      country: "",
-      billing_address: "",
-      billing_city: "",
-      billing_state: "",
-      billing_postal_code: "",
-    },
-  });
-
-  const watchCountry = watch("country");
-
-  // Reset US fields if country changes
-  useEffect(() => {
-    if (watchCountry !== "US") {
-      setValue("billing_address", "");
-      setValue("billing_city", "");
-      setValue("billing_state", "");
-      setValue("billing_postal_code", "");
-    }
-  }, [watchCountry, setValue]);
-
-  // --- Mutation ---
-  const { mutateAsync: upgradePlan, isPending: isProcessing } =
-    useUpgradePlan();
-
-  const { mutateAsync: buyNewPlan, isPending: isProcessingBuyNewPlan } =
-    useBuyNewPlan();
-
   // --- Data fetching ---
   const { data: planData, isPending: loadingPlan } = useGetPlanDetails(pkgId);
   const { data: paymentMethodsData, isPending: loadingPaymentMethods } =
@@ -105,6 +69,114 @@ function CheckoutPage() {
 
   const paymentMethods: PaymentMethod[] =
     paymentMethodsData?.paymentMethods || [];
+
+  const {
+    mutate: getTax,
+    data: taxData,
+    isPending: isCalculatingTax,
+  } = useGetStripeTax();
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    setValue,
+    formState: { errors: formErrors },
+  } = useForm<CheckoutFormValues>({
+    resolver: zodResolver(checkoutSchema),
+    defaultValues: {
+      country: "",
+      billing_address: "",
+      billing_city: "",
+      billing_state: "",
+      billing_postal_code: "",
+    },
+  });
+
+  const watchFields = watch();
+
+  const addOnPayload = useMemo(() => {
+    const payload: { priceId: string; quantity: number }[] = [];
+    Object.entries(selectedAddOns).forEach(([id, quantity]) => {
+      const entry = availableAddOns.find((a) => a.addOnId === id);
+      if (entry) {
+        const pId =
+          billingCycle === "monthly"
+            ? entry.addOn.stripe_price_monthly_id
+            : entry.addOn.stripe_price_yearly_id;
+
+        if (pId) {
+          payload.push({
+            priceId: pId,
+            quantity: quantity,
+          });
+        }
+      }
+    });
+    return payload;
+  }, [selectedAddOns, availableAddOns, billingCycle]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!watchFields.country) return;
+
+      const isUS = watchFields.country === "US";
+
+      const payload: any = {
+        packageId: pkgId,
+        billingCycle: billingCycle.toUpperCase() as "MONTHLY" | "YEARLY",
+        addOnPriceIds: addOnPayload,
+        country: watchFields.country,
+      };
+
+      if (isUS) {
+        const isComplete =
+          watchFields.billing_state &&
+          watchFields.billing_postal_code &&
+          watchFields.billing_address &&
+          watchFields.billing_city;
+
+        // Don't call API if ANY field is missing
+        if (!isComplete) return;
+
+        // All fields exist → add them
+        payload.billing_state = watchFields.billing_state;
+        payload.billing_postal_code = watchFields.billing_postal_code;
+        payload.billing_address = watchFields.billing_address;
+        payload.billing_city = watchFields.billing_city;
+      }
+
+      getTax(payload);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [
+    getTax,
+    pkgId,
+    billingCycle,
+    addOnPayload,
+    watchFields.country,
+    watchFields.billing_state,
+    watchFields.billing_postal_code,
+  ]);
+
+  // Reset US fields if country changes
+  useEffect(() => {
+    if (watchFields.country !== "US") {
+      setValue("billing_address", "");
+      setValue("billing_city", "");
+      setValue("billing_state", "");
+      setValue("billing_postal_code", "");
+    }
+  }, [watchFields.country, setValue]);
+
+  // --- Mutation ---
+  const { mutateAsync: upgradePlan, isPending: isProcessing } =
+    useUpgradePlan();
+
+  const { mutateAsync: buyNewPlan, isPending: isProcessingBuyNewPlan } =
+    useBuyNewPlan();
 
   // Auto-select primary payment method
   useEffect(() => {
@@ -151,10 +223,9 @@ function CheckoutPage() {
     return total;
   }, [selectedAddOns, availableAddOns, billingCycle]);
 
-  const totalPrice = basePlanPrice + addOnsTotal;
-
   const yearlyPerMonth = parseFloat(selectedPlan?.yearly_price || "0") / 12;
   const originalMonthlyPrice = parseFloat(selectedPlan?.monthly_price || "0");
+
   const yearlySavings =
     billingCycle === "yearly"
       ? (
@@ -167,6 +238,12 @@ function CheckoutPage() {
     billingCycle === "monthly"
       ? (selectedPlan?.monthly_discount ?? null)
       : (selectedPlan?.yearly_discount ?? null);
+
+  const totalPrice = useMemo(() => {
+    const discPercent = parseFloat(discount || "0");
+    const discountedBase = basePlanPrice * (1 - discPercent / 100);
+    return discountedBase + addOnsTotal;
+  }, [basePlanPrice, addOnsTotal, discount]);
 
   const stripePriceId =
     billingCycle === "monthly"
@@ -239,17 +316,13 @@ function CheckoutPage() {
         priceId: stripePriceId,
         addOnPriceIds: addOnPayload,
         paymentMethodId: selectedPaymentMethodId,
-        ...(data.country === "US"
-          ? {
-              country: data.country,
-              billing_city: data.billing_city,
-              billing_state: data.billing_state,
-              billing_postal_code: data.billing_postal_code,
-              billing_address: data.billing_address,
-            }
-          : {
-              country: data.country,
-            }),
+        country: data.country,
+        ...(data.country === "US" && {
+          billing_city: data.billing_city,
+          billing_state: data.billing_state,
+          billing_postal_code: data.billing_postal_code,
+          billing_address: data.billing_address,
+        }),
       };
 
       if (
@@ -263,7 +336,6 @@ function CheckoutPage() {
       router.push(`/organization-details/${orgId}/payment/success`);
     } catch (error) {
       console.error("Checkout error:", error);
-      // router.push(`/organization-details/${orgId}/payment/failed`);
     }
   };
 
@@ -276,7 +348,7 @@ function CheckoutPage() {
   if (!selectedPlan) return <PackageNotFound orgId={orgId} />;
 
   return (
-    <div className="w-full max-w-7xl mx-auto md:px-8">
+    <div className="w-full max-w-7xl mx-auto md:px-8 pb-60">
       {/* Header */}
       <CheckoutHeader />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -304,7 +376,7 @@ function CheckoutPage() {
             control={control}
             register={register}
             errors={formErrors}
-            watchCountry={watchCountry}
+            watchCountry={watchFields.country}
           />
 
           <PaymentMethodSelector
@@ -320,6 +392,7 @@ function CheckoutPage() {
         {/* Right Column */}
         <div className="lg:col-span-1">
           <OrderSummary
+            country={watchFields.country}
             packageName={selectedPlan.package_name}
             currency={selectedPlan.currency}
             billingCycle={billingCycle}
@@ -331,7 +404,9 @@ function CheckoutPage() {
             availableAddOns={availableAddOns}
             addOnsTotal={addOnsTotal}
             totalPrice={totalPrice}
+            taxDetails={taxData}
             isProcessing={isProcessing || isProcessingBuyNewPlan}
+            isCalculatingTax={isCalculatingTax}
             canCheckout={!!selectedPaymentMethodId && !!stripePriceId}
             onCheckout={handleSubmit(handleCheckout)}
           />
