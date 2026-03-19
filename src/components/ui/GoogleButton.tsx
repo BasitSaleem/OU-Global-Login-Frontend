@@ -11,11 +11,15 @@ interface GoogleButtonProps {
 
 const GoogleButton: React.FC<GoogleButtonProps> = ({ onClick, text, className, disabled, isLoading }) => {
     const googleSignIn = () => {
+        const state = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        document.cookie = `google_auth_state=${state}; path=/; max-age=3600; SameSite=Lax`;
+
         const query = {
             client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
             redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI!,
             response_type: "code",
             scope: process.env.NEXT_PUBLIC_GOOGLE_SCOPES!,
+            state: state,
         };
         const url = new URL("https://accounts.google.com/o/oauth2/v2/auth");
         url.search = new URLSearchParams(query).toString();
@@ -27,7 +31,7 @@ const GoogleButton: React.FC<GoogleButtonProps> = ({ onClick, text, className, d
             disabled={disabled}
             className={`
         relative group flex items-center justify-center 
-        h-[40px] px-[12px] min-w-max w-full
+        h-[42px] px-[12px] min-w-max w-full
         border border-border rounded-full
         text-text text-[14px] font-bold tracking-[0.25px]
         select-none appearance-none overflow-hidden

@@ -32,6 +32,8 @@ const ENDPOINTS = {
   LOGIN_WITH_GOOGLE: "/auth/google",
   CHECK_PASSWORD: "/auth/check-password",
   CREATE_PASSWORD: "/auth//create-password",
+  GET_ALL_IDENTITIES: "/auth/identities",
+  REMOVE_IDENTITY: "/auth/identity",
 };
 //=================API HOOKS==================
 //1.LOGIN
@@ -332,8 +334,8 @@ export const useLoginWithGoogle = () => {
       toast.success("Login successful");
     },
     onError: (error: any) => {
-      const message = (error as Error)?.message || "Failed to login with Google";
-      toast.error(message);
+      const message = (error as Error)?.message || "Failed to login";
+      toast.error("Login failed", message);
     },
   });
 }
@@ -359,6 +361,31 @@ export const useCreatePassword = () => {
     },
   });
 }
+export const getAllIdentities = () => {
+  return useQuery({
+    queryKey: ['all-identities'],
+    queryFn: () => request(ENDPOINTS.GET_ALL_IDENTITIES, "GET"),
+    retry: false,
+    select: (data: any) => data?.data,
+    refetchOnWindowFocus: false,
+  });
+}
+
+export const useRemoveIdentity = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (identityId: string) =>
+      request(`${ENDPOINTS.REMOVE_IDENTITY}`, "DELETE", {}, { token: identityId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-identities"] });
+      toast.success("Account removed successfully");
+    },
+    onError: (error: any) => {
+      const message = (error as Error)?.message || "Failed to remove account";
+      toast.error("Error", message);
+    },
+  });
+};
 
 
 
