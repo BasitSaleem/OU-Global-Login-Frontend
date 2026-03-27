@@ -49,12 +49,12 @@ export default function OrgSidebar({ collapsed, className, organizationDetails }
                 )}
             >
                 {collapsed ? (
-                    <div className="w-9 h-9 rounded flex items-center justify-center bg-primary/10">
-                        <SvgIcon name="ownersUniverseColl" className=" w-[18px] h-[18px]" />
+                    <div className="w-9 h-9 rounded flex items-center justify-center">
+                        <SvgIcon name="OI" width={30} height={30} />
                     </div>
                 ) : (
                     <SvgIcon
-                        name="ownersUniverse"
+                        name="ownersInventory"
                         className="text-foreground"
                         width={130}
                         height={130}

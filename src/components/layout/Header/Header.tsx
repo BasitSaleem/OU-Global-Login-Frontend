@@ -81,7 +81,7 @@ export default function AppHeader({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
- 
+
 
   return (
     <header className="h-14 border-b bg-bg-secondary flex items-center justify-between px-4">

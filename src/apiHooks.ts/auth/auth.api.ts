@@ -5,6 +5,7 @@ import { request } from "@/utils/requestFunction";
 import { toast } from "@/hooks/useToast";
 import { changePasswordData, forgotPasswordData, resetPasswordData, signInResponse } from "@/types/auth.types";
 import { PermissionTypeGenerator } from "@/utils/permissionTypeGenerator";
+import { CreatePasswordSchemaType } from "@/schemas/auth.schemas";
 
 const ENDPOINTS = {
   SIGN_IN: "/auth/sign-in",
@@ -27,7 +28,12 @@ const ENDPOINTS = {
   CHANGE_EMAIL: "/auth/change-email-final",
   SEND_CHANGE_EMAIL_VERIFICATION: "/auth/send-change-email-verification",
   SEND_OTP_FOR_CHANGE_EMAIL: "/auth/send-otp-for-change-email",
-  DECLINE_CHANGE_EMAIL: "/auth/decline-change-email"
+  DECLINE_CHANGE_EMAIL: "/auth/decline-change-email",
+  LOGIN_WITH_GOOGLE: "/auth/google",
+  CHECK_PASSWORD: "/auth/check-password",
+  CREATE_PASSWORD: "/auth//create-password",
+  GET_ALL_IDENTITIES: "/auth/identities",
+  REMOVE_IDENTITY: "/auth/identity",
 };
 //=================API HOOKS==================
 //1.LOGIN
@@ -320,5 +326,66 @@ export const useDeclineChangeEmail = () => {
     },
   });
 };
+export const useLoginWithGoogle = () => {
+  return useMutation({
+    mutationFn: (data: { code: string }) => request(ENDPOINTS.LOGIN_WITH_GOOGLE, "POST", {}, data),
+    mutationKey: ['login-with-google'],
+    onSuccess: () => {
+      toast.success("Login successful");
+    },
+    onError: (error: any) => {
+      const message = (error as Error)?.message || "Failed to login";
+      toast.error("Login failed", message);
+    },
+  });
+}
+export const useCheckPassword = () => {
+  return useQuery({
+    queryKey: ['check-password'],
+    queryFn: () => request(ENDPOINTS.CHECK_PASSWORD, "GET"),
+    retry: false,
+    select: (data: any) => data?.data,
+    refetchOnWindowFocus: false,
+  });
+}
+export const useCreatePassword = () => {
+  return useMutation({
+    mutationFn: (data: { password: string }) => request(ENDPOINTS.CREATE_PASSWORD, "POST", {}, data),
+    mutationKey: ['create-password'],
+    onSuccess: () => {
+      toast.success("Password created successfully");
+    },
+    onError: (error: any) => {
+      const message = (error as Error)?.message || "Failed to create password";
+      toast.error("Password creation failed", message);
+    },
+  });
+}
+export const getAllIdentities = () => {
+  return useQuery({
+    queryKey: ['all-identities'],
+    queryFn: () => request(ENDPOINTS.GET_ALL_IDENTITIES, "GET"),
+    retry: false,
+    select: (data: any) => data?.data,
+    refetchOnWindowFocus: false,
+  });
+}
+
+export const useRemoveIdentity = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (identityId: string) =>
+      request(`${ENDPOINTS.REMOVE_IDENTITY}`, "DELETE", {}, { token: identityId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-identities"] });
+      toast.success("Account removed successfully");
+    },
+    onError: (error: any) => {
+      const message = (error as Error)?.message || "Failed to remove account";
+      toast.error("Error", message);
+    },
+  });
+};
+
 
 

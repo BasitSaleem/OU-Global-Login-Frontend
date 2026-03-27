@@ -1,10 +1,8 @@
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
 import { PermissionGuard } from "@/components/HOCs/permission-guard";
-
 import { getColorFromId } from "@/utils/getRandomColors";
 import { organizationName } from "@/utils/organizationName";
 import Link from "next/link";
-import { useState } from "react";
 import OrganizationProductItem from "./OrganizationProductItem";
 interface CardProps {
     code: "OI" | "OJ" | "OM" | "OA";
@@ -18,9 +16,9 @@ interface CardProps {
 export const generateProductLink = (subdomain: string) => {
     let url = '';
     if (process.env.NODE_ENV === 'development') {
-        url = `http://${subdomain}.localhost:8001/login?sso_login=true`
+        url = `http://${subdomain}.localhost:8001/login`
     } else {
-        url = `https://${subdomain}.${process.env.NEXT_PUBLIC_OI_PRODUCT_DOMAIN}/login?sso_login=true`
+        url = `https://${subdomain}.${process.env.NEXT_PUBLIC_OI_PRODUCT_DOMAIN}/login`
     }
 
     return url;
@@ -28,7 +26,6 @@ export const generateProductLink = (subdomain: string) => {
 }
 
 const OrganizationProductCard = ({ code, organizations, metaData }: CardProps) => {
-    const [viewMore, setViewMore] = useState(8);
     const PRODUCT_NAME_MAP: Record<string, string> = {
         OI: "Owners Inventory",
         OJ: "Owners Jungle",
@@ -47,7 +44,6 @@ const OrganizationProductCard = ({ code, organizations, metaData }: CardProps) =
             <div className="flex items-start gap-3">
                 <div
                     className="w-8 h-8 rounded flex items-center justify-center flex-shrink-0"
-                    style={{ backgroundColor: "rgba(121, 92, 245, 0.07)" }}
                 >
                     <img
                         src={`/Icons/${code}_LOGO.svg`}
@@ -57,17 +53,17 @@ const OrganizationProductCard = ({ code, organizations, metaData }: CardProps) =
                 </div>
 
                 <div className="flex-1 min-w-0">
-                    <h3 className="text-heading-2 mb-2">{getProductDisplayName(code)}</h3> 
+                    <h3 className="text-heading-2 mb-2">{getProductDisplayName(code)}</h3>
                     <p className="text-body-small text-gray-600 mb-2">
                         Manage your inventory
                     </p>
 
                     <div className="flex flex-wrap items-center gap-2 mt-3">
-                        {filteredOrganizations.slice(0, viewMore).map((org) => {
+                        {filteredOrganizations.slice(0, 8).map((org) => {
                             const bgColor = getColorFromId(org.id ?? "");
                             return (
                                 <PermissionGuard
-                                key={org.id}
+                                    key={org.id}
                                     requiredPermissions="og:access::products"
                                     fallback={
                                         <div
@@ -79,7 +75,7 @@ const OrganizationProductCard = ({ code, organizations, metaData }: CardProps) =
                                                 style={{ backgroundColor: bgColor }}
                                                 title={org.name}
                                             >
-                                                {organizationName(org.name ?? "")} 
+                                                {organizationName(org.name ?? "")}
                                             </div>
                                         </div>
                                     }
@@ -87,7 +83,7 @@ const OrganizationProductCard = ({ code, organizations, metaData }: CardProps) =
                                     {org.products?.filter(p => p.product_name === code).map((product) => (
                                         product.oi_sub_domain ? (
                                             <OrganizationProductItem key={product.oi_sub_domain} product={product} bgColor={bgColor} org={org} />
-                                           
+
                                         ) : null
                                     ))}
                                 </PermissionGuard>
@@ -101,21 +97,6 @@ const OrganizationProductCard = ({ code, organizations, metaData }: CardProps) =
                                 View all
 
                             </Link>
-                            // <>
-                            //     {viewMore < metaData?.totalCount ? (
-                            //         <Button
-                            //             onClick={() => setViewMore(viewMore + 4)}
-                            //             className="text-primary text-sm underline"
-                            //         >
-                            //             View More
-                            //         </Button>
-                            //     ) : <Button
-                            //         onClick={() => setViewMore(viewMore - 4)}
-                            //         className="text-primary text-sm underline"
-                            //     >
-                            //         View less
-                            //     </Button>}
-                            // </>
                         )}
                     </div>
                 </div>

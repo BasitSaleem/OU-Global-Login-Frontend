@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema } from "@/schemas/auth.schemas";
 import { Button, Input, } from "@/components/ui";
 import { signUpData } from "@/apiHooks.ts/auth/auth.types";
+import GoogleButton from "@/components/ui/GoogleButton";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -40,18 +41,6 @@ export default function SignUpPage() {
       { first_name: data.first_name, last_name: data.last_name, email: data.email, password: data.password } as signUpData,
       {
         onSuccess: (response) => {
-          // const { user, refreshToken, } = response.data;
-          // const organization = user.organizations?.[0] ?? null;
-          // dispatch(
-          //   setAuth({
-          //     user,
-          //     organization,
-          //     isAuthenticated: true,
-          //     refreshToken,
-          //     isLoading: false,
-          //     error: null,
-          //   })
-          // );
           router.push(`/otp?email=${encodeURIComponent(response.data.email)}${token ? `&token=${token}` : ""}`);
         },
       }
@@ -62,24 +51,19 @@ export default function SignUpPage() {
 
     <>    {/* Main content container */}
       < div className="flex items-center justify-center px-6 sm:px-6 pb-4 sm:pb-6 pt-0 sm:pt-2" >
-        {/* Main sign up card */}
         <div className="relative z-10 w-full max-w-sm sm:max-w-md xl:max-w-md">
           <div className="bg-bg-secondary rounded-2xl sm:rounded-[16px] px-4 sm:px-14 py-3 sm:py-4">
-            {/* Welcome heading */}
             <div className="text-center mb-3 mt-2 sm:mb-4">
               <h1 className="text-base sm:text-lg font-bold text-text">
                 Sign up to get started
               </h1>
             </div>
             <FormProvider {...methods}>
-              {/* Sign up form */}
               <form
                 onSubmit={handleSubmit(onSubmit)}
                 className="space-y-2 sm:space-y-3"
               >
-                {/* Name fields row */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
-                  {/* First Name field */}
                   <Input
                     type="text"
                     label="First Name"
@@ -108,6 +92,7 @@ export default function SignUpPage() {
                   id="email"
                   label="Email"
                   type="email"
+                  autoComplete="username"
                   disabled={email && email.length > 0 ? true : false}
                   placeholder="Enter Email"
                   {...methods.register("email", {
@@ -121,6 +106,7 @@ export default function SignUpPage() {
                   label="Password"
                   placeholder="Enter Password"
                   isPassword={true}
+                  autoComplete="new-password"
                   {...methods.register("password", {
                     required: "Password is required",
                   })}
@@ -132,6 +118,8 @@ export default function SignUpPage() {
                   type="password"
                   placeholder="Confirm Password"
                   isPassword={true}
+                  autoComplete="new-password"
+
                   {...methods.register("confirmPassword", {
                     required: "confirm password is required",
                   })}
@@ -140,7 +128,6 @@ export default function SignUpPage() {
                   }
                 />
 
-                {/* Sign Up button */}
                 <div className="pt-2 sm:pt-3 sm:mt-5">
                   <Button
                     type="submit"
@@ -156,7 +143,7 @@ export default function SignUpPage() {
               </form>
             </FormProvider>
             {/* Divider */}
-            <div className="my-3 sm:my-7 flex items-center">
+            <div className="my-2 sm:my-7 flex items-center">
               <div className="flex-1 border-t "></div>
               <span className="px-2 sm:px-3 text-xs sm:text-sm">
                 Or
@@ -165,41 +152,17 @@ export default function SignUpPage() {
             </div>
 
             {/* Social login buttons */}
-            <div className="space-y-2 sm:space-y-5">
-              <Button
-                variant="primary"
-                className="w-full border-primary/10 rounded-2xl bg-primary/0 hover:bg-primary/10 text-text hover:text-primary"
-              >
-                <Image src={Icons.google} alt="Google" width={20} height={20} />
-                <span className="text-xs sm:text-sm">
-                  Continue with Google
-                </span>
-              </Button>
-              <Button
-                variant="primary"
-                className="w-full border-primary/10 rounded-2xl bg-primary/0 hover:bg-primary/10 text-text hover:text-primary"
-
-              >
-                <Image
-                  src={Icons.microsoft}
-                  alt="Microsoft"
-                  width={20}
-                  height={20}
-                />
-                <span className="text-xs sm:text-sm">
-                  Continue with Microsoft
-                </span>
-              </Button>
-            </div>
-
-            {/* Sign in link */}
+            <GoogleButton
+              text="Continue with Google"
+              className="w-full"
+            />
             <div className="mt-3 sm:mt-4 text-center">
-              <span className="text-xs sm:text-sm">
+              <span className="text-xs sm:text-sm text-text">
                 Already have an account{" "}
               </span>
               <Link
                 href={`/login?app=${app}`}
-                className="text-xs sm:text-sm font-bold text-primary hover:underline underline"
+                className="text-xs sm:text-sm font-bold text-primary hover:underline underline "
               >
                 Sign In
               </Link>

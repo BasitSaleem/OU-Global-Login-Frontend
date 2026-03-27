@@ -93,7 +93,7 @@ export interface signInResponse {
 }
 export interface changePasswordData {
   newPassword: string;
-  oldPassword: string;
+  oldPassword?: string;
 }
 export interface forgotPasswordData {
   email: string;

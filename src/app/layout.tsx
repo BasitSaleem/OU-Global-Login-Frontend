@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { Providers } from "@/providers";
-import { SEO } from "@/components/SEO";
 
 
 const inter = Inter({
@@ -13,13 +12,13 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Owners Global - Global Login & Authentication Platform",
-    template: "%s | Owners Global"
+    default: "Owners Inventory",
+    template: "%s | Owners Inventory"
   },
-  description: "Global authentication and business management platform for Owners Global. Streamline your business operations with our suite of integrated products including Owners Inventory, Owners Jobs, Owners Marketplace, and more.",
+  description: "Global authentication and business management platform for Owners Inventory. Streamline your business operations with our suite of integrated products including Owners Inventory, Owners Jobs, Owners Marketplace, and more.",
   keywords: [
     "business management",
-    "owners global",
+    "owners inventory",
     "global login",
     "business tools",
     "inventory management",
@@ -31,21 +30,21 @@ export const metadata: Metadata = {
   ],
   authors: [
     {
-      name: "Owners Global",
+      name: "Owners Universe",
     }
   ],
-  creator: "Owners Global",
-  publisher: "Owners Global",
-  applicationName: "Owners Global",
+  creator: "Owners Universe",
+  publisher: "Owners Universe",
+  applicationName: "Owners Universe",
 
   // Open Graph metadata
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://osglobal.ownersjungle.com",
-    siteName: "Owners Global",
-    title: "Owners Global - Global Login & Authentication Platform",
-    description: "Global authentication and business management platform for Owners Global. Streamline your business operations with our suite of integrated products.",
+    siteName: "Owners Universe",
+    title: "Owners Universe - Global Login & Authentication Platform",
+    description: "Global authentication and business management platform for Owners Universe. Streamline your business operations with our suite of integrated products.",
     images: [
       {
         url: "/og-image.png",
@@ -59,21 +58,21 @@ export const metadata: Metadata = {
   // Twitter Card metadata
   twitter: {
     card: "summary_large_image",
-    title: "Owners Global - Global Login & Authentication Platform",
-    description: "Global authentication and business management platform for Owners Global. Streamline your business operations with our suite of integrated products.",
-    creator: "@ownersglobal",
+    title: "Owners Universe - Global Login & Authentication Platform",
+    description: "Global authentication and business management platform for Owners Universe. Streamline your business operations with our suite of integrated products.",
+    creator: "@ownersuniverse",
     images: ["/og-image.png"],
   },
 
   // App icons and favicons
   icons: {
     icon: [
-      { url: "/favicon.ico" },
-      { url: "/icon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/icon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/OI_LOGO.svg", sizes: "26x26", type: "image/svg+xml" },
+      { url: "/og-image.png", sizes: "16x16", type: "image/png" },
+      { url: "/og-image.png", sizes: "32x32", type: "image/png" },
     ],
     apple: [
-      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+      { url: "/og-image.png", sizes: "180x180", type: "image/png" },
     ],
   },
 

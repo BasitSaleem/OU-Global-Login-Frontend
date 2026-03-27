@@ -115,7 +115,7 @@ const page = () => {
                     variant="primary"
                     className="w-full h-8 sm:h-9 text-white text-xs bg-primary hover:bg-primary/80 sm:text-sm font-bold rounded-full"
                   >
-                    {!isPending ? "Reset Password" : "Resetting Password ..."}
+                    {!isPending ? "Reset Password" : "Resetting Password"}
                   </Button>
                 </div>
               </form>

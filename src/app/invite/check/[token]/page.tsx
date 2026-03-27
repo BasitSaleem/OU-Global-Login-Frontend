@@ -1,24 +1,25 @@
-'use client';
 
+'use client';
 import { useAcceptInvitation, useGetInvitationStatus } from '@/apiHooks.ts/invitation/invitation.api';
 import { useParams, useRouter } from 'next/navigation';
 import { useGetMe } from '@/apiHooks.ts/auth/auth.api';
 import { ROUTES } from '@/constants';
 import { toast } from '@/hooks/useToast';
 import { Loader } from '@/components/ui';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 export default function AcceptInvitePage() {
     const params = useParams();
     const router = useRouter();
     const token = params.token as string;
+    const isAcceptingRef = useRef(false);
 
     const { data: statusData, isPending: isStatusPending, error } =
         useGetInvitationStatus(token);
 
     const { data: me, isPending: isMePending } = useGetMe();
 
-    const { mutate: acceptInvitation, isPending: isAccepting } =
+    const { mutate: acceptInvitation, isPending: isAccepting, error: acceptError } =
         useAcceptInvitation({
             onSuccess: () => {
                 router.replace(ROUTES.DASHBOARD);
@@ -26,13 +27,13 @@ export default function AcceptInvitePage() {
         });
 
     useEffect(() => {
-        if (isStatusPending || isMePending || isAccepting) return;
-
-        if (error) {
-            toast.info('Invitation not found', 'Invitation not found');
+        if (acceptError) {
             router.replace(ROUTES.LOGIN);
             return;
         }
+
+        if (isStatusPending || isMePending || isAccepting || isAcceptingRef.current) return;
+
 
         if (!statusData) return;
 
@@ -42,6 +43,7 @@ export default function AcceptInvitePage() {
         // USER LOGGED IN
         if (me?.data?.user) {
             if (inviteStatus === 'PENDING') {
+                isAcceptingRef.current = true;
                 acceptInvitation(token);
                 return;
             }
@@ -57,11 +59,17 @@ export default function AcceptInvitePage() {
                 router.replace(ROUTES.DASHBOARD);
                 return;
             }
+            if (inviteStatus === 'EXPIRED') {
+                toast.info('Invitation Expired', 'Invitation has expired');
+                router.replace(ROUTES.LOGIN);
+                return;
+            }
+
         }
 
         // USER NOT LOGGED IN
         const redirectParams =
-            `?token=${encodeURIComponent(token)}` +
+            `?app=OG&token=${encodeURIComponent(token)}` +
             `${email ? `&email=${encodeURIComponent(email)}` : ''}` +
             `&redirect_uri=${encodeURIComponent(currentPath)}`;
 
@@ -83,6 +91,7 @@ export default function AcceptInvitePage() {
         if (inviteStatus === 'REJECTED') {
             toast.info('Already Declined', 'Invitation already declined');
             router.replace(ROUTES.LOGIN);
+            return
         }
     }, [
         statusData,
@@ -94,6 +103,7 @@ export default function AcceptInvitePage() {
         token,
         router,
         acceptInvitation,
+        acceptError,
     ]);
 
     return (
@@ -108,3 +118,4 @@ export default function AcceptInvitePage() {
         />
     );
 }
+

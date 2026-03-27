@@ -85,7 +85,7 @@ export default function OTPPage() {
 
   return (
 
-    <div className="flex items-center justify-center px-6 h-[450px]  pb-4 pt-64 ">
+    <div className="flex items-center justify-center px-6 h-[450px] pb-4 ">
       <div className="relative z-10 w-full max-w-sm sm:max-w-md xl:max-w-md">
         <div className="bg-bg-secondary rounded-2xl sm:rounded-[16px] px-4 sm:px-14 py-3 sm:py-4">
           <div className="text-center mb-3 mt-2 sm:mb-4">

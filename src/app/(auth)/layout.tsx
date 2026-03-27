@@ -109,11 +109,11 @@ const AuthLayout = ({ children }: AuthLayoutProp) => {
         <Logo Icon="ownersInventory" className="cursor-pointer" />
         <div className="flex items-center gap-2 sm:gap-3">
           {pathname === "/login" ? (
-            <span className="text-xs sm:text-sm hidden sm:block">
+            <span className="text-xs sm:text-sm hidden sm:block text-text">
               Don't have an account?
             </span>
           ) : (
-            <span className="text-xs sm:text-sm hidden sm:block">
+            <span className="text-xs sm:text-sm hidden sm:block text-text">
               Already have an account?
             </span>
           )}
@@ -137,7 +137,7 @@ const AuthLayout = ({ children }: AuthLayoutProp) => {
       {!redirectUrlParam ? <PublicRoute>{Content}</PublicRoute> : Content}
 
       <div className="mt-6 inset-x-0 z-10 pb-6 sm:pb-8 flex justify-center">
-        <p className="text-xs text-center">
+        <p className="text-xs text-center text-text">
           © {new Date().getFullYear()} Owners Inventory - All rights reserved
         </p>
       </div>

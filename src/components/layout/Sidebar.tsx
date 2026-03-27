@@ -236,12 +236,12 @@ export default function Sidebar({
           )}
         >
           {collapsed ? (
-            <div className="w-20 h-10 rounded-lg flex items-center justify-center bg-primary/10">
-              <SvgIcon name="ownersUniverseColl" width={20} height={20} />
+            <div className="w-20 h-10 rounded-lg flex items-center justify-center">
+              <SvgIcon name="OI" width={30} height={30} />
             </div>
           ) : (
             <SvgIcon
-              name="ownersUniverse"
+              name="ownersInventory"
               width={130}
             />
           )}
