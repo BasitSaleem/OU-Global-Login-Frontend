@@ -67,15 +67,15 @@ export default function EmailSettingsPage() {
 
   return (
     <main className="p-3">
-      <div className="flex items-center justify-center">
-        <div className="flex flex-col lg:flex-row w-full max-w-6xl lg:m-10 border rounded-lg overflow-hidden">
-          <div className="w-full lg:w-[420px] flex flex-col bg-primary/10 justify-center border-r items-center p-6 lg:p-10">
-            <div className="flex flex-col items-center text-center space-y-4">
+      <div className="flex justify-center items-center">
+        <div className="flex lg:flex-row flex-col lg:m-10 border rounded-lg w-full max-w-6xl overflow-hidden">
+          <div className="flex flex-col justify-center items-center bg-primary/10 p-6 lg:p-10 border-r w-full lg:w-[420px]">
+            <div className="flex flex-col items-center space-y-4 text-center">
               <SvgIcon name="email" className="w-20 h-20 text-primary" />
-              <h2 className="text-heading-1 mt-10 font-bold">
+              <h2 className="mt-10 font-bold text-heading-1">
                 Email Security
               </h2>
-              <ul className="mt-5 space-y-3 text-body-small text-left w-full">
+              <ul className="space-y-3 mt-5 w-full text-body-small text-left">
                 <li>• Use a valid email address</li>
                 <li>
                   • Once you send the request you will receive an email to
@@ -89,18 +89,18 @@ export default function EmailSettingsPage() {
             </div>
           </div>
 
-          <div className="flex-1 bg-bg-secondary p-6 lg:p-12 flex flex-col">
-            <div className="w-full max-w-lg mx-auto space-y-8">
+          <div className="flex flex-col flex-1 bg-bg-secondary p-6 lg:p-12">
+            <div className="space-y-8 mx-auto w-full max-w-lg">
               {showSuccessModal ? (
-                <div className="space-y-6 text-center py-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="bg-green-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <div className="slide-in-from-bottom-4 space-y-6 py-8 text-center animate-in duration-500 fade-in">
+                  <div className="flex justify-center items-center bg-green-50 mx-auto mb-6 rounded-full w-20 h-20">
                     <SvgIcon
                       name="email"
                       className="w-10 h-10 text-green-500"
                     />
                   </div>
                   <div className="space-y-2">
-                    <h2 className="text-2xl font-bold text-text">
+                    <h2 className="font-bold text-text text-2xl">
                       Verification Sent!
                     </h2>
                     <p className="leading-relaxed">
@@ -117,7 +117,7 @@ export default function EmailSettingsPage() {
                 <>
                   <section className="space-y-6">
                     <div className="space-y-2">
-                      <h1 className="text-2xl lg:text-3xl font-bold">Change Email</h1>
+                      <h1 className="font-bold text-2xl lg:text-3xl">Change Email</h1>
                       <p className="text-text-secondary leading-snug">
                         Ensure your account stays secure with a strong email that
                         you don’t use elsewhere.
@@ -150,7 +150,7 @@ export default function EmailSettingsPage() {
                           required
                         />
                       </div>
-                      {identityData?.identities?.length > 0 &&
+                      {/* {identityData?.identities?.length > 0 &&
                         <div className="space-y-1">
                           {identityData.identities.map((identity: any) => <Input
                             leftIcon={<SvgIcon name={identity.provider} className="w-4 h-4" />}
@@ -158,19 +158,19 @@ export default function EmailSettingsPage() {
                             value={identity.provider}
                             disabled
                             rightIcon={<Button
-                              className=" h-1 w-fit text-sm px-2 py-3"
+                              className="px-2 py-3 w-fit h-1 text-sm"
                               variant="primary"
                               type="button"
                               onClick={() => {
-                                setShowDeleteModal(true)
-                                setIdentityToDelete(identity)
+                                setShowDeleteModal(true);
+                                setIdentityToDelete(identity);
                               }}
                             >
                               Manage
                             </Button>}
                           />)}
 
-                        </div>}
+                        </div>} */}
 
                       <Button
                         className="w-full h-12"
