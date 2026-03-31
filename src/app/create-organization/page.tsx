@@ -20,7 +20,7 @@ import { SubdomainSuggestion } from "@/components/SubdomainSuggestion";
 import { AvailabilityStatus } from "@/components/AvailabilityStatus";
 import { CreateOrganizationGuard } from "@/components/HOCs/createOrgRoute.guard";
 import { SvgIcon } from "@/components/ui/SvgIcon";
-import OgPlanSelector from "@/components/pages/Organizations/OgPlanSelector";
+// import OgPlanSelector from "@/components/pages/Organizations/OgPlanSelector";
 
 export default function CreateOrgPage() {
   const searchParams = useSearchParams();
@@ -47,7 +47,7 @@ export default function CreateOrgPage() {
 
 function CreateOrgContent({ initialPkgId }: { initialPkgId: string | null }) {
   const [companyName, setCompanyName] = useState("");
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(initialPkgId);
+  // const [selectedPlan, setSelectedPlan] = useState<string | null>(initialPkgId);
   const [subDomain, setSubDomain] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("OI");
   const [showProgressModal, setShowProgressModal] = useState(false);
@@ -120,7 +120,7 @@ function CreateOrgContent({ initialPkgId }: { initialPkgId: string | null }) {
       name: trimmedName,
       subDomainName: trimmedSubDomain,
       product: [selectedProduct],
-      packageId: selectedPlan,
+      packageId: initialPkgId,
     };
 
     createOrgMutation(payload, {
@@ -133,6 +133,7 @@ function CreateOrgContent({ initialPkgId }: { initialPkgId: string | null }) {
           },
         });
         setShowProgressModal(true);
+        localStorage.removeItem("pkgId");
       },
       onError: (error: any) => {
         const message =
@@ -247,10 +248,12 @@ function CreateOrgContent({ initialPkgId }: { initialPkgId: string | null }) {
                 />
               )}
 
-              <OgPlanSelector
-                selectedPlane={selectedPlan}
-                setSelectedPlan={setSelectedPlan}
-              />
+              {/* <div className="mt-2">
+                <OgPlanSelector
+                  selectedPlane={selectedPlan}
+                  setSelectedPlan={setSelectedPlan}
+                />
+              </div> */}
             </div>
 
             {/* Actions */}
@@ -271,7 +274,7 @@ function CreateOrgContent({ initialPkgId }: { initialPkgId: string | null }) {
                 onClick={handleSubmit}
                 variant="primary"
                 className="py-5"
-                disabled={!canSubmit() || !selectedPlan}
+                disabled={!canSubmit()}
               >
                 {creatingOrg ? (
                   <div className="flex items-center gap-2">

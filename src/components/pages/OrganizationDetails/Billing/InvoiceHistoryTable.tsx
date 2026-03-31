@@ -26,8 +26,6 @@ const InvoiceHistoryTable = ({ org }: { org: Partial<Organization> }) => {
 
   const invoices = data?.invoices || [];
 
-  console.log(invoices);
-
   return (
     <>
       <div className="overflow-x-auto border rounded-lg mt-6">
@@ -91,10 +89,10 @@ const InvoiceHistoryTable = ({ org }: { org: Partial<Organization> }) => {
             ) : (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={7}
                   className="px-6 py-10 text-center text-sm text-gray-500"
                 >
-                  No invoices found.
+                  No Invoices Found.
                 </td>
               </tr>
             )}

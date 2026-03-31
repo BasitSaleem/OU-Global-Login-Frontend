@@ -15,7 +15,9 @@ interface OILinkProps {
 const OILink = ({ org, subscription }: OILinkProps) => {
   const isStatusDisabled =
     subscription?.status &&
-    ["CANCELLED", "EXPIRED", "PAST_DUE"].includes(subscription.status);
+    ["PAST_DUE", "CANCELLED", "EXPIRED", "INCOMPLETE"].includes(
+      subscription.status,
+    );
 
   const [isDisabled, setIsDisabled] = useState<boolean>(() => {
     if (isStatusDisabled) return true;
@@ -89,7 +91,7 @@ const OILink = ({ org, subscription }: OILinkProps) => {
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover/member:block">
               <div className="rounded-md px-2 py-1 text-[11px] font-medium text-white bg-primary shadow-lg whitespace-nowrap">
                 {isStatusDisabled
-                  ? `Subscription ${subscription?.status}`
+                  ? `No Subscription` // ${subscription?.status}`
                   : "Processing..."}
               </div>
             </div>

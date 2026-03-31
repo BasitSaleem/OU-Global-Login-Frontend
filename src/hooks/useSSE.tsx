@@ -84,6 +84,7 @@ export const useSSE = (orgId: string | undefined, subscriptionId: string) => {
       const data = JSON.parse(e.data);
       toast.success(data.title, data.message);
       queryClient.invalidateQueries({ queryKey: ["org-invoices", orgId] });
+      queryClient.invalidateQueries({ queryKey: ["organization", orgId] });
     });
 
     es.addEventListener(SSE_EVENTS.INVOICE_PAYMENT_FAILED, (e) => {

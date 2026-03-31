@@ -45,7 +45,7 @@ const RenewalSection = ({ organization }: { organization: OgOrganization }) => {
               {subscriptions?.[0]?.status === "TRIAL" ||
               subscriptions?.[0]?.status === "CANCELLED"
                 ? "--"
-                : subscriptions?.[0]?.payments?.[0]?.amount + ".00"}
+                : (subscriptions?.[0]?.payments?.[0]?.amount ?? "0") + ".00"}
             </p>
           </div>
         </div>
