@@ -84,5 +84,6 @@ export interface packageAddOnsType {
     yearly_price: string;
     currency: string;
     is_active: boolean;
+    is_quantity_allowed: boolean;
   };
 }
