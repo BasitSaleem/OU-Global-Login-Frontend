@@ -47,6 +47,7 @@ export default function HomePage() {
               width={500}
               height={500}
               src={Icons.homepageimage}
+              loading="eager"
               alt="Welcome illustration"
               className="w-72 h-72 object-contain"
             />

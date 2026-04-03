@@ -11,6 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://osglobal.ownersjungle.com"),
   title: {
     default: "Owners Inventory",
     template: "%s | Owners Inventory"
