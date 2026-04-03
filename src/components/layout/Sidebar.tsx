@@ -16,7 +16,7 @@ interface SidebarProps {
 
 interface NavigationItem {
   href: string;
-  svgName: IconName
+  svgName: IconName;
   label: string;
   isActive: boolean;
   hasExternal?: boolean;
@@ -47,43 +47,46 @@ export default function Sidebar({
       label: "Organizations",
       isActive: currentPath === "/organizations",
     },
+    // {
+    //   href: "/payment-cards",
+    //   svgName: "payment-methods",
+    //   label: "Payment Cards",
+    //   isActive: currentPath === "/payment-cards",
+    // },
     {
       href: "https://ownersinventory.com/",
       hasExternal: true,
-      svgName: 'OI',
+      svgName: "OI",
       label: "Inventory",
       isActive: currentPath === "/ownersinventory.com",
     },
     {
       href: "/marketplace",
-      svgName: 'OM',
+      svgName: "OM",
       label: "Marketplace",
       hasTime: true,
       isActive: currentPath === "/marketplace",
     },
     {
       href: "/jungle",
-      svgName: 'OJ',
+      svgName: "OJ",
       label: "Jungle",
       hasTime: true,
       isActive: currentPath === "/jungle",
     },
     {
       href: "/analytics",
-      svgName: 'OA',
+      svgName: "OA",
       label: "Analytics",
       hasTime: true,
-      isActive: currentPath === "/analytics"
-
+      isActive: currentPath === "/analytics",
     },
   ];
 
   const handleItemClick = (item: NavigationItem, e: React.MouseEvent) => {
     e.preventDefault();
     if (item.hasTime) {
-      const iconNode = (
-        <SvgIcon name={item.svgName} className="w-10 h-10" />
-      );
+      const iconNode = <SvgIcon name={item.svgName} className="w-10 h-10" />;
       onShowModal(iconNode);
     } else {
       if (item.hasExternal) {
@@ -103,9 +106,7 @@ export default function Sidebar({
     }
     if (item.hasBadge && !item.isActive) {
       return (
-        <span
-          className="text-sm font-medium px-1.5 py-0.5 bg-primary/10 rounded-full text-primary"
-        >
+        <span className="text-sm font-medium px-1.5 py-0.5 bg-primary/10 rounded-full text-primary">
           TRY
         </span>
       );
@@ -120,10 +121,12 @@ export default function Sidebar({
       {
         "justify-center px-0": collapsed,
         "px-2": !collapsed,
-        "bg-primary text-white hover:bg-primary hover:text-white": item.isActive,
-        "justify-between": !collapsed && (item.hasExternal || item.hasTime || item.hasBadge),
+        "bg-primary text-white hover:bg-primary hover:text-white":
+          item.isActive,
+        "justify-between":
+          !collapsed && (item.hasExternal || item.hasTime || item.hasBadge),
         "gap-2": !collapsed && !item.isActive,
-      }
+      },
     );
 
     return (
@@ -165,7 +168,7 @@ export default function Sidebar({
           : "border-border"
         : isActive
           ? "text-primary bg-primary/10 "
-          : "text-gray-600"
+          : "text-gray-600",
     );
 
     return (
@@ -178,7 +181,12 @@ export default function Sidebar({
           <SvgIcon name="AllProducts" width={20} height={20} />
         ) : (
           <>
-            <span className={cn("p-1", theme.theme === "light" ? "" : "text-invert")}>
+            <span
+              className={cn(
+                "p-1",
+                theme.theme === "light" ? "" : "text-invert",
+              )}
+            >
               View All Products
             </span>
 
@@ -188,7 +196,10 @@ export default function Sidebar({
               viewBox="0 0 20 20"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className={cn("p-1 w-6 h-6", theme.theme === "light" ? "" : "text-invert")}
+              className={cn(
+                "p-1 w-6 h-6",
+                theme.theme === "light" ? "" : "text-invert",
+              )}
             >
               <path
                 d="M5 2L13 9.5L5 17"
@@ -203,7 +214,6 @@ export default function Sidebar({
       </Link>
     );
   };
-
 
   return (
     <>
@@ -221,10 +231,10 @@ export default function Sidebar({
           "border-r bg-bg-secondary flex-shrink-0 transition-all duration-300 ease-in-out fixed lg:relative inset-y-0 left-0 z-50",
           {
             "w-17": collapsed,
-            "w-70": !collapsed,//else use w-64 
+            "w-70": !collapsed, //else use w-64
             "translate-x-0": mobileOpen,
             "-translate-x-full lg:translate-x-0": !mobileOpen,
-          }
+          },
         )}
       >
         {/* Header */}
@@ -232,7 +242,7 @@ export default function Sidebar({
           href="/"
           className={cn(
             "h-14  flex items-center justify-start border-b cursor-pointer",
-            collapsed ? "px-3" : "px-3"
+            collapsed ? "px-3" : "px-3",
           )}
         >
           {collapsed ? (

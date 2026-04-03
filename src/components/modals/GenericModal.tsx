@@ -3,6 +3,7 @@
 import { X } from 'lucide-react';
 import React, { useEffect } from 'react';
 import { Button } from '../ui';
+import { useScrollLock } from '@/hooks/useScrollLock';
 
 type ModalSize = 'sm' | 'md' | 'lg';
 
@@ -33,11 +34,13 @@ function ModalRoot({
   children,
   ariaLabel,
 }: ModalRootProps) {
+  useScrollLock(isOpen);
   useEffect(() => {
     if (!isOpen) return;
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
+
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [isOpen, onClose]);

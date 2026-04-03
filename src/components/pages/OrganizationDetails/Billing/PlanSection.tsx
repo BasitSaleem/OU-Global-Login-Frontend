@@ -1,326 +1,238 @@
-import React from 'react';
+import React from "react";
 import { motion } from "framer-motion";
-import { PricingCard } from "@/components/PricingCard";
-import { Button } from '@/components/ui';
-import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 
-const PlanSection = () => {
-    const pricingPlans = [
-        {
-            title: "Basic",
-            price: "Free",
-            pricePeriod: "",
-            buttonText: "Activated",
-            userCount: "2 seats",
-            features: [
-                "Human Resource",
-                "Single Location",
-                "Single Warehouse",
-                "100 Products",
-                "Advance Point of Sales",
-                "100 Invoices / Month",
-                "50 Purchase Orders / Month",
-                "100 Transfer Orders / Month",
-                "Online Store",
-                "Coupons",
-                "Basic Accounts & Financials"
-            ],
-            borderColor: "#FFCB00",
-            buttonColor: "#1AD1B9",
-            priceColor: "#1AD1B9",
-            badge: {
-                text: "Current Plan",
-                backgroundColor: "#FFCB00",
-                textColor: "#231F20"
-            },
-            isCurrentPlan: true
-        },
-        {
-            title: "Standard",
-            price: "$49",
-            pricePeriod: "/month",
-            buttonText: "Upgrade Now",
-            userCount: "5 users",
-            features: [
-                "5 users",
-                "Human Resource",
-                "02 Locations",
-                "02 Warehouse",
-                "Unlimited Products",
-                "Advance Point of Sales",
-                "700 Invoices / Month",
-                "500 Purchase Orders / Month",
-                "700 Transfer Orders / Month",
-                "Online Store",
-                "Coupons",
-                "Basic Accounts & Financials"
-            ],
-            borderColor: "#E5E7EB",
-            buttonColor: "#38ACCC",
-            priceColor: "#38ACCC"
-        },
-        {
-            title: "Professional",
-            price: "$99",
-            pricePeriod: "/month",
-            buttonText: "Upgrade Now",
-            userCount: "10 users",
-            features: [
-                "10 users",
-                "Human Resource",
-                "04 Locations",
-                "03 Warehouse",
-                "Unlimited Products",
-                "Advance Point of Sales",
-                "3000 Invoices / Month",
-                "1500 Purchase Orders / Month",
-                "3000 Transfer Orders / Month",
-                "Online Store",
-                "Coupons",
-                "Loyality",
-                "Production Orders",
-                "Machines",
-                "Advance Accounts & Financials"
-            ],
-            borderColor: "#5588DF",
-            buttonColor: "#5588DF",
-            priceColor: "#5588DF",
-            background: "linear-gradient(0deg, rgba(85, 136, 223, 0.02) 0%, rgba(85, 136, 223, 0.02) 100%), white",
-            badge: {
-                text: "Most Popular",
-                backgroundColor: "#5588DE"
-            },
-            isPopular: true,
-            onButtonClick: () => console.log('Upgrade to Professional')
-        },
-        {
-            title: "Premium",
-            price: "$199",
-            pricePeriod: "/month",
-            buttonText: "Upgrade Now",
-            userCount: "Unlimited Users",
-            features: [
-                "Unlimited Users",
-                "Human Resource",
-                "06 Locations",
-                "06 Warehouse",
-                "Unlimited Products",
-                "Advance Point of Sales",
-                "4500 Invoices / Month",
-                "5500 Purchase Orders / Month",
-                "2500 Transfer Orders / Month",
-                "Online Store",
-                "Coupons",
-                "Loyalty",
-                "Production Orders",
-                "Machines",
-                "Advance Accounts & Financials"
-            ],
-            borderColor: "#8B5CF6",
-            buttonColor: "#8B5CF6",
-            priceColor: "#8B5CF6",
-            badge: {
-                text: "Best Value",
-                backgroundColor: "#8B5CF6"
-            },
-            onButtonClick: () => console.log('Upgrade to Premium')
-        },
-        // {
-        //     title: "Enterprise",
-        //     price: "$399",
-        //     pricePeriod: "/month",
-        //     buttonText: "Contact Sales",
-        //     userCount: "Unlimited Users",
-        //     features: [
-        //         "Unlimited Users",
-        //         "Human Resource",
-        //         "10 Locations",
-        //         "10 Warehouse",
-        //         "Unlimited Products",
-        //         "Advance Point of Sales",
-        //         "10000 Invoices / Month",
-        //         "10000 Purchase Orders / Month",
-        //         "10000 Transfer Orders / Month",
-        //         "Online Store",
-        //         "Coupons",
-        //         "Loyalty",
-        //         "Production Orders",
-        //         "Machines",
-        //         "Advanced Accounts & Financials",
-        //         "Priority Support",
-        //         "Custom Integrations",
-        //         "Dedicated Account Manager"
-        //     ],
-        //     borderColor: "#10B981",
-        //     buttonColor: "#10B981",
-        //     priceColor: "#10B981",
-        //     badge: {
-        //         text: "Enterprise",
-        //         backgroundColor: "#10B981"
-        //     },
-        //     onButtonClick: () => console.log('Contact for Enterprise')
-        // },
-        {
-            title: "Starter",
-            price: "$19",
-            pricePeriod: "/month",
-            buttonText: "Get Started",
-            userCount: "1 user",
-            features: [
-                "1 user",
-                "Single Location",
-                "Single Warehouse",
-                "50 Products",
-                "Basic Point of Sales",
-                "50 Invoices / Month",
-                "25 Purchase Orders / Month",
-                "50 Transfer Orders / Month",
-                "Basic Accounts"
-            ],
-            borderColor: "#6B7280",
-            buttonColor: "#6B7280",
-            priceColor: "#6B7280",
-            onButtonClick: () => console.log('Get Starter Plan')
-        }
-    ];
-    const [currentIndex, setCurrentIndex] = React.useState(0);
-    const CARD_WIDTH = 320;
-    const GAP = 16;
-    const TOTAL_MOVE = CARD_WIDTH + GAP;
-    const VISIBLE_CARDS = 4;
+import { Button } from "@/components/ui";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
+import TrialBanner from "@/components/TrialBanner";
+import { useGetAllPlans } from "@/apiHooks.ts/plans/plans.api";
+import PricingSkeleton from "@/components/PricingSkeleton";
+import ErrorMessage from "@/components/ErrorMessage";
+import PlanCard from "@/components/PlanCard";
+import { SUBSCRIPTION_STATUS_COLOR } from "@/utils/ColorClasses";
+import CancelSubscriptionModal from "@/components/modals/CancelSubscriptionModal";
+import { Skeleton } from "@/components/ui/skeleton";
+const PlanSection = ({ organization, loading }: { organization?: OgOrganization, loading: boolean }) => {
+  const { data, isLoading, error } = useGetAllPlans();
+  const [cancelSubscriptionModal, setCancelSubscriptionModal] = React.useState(false);
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const CARD_WIDTH = 320;
+  const GAP = 16;
+  const TOTAL_MOVE = CARD_WIDTH + GAP;
+  const [maxIndex, setMaxIndex] = React.useState(0);
+  const containerRef = React.useRef<HTMLDivElement>(null);
 
-    // Dynamic calculation for max index
-    const [maxIndex, setMaxIndex] = React.useState(0);
-    const containerRef = React.useRef<HTMLDivElement>(null);
+  const planCount = data?.plans?.length ?? 0;
 
-    React.useEffect(() => {
-        const updateMaxIndex = () => {
-            if (containerRef.current) {
-                const containerWidth = containerRef.current.offsetWidth;
-                const cardsVisible = Math.floor(containerWidth / TOTAL_MOVE);
-                // Ensure at least one card is considered "visible" for calculation logic
-                const safeVisible = Math.max(1, cardsVisible);
-                // Calculate how many steps we can scroll
-                // If cardsVisible >= pricingPlans.length, maxIndex should be 0 (no scroll needed)
-                // Otherwise, it's length - safeVisible (to align the last card to the end? 
-                // Actually, aligning last card to left edge often implies we can scroll until index = length - 1. 
-                // But the user wants NO extra space. 
-                // If we want the last card to settle at the end of the view? 
-                // Current implementation scrolls by TOTAL_MOVE. 
-                // Let's stick to the behavior: allowed index = length - visible_fully - fraction?
-                // Simplest approach satisfying "no extra margin":
-                // maxIndex = pricingPlans.length - (containerWidth / TOTAL_MOVE). 
-                // Since we rely on integer indices for `currentIndex`:
+  const sortedPlans = React.useMemo(() => {
+    if (!data?.plans) return [];
 
-                // Let's rely on the previous "visible cards" logic but make it dynamic.
-                const CalculatedMaxIndex = Math.max(0, pricingPlans.length - Math.floor(containerWidth / TOTAL_MOVE));
-                setMaxIndex(CalculatedMaxIndex);
-            }
-        };
+    const typeOrder = ["RETAIL", "MANUFACTURING", "ECOMMERCE", "HYBRID"];
+    const packageOrder = ["BASIC", "PRO", "PREMIUM"];
 
-        updateMaxIndex();
-        window.addEventListener('resize', updateMaxIndex);
-        return () => window.removeEventListener('resize', updateMaxIndex);
-    }, [pricingPlans.length, TOTAL_MOVE]);
+    return [...data.plans].sort((a, b) => {
+      const typeDiff = typeOrder.indexOf(a.type) - typeOrder.indexOf(b.type);
+      if (typeDiff !== 0) return typeDiff;
+      const aName = a.package_name.toUpperCase();
+      const bName = b.package_name.toUpperCase();
 
+      const aLevel = packageOrder.findIndex((p) => aName.includes(p));
+      const bLevel = packageOrder.findIndex((p) => bName.includes(p));
 
-    // Calculate maxOffset based on dynamic maxIndex
-    // If we scroll to maxIndex, the offset is -maxIndex * TOTAL_MOVE.
-    // This aligns the card at `maxIndex` to the left.
-    // If `maxIndex` is correct, the remaining cards + this one should fill the screen or end exactly at the right.
-    const maxOffset = -(maxIndex * TOTAL_MOVE);
+      return aLevel - bLevel;
+    });
+  }, [data?.plans]);
 
-    const handleNext = () => {
-        if (currentIndex < maxIndex) {
-            setCurrentIndex(prev => prev + 1);
-        }
+  React.useEffect(() => {
+    const updateMaxIndex = () => {
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth;
+        const cardsVisible = Math.floor(containerWidth / TOTAL_MOVE);
+        const CalculatedMaxIndex = Math.max(0, planCount - cardsVisible);
+        setMaxIndex(CalculatedMaxIndex);
+      }
     };
 
-    const handlePrev = () => {
-        if (currentIndex > 0) {
-            setCurrentIndex(prev => prev - 1);
-        }
-    };
+    updateMaxIndex();
+    window.addEventListener("resize", updateMaxIndex);
+    return () => window.removeEventListener("resize", updateMaxIndex);
+  }, [planCount, TOTAL_MOVE]);
 
-    return (
-        <div className="text-center md:text-left">
-            <h1 className="text-heading-1 font-bold mb-1 pt-8 pb-4">
-                Your plan
-            </h1>
-            <p className="text-body-small">
-                Your Organization is currently on the Basic Plan.
-            </p>
+  const maxOffset = -(maxIndex * TOTAL_MOVE);
 
-            <div className="mt-9 relative group w-full grid grid-cols-1" ref={containerRef}>
-                <Button
-                    variant='basic'
-                    onClick={handlePrev}
-                    // disabled={currentIndex === 0}
-                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0 -ml-4 cursor-pointer disabled:cursor-not-allowed bg-primary/40 rounded-full py-8 "
-                > <ChevronLeft size={40} color="white" />
-                </Button>
+  const handleNext = () => {
+    if (currentIndex < maxIndex) {
+      setCurrentIndex((prev) => prev + 1);
+    }
+  };
 
-                <Button
-                    variant='basic'
-                    onClick={handleNext}
-                    disabled={currentIndex >= maxIndex}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0 -mr-4 cursor-pointer disabled:cursor-not-allowed bg-primary/40 rounded-full py-8 "
-                > <ChevronRight size={40} color="white" />
-                </Button>
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+    }
+  };
+  const cancelSubscription = () => {
+    setCancelSubscriptionModal(true);
+  }
 
-                <div className="overflow-hidden w-full  py-4 -my-4">
-                    <motion.div
-                        className="flex gap-4 touch-pan-y cursor-grab active:cursor-grabbing"
-                        style={{ touchAction: "pan-y", overscrollBehaviorX: "none" }}
-                        animate={{ x: -currentIndex * TOTAL_MOVE }}
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                        drag="x"
-                        dragElastic={0.1}
-                        // If all cards fit, maxOffset is 0, so no drag possible to the left
-                        dragConstraints={{ right: 0, left: maxOffset }}
-                        onDragEnd={(e, { offset }) => {
-                            const swipe = offset.x;
+  return (
+    <div className="text-center md:text-left">
+      <div className="flex justify-between items-center gap-2 ">
+        <div className="flex gap-2 ">
+          <h1 className="text-text font-bold">
+            {loading ? <Skeleton width={180} height={20} className="mt-1" /> : <>Your are on<span className="pl-1.5 text-primary font-semibold">
+              {organization?.subscriptions?.[0]?.oiPackage?.package_name}
+            </span>{" "}
+              plan</>}
 
-                            if (swipe < -50 && currentIndex < maxIndex) {
-                                setCurrentIndex(prev => prev + 1);
-                            } else if (swipe > 50 && currentIndex > 0) {
-                                setCurrentIndex(prev => prev - 1);
-                            }
-                        }}
-                    >
-                        {pricingPlans.map((plan, index) => (
-                            <motion.div
-                                key={index}
-                                className="flex-shrink-0 w-80"
-                            // animate={{
-                            //     scale: index === currentIndex ? 1 : 0.95,
-                            //     opacity: index === currentIndex ? 1 : 0.7
-                            // }}
-                            // transition={{ duration: 0.3 }}
-                            >
-                                <PricingCard
-                                    title={plan.title}
-                                    price={plan.price}
-                                    pricePeriod={plan.pricePeriod}
-                                    buttonText={plan.buttonText}
-                                    userCount={plan.userCount}
-                                    features={plan.features}
-                                    borderColor={plan.borderColor}
-                                    buttonColor={plan.buttonColor}
-                                    priceColor={plan.priceColor}
-                                    background={plan.background}
-                                    badge={plan.badge}
-                                    isCurrentPlan={plan.isCurrentPlan}
-                                    isPopular={plan.isPopular}
-                                    onButtonClick={plan.onButtonClick}
-                                />
-                            </motion.div>
-                        ))}
-                    </motion.div>
-                </div>
-            </div>
+          </h1>
+          {loading ? <Skeleton width={50} height={25} circle /> : (
+            <span
+              className={`px-1.5 py-1 rounded-full text-xs text-text font-semibold capitalize ${SUBSCRIPTION_STATUS_COLOR[
+                organization?.subscriptions?.[0]?.status ?? ""
+              ]
+                }`}
+            >
+              {organization?.subscriptions?.[0]?.status ?? "No Subscription"}
+            </span>
+          )}
         </div>
-    );
+        {organization?.subscriptions?.[0]?.status !== "TRIAL" &&
+          organization?.subscriptions?.[0]?.status !== "CANCELLED" && (
+            loading ? (
+              <Skeleton width={200} height={35} circle />
+            ) : (
+              <Button variant="destructive"
+                className="rounded-full"
+                onClick={cancelSubscription}
+              >
+                Cancel Subscription
+              </Button>
+            )
+          )}
+      </div>
+      {/* {loading ? <Skeleton width={200} height={10} className="mt-1" /> : (
+        <p className="text-body-small mt-2">
+          {organization?.subscriptions?.[0]?.status === "CANCELLED" ? (
+            "Your subscription has been cancelled."
+          ) : (
+            organization?.subscriptions?.[0]?.oiPackage?.package_name ? (
+              <>
+                Your Organization is currently on the{" "}
+                <span className="text-primary font-semibold">
+                  {organization?.subscriptions?.[0]?.oiPackage?.package_name}
+                </span>{" "}
+                Plan.
+              </>
+            ) : (
+              "No subscription plan found."
+            )
+          )}
+        </p>
+      )} */}
+      {loading ? (
+        <div className="w-full mt-4 bg-primary/10 border-primary/10 border rounded-3xl px-6 mb-6 flex items-center justify-between">
+          <div className="flex flex-col py-4 gap-2 md:py-5 md:mt-10">
+            <Skeleton width={450} height={10} />
+            <Skeleton width={400} height={10} />
+            <div className="flex gap-2 md:my-6">
+              <Skeleton width={100} height={32} />
+              <Skeleton width={100} height={32} />
+            </div>
+          </div>
+          <div className="flex flex-col py-4 gap-2 md:py-6">
+            <Skeleton width={250} height={10} />
+            <Skeleton width={200} height={10} />
+            <Skeleton width={260} height={10} />
+            <Skeleton width={230} height={10} />
+          </div>
+        </div>
+      ) : (
+        <TrialBanner
+          subscription={organization?.subscriptions?.[0]}
+          orgId={organization?.id!}
+        />
+      )}
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 w-full mt-8">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <PricingSkeleton key={i} />
+          ))}
+        </div>
+      ) : (
+        <div
+          className="mt-9 relative group w-full grid grid-cols-1"
+          ref={containerRef}
+        >
+          <Button
+            variant="basic"
+            onClick={handlePrev}
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0 -ml-4 cursor-pointer disabled:cursor-not-allowed bg-primary/40 rounded-full py-8 "
+          >
+            {" "}
+            <ChevronLeft size={40} color="white" />
+          </Button>
+
+          <Button
+            variant="basic"
+            onClick={handleNext}
+            disabled={currentIndex >= maxIndex}
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0 -mr-4 cursor-pointer disabled:cursor-not-allowed bg-primary/40 rounded-full py-8 "
+          >
+            {" "}
+            <ChevronRight size={40} color="white" />
+          </Button>
+          <div className="overflow-hidden w-full  py-4 -my-4">
+            {error && <ErrorMessage message={error.message} />}
+            {!isLoading && data && (
+              <motion.div
+                className="flex gap-4 touch-pan-y cursor-grab active:cursor-grabbing"
+                style={{ touchAction: "pan-y", overscrollBehaviorX: "none" }}
+                animate={{ x: -currentIndex * TOTAL_MOVE }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                drag="x"
+                dragElastic={0.1}
+                dragConstraints={{ right: 0, left: maxOffset }}
+                onDragEnd={(e, { offset }) => {
+                  const swipe = offset.x;
+
+                  if (swipe < -50 && currentIndex < maxIndex) {
+                    setCurrentIndex((prev) => prev + 1);
+                  } else if (swipe > 50 && currentIndex > 0) {
+                    setCurrentIndex((prev) => prev - 1);
+                  }
+                }}
+              > <>
+
+                  {sortedPlans?.map((plan) => (
+                    <motion.div key={plan.id} className="flex-shrink-0 w-80">
+                      <PlanCard
+                        key={plan.id}
+                        plan={plan}
+                        isCurrentPlan={
+                          plan.id === organization?.subscriptions?.[0]?.oiPackage?.id
+                        }
+                        subscriptionStatus={organization?.subscriptions?.[0]?.status}
+                        subscriptionId={organization?.subscriptions?.[0]?.id}
+                      />
+                    </motion.div>
+                  ))}
+
+                </>
+
+              </motion.div>
+            )}
+          </div>
+        </div>
+      )}
+      <CancelSubscriptionModal
+        isOpen={cancelSubscriptionModal}
+        onClose={() => setCancelSubscriptionModal(false)}
+        subscriptionId={organization?.subscriptions?.[0]?.id as string}
+        orgId={organization?.id as string}
+      />
+    </div >
+  );
 };
 
 export default PlanSection;

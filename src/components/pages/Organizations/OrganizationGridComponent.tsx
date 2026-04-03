@@ -7,7 +7,7 @@ import { Button } from "@/components/ui";
 import { useRouter } from "next/navigation";
 import { organizationName } from "@/utils/organizationName";
 import OILink from "./OrganizationMemberLink";
-
+import { SUBSCRIPTION_STATUS_COLOR } from "@/utils/ColorClasses";
 
 interface OrganizationGridComponentProps {
   id: string;
@@ -27,17 +27,14 @@ export function OrganizationGridComponent({
   handleDeleteClick,
 }: OrganizationGridComponentProps) {
   const [isUpdate, setIsUpdate] = useState<boolean>(
-    org?.favorites?.some((fUser) => fUser.userId === user?.id) ?? false
+    org?.favorites?.some((fUser) => fUser.userId === user?.id) ?? false,
   );
   const bgColor = useMemo(() => getColorFromId(org.id), [org.id]);
   const router = useRouter();
   const onClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    router.push(`/organization-details/${org.id}`);
+    router.push(`/organization-details/${org.id}/billing`);
   };
-  const data = org.permissionNames?.includes("og:delete::organization")
-    ? "og:delete::organization"
-    : undefined;
 
   return (
     <div key={id} className="flex flex-col h-[100px]"
@@ -54,9 +51,20 @@ export function OrganizationGridComponent({
           <h3 className="truncate text-body-medium-bold text-black leading-tight pt-1">
             {org?.name}
           </h3>
-          <p className="text-body-tiny text-gray-500 truncate">
-            {org?.packageName || org?.products?.[0]?.plan || "Basic"}
-          </p>
+          <div className="flex items-center gap-2 overflow-hidden">
+            <p className="text-body-tiny text-gray-500 truncate">
+              {org?.subscriptions?.[0]?.oiPackage?.package_name || "Basic"}
+            </p>
+            {org?.subscriptions?.[0]?.status && (
+              <span
+                className={`px-1.5 py-0.5 text-[9px] font-bold rounded-full uppercase whitespace-nowrap ${SUBSCRIPTION_STATUS_COLOR[org.subscriptions[0].status] ||
+                  "bg-gray-100 text-gray-700"
+                  }`}
+              >
+                {org.subscriptions[0].status}
+              </span>
+            )}
+          </div>
         </div>
 
         <div className="flex-shrink-0 flex ">
@@ -85,8 +93,8 @@ export function OrganizationGridComponent({
               strokeWidth="1.5"
               xmlns="http://www.w3.org/2000/svg"
               className={`transition-all duration-200 ${isPending
-                ? "opacity-50 scale-95"
-                : "opacity-100 scale-100 group-hover:scale-105"
+                  ? "opacity-50 scale-95"
+                  : "opacity-100 scale-100 group-hover:scale-105"
                 }`}
             >
               <path d="M9.04907 2.92705C9.34843 2.00574 10.6518 2.00574 10.9511 2.92705L12.0207 6.21885C12.1546 6.63087 12.5386 6.90983 12.9718 6.90983H16.433C17.4017 6.90983 17.8045 8.14945 17.0208 8.71885L14.2206 10.7533C13.8701 11.0079 13.7235 11.4593 13.8573 11.8713L14.9269 15.1631C15.2263 16.0844 14.1718 16.8506 13.3881 16.2812L10.5879 14.2467C10.2374 13.9921 9.76279 13.9921 9.4123 14.2467L6.61213 16.2812C5.82842 16.8506 4.77394 16.0844 5.07329 15.1631L6.14286 11.8713C6.27673 11.4593 6.13007 11.0079 5.77958 10.7533L2.97941 8.71885C2.19569 8.14945 2.59847 6.90983 3.56719 6.90983H7.02839C7.46161 6.90983 7.84557 6.63087 7.97944 6.21885L9.04907 2.92705Z" />
@@ -114,7 +122,7 @@ export function OrganizationGridComponent({
             {org?._count?.memberships ? org?._count.memberships : "0"} member
             {org?._count?.memberships.length > 1 ? "" : "s"}
           </span>
-          <OILink id={id} org={org} />
+          <OILink org={org} subscription={org?.subscriptions?.[0]} />
         </div>
       </div>
     </div>

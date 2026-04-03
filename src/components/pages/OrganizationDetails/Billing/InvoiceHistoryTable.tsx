@@ -1,54 +1,113 @@
-import React from 'react';
-import { Download } from "lucide-react";
+"use client";
 
-const InvoiceHistoryTable = () => {
-    const invoices = [
-        { date: "01/12/2024", invoice: "Invoice #001 - Dec 2024", amount: "$10.00" },
-        { date: "01/11/2024", invoice: "Invoice #002 - Nov 2024", amount: "$10.00" },
-    ];
+import React, { useState } from "react";
 
-    return (
-        <div className="overflow-x-auto border rounded-lg mt-6">
-            <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-[#8B5CF6]">
-                    <tr>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Date
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Invoice
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Amount
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                            Action
-                        </th>
-                    </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                    {invoices.map((inv, index) => (
-                        <tr key={index}>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {inv.date}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 underline cursor-pointer">
-                                {inv.invoice}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {inv.amount}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-center">
-                                <button className="text-gray-500 hover:text-gray-700">
-                                    <Download size={16} />
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    );
+import OrgInvoiceItem from "./OrgInvoiceItem";
+import { useGetOrgInvoices } from "@/apiHooks.ts/invoice/inovice.api";
+import InvoiceHistorySkeleton from "./InvoiceHistorySkeleton";
+
+import InvoiceDetailModal from "./InvoiceDetailModal";
+import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
+import { Organization } from "@/apiHooks.ts/organization/organization.types";
+
+const InvoiceHistoryTable = ({ org }: { org: Partial<Organization> }) => {
+  const { data, isLoading } = useGetOrgInvoices(org.id);
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleViewInvoice = (invoice: Invoice) => {
+    setSelectedInvoice(invoice);
+    setIsModalOpen(true);
+  };
+
+  if (isLoading) {
+    return <InvoiceHistorySkeleton />;
+  }
+
+  const invoices = data?.invoices || [];
+
+  return (
+    <>
+      <div className="overflow-x-auto border rounded-lg mt-6">
+        <table className="min-w-full divide-y divide-border">
+          <thead className="bg-[#8B5CF6]">
+            <tr>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
+              >
+                Date
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
+              >
+                Invoice
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
+              >
+                Subtotal
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
+              >
+                Tax
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
+              >
+                Amount
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
+              >
+                Status
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider"
+              >
+                Action
+              </th>
+            </tr>
+          </thead>
+          <tbody className=" divide-y divide-border">
+            {invoices.length > 0 ? (
+              invoices.map((inv, index) => (
+                <OrgInvoiceItem
+                  key={inv.id || index}
+                  invoice={inv}
+                  onView={handleViewInvoice}
+                  orgName={org.name || ""}
+                />
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={7}
+                  className="px-6 py-10 text-center text-sm text-gray-500"
+                >
+                  No Invoices Found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <InvoiceDetailModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        invoice={selectedInvoice}
+        orgName={org.name!}
+      />
+    </>
+  );
 };
 
 export default InvoiceHistoryTable;

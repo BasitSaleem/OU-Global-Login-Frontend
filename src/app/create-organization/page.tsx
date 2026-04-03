@@ -10,7 +10,7 @@ import {
 } from "@/apiHooks.ts/organization/organization.types";
 import { PRODUCTS, ROUTES } from "@/constants";
 import { useDebounce } from "@/hooks/useDebounce";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { toast } from "@/hooks/useToast";
 import ProgressModal from "@/components/ui/ProgressModal";
@@ -20,15 +20,42 @@ import { SubdomainSuggestion } from "@/components/SubdomainSuggestion";
 import { AvailabilityStatus } from "@/components/AvailabilityStatus";
 import { CreateOrganizationGuard } from "@/components/HOCs/createOrgRoute.guard";
 import { SvgIcon } from "@/components/ui/SvgIcon";
+// import OgPlanSelector from "@/components/pages/Organizations/OgPlanSelector";
 
 export default function CreateOrgPage() {
+  const searchParams = useSearchParams();
+  const queryPkgId = searchParams.get("pkgId");
+
+  // Resolve pkgId: prefer query params, fall back to localStorage
+  const pkgId =
+    queryPkgId ||
+    (typeof window !== "undefined" ? localStorage.getItem("pkgId") : null);
+
+  // Store pkgId in localStorage so it survives the auth redirect
+  useEffect(() => {
+    if (queryPkgId) {
+      localStorage.setItem("pkgId", queryPkgId);
+    }
+  }, [queryPkgId]);
+
+  return (
+    <AuthGuard>
+      <CreateOrgContent initialPkgId={pkgId} />
+    </AuthGuard>
+  );
+}
+
+function CreateOrgContent({ initialPkgId }: { initialPkgId: string | null }) {
   const [companyName, setCompanyName] = useState("");
+  // const [selectedPlan, setSelectedPlan] = useState<string | null>(initialPkgId);
   const [subDomain, setSubDomain] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("OI");
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [organizationData, setOrganizationData] =
     useState<CreateOrganizationResponse | null>(null);
   const [isSuggestionSubdomain, setIsSuggestionSubdomain] = useState(false);
+
+  console.log("initialPkgId", initialPkgId);
 
   const debouncedCompanyName = useDebounce(companyName.trim(), 1500);
   const debouncedSubDomain = useDebounce(subDomain.trim(), 1500);
@@ -52,13 +79,10 @@ export default function CreateOrgPage() {
   const shouldCheckAvailability =
     selectedProduct === "OI" && debouncedSubDomain && !isSuggestionSubdomain;
 
-  const {
-    data: isSubAvailable,
-    isFetching: checkingSub,
-    isError: subError,
-  } = useCheckSubDomainAvailability(
-    shouldCheckAvailability ? debouncedSubDomain : "",
-  );
+  const { data: isSubAvailable, isFetching: checkingSub } =
+    useCheckSubDomainAvailability(
+      shouldCheckAvailability ? debouncedSubDomain : "",
+    );
 
   const finalIsSubAvailable = isSuggestionSubdomain ? true : isSubAvailable;
 
@@ -96,6 +120,7 @@ export default function CreateOrgPage() {
       name: trimmedName,
       subDomainName: trimmedSubDomain,
       product: [selectedProduct],
+      packageId: initialPkgId,
     };
 
     createOrgMutation(payload, {
@@ -108,6 +133,7 @@ export default function CreateOrgPage() {
           },
         });
         setShowProgressModal(true);
+        localStorage.removeItem("pkgId");
       },
       onError: (error: any) => {
         const message =
@@ -135,7 +161,7 @@ export default function CreateOrgPage() {
   };
 
   return (
-    <AuthGuard>
+    <>
       {creatingOrg && <Loader text="Initializing organization creation" />}
       <CreateOrganizationGuard>
         <div className="min-h-screen w-full flex items-center justify-center bg-background p-4 sm:p-8">
@@ -168,8 +194,8 @@ export default function CreateOrgPage() {
                     disabled={product.isDisabled}
                     onClick={() => setSelectedProduct(product.name)}
                     className={`flex items-center gap-2 border rounded-lg px-3 py-3 text-base font-medium transition ${selectedProduct === product.name
-                        ? "border-primary bg-bg-secondary hover:text-text hover:bg-primary/70 text-primary"
-                        : "border text-text"
+                      ? "border-primary bg-bg-secondary hover:text-text hover:bg-primary/70 text-primary"
+                      : "border text-text"
                       } ${product.isDisabled
                         ? "cursor-not-allowed opacity-50 "
                         : "cursor-pointer"
@@ -219,6 +245,13 @@ export default function CreateOrgPage() {
                   value={subDomain}
                 />
               )}
+
+              {/* <div className="mt-2">
+                <OgPlanSelector
+                  selectedPlane={selectedPlan}
+                  setSelectedPlan={setSelectedPlan}
+                />
+              </div> */}
             </div>
 
             {/* Actions */}
@@ -246,7 +279,7 @@ export default function CreateOrgPage() {
                     <LoadingSpinner size={4} className="border-white" />
                     <span>
                       Creating
-                      <Dots dotSize="3px" className="text-white gap-1 mt-1" />
+                      <Dots dotSize="3px" className="text-white mt-1" />
                     </span>
                   </div>
                 ) : (
@@ -265,6 +298,6 @@ export default function CreateOrgPage() {
         onGoHome={handleGoHome}
         isFromMain={true}
       />
-    </AuthGuard>
+    </>
   );
 }

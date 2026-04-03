@@ -29,15 +29,47 @@ export const request = async <T = any>(
   method: RequestMethod,
   headers?: Record<string, string>,
   data?: any,
-  isFormData?: boolean
+  isFormData?: boolean,
 ): Promise<T> => {
-  const raw = data?.client_id ? new URL(`${BASE_URL}${url}`) : `${BASE_URL}${url}`;
+  const raw = data?.client_id
+    ? new URL(`${BASE_URL}${url}`)
+    : `${BASE_URL}${url}`;
 
   let params = {};
   if (data?.client_id) {
-    const { client_id, redirect_uri, scope, state, nonce, code_challenge, code_challenge_method, response_type, subdomain } = data;
-    if (!client_id || !redirect_uri || !scope || !state || !nonce || !code_challenge || !code_challenge_method || !response_type || !subdomain) {
-      params = { client_id, redirect_uri, scope, state, nonce, code_challenge, code_challenge_method, response_type, subdomain };
+    const {
+      client_id,
+      redirect_uri,
+      scope,
+      state,
+      nonce,
+      code_challenge,
+      code_challenge_method,
+      response_type,
+      subdomain,
+    } = data;
+    if (
+      !client_id ||
+      !redirect_uri ||
+      !scope ||
+      !state ||
+      !nonce ||
+      !code_challenge ||
+      !code_challenge_method ||
+      !response_type ||
+      !subdomain
+    ) {
+      params = {
+        client_id,
+        redirect_uri,
+        scope,
+        state,
+        nonce,
+        code_challenge,
+        code_challenge_method,
+        response_type,
+        subdomain,
+      };
     }
   }
   const fetchOptions: any = {

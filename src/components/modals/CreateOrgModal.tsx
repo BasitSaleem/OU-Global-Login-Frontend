@@ -13,6 +13,8 @@ import { CreateOrganizationData } from "@/apiHooks.ts/organization/organization.
 import { SubdomainSuggestion } from "../SubdomainSuggestion";
 import { AvailabilityStatus } from "../AvailabilityStatus";
 import { SvgIcon } from "../ui/SvgIcon";
+import OgPlanSelector from "../pages/Organizations/OgPlanSelector";
+
 interface CreateOrgModalProps {
   isOpen: boolean;
   isLoading: boolean;
@@ -27,6 +29,7 @@ export default function CreateOrgModal({
   onSubmit,
 }: CreateOrgModalProps) {
   const [companyName, setCompanyName] = useState("");
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [subDomain, setSubDomain] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("OI");
   const [isSuggestionSubdomain, setIsSuggestionSubdomain] = useState(false);
@@ -88,6 +91,7 @@ export default function CreateOrgModal({
       name: trimmedName,
       subDomainName: trimmedSubDomain,
       product: [selectedProduct],
+      packageId: selectedPlan,
     };
 
     onSubmit(payload);
@@ -110,11 +114,10 @@ export default function CreateOrgModal({
       ariaLabel="Create organization"
     >
       {isLoading && <Loader text="Initializing organization creation" />}
-
       <Modal.Title className="mb-2 text-heading-2">
         Create an Organization
       </Modal.Title>
-      <Modal.Body>
+      <Modal.Body className="pb-10">
         <div className="mb-4">
           <Input
             label="Company Name"
@@ -136,8 +139,8 @@ export default function CreateOrgModal({
               onClick={() => setSelectedProduct(product.name)}
               disabled={product.isDisabled}
               className={`flex items-center gap-2 border justify-start rounded-lg px-3 py-3 text-base font-medium transition mb-1 ${selectedProduct === product.name
-                  ? "border-primary bg-bg-secondary text-primary"
-                  : "border text-text bg-bg-secondary hover:bg-primary/10"
+                ? "border-primary bg-bg-secondary text-primary"
+                : "border text-text bg-bg-secondary hover:bg-primary/10"
                 } ${product.isDisabled
                   ? "cursor-not-allowed opacity-50  bg-primary/10"
                   : "cursor-pointer"
@@ -181,8 +184,12 @@ export default function CreateOrgModal({
             )}
           </div>
         )}
-      </Modal.Body>
 
+        <OgPlanSelector
+          selectedPlane={selectedPlan}
+          setSelectedPlan={setSelectedPlan}
+        />
+      </Modal.Body>
       <Modal.Footer>
         <Button onClick={onClose} variant="secondary" disabled={isLoading}>
           Cancel
@@ -191,13 +198,13 @@ export default function CreateOrgModal({
           onClick={handleSubmit}
           variant="primary"
           isLoading={isLoading}
-          disabled={isLoading || !canSubmit()}
+          disabled={isLoading || !canSubmit() || !selectedPlan}
         >
           {" "}
           {isLoading ? (
             <span>
               {" "}
-              Creating <Dots dotSize="3px" className="text-white gap-1 mt-1" />
+              Creating <Dots dotSize="3px" className="text-white  mt-1" />
             </span>
           ) : (
             "Continue"

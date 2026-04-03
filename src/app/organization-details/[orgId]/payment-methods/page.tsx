@@ -22,7 +22,7 @@ const PaymentMethodsPage = () => {
             last4: '4343',
             expiry: '12/26',
             isPrimary: true,
-            cardHolderName: 'John Doe'
+            cardHolderName: 'Holder Name'
         },
         {
             id: '2',
@@ -30,7 +30,7 @@ const PaymentMethodsPage = () => {
             last4: '4343',
             expiry: '12/26',
             isPrimary: false,
-            cardHolderName: 'John Doe'
+            cardHolderName: 'Holder Name'
         }
     ]);
 
@@ -106,7 +106,7 @@ const PaymentMethodsPage = () => {
                         last4={method.last4}
                         expiry={method.expiry}
                         isPrimary={method.isPrimary}
-                        onEdit={() => handleEditClick(method)}
+                        // onEdit={() => handleEditClick(method)}
                         onDelete={() => setIsDeleteModalOpen(true)}
                         onMakePrimary={() => handleMakePrimary(method.id)}
                     />

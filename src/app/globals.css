@@ -1,66 +1,67 @@
 @import "tailwindcss";
 
 /* Import Inter font with all required weights */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
 
 /* Define your color palette in CSS variables */
 :root {
   /* Light theme colors */
-  --color-primary-50: #F5F3FF;
-  --color-card-secondary: #FFF;
+  --color-primary-50: #f5f3ff;
+  --color-card-secondary: #fff;
   --gradient-primary-start: #faf5ff;
   --gradient-primary-end: #fdf2f8;
-  --color-primary-100: #EDE9FE;
+  --color-primary-100: #ede9fe;
 
-  --color-primary-200: #DDD6FE;
-  --color-primary-300: #C4B5FD;
-  --color-primary-400: #A78BFA;
+  --color-primary-200: #ddd6fe;
+  --color-primary-300: #c4b5fd;
+  --color-primary-400: #a78bfa;
   --color-primary-500: #985cff;
-  --color-primary-600: #7C3AED;
-  --color-primary-700: #6D28D9;
-  --color-primary-800: #5B21B6;
-  --color-primary-900: #4C1D95;
+  --color-primary-600: #7c3aed;
+  --color-primary-700: #6d28d9;
+  --color-primary-800: #5b21b6;
+  --color-primary-900: #4c1d95;
   --color-primary: #795cf5;
-  --color-bg-secondary: #FFF;
-  --color-skeleton: #D1D5DB;
+  --color-bg-secondary: #fff;
+  --color-skeleton: #d1d5db;
   --color-black: #131313;
-  --color-text: #6B7280;
-  --color-red: #E53935;
+  --color-text: #6b7280;
+  --color-red: #e53935;
   --color-text-btn: #ffffff;
   /* --color-hover: #795CF5; */
   /* Gray scale */
   /* Gray scale */
-  --color-gray: #1F2937;
-  --color-gray-50: #F9FAFB;
-  --color-gray-100: #F3F4F6;
-  --color-gray-200: #E5E7EB;
-  --color-gray-300: #D1D5DB;
-  --color-gray-400: #9CA3AF;
-  --color-gray-500: #6B7280;
-  --color-gray-600: #4B5563;
-  --color-gray-800: #1F2937;
+  --color-gray: #1f2937;
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-800: #1f2937;
   --color-gray-900: #111827;
   --color-input-bg: #ffffff;
   /* Base colors */
-  --color-white: #FFFFFF;
+  --color-white: #ffffff;
   /* Background and text */
   --color-background: var(--color-white);
   --color-foreground: var(--color-black);
-  --color-border: #E5E7EB;
+  --color-border: #e5e7eb;
   --color-bg-secondary: #ffffff;
-  --color-icon: #4B5563;
+  --color-icon: #4b5563;
   --color-invert: #131313;
   --color-google-button: #ffff;
+  --color-gray: #bfc6c4;
 }
 
 /* Dark theme colors */
 .dark {
   --color-background: #111827;
   --color-foreground: var(--color-white);
-  --color-border: #4B5563;
-  --color-bg-secondary: #1F2937;
-  --color-card-secondary: #4B5563;
-  --color-primary-100: #EDE9FE;
+  --color-border: #4b5563;
+  --color-bg-secondary: #1f2937;
+  --color-card-secondary: #4b5563;
+  --color-primary-100: #ede9fe;
   --color-primary-500: #985cff;
   --color-primary: #985cff;
   --gradient-primary-start: #9333EA;
@@ -72,8 +73,9 @@
   --color-text: #ffffff;
   --color-invert: #ffffff;
   --color-text-btn: #ffffff;
-  --color-red: #E53935;
+  --color-red: #e53935;
   --color-icon: #ffffff;
+  --color-gray: #1f2937;
   /* --color-hover: #795CF5; */
 }
 
@@ -104,10 +106,10 @@
 }
 
 @utility bg-card {
-  background: linear-gradient(90deg, var(--gradient-primary-start), var(--gradient-primary-end));
+  background: linear-gradient(90deg,
+      var(--gradient-primary-start),
+      var(--gradient-primary-end));
 }
-
-
 
 /* Register colors with Tailwind 4 */
 @theme {
@@ -125,6 +127,7 @@
   --color-text: var(--color-text);
   --color-btn-text: var(--color-text-btn);
   --color-icon: var(--color-icon);
+  --color-gray: var(--color-gray);
   /* --color-hover: var(--color-primary-900); */
   --color-google-button: var(--color-google-button);
   --color-card-secondary: var(--color-card-secondary);
@@ -144,7 +147,6 @@
   --color-invert: var(--color-invert);
   --color-red: var(--color-red);
 
-
   /* Gray colors */
   /* Gray colors */
   --color-gray-50: var(--color-gray-50);
@@ -157,8 +159,6 @@
   --color-gray-700: var(--color-gray-700);
   --color-gray-800: var(--color-gray-800);
   --color-gray-900: var(--color-gray-900);
-
-
 }
 
 /* Autofill styles layer - higher specificity */
@@ -177,11 +177,14 @@
 
   /* gradient for home card  bg  */
 
-
   /* Focus state for autofilled inputs - preserve focus ring */
   input:-webkit-autofill:focus {
-    -webkit-box-shadow: 0 0 0px 1000px var(--color-gray-100) inset, 0 0 0 2px var(--color-primary-500);
-    box-shadow: 0 0 0px 1000px var(--color-gray-100) inset, 0 0 0 2px var(--color-primary-500);
+    -webkit-box-shadow:
+      0 0 0px 1000px var(--color-gray-100) inset,
+      0 0 0 2px var(--color-primary-500);
+    box-shadow:
+      0 0 0px 1000px var(--color-gray-100) inset,
+      0 0 0 2px var(--color-primary-500);
     -webkit-text-fill-color: var(--color-foreground);
     caret-color: var(--color-foreground);
     outline: none;
@@ -203,8 +206,12 @@
 
   /* Dark mode focus state for autofilled inputs */
   .dark input:-webkit-autofill:focus {
-    -webkit-box-shadow: 0 0 0px 1000px var(--color-gray-800) inset, 0 0 0 2px var(--color-primary-500);
-    box-shadow: 0 0 0px 1000px var(--color-gray-800) inset, 0 0 0 2px var(--color-primary-500);
+    -webkit-box-shadow:
+      0 0 0px 1000px var(--color-gray-800) inset,
+      0 0 0 2px var(--color-primary-500);
+    box-shadow:
+      0 0 0px 1000px var(--color-gray-800) inset,
+      0 0 0 2px var(--color-primary-500);
     -webkit-text-fill-color: var(--color-foreground);
     caret-color: var(--color-foreground);
     outline: none;
@@ -231,17 +238,33 @@
 
   html {
     scroll-behavior: smooth;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
   }
 
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
   }
 
   /* 
@@ -271,7 +294,8 @@
   }
 
   body {
-    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transition:
+      background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
       color 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
 }
@@ -281,17 +305,27 @@
 
   /* Heading Typography Classes - Compact professional sizes */
   .text-heading-1 {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
     font-size: 18px;
     line-height: 20px;
     font-weight: 600;
     color: var(--color-foreground);
   }
 
-
-
   .text-heading-2 {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
     font-size: 16px;
     line-height: 18px;
     font-weight: 600;
@@ -299,7 +333,13 @@
   }
 
   .text-heading-3 {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
     font-size: 15px;
     line-height: 16px;
     font-weight: 600;
@@ -308,7 +348,13 @@
 
   /* Body Typography - Professional compact sizes */
   .text-body-large {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
     font-size: 16px;
     line-height: 20px;
     font-weight: 400;
@@ -316,7 +362,13 @@
   }
 
   .text-body-large-bold {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
     font-size: 16px;
     line-height: 20px;
     font-weight: 500;
@@ -324,7 +376,13 @@
   }
 
   .text-body-medium {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
     font-size: 15px;
     line-height: 18px;
     font-weight: 500;
@@ -332,7 +390,13 @@
   }
 
   .text-body-medium-bold {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
     font-size: 15px;
     line-height: 18px;
     font-weight: 500;
@@ -340,7 +404,13 @@
   }
 
   .text-body-small {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
     font-size: 14px;
     line-height: 16px;
     font-weight: 400;
@@ -348,7 +418,13 @@
   }
 
   .text-body-small-bold {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
     font-size: 14px;
     line-height: 16px;
     font-weight: 500;
@@ -356,7 +432,13 @@
   }
 
   .text-body-tiny {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
     font-size: 13px;
     line-height: 14px;
     font-weight: 400;
@@ -366,8 +448,12 @@
   /* High specificity autofill focus styles */
   .focus\:ring-2:focus:-webkit-autofill,
   .focus\:ring-primary-500:focus:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0px 1000px var(--color-gray-100) inset, 0 0 0 2px var(--color-primary-500) !important;
-    box-shadow: 0 0 0px 1000px var(--color-gray-100) inset, 0 0 0 2px var(--color-primary-500) !important;
+    -webkit-box-shadow:
+      0 0 0px 1000px var(--color-gray-100) inset,
+      0 0 0 2px var(--color-primary-500) !important;
+    box-shadow:
+      0 0 0px 1000px var(--color-gray-100) inset,
+      0 0 0 2px var(--color-primary-500) !important;
     -webkit-text-fill-color: var(--color-foreground) !important;
     caret-color: var(--color-foreground) !important;
   }
@@ -375,8 +461,12 @@
   /* Dark mode high specificity autofill focus styles */
   .dark .focus\:ring-2:focus:-webkit-autofill,
   .dark .focus\:ring-primary-500:focus:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0px 1000px var(--color-gray-800) inset, 0 0 0 2px var(--color-primary-500) !important;
-    box-shadow: 0 0 0px 1000px var(--color-gray-800) inset, 0 0 0 2px var(--color-primary-500) !important;
+    -webkit-box-shadow:
+      0 0 0px 1000px var(--color-gray-800) inset,
+      0 0 0 2px var(--color-primary-500) !important;
+    box-shadow:
+      0 0 0px 1000px var(--color-gray-800) inset,
+      0 0 0 2px var(--color-primary-500) !important;
     -webkit-text-fill-color: var(--color-foreground) !important;
     caret-color: var(--color-foreground) !important;
   }
