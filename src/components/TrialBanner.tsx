@@ -43,8 +43,8 @@ const TrialBanner = ({
   return (
     <>
 
-      <div className="w-full mt-4 bg-primary/10 border-primary/10 border rounded-3xl px-6 mb-6 flex items-center justify-between">
-        <div className="flex-1 py-4 md:py-0">
+      <div className="w-full mt-4 bg-primary/10 border-primary/10 border rounded-3xl px-4 md:px-6 mb-6 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-0">
+        <div className="flex-1 py-6 md:py-0 text-center md:text-left">
           <h2 className="text-xl font-semibold text-primary">
             {daysRemaining === null
               ? "You are currently on a free trial"
@@ -52,19 +52,21 @@ const TrialBanner = ({
                 ? "Your free trial ends today"
                 : `Your free trial ends in ${daysRemaining} ${daysRemaining === 1 ? "day" : "days"}`}
           </h2>
-          <p className="text-[16px] text-gray-500 mb-4">
+          <p className="text-[16px] text-gray-500 mb-6">
             Upgrade now to keep full access to all features
           </p>
           <div className="flex gap-3 items-center justify-center md:justify-start">
             <Button
               onClick={handleNavigation}
               variant="primary"
+              className="px-8"
             >
               Upgrade now
             </Button>
             <Button
               onClick={() => setIsVisible(false)}
               variant="secondary"
+              className="px-8"
             >
               Dismiss
             </Button>

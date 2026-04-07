@@ -4,7 +4,6 @@ import "./globals.css";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { Providers } from "@/providers";
 
-
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
@@ -31,21 +30,21 @@ export const metadata: Metadata = {
   ],
   authors: [
     {
-      name: "Owners Universe",
+      name: "Owners Inventory",
     }
   ],
-  creator: "Owners Universe",
-  publisher: "Owners Universe",
-  applicationName: "Owners Universe",
+  creator: "Owners Inventory",
+  publisher: "Owners Inventory",
+  applicationName: "Owners Inventory",
 
   // Open Graph metadata
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://osglobal.ownersjungle.com",
-    siteName: "Owners Universe",
-    title: "Owners Universe - Global Login & Authentication Platform",
-    description: "Global authentication and business management platform for Owners Universe. Streamline your business operations with our suite of integrated products.",
+    siteName: "Owners Inventory",
+    title: "Owners Inventory - Global Login & Authentication Platform",
+    description: "Global authentication and business management platform for Owners Inventory. Streamline your business operations with our suite of integrated products.",
     images: [
       {
         url: "/og-image.png",
@@ -59,9 +58,9 @@ export const metadata: Metadata = {
   // Twitter Card metadata
   twitter: {
     card: "summary_large_image",
-    title: "Owners Universe - Global Login & Authentication Platform",
-    description: "Global authentication and business management platform for Owners Universe. Streamline your business operations with our suite of integrated products.",
-    creator: "@ownersuniverse",
+    title: "Owners Inventory - Global Login & Authentication Platform",
+    description: "Global authentication and business management platform for Owners Inventory. Streamline your business operations with our suite of integrated products.",
+    creator: "@ownersinventory",
     images: ["/og-image.png"],
   },
 

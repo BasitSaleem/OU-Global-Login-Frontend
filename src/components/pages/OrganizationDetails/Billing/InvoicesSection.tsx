@@ -86,21 +86,22 @@ const InvoicesSection = ({ organization, loading }: InvoicesSectionPropsType) =>
         <Input placeholder="" />
       </div> */}
       {loading ? (
-        <div className="flex flex-col border-border border h-24 rounded-xl animate-pulse">
-          <div className="flex gap-2 justify-around w-full mt-2.5">
-            {Array.from({ length: 7 }).map((_, index) => (
-              <Skeleton key={index} width={150} height={30} />
+        <div className="flex flex-col border border-border h-auto rounded-xl animate-pulse p-4 gap-4">
+          <div className="flex gap-4 justify-between w-full">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <Skeleton key={index} width="100%" height={24} className={index > 1 ? "hidden sm:block" : ""} />
             ))}
           </div>
-          <div className="flex gap-2 justify-around w-full mt-2.5">
-            {Array.from({ length: 7 }).map((_, index) => (
-              <div key={index} className="flex flex-col gap-2 items-center">
-                <Skeleton width={130} height={10} />
-                <Skeleton width={120} height={10} />
+          <div className="space-y-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex gap-4 justify-between w-full">
+                <Skeleton width="40%" height={16} />
+                <Skeleton width="30%" height={16} />
+                <Skeleton width="20%" height={16} className="hidden sm:block" />
+                <Skeleton width="10%" height={16} className="hidden md:block" />
               </div>
             ))}
           </div>
-
         </div>
       ) : (
         <InvoiceHistoryTable org={organization !== undefined ? organization : {}} />

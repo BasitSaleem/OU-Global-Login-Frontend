@@ -12,25 +12,25 @@ const owners: {
     {
       value: "inventory",
       toolTipText: "Owners Inventory",
-      iconUrl: Icons.ownerinventory,
+      iconUrl: "OI",
       isDisabled: false,
     },
     {
       value: "jungle",
       toolTipText: "Owners Jungle",
-      iconUrl: Icons.ownerjungle,
+      iconUrl: "OJ",
       isDisabled: true,
     },
     {
       value: "marketplace",
       toolTipText: "Owner Marketplace",
-      iconUrl: Icons.ownermarketplace,
+      iconUrl: "OM",
       isDisabled: true,
     },
     {
       value: "analytics",
       toolTipText: "Analytics",
-      iconUrl: Icons.owneranalytics,
+      iconUrl: "OA",
       isDisabled: true,
     },
   ];
@@ -40,9 +40,11 @@ const BillingSection = ({ loading }: { loading: boolean }) => {
 
   return (
     <>
-      <h1 className="font-bold text-2xl text-center md:text-left">{loading ? "Loading Billing..." : "Billing"}</h1>
-      <div className="flex justify-center mt-3">
-        <div className="flex items-center gap-2 mb-3">
+      <h1 className="font-bold text-2xl text-center md:text-left">
+        {loading ? "Loading Billing..." : "Billing"}
+      </h1>
+      <div className="flex justify-center md:justify-start mt-3">
+        <div className="flex items-center justify-center w-full gap-2 mb-3">
           {loading ? (
             Array.from({ length: 4 }).map((_, index) => (
               <Skeleton key={index} width={30} height={30} />

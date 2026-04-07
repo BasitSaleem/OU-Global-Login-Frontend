@@ -1,5 +1,5 @@
-import Image from "next/image";
-
+import { Tooltip } from "@/components/ui";
+import { SvgIcon } from "@/components/ui/SvgIcon";
 export type OwnerKey = "inventory" | "jungle" | "marketplace" | "analytics";
 
 interface OwnersProductItemProps {
@@ -21,23 +21,25 @@ const OwnersProductItem = ({
 }: OwnersProductItemProps) => {
   return (
     <div
-      className={`relative group  ${isDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+      className={`relative ${isDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
       onClick={() => !isDisabled && setSelectedOwner(value)}
     >
-      <Image
-        src={iconUrl}
-        alt={toolTipText}
-        width={20}
-        height={20}
-        className={`w-8 h-8 rounded-lg p-1 transition border ${
-          selectedOwner === value
-            ? "border-primary bg-bg-secondary"
-            : "border-transparent"
-        }`}
-      />
-      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-bg-secondary border text-black text-body-tiny font-medium rounded px-2 py-1 whitespace-nowrap z-10 shadow-sm">
-        {toolTipText}
-      </div>
+      <Tooltip content={toolTipText} position="bottom">
+        <div
+          className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all border ${selectedOwner === value
+            ? "border-primary bg-primary/5 shadow-sm scale-110"
+            : "border-transparent hover:bg-bg-secondary"
+            }`}
+        >
+          <SvgIcon
+            name={iconUrl}
+            className={`transition-all duration-300 ${selectedOwner === value ? "scale-110" : ""
+              }`}
+            width={28}
+            height={28}
+          />
+        </div>
+      </Tooltip>
     </div>
   );
 };

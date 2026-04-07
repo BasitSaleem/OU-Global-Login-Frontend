@@ -63,7 +63,7 @@ export const useLogin = () => {
       // }
       toast.success(
         "Login successful!",
-        `Welcome back ${response?.data?.user?.first_name} to Owners Universe`,
+        `Welcome back ${response?.data?.user?.first_name} to Owners Inventory`,
       );
     },
     onError: (error: any) => {

@@ -1,10 +1,11 @@
 "use client";
-import React from "react";
-import Link from "next/link";
+import { Link } from "@/components/ui";
 import { usePathname } from "next/navigation";
 import { cn } from "@/utils/helpers";
 import { IconName, SvgIcon } from "@/components/ui/SvgIcon";
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
+import { useAppSelector } from "@/redux/store";
+import { Permission } from "@/types/common";
 
 interface OrgSidebarProps {
   collapsed: boolean;
@@ -12,28 +13,33 @@ interface OrgSidebarProps {
   organizationDetails: OgOrganization;
 }
 
-const sidebarItems: {
+interface SidebarItem {
   label: string;
   href: (orgId: string) => string;
   icon: IconName;
-}[] = [
-    {
-      label: "Payment Cards",
-      href: (orgId) => `/organization-details/${orgId}/payment-cards`,
-      icon: "payment-methods",
-      // isActive: currentPath === "/payment-cards",
-    },
-    {
-      label: "Billings",
-      href: (orgId) => `/organization-details/${orgId}/billing`,
-      icon: "billing",
-    },
-    {
-      label: "Notifications",
-      href: (orgId) => `/organization-details/${orgId}/notifications`,
-      icon: "notification",
-    },
-  ];
+  showForRoles: string[];
+}
+
+const sidebarItems: SidebarItem[] = [
+  {
+    label: "Payment Cards",
+    href: (orgId) => `/organization-details/${orgId}/payment-cards`,
+    icon: "payment-methods",
+    showForRoles: ["OWNER",],
+  },
+  {
+    label: "Billings",
+    href: (orgId) => `/organization-details/${orgId}/billing`,
+    icon: "billing",
+    showForRoles: ["OWNER"],
+  },
+  {
+    label: "Notifications",
+    href: (orgId) => `/organization-details/${orgId}/notifications`,
+    icon: "notification",
+    showForRoles: ["OWNER", "ADMIN", "MEMBER"],
+  },
+];
 
 export default function OrgSidebar({
   collapsed,
@@ -41,40 +47,39 @@ export default function OrgSidebar({
   organizationDetails,
 }: OrgSidebarProps) {
   const pathname = usePathname();
+  const user = useAppSelector((s) => s.auth.user)
+  const userRole = organizationDetails?.memberships?.find((m) => m.user_id === user?.id)?.role as string
+  console.log(organizationDetails, user?.id, userRole);
 
   return (
     <aside
       className={cn(
-        "flex-shrink-0 bg-background border-r h-full transition-all duration-300 ease-in-out",
+        "shrink-0 bg-background border-r h-full transition-all duration-300 ease-in-out",
         collapsed ? "w-17" : "w-70",
         className,
       )}
     >
+
       <Link
+        isShow={true}
         href="/"
         className={cn(
           "h-14 flex items-center justify-start border-b cursor-pointer",
           collapsed ? "px-3" : "px-3",
+
+        )}
+        rightIcon={!collapsed ? (
+          <SvgIcon name="ownersInventory" className="text-foreground" width={130} height={130} />
+        ) : (
+          <SvgIcon name="OI" className="text-foreground" width={40} height={40} />
         )}
       >
-        {collapsed ? (
-          <div className="w-9 h-9 rounded flex items-center justify-center bg-primary/10">
-            <SvgIcon name="OI" className=" w-[18px] h-[18px]" />
-          </div>
-        ) : (
-          <SvgIcon
-            name="ownersInventory"
-            className="text-foreground"
-            width={130}
-            height={130}
-          />
-        )}
       </Link>
       <nav className="px-3 py-1.5 space-y-1 ">
         <div
           className={cn(
             "flex items-center text-sm font-medium rounded-lg transition-colors p-2 mb-2 text-icon",
-            collapsed ? "justify-center bg-primary/10 " : "ml-1",
+            collapsed ? "justify-center bg-primary/10 " : "ml-5",
           )}
         >
           {collapsed ? (
@@ -93,11 +98,23 @@ export default function OrgSidebar({
         {sidebarItems.map((item) => {
           const href = item.href(organizationDetails?.id);
           const isActive = pathname === href;
+          const isShow = item.showForRoles.includes(organizationDetails?.memberships?.find((m) => m.user_id === user?.id)?.role as string)
           return (
             <Link
               key={href}
+              isShow={isShow}
+              title={item.label}
+              label={item.label}
               href={href}
-              title={collapsed ? item.label : undefined}
+              showLabel={!collapsed}
+              leftIcon={
+                <SvgIcon
+                  name={item.icon}
+                  width={20}
+                  height={20}
+                  className={`text-icon ${isActive ? "text-white" : ""}`}
+                />
+              }
               className={cn(
                 "flex items-center text-sm font-medium rounded-lg transition-colors p-2",
                 collapsed ? "justify-center px-0" : "p-3",
@@ -105,26 +122,7 @@ export default function OrgSidebar({
                   ? "bg-primary text-white"
                   : "hover:bg-primary/10 hover:text-primary",
               )}
-            >
-              {collapsed ? (
-                <SvgIcon
-                  name={item.icon}
-                  width={20}
-                  height={20}
-                  className={`text-icon ${isActive ? "text-white" : ""}`}
-                />
-              ) : (
-                <span className="flex items-center w-full gap-3">
-                  <SvgIcon
-                    name={item.icon}
-                    width={20}
-                    height={20}
-                    className={`text-icon ${isActive ? "text-white" : ""}`}
-                  />
-                  <span className="truncate">{item.label}</span>
-                </span>
-              )}
-            </Link>
+            />
           );
         })}
       </nav>

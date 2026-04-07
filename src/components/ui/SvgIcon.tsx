@@ -7,7 +7,7 @@ interface SvgIconProps {
   height?: number;
 }
 
-export function SvgIcon({ name, className = "", width, height }: SvgIconProps) {
+export function SvgIcon({ name, className = "", width = 24, height = 24 }: SvgIconProps) {
   const renderSvg = () => {
     switch (name) {
       case 'ownersUniverse':

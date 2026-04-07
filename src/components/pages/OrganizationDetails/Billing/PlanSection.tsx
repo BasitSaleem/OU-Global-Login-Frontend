@@ -77,18 +77,26 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
 
   return (
     <div className="text-center md:text-left">
-      <div className="flex justify-between items-center gap-2 ">
-        <div className="flex gap-2 ">
-          <h1 className="text-text font-bold">
-            {loading ? <Skeleton width={180} height={20} className="mt-1" /> : <>Your are on<span className="pl-1.5 text-primary font-semibold">
-              {organization?.subscriptions?.[0]?.oiPackage?.package_name}
-            </span>{" "}
-              plan</>}
-
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-center gap-2 ">
+          <h1 className="text-text font-bold text-lg md:text-xl">
+            {loading ? (
+              <Skeleton width={180} height={24} className="mt-1" />
+            ) : (
+              <>
+                You are on
+                <span className="pl-1.5 text-primary font-semibold">
+                  {organization?.subscriptions?.[0]?.oiPackage?.package_name}
+                </span>{" "}
+                plan
+              </>
+            )}
           </h1>
-          {loading ? <Skeleton width={50} height={25} circle /> : (
+          {loading ? (
+            <Skeleton width={80} height={24} circle />
+          ) : (
             <span
-              className={`px-1.5 py-1 rounded-full text-xs text-text font-semibold capitalize ${SUBSCRIPTION_STATUS_COLOR[
+              className={`px-3 py-1 rounded-full text-xs text-text font-semibold capitalize ${SUBSCRIPTION_STATUS_COLOR[
                 organization?.subscriptions?.[0]?.status ?? ""
               ]
                 }`}
@@ -99,52 +107,36 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
         </div>
         {organization?.subscriptions?.[0]?.status !== "TRIAL" &&
           organization?.subscriptions?.[0]?.status !== "CANCELLED" && (
-            loading ? (
-              <Skeleton width={200} height={35} circle />
-            ) : (
-              <Button variant="destructive"
-                className="rounded-full"
-                onClick={cancelSubscription}
-              >
-                Cancel Subscription
-              </Button>
-            )
+            <div className="w-full md:w-auto">
+              {loading ? (
+                <Skeleton width="100%" height={40} className="md:w-[200px]" circle />
+              ) : (
+                <Button
+                  variant="destructive"
+                  className="rounded-full w-full md:w-auto"
+                  onClick={cancelSubscription}
+                >
+                  Cancel Subscription
+                </Button>
+              )}
+            </div>
           )}
       </div>
-      {/* {loading ? <Skeleton width={200} height={10} className="mt-1" /> : (
-        <p className="text-body-small mt-2">
-          {organization?.subscriptions?.[0]?.status === "CANCELLED" ? (
-            "Your subscription has been cancelled."
-          ) : (
-            organization?.subscriptions?.[0]?.oiPackage?.package_name ? (
-              <>
-                Your Organization is currently on the{" "}
-                <span className="text-primary font-semibold">
-                  {organization?.subscriptions?.[0]?.oiPackage?.package_name}
-                </span>{" "}
-                Plan.
-              </>
-            ) : (
-              "No subscription plan found."
-            )
-          )}
-        </p>
-      )} */}
       {loading ? (
-        <div className="w-full mt-4 bg-primary/10 border-primary/10 border rounded-3xl px-6 mb-6 flex items-center justify-between">
-          <div className="flex flex-col py-4 gap-2 md:py-5 md:mt-10">
-            <Skeleton width={450} height={10} />
-            <Skeleton width={400} height={10} />
-            <div className="flex gap-2 md:my-6">
-              <Skeleton width={100} height={32} />
-              <Skeleton width={100} height={32} />
+        <div className="w-full mt-4 bg-primary/10 border-primary/10 border rounded-3xl px-4 md:px-6 mb-6 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
+          <div className="flex flex-col py-6 md:py-10 gap-3 w-full md:w-auto">
+            <Skeleton width="80%" height={12} className="md:w-[450px]" />
+            <Skeleton width="60%" height={12} className="md:w-[400px]" />
+            <div className="flex gap-2 mt-4 md:my-6">
+              <Skeleton width={110} height={36} />
+              <Skeleton width={110} height={36} />
             </div>
           </div>
-          <div className="flex flex-col py-4 gap-2 md:py-6">
-            <Skeleton width={250} height={10} />
-            <Skeleton width={200} height={10} />
-            <Skeleton width={260} height={10} />
-            <Skeleton width={230} height={10} />
+          <div className="flex flex-col py-6 md:py-6 gap-2 w-full md:w-auto items-center md:items-end">
+            <Skeleton width="100%" height={8} className="md:w-[250px]" />
+            <Skeleton width="90%" height={8} className="md:w-[200px]" />
+            <Skeleton width="95%" height={8} className="md:w-[260px]" />
+            <Skeleton width="85%" height={8} className="md:w-[230px]" />
           </div>
         </div>
       ) : (
@@ -205,7 +197,7 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
               > <>
 
                   {sortedPlans?.map((plan) => (
-                    <motion.div key={plan.id} className="flex-shrink-0 w-80">
+                    <motion.div key={plan.id} className="shrink-0 w-80">
                       <PlanCard
                         key={plan.id}
                         plan={plan}

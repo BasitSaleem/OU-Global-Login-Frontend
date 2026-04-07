@@ -20,14 +20,14 @@ const PaymentMethodSection = ({ loading }: { loading: boolean }) => {
             <div className="flex flex-col sm:flex-row justify-between items-center w-full h-full bg-bg-secondary rounded-lg border px-4 py-3 gap-3 sm:gap-0">
               <div className="flex gap-2">
                 <Skeleton width={30} height={30} circle />
-                <div className="flex flex-col gap-y-2">
-                  <Skeleton width={200} height={10} />
-                  <Skeleton width={190} height={10} />
+                <div className="flex flex-col gap-y-2 w-full sm:w-auto items-center sm:items-start text-center sm:text-left">
+                  <Skeleton width="150px" height={10} className="sm:w-[200px]" />
+                  <Skeleton width="130px" height={10} className="sm:w-[190px]" />
                 </div>
               </div>
-              <div className="flex flex-col gap-y-2">
-                <Skeleton width={200} height={10} />
-                <Skeleton width={190} height={10} />
+              <div className="flex flex-col gap-y-2 w-full sm:w-auto items-center sm:items-end text-center sm:text-right">
+                <Skeleton width="150px" height={10} className="sm:w-[200px]" />
+                <Skeleton width="130px" height={10} className="sm:w-[190px]" />
               </div>
             </div>
           </div>

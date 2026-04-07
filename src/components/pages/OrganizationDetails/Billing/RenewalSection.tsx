@@ -18,11 +18,11 @@ const RenewalSection = ({ organization, loading }: { organization?: OgOrganizati
       <div className="border rounded-lg w-full mx-auto">
         {
           loading ? (
-            <div className="flex items-center gap-6 justify-center h-20">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 py-6 px-4 md:px-9">
               {Array.from({ length: 4 }).map((_, index) => (
-                <div key={index} className="flex flex-col items-center gap-3 md:items-start text-center md:text-left">
-                  <Skeleton width={200} height={20} />
-                  <Skeleton width={200} height={20} />
+                <div key={index} className="flex flex-col items-center gap-2 md:items-start text-center md:text-left">
+                  <Skeleton width="120px" height={18} />
+                  <Skeleton width="100px" height={18} />
                 </div>
               ))}
             </div>

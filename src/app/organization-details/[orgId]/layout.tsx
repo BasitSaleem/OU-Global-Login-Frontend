@@ -19,7 +19,6 @@ export default function OrganizationDetailsLayout({
     setCollapsed(!collapsed);
   };
 
-  // ✅ SSE — only connects once orgId is available
   useSSE(orgId || undefined, organizationDetails?.subscriptions?.[0]?.id || "");
 
   const onToggleMobileSidebar = () => {
