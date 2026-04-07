@@ -49,7 +49,6 @@ export default function OrgSidebar({
   const pathname = usePathname();
   const user = useAppSelector((s) => s.auth.user)
   const userRole = organizationDetails?.memberships?.find((m) => m.user_id === user?.id)?.role as string
-  console.log(organizationDetails, user?.id, userRole);
 
   return (
     <aside
@@ -98,7 +97,7 @@ export default function OrgSidebar({
         {sidebarItems.map((item) => {
           const href = item.href(organizationDetails?.id);
           const isActive = pathname === href;
-          const isShow = item.showForRoles.includes(organizationDetails?.memberships?.find((m) => m.user_id === user?.id)?.role as string)
+          const isShow = item.showForRoles.includes(userRole);
           return (
             <Link
               key={href}

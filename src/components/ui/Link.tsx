@@ -41,7 +41,7 @@ const Link = forwardRef<HTMLAnchorElement, LinkProps>(
       leftIcon,
       rightIcon,
       label,
-      isShow,
+      isShow = true,
       showLabel = true,
       ...props
     },
@@ -105,12 +105,7 @@ const Link = forwardRef<HTMLAnchorElement, LinkProps>(
     ) : (
       linkElement
     );
-    return (
-      <div
-      >
-        {finalElement}
-      </div>
-    );
+    return finalElement || null;
   },
 );
 

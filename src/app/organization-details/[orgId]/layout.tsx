@@ -4,6 +4,10 @@ import Header from "@/components/layout/Header/Header";
 import OrgSidebar from "@/components/pages/OrganizationDetails/OrgSidebar";
 import { useOrganizationDetails } from "@/apiHooks.ts/organization/organization.api";
 import { useSSE } from "@/hooks/useSSE";
+import { usePathname, useRouter } from "next/navigation";
+import { useAppSelector } from "@/redux/store";
+import { Loader } from "@/components/ui";
+
 export default function OrganizationDetailsLayout({
   children,
   params,
@@ -14,7 +18,26 @@ export default function OrganizationDetailsLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [orgId, setOrgId] = useState<string>("");
-  const { data: organizationDetails } = useOrganizationDetails(orgId);
+  const { data: organizationDetails, isLoading } = useOrganizationDetails(orgId);
+  const router = useRouter();
+  const pathname = usePathname();
+  const user = useAppSelector((s) => s.auth.user);
+
+  const userRole = organizationDetails?.memberships?.find(
+    (m) => m.user_id === user?.id
+  )?.role;
+
+  useEffect(() => {
+
+    if (!isLoading && organizationDetails && pathname) {
+      const isBillingPage = pathname.includes("/billing");
+      const isPaymentPage = pathname.includes("/payment-cards");
+
+      if ((isBillingPage || isPaymentPage) && userRole !== "OWNER") {
+        router.push(`/organization-details/${orgId}/notifications`);
+      }
+    }
+  }, [pathname, userRole, organizationDetails, isLoading, orgId, router]);
   const onToggleSidebar = () => {
     setCollapsed(!collapsed);
   };
@@ -32,7 +55,9 @@ export default function OrganizationDetailsLayout({
     }
     getOrgId();
   }, [params]);
-
+  if (isLoading) {
+    return <Loader text="Loading organization details" />
+  }
   return (
     <div className="min-h-screen bg-background flex font-inter">
       <div className="hidden md:block">

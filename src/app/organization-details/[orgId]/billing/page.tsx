@@ -9,6 +9,7 @@ import BillingSection from "@/components/pages/OrganizationDetails/Billing/Billi
 import { useOrganizationDetails } from "@/apiHooks.ts/organization/organization.api";
 
 import NotFound from "@/components/NotFound";
+import { useAppSelector } from "@/redux/store";
 function BillingPage() {
   const { orgId } = useParams();
   const {
@@ -19,6 +20,15 @@ function BillingPage() {
 
   if (error) {
     return <NotFound title={error?.message} />;
+  }
+  const user = useAppSelector((s) => s.auth.user);
+
+  const userRole = organization?.memberships?.find(
+    (m) => m.user_id === user?.id
+  )?.role;
+
+  if (userRole !== "OWNER") {
+    return null
   }
   return (
     <div className="px-2 py-12 w-full mx-auto   md:px-11 ">
