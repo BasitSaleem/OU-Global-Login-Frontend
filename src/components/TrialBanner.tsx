@@ -29,7 +29,6 @@ const TrialBanner = ({
     return diffDays >= 0 ? diffDays : 0;
   }, [subscription?.trial_ends_at]);
 
-  // Show banner for any plan with active trial status
   const shouldShowBanner = isVisible && subscription?.status === "TRIAL";
 
   if (!shouldShowBanner) return null;
@@ -43,7 +42,7 @@ const TrialBanner = ({
   return (
     <>
 
-      <div className="w-full mt-4 bg-primary/10 border-primary/10 border rounded-3xl px-4 md:px-6 mb-6 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-0">
+      <div className="w-full mt-4 bg-primary/20 border-border border rounded-3xl px-4 md:px-6 mb-6 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-0">
         <div className="flex-1 py-6 md:py-0 text-center md:text-left">
           <h2 className="text-xl font-semibold text-primary">
             {daysRemaining === null
@@ -52,7 +51,7 @@ const TrialBanner = ({
                 ? "Your free trial ends today"
                 : `Your free trial ends in ${daysRemaining} ${daysRemaining === 1 ? "day" : "days"}`}
           </h2>
-          <p className="text-[16px] text-gray-500 mb-6">
+          <p className="text-[16px] text-text mb-6">
             Upgrade now to keep full access to all features
           </p>
           <div className="flex gap-3 items-center justify-center md:justify-start">

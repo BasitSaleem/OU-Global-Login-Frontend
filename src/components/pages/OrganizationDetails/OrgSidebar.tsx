@@ -5,7 +5,6 @@ import { cn } from "@/utils/helpers";
 import { IconName, SvgIcon } from "@/components/ui/SvgIcon";
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
 import { useAppSelector } from "@/redux/store";
-import { Permission } from "@/types/common";
 
 interface OrgSidebarProps {
   collapsed: boolean;
@@ -31,7 +30,7 @@ const sidebarItems: SidebarItem[] = [
     label: "Billings",
     href: (orgId) => `/organization-details/${orgId}/billing`,
     icon: "billing",
-    showForRoles: ["OWNER"],
+    showForRoles: ["OWNER", "ADMIN"],
   },
   {
     label: "Notifications",
@@ -53,7 +52,7 @@ export default function OrgSidebar({
   return (
     <aside
       className={cn(
-        "shrink-0 bg-background border-r h-full transition-all duration-300 ease-in-out",
+        "shrink-0 bg-bg-secondary border-r h-full transition-all duration-300 ease-in-out",
         collapsed ? "w-17" : "w-70",
         className,
       )}

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 
 import PaymentMethodCard from "@/components/pages/OrganizationDetails/PaymentMethods/PaymentMethodCard";
 import DeletePaymentModal from "@/components/pages/OrganizationDetails/PaymentMethods/DeletePaymentModal";

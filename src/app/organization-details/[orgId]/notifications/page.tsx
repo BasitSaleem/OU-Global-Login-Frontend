@@ -1,16 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-
-import Image from 'next/image';
-
-import { Icons } from '@/components/utils/icons';
-import { Button, Input } from '@/components/ui';
+import { Button } from '@/components/ui';
 import { Bell, ChartColumnIncreasing, ClipboardCheck, Mail, ShoppingCart, Truck } from 'lucide-react';
-import { SvgIcon } from '@/components/ui/SvgIcon';
-
+import OwnersProductItem from '@/components/pages/OrganizationDetails/Billing/OwnersProductItem';
+import { NotificationSection } from '@/components/pages/OrganizationDetails/Notifications/NotificationSection';
 // Types
-type NotificationSettings = {
+export type NotificationSettings = {
   inAppNotifications: boolean;
   emailNotifications: boolean;
 
@@ -31,67 +27,41 @@ type NotificationSettings = {
   productionCancelled: { inApp: boolean; email: boolean };
 };
 
-type OwnerKey = 'inventory' | 'jungle' | 'marketplace' | 'analytics';
-
+export type OwnerKey = 'inventory' | 'jungle' | 'marketplace' | 'analytics';
+const owners: {
+  value: OwnerKey;
+  toolTipText: string;
+  iconUrl: string;
+  isDisabled: boolean;
+}[] = [
+    {
+      value: "inventory",
+      toolTipText: "Owners Inventory",
+      iconUrl: "OI",
+      isDisabled: false,
+    },
+    {
+      value: "jungle",
+      toolTipText: "Owners Jungle",
+      iconUrl: "OJ",
+      isDisabled: false,
+    },
+    {
+      value: "marketplace",
+      toolTipText: "Owner Marketplace",
+      iconUrl: "OM",
+      isDisabled: false,
+    },
+    {
+      value: "analytics",
+      toolTipText: "Analytics",
+      iconUrl: "OA",
+      isDisabled: false,
+    },
+  ];
 // reusable section component
-function NotificationSection({
-  icon: Icon,
-  title,
-  items,
-  settings,
-  updateNestedSetting
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  title: string;
-  items: { key: keyof NotificationSettings; label: string; highlighted?: boolean }[];
-  settings: NotificationSettings;
-  updateNestedSetting: (category: keyof NotificationSettings, type: 'inApp' | 'email', value: boolean) => void;
-}) {
-  return (
-    <div className="bg-bg-secondary border  rounded-lg p-4">
-      <div className="flex items-center gap-2 mb-3">
-        <Icon className="text-primary" />
-        <h3 className="text-body-medium-bold font-medium text-black">{title}</h3>
-      </div>
+// NotificationSection is imported from a separate component file.
 
-      <div className="space-y-3">
-        {items.map((item) => (
-          <div
-            key={item.key as string}
-            className={`flex items-center justify-between px-2 py-1.5 rounded-lg ${item.highlighted ? 'bg-primary/20' : ''
-              }`}
-          >
-            {/* Label text */}
-            <span className="flex-1 text-body-small text-black">{item.label}</span>
-
-            {/* Checkboxes */}
-            <div className="flex items-center  gap-3 shrink-0">
-              <div className="flex items-center gap-1 cursor-pointer">
-                <Input
-                  type="checkbox"
-                  checked={(settings[item.key] as any).inApp}
-                  onChange={(e) => updateNestedSetting(item.key, 'inApp', e.target.checked)}
-                  className="w-3 h-3 rounded-lg cursor-pointer"
-                />
-                <span className="text-body-tiny text-black mt-1">In App</span>
-              </div>
-
-              <label className="flex items-center gap-1 cursor-pointer">
-                <Input
-                  type="checkbox"
-                  checked={(settings[item.key] as any).email}
-                  onChange={(e) => updateNestedSetting(item.key, 'email', e.target.checked)}
-                  className="w-3 h-3 rounded-lg cursor-pointer"
-                />
-                <span className="text-body-tiny text-black mt-1">Email</span>
-              </label>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 // helper for default settings
 const defaultSettings: NotificationSettings = {
@@ -138,7 +108,7 @@ export default function NotificationPreferencesPage() {
     }));
   };
 
-  const updateNestedSetting = (category: keyof NotificationSettings, type: 'inApp' | 'email', value: boolean) => {
+  const updateNestedSetting: any = (category: keyof NotificationSettings, type: 'inApp' | 'email', value: boolean) => {
     setNotificationSettings((prev) => {
       const current = prev[selectedOwner][category] as { inApp: boolean; email: boolean };
       return {
@@ -213,50 +183,29 @@ export default function NotificationPreferencesPage() {
             </p>
           </div>
 
-          <div className="flex justify-center  mt-3">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('inventory')}>
-                <SvgIcon name="OI" width={20} height={20} className={`w-8 h-8 rounded-lg p-1 transition border ${selectedOwner === 'inventory' ? 'border-primary bg-bg-secondary' : 'border-transparent'
-                  }`} />
-                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-bg-secondary border text-black text-body-tiny font-medium rounded px-2 py-1 whitespace-nowrap z-10 shadow-sm">
-                  Owners Inventory
-                </div>
-              </div>
-
-              <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('jungle')}>
-                <SvgIcon name="OJ" width={20} height={20} className={`w-8 h-8 rounded-lg p-1 transition border ${selectedOwner === 'jungle' ? 'border-primary bg-bg-secondary' : 'border-transparent'
-                  }`} />
-                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-bg-secondary border text-black text-body-tiny font-medium rounded px-2 py-1 whitespace-nowrap z-10 shadow-sm">
-                  Owners Jungle
-                </div>
-              </div>
-
-              <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('marketplace')}>
-                <SvgIcon name="OM" width={20} height={20} className={`w-8 h-8 rounded-lg p-1 transition border ${selectedOwner === 'marketplace' ? 'border-primary bg-bg-secondary' : 'border-transparent'
-                  }`} />
-                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-bg-secondary border text-black text-body-tiny font-medium rounded px-2 py-1 whitespace-nowrap z-10 shadow-sm">
-                  Owner Marketplace
-                </div>
-              </div>
-
-              <div className="relative group cursor-pointer" onClick={() => setSelectedOwner('analytics')}>
-                <SvgIcon name="OA" width={20} height={20} className={`w-8 h-8 rounded-lg p-1 transition border ${selectedOwner === 'analytics' ? 'border-primary bg-bg-secondary' : 'border-transparent'
-                  }`} />
-                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-bg-secondary border text-black text-body-tiny font-medium rounded px-2 py-1 whitespace-nowrap z-10 shadow-sm">
-                  Analytics
-                </div>
-              </div>
+          {/* Owner Icons */}
+          <div className="flex justify-center md:justify-start mt-3">
+            <div className="flex items-center justify-center w-full gap-2 mb-3">
+              {owners.map((owner) => (
+                <OwnersProductItem
+                  key={owner.value}
+                  value={owner.value}
+                  toolTipText={owner.toolTipText}
+                  iconUrl={owner.iconUrl}
+                  isDisabled={owner.isDisabled}
+                  selectedOwner={selectedOwner}
+                  setSelectedOwner={setSelectedOwner}
+                />
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Notification Methods */}
         <div className="bg-bg-secondary border rounded-lg p-5 mb-5">
           <h2 className="text-body-medium-bold font-medium text-black mb-2">
             Notification Methods
           </h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            {/* In-App Notifications */}
             <div className="flex items-center justify-between gap-2 p-3 border rounded-lg">
               <Bell strokeWidth={2} color='#795CF5' size={22} />
               <span className="text-body-small text-black">In-App Notifications</span>
@@ -269,8 +218,6 @@ export default function NotificationPreferencesPage() {
                 />
               </div>
             </div>
-
-            {/* Email Notifications */}
             <div className="flex items-center justify-between gap-2 p-3 border rounded-lg">
               <Mail color='#795CF5' strokeWidth={2} size={22} />
               <span className="text-body-small text-black">Email Notifications</span>
@@ -286,7 +233,6 @@ export default function NotificationPreferencesPage() {
           </div>
         </div>
 
-        {/* Notification Categories Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-4">
           {sections.map((section) => (
             <NotificationSection

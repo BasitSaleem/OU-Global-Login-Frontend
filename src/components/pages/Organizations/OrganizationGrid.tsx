@@ -9,7 +9,6 @@ import { useAppSelector } from "@/redux/store";
 import { DeleteOrganizationModal } from "@/components/modals/DeleteOrganizationModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizationGridComponent } from "./OrganizationGridComponent";
-import { toast } from "@/hooks/useToast";
 import { LoadingSpinner, Tooltip } from "@/components/ui";
 import { Plus } from "lucide-react";
 import { PermissionGuard } from "@/components/HOCs/permission-guard";
@@ -34,12 +33,12 @@ export default function OrganizationGrid({
   }: {
     isAddNew?: boolean;
   }) => (
-    <div className="bg-bg-secondary p-3 py-6 rounded-xl border">
+    <div className={`bg-bg-secondary p-3 py-6 rounded-xl border border-border ${isAddNew ? "border-dashed" : ""}`}>
       {isAddNew ? (
         <div className="flex items-center justify-center w-full h-full">
           <div className="flex flex-col items-center justify-center ">
-            <Plus size={50} color="#D1D5DB" />
-            <h1 className="text-skeleton animate-pulse">Add new</h1>
+            <Plus size={50} className="text-skeleton" />
+            <h1 className="text-skeleton">Add new</h1>
           </div>
         </div>
       ) : (
@@ -52,9 +51,10 @@ export default function OrganizationGrid({
             </div>
             <Skeleton width="24px" height="24px" circle />
           </div>
-          <div className="flex items-center justify-between px-2 py-1 rounded bg-skeleton -mb-3 mt-3.5">
-            <Skeleton width="22px" height="22px" circle count={3} />
+          <div className="mt-5 -mb-3">
+            <Skeleton width="100%" height="26px" />
           </div>
+
         </>
       )}
     </div>
@@ -142,7 +142,7 @@ export default function OrganizationGrid({
                 >
                   {org?.isAddNew ? (
                     <div
-                      className="flex flex-col items-center justify-center text-center h-full rounded-xl bg-primary/5  w-full"
+                      className="flex flex-col border border-dashed border-border items-center justify-center text-center h-full rounded-xl bg-primary/5  w-full"
                       onClick={onAddNew}
                     >
                       <div className="text-primary">

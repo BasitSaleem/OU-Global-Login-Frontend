@@ -6,8 +6,8 @@
   /* Light theme colors */
   --color-primary-50: #f5f3ff;
   --color-card-secondary: #fff;
-  --gradient-primary-start: #faf5ff;
-  --gradient-primary-end: #fdf2f8;
+  --gradient-primary-start: #7a17dd5b;
+  --gradient-primary-end: #c5b0f15b;
   --color-primary-100: #ede9fe;
 
   --color-primary-200: #ddd6fe;
@@ -54,7 +54,7 @@
 
 /* Dark theme colors */
 .dark {
-  --color-background: #111827;
+  --color-background: #000000;
   --color-foreground: var(--color-white);
   --color-border: #4b5563;
   --color-bg-secondary: #1f2937;
