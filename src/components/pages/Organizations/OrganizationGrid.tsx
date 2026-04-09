@@ -100,14 +100,16 @@ export default function OrganizationGrid({
       <div className="flex items-center justify-between mb-3 ">
         <div className="flex items-center gap-2">
           <h1 className="text-heading-1 font-bold text-black">
-            {loading ? "Loading Organizations" : "Your Organizations"}
+            {loading ? (
+              <Skeleton width="200px" height="24px" circle />
+            ) : "Your Organizations"}
           </h1>
-          {!loading ? (
+          {loading ? (
+            <Skeleton width="24px" height="24px" circle />
+          ) : (
             <div className="w-6 h-6 rounded-full flex items-center justify-center text-white font-medium bg-primary">
               {metaData?.totalCount!}
             </div>
-          ) : (
-            <LoadingSpinner size={4} />
           )}
         </div>
       </div>
