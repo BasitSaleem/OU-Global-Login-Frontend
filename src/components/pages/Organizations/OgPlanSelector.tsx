@@ -24,27 +24,25 @@ const OgPlanSelector = ({
     }),
   );
 
-  /** ✅ plans based on selected category */
   const plans =
     selectedCategory && allPlans.length > 0
       ? allPlans
-          .filter((p) => p.type === selectedCategory)
-          .map((plan) => ({
-            value: plan.id,
-            label: (
-              <span className="flex items-center justify-between w-full overflow-hidden">
-                <span className="truncate">{plan.package_name}</span>
-                {plan.free_trial_days > 0 && (
-                  <span className="ml-2 px-2 py-0.5 text-[10px] font-bold bg-primary/20 text-primary rounded-full uppercase whitespace-nowrap shrink-0">
-                    {plan.free_trial_days} Days Trial
-                  </span>
-                )}
-              </span>
-            ),
-          }))
+        .filter((p) => p.type === selectedCategory)
+        .map((plan) => ({
+          value: plan.id,
+          label: (
+            <span className="flex items-center justify-between w-full overflow-hidden">
+              <span className="truncate">{plan.package_name}</span>
+              {plan.free_trial_days > 0 && (
+                <span className="ml-2 px-2 py-0.5 text-[10px] font-bold bg-primary/20 text-primary rounded-full uppercase whitespace-nowrap shrink-0">
+                  {plan.free_trial_days} Days Trial
+                </span>
+              )}
+            </span>
+          ),
+        }))
       : [];
 
-  /**  loading state */
   if (isPending) {
     return (
       <div className="flex flex-col space-y-3">

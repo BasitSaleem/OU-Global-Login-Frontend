@@ -24,9 +24,9 @@ import {
 import { CheckoutFormValues } from "@/components/pages/Checkout/InvoiceCountry";
 import PackageNotFound from "@/components/pages/Checkout/PackageNotFound";
 import { toast } from "@/hooks/useToast";
-import CheckoutLoading from "@/components/pages/Checkout/CheckoutLoading";
 import { checkoutSchema } from "@/schemas/checkout.schemas";
 import CheckoutHeader from "@/components/pages/Checkout/CheckoutHeader";
+import CheckOutSkeleton from "@/components/pages/Checkout/CheckOutSkeleton";
 
 type BillingCycle = "monthly" | "yearly";
 
@@ -339,20 +339,16 @@ function CheckoutPage() {
     }
   };
 
-  // --- Loading state ---
   if (loadingPlan || loadingPaymentMethods || loadingOrg) {
-    return <CheckoutLoading />;
+    return <CheckOutSkeleton />;
   }
 
-  // --- No plan found ---
   if (!selectedPlan) return <PackageNotFound orgId={orgId} />;
 
   return (
-    <div className="w-full max-w-7xl mx-auto md:px-8 pb-60">
-      {/* Header */}
+    <div className="w-full max-w-full mx-auto md:px-8 pb-60">
       <CheckoutHeader />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column */}
         <div className="lg:col-span-2 space-y-6">
           <PlanCard
             packageName={selectedPlan.package_name}
@@ -389,7 +385,6 @@ function CheckoutPage() {
           />
         </div>
 
-        {/* Right Column */}
         <div className="lg:col-span-1">
           <OrderSummary
             country={watchFields.country}
