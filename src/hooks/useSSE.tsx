@@ -94,6 +94,14 @@ export const useSSE = (orgId: string | undefined, subscriptionId: string) => {
       queryClient.invalidateQueries({ queryKey: ["org-invoices", orgId] });
     });
 
+    // ✅ payment method events
+    es.addEventListener(SSE_EVENTS.PAYMENT_METHOD_ADDED, (e: any) => {
+      console.log("PAYMENT_METHOD_ADDED", orgId);
+      const data = JSON.parse(e.data);
+      toast.success(data.title, data.message);
+      queryClient.invalidateQueries({ queryKey: ["payment-methods"] });
+    });
+
     return () => {
       es.close();
       esRef.current = null;
