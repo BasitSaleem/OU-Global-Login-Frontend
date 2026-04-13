@@ -13,7 +13,6 @@ import { useAppSelector } from "@/redux/store";
 function BillingPage() {
   const { orgId } = useParams();
   const decodedId = atob(orgId as string);
-  console.log(decodedId, "DECODED ID");
 
   const {
     data: organization,
@@ -34,7 +33,7 @@ function BillingPage() {
     return null
   }
   return (
-    <div className="px-2 py-12 w-full mx-auto   md:px-11 ">
+    <div className="px-2 py-12 w-full mx-auto   md:px-11 overflow-x-hidden ">
       <BillingSection loading={isLoading} />
       <PlanSection organization={organization} loading={isLoading} />
       <RenewalSection organization={organization} loading={isLoading} />

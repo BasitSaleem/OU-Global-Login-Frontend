@@ -9,7 +9,9 @@ import { Button } from "@/components/ui";
 
 const PaymentMethodSection = ({ loading }: { loading: boolean }) => {
   const { orgId } = useParams();
-  const { data, isLoading } = useGetPaymentMethods(orgId as string);
+  console.log(orgId, "ORG IDiuabsdiubasiub");
+
+  const { data, isLoading } = useGetPaymentMethods(atob(orgId as string));
   const router = useRouter();
 
   if (isLoading || loading) {

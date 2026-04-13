@@ -39,11 +39,11 @@ const BillingSection = ({ loading }: { loading: boolean }) => {
   const [selectedOwner, setSelectedOwner] = useState<OwnerKey>("inventory");
 
   return (
-    <>
+    <div className="flex justify-between items-center">
       <h1 className="font-bold text-2xl text-center md:text-left">
         {loading ? "Loading Billing..." : "Billing"}
       </h1>
-      <div className="flex justify-center md:justify-start mt-3">
+      <div className="flex justify-center md:justify-center">
         <div className="flex items-center justify-center w-full gap-2 mb-3">
           {loading ? (
             Array.from({ length: 4 }).map((_, index) => (
@@ -63,7 +63,7 @@ const BillingSection = ({ loading }: { loading: boolean }) => {
             ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

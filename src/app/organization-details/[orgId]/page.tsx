@@ -4,6 +4,6 @@ const page = () => {
     const params = useParams()
     const orgId = params.orgId
     const router = useRouter()
-    return router.push(`/organization-details/${orgId}/payment-methods`)
+    return router.push(`/organization-details/${btoa(orgId as string)}/payment-methods`)
 }
 export default page

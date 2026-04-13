@@ -1,5 +1,4 @@
-import React from 'react';
-export type IconName = 'ownersUniverse' | 'search' | 'calendar' | 'dashboard' | 'settings' | 'profile' | 'notification' | 'logout' | 'home' | 'organization' | 'email' | 'changePassword' | 'hamburgerLeft' | 'hamburgerRight' | 'ownersInventory' | 'ownersUniverseColl' | "AllProducts" | "billing" | "visa" | "payment-methods" | "mastercard" | "time" | "OA" | "OI" | "OM" | "OJ" | "expand" | "ownersInventory" | "google";
+export type IconName = 'ownersUniverse' | 'search' | 'calendar' | 'dashboard' | 'settings' | 'profile' | 'notification' | 'logout' | 'home' | 'organization' | 'email' | 'changePassword' | 'hamburgerLeft' | 'hamburgerRight' | 'ownersInventory' | 'ownersUniverseColl' | "AllProducts" | "billing" | "visa" | "payment-methods" | "mastercard" | "time" | "OA" | "OI" | "OM" | "OJ" | "expand" | "ownersInventory" | "google" | "check";
 interface SvgIconProps {
   name: IconName | string;
   className?: string;
@@ -355,6 +354,12 @@ export function SvgIcon({ name, className = "", width, height }: SvgIconProps) {
             <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
             <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
             <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+          </svg>
+        )
+      case "check":
+        return (
+          <svg width={width} height={height} viewBox="0 0 15 13" xmlns="http://www.w3.org/2000/svg" className={className}>
+            <path d="M6.39959 12.3594C6.35715 12.3594 6.31517 12.3506 6.27629 12.3336C6.2374 12.3166 6.20246 12.2917 6.17365 12.2606L0.0817469 5.67088C0.0411367 5.62695 0.0142147 5.57213 0.00427583 5.51313C-0.00566304 5.45414 0.00181231 5.39352 0.0257871 5.33871C0.0497619 5.2839 0.0891961 5.23726 0.139263 5.20452C0.189331 5.17177 0.247859 5.15433 0.307685 5.15432H3.23999C3.28402 5.15433 3.32753 5.16378 3.3676 5.18203C3.40766 5.20029 3.44334 5.22692 3.47224 5.26014L5.50818 7.60242C5.72821 7.13208 6.15415 6.34894 6.90159 5.39466C8.00658 3.98389 10.0619 1.90909 13.5783 0.0361075C13.6463 -8.57097e-05 13.7254 -0.00947928 13.7999 0.00978174C13.8745 0.0290428 13.9391 0.0755582 13.981 0.140143C14.023 0.204728 14.0392 0.282687 14.0264 0.358628C14.0137 0.434568 13.9729 0.502968 13.9122 0.550323C13.8988 0.560815 12.5429 1.62851 10.9826 3.58417C9.54652 5.38386 7.63753 8.32663 6.69818 12.1257C6.68168 12.1925 6.6433 12.2517 6.58916 12.2941C6.53503 12.3365 6.46825 12.3595 6.3995 12.3596L6.39959 12.3594Z" fill="currentColor" />
           </svg>
         )
       default:

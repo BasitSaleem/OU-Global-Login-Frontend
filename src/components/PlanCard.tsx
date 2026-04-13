@@ -1,174 +1,114 @@
 import React from "react";
 import { OiPlanType } from "@/apiHooks.ts/plans/plans.types";
 import { useParams, useRouter } from "next/navigation";
-import { useCancelSubscription } from "@/apiHooks.ts/subscription/subscription.api";
+import { SvgIcon } from "./ui/SvgIcon";
 
 interface PlanCardProps {
   plan: OiPlanType;
   isCurrentPlan?: boolean;
+  isSelected?: boolean;
+  onClick?: () => void;
   subscriptionStatus?: string;
   className?: string;
   subscriptionId?: string;
 }
 
-const getPlanStyles = (type: string) => {
-  switch (type.toLowerCase()) {
-    case "retail":
-      return {
-        borderColor: "#FFCB00",
-        buttonColor: "#1AD1B9",
-        priceColor: "#1AD1B9",
-        badgeColor: "#FFCB00",
-        background: "white",
-      };
-    case "manufacturing":
-      return {
-        borderColor: "#5588DF",
-        buttonColor: "#5588DF",
-        priceColor: "#5588DF",
-        badgeColor: "#5588DF",
-        background:
-          "linear-gradient(0deg, rgba(85,136,223,0.02) 0%, rgba(85,136,223,0.02) 100%), white",
-      };
-    case "ecommerce":
-      return {
-        borderColor: "#8B5CF6",
-        buttonColor: "#8B5CF6",
-        priceColor: "#8B5CF6",
-        badgeColor: "#8B5CF6",
-        background: "white",
-      };
-    case "hybrid":
-      return {
-        borderColor: "#6B7280",
-        buttonColor: "#6B7280",
-        priceColor: "#6B7280",
-        badgeColor: "#6B7280",
-        background: "white",
-      };
-    default:
-      return {
-        borderColor: "#E5E7EB",
-        buttonColor: "#38ACCC",
-        priceColor: "#38ACCC",
-        badgeColor: "#38ACCC",
-        background: "white",
-      };
-  }
-};
-
 const PlanCard: React.FC<PlanCardProps> = ({
   plan,
   isCurrentPlan = false,
+  isSelected = false,
+  onClick,
   className = "",
 }) => {
-  const styles = getPlanStyles(plan.type);
   const { orgId } = useParams();
   const router = useRouter();
 
-  const renderFeatures = () => {
-    const features = [
-      { text: `${plan.no_of_users || "0"} users`, included: plan.show_users },
-      { text: "Human Resource", included: plan.show_people },
-      {
-        text: `${plan.no_of_stores || "0"} Locations`,
-        included: plan.show_stores,
-      },
-      {
-        text: `${plan.no_of_warehouses || "0"} Warehouse`,
-        included: plan.show_warehouses,
-      },
-      {
-        text: `${plan.no_of_products || "0"} Products`,
-        included: plan.show_products,
-      },
-      { text: "Advance Point of Sales", included: plan.show_pos },
-      { text: "Online Store", included: plan.show_online_store },
-      { text: "Manufacturing", included: plan.show_manufacturing },
-    ].filter((f) => f.included !== null);
+  const isPro = plan.package_name.toUpperCase().includes("PRO");
 
-    return features.map((feature, index) => (
-      <div
-        key={index}
-        className={`text-center flex justify-center flex-col text-base font-normal leading-9 break-words font-inter ${feature.included
-            ? "text-text opacity-100"
-            : "text-text opacity-60 line-through"
-          }`}
-      >
-        {feature.text}
-      </div>
-    ));
+  const getFeatures = () => {
+    return [
+      { text: `${plan.no_of_stores || "1"} Store`, included: plan.show_stores },
+      { text: `${plan.no_of_pos || "1"} POS Terminal`, included: plan.show_pos },
+      { text: plan.no_of_warehouses ? `${plan.no_of_warehouses} Warehouse` : "1 Warehouse", included: plan.show_warehouses },
+      { text: "Unlimited Users", included: plan.show_users },
+      { text: "Unlimited Products", included: plan.show_products },
+      { text: "Unlimited Orders & Invoices", included: true },
+      { text: "Onboarding Assistance & Email Support", included: true },
+    ].filter(f => f.included !== false); // Simplified for the demo/screenshot look
   };
 
-  const badgeLabel = isCurrentPlan
-    ? "Current Plan"
-    : plan.type.charAt(0).toUpperCase() + plan.type.slice(1).toLowerCase();
+  const features = getFeatures();
+
+  const buttonColor = plan.package_name.toUpperCase().includes("ENTERPRISE")
+    ? "bg-[#5588DF]"
+    : "bg-[#1AD1B9]";
 
   return (
     <div
-      className={`relative flex flex-col items-center p-5 rounded-3xl border-2 box-border h-[830px] cursor-pointer ${className}`}
-      style={{
-        borderColor: styles.borderColor,
-        // background: styles.background,
-      }}
+      onClick={onClick}
+      className={`relative flex flex-col p-8 bg-background rounded-[40px] border-2 transition-all duration-300 cursor-pointer h-full ${isSelected
+        ? "scale-[1.02]"
+        : "border-border hover:border-gray-200"
+        } ${className}`}
+      style={isSelected ? {
+        border: "2px solid transparent",
+        backgroundImage: "linear-gradient(background, background), linear-gradient(to right, #1AD1B9, #716AE2, #5588DF)",
+        backgroundOrigin: "border-box",
+        backgroundClip: "padding-box, border-box",
+      } : {}}
     >
-      {/* Badge — always visible */}
-      <div
-        className="absolute -top-3.5 left-1/2 -translate-x-1/2 w-36 h-7  flex items-center justify-center z-10 rounded-2xl"
-        style={{ backgroundColor: styles.badgeColor }}
-      >
-        <div className="text-center flex justify-center flex-col text-sm font-semibold break-words text-white">
-          {badgeLabel}
+
+      {/* Most Popular Badge */}
+      {isPro && (
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-linear-to-r from-[#1AD1B9] to-[#716AE2] text-white text-xs font-bold px-4 py-1 rounded-full shadow-lg">
+          Most Popular
         </div>
+      )}
+
+      {/* Header */}
+      <div className="flex justify-between items-start mb-4">
+        <h3 className="text-2xl font-bold text-text">{plan.package_name}</h3>
+        {isCurrentPlan && (
+          <span className="flex items-center gap-1.5 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold">
+            <span className=" h-1.5 bg-primary rounded-full text-nowrap" />
+            Current Plan
+          </span>
+        )}
       </div>
 
-      <div className={`w-full flex flex-col items-center gap-2.5 mt-2.5`}>
-        {/* Title */}
-        <div className="w-full text-center text-xl font-semibold text-text">
-          {plan.package_name}
-        </div>
+      <p className="text-text text-sm mb-8">
+        {isPro ? "Ideal for growing businesses" :
+          plan.package_name.toUpperCase().includes("BASIC") ? "Perfect for small businesses getting started" :
+            "For established businesses scaling up"}
+      </p>
 
-        {/* Price */}
-        <div className="w-full text-center flex flex-col items-center">
-          <span
-            className="text-4xl font-semibold font-inter"
-            style={{ color: styles.priceColor }}
-          >
-            ${plan.monthly_price}
-          </span>
-          <span
-            className="text-sm font-normal text-text"
-            style={{ color: styles.priceColor }}
-          >
-            /month
-          </span>
-        </div>
+      <div className="flex items-baseline gap-1 mb-8">
+        <span className={`text-4xl font-bold ${plan.package_name.toUpperCase().includes("ENTERPRISE") ? "text-[#5588DF]" : "text-[#1AD1B9]"}`}>
+          ${plan.monthly_price}
+        </span>
+        <span className="text-text font-medium">/month</span>
+      </div>
 
-        {/* Button */}
-        <div
-          className={`w-full h-10 rounded-full flex items-center justify-center ${isCurrentPlan ? "opacity-50 cursor-not-allowed" : "cursor-pointer transition-opacity hover:opacity-90"}`}
-          style={{ backgroundColor: styles.buttonColor }}
-          onClick={() => {
-            if (isCurrentPlan) return;
-            router.push(
-              `/organization-details/${orgId}/billing/checkout/${plan.id}`,
-            );
-          }}
-        >
-          <div className="text-white text-base font-semibold font-inter">
-            {isCurrentPlan ? "Activated" : "Upgrade Now"}
+      <button
+        className={`w-full py-4 rounded-2xl text-white font-bold text-lg mb-8 transition-opacity cursor-pointer hover:opacity-90 ${buttonColor}`}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (isCurrentPlan) return;
+          router.push(`/organization-details/${orgId}/billing/checkout/${btoa(plan.id as string)}`);
+        }}
+      >
+        {isCurrentPlan ? "Current Plan" : "Upgrade Now"}
+      </button>
+
+      <div className="space-y-4">
+        {features.map((feature, idx) => (
+          <div key={idx} className="flex items-center gap-3">
+            <div className="shrink-0 w-5 h-5 flex items-center justify-center">
+              <SvgIcon name="check" className="text-primary" />
+            </div>
+            <span className="text-text font-medium">{feature.text}</span>
           </div>
-        </div>
-
-        {/* Users */}
-        <div className="w-full text-center text-base font-normal font-inter">
-          {plan.no_of_users} users
-        </div>
-
-        {/* Features */}
-        <div className="w-full text-center flex flex-col gap-1 mt-2">
-          {renderFeatures()}
-        </div>
+        ))}
       </div>
     </div>
   );

@@ -43,7 +43,7 @@ function CheckoutPage() {
     {},
   );
 
-  const { data: planData, isPending: loadingPlan } = useGetPlanDetails(pkgId);
+  const { data: planData, isPending: loadingPlan } = useGetPlanDetails(atob(pkgId as string));
   const { data: paymentMethodsData, isPending: loadingPaymentMethods } =
     useGetPaymentMethods(atob(orgId as string));
   const { data: organization, isPending: loadingOrg } =
@@ -302,8 +302,8 @@ function CheckoutPage() {
 
     try {
       const payload = {
-        orgId,
-        packageId: pkgId,
+        orgId: atob(orgId as string),
+        packageId: atob(pkgId as string),
         subscriptionId,
         billingCycle: billingCycle.toUpperCase() as "MONTHLY" | "YEARLY",
         priceId: stripePriceId,
@@ -342,7 +342,7 @@ function CheckoutPage() {
   return (
     <div className="w-full max-w-full mx-auto md:px-8 pb-60">
       <CheckoutHeader />
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         <div className="lg:col-span-2 space-y-6">
           <PlanCard
             packageName={selectedPlan.package_name}
@@ -377,7 +377,7 @@ function CheckoutPage() {
           />
         </div>
 
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 self-start sticky top-10 z-10">
           <OrderSummary
             country={watchFields.country}
             isPaymentMethodAvailable={paymentMethods.length > 0}
@@ -403,7 +403,7 @@ function CheckoutPage() {
         </div>
         {isModalOpen && (
           <StripeWrapper
-            orgId={orgId}
+            orgId={atob(orgId as string)}
             onClose={() => setIsModalOpen(false)}
           />
         )}

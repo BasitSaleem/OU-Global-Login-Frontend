@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Store, Factory, ShoppingCart, Layers } from "lucide-react";
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
 import TrialBanner from "@/components/TrialBanner";
 import { useGetAllPlans } from "@/apiHooks.ts/plans/plans.api";
@@ -16,32 +16,42 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
   const { data, isLoading, error } = useGetAllPlans();
   const [cancelSubscriptionModal, setCancelSubscriptionModal] = React.useState(false);
   const [currentIndex, setCurrentIndex] = React.useState(0);
-  const CARD_WIDTH = 320;
+  const [activeType, setActiveType] = React.useState<string>("RETAIL");
+  const [selectedPlanId, setSelectedPlanId] = React.useState<string | null>(null);
+
+  const CARD_WIDTH = 440; // Increased to match larger cards
   const GAP = 16;
   const TOTAL_MOVE = CARD_WIDTH + GAP;
   const [maxIndex, setMaxIndex] = React.useState(0);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
-  const planCount = data?.plans?.length ?? 0;
+  const typeData = [
+    { id: "RETAIL", label: "Retail", icon: Store, description: "Perfect for stores, Shops and multi locations business" },
+    { id: "MANUFACTURING", label: "Manufacturing", icon: Factory, description: "Ideal for factories and production line management" },
+    { id: "ECOMMERCE", label: "Ecommerce", icon: ShoppingCart, description: "Best for online stores and digital marketplaces" },
+    { id: "HYBRID", label: "Hybrid", icon: Layers, description: "Versatile solutions for combined business models" },
+  ];
 
-  const sortedPlans = React.useMemo(() => {
+  const filteredPlans = React.useMemo(() => {
     if (!data?.plans) return [];
 
     const typeOrder = ["RETAIL", "MANUFACTURING", "ECOMMERCE", "HYBRID"];
     const packageOrder = ["BASIC", "PRO", "PREMIUM"];
 
-    return [...data.plans].sort((a, b) => {
-      const typeDiff = typeOrder.indexOf(a.type) - typeOrder.indexOf(b.type);
-      if (typeDiff !== 0) return typeDiff;
-      const aName = a.package_name.toUpperCase();
-      const bName = b.package_name.toUpperCase();
+    return [...data.plans]
+      .filter(plan => plan.type === activeType)
+      .sort((a, b) => {
+        const aName = a.package_name.toUpperCase();
+        const bName = b.package_name.toUpperCase();
 
-      const aLevel = packageOrder.findIndex((p) => aName.includes(p));
-      const bLevel = packageOrder.findIndex((p) => bName.includes(p));
+        const aLevel = packageOrder.findIndex((p) => aName.includes(p));
+        const bLevel = packageOrder.findIndex((p) => bName.includes(p));
 
-      return aLevel - bLevel;
-    });
-  }, [data?.plans]);
+        return aLevel - bLevel;
+      });
+  }, [data?.plans, activeType]);
+
+  const planCount = filteredPlans.length;
 
   React.useEffect(() => {
     const updateMaxIndex = () => {
@@ -92,6 +102,9 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
               </>
             )}
           </h1>
+          <div>
+
+          </div>
           {loading ? (
             <Skeleton width={80} height={24} circle />
           ) : (
@@ -140,10 +153,43 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
           </div>
         </div>
       ) : (
-        <TrialBanner
-          subscription={organization?.subscriptions?.[0]}
-          orgId={organization?.id!}
-        />
+        <>
+          <TrialBanner
+            subscription={organization?.subscriptions?.[0]}
+            orgId={organization?.id!}
+          />
+
+          <div className="mt-8 flex flex-col gap-6">
+            {/* Plan Type Selector */}
+            <div className="flex flex-wrap items-center gap-2 p-1.5 bg-[#EEEDF0]  rounded-2xl w-fit">
+              {typeData.map((type) => {
+                const Icon = type.icon;
+                const isActive = activeType === type.id;
+                return (
+                  <button
+                    key={type.id}
+                    onClick={() => {
+                      setActiveType(type.id);
+                      setCurrentIndex(0);
+                    }}
+                    className={`flex items-center gap-2 px-4  cursor-pointer py-2 rounded-xl transition-all duration-200 ${isActive
+                      ? "bg-primary text-white shadow-md"
+                      : "text-black hover:bg-primary/10"
+                      }`}
+                  >
+                    <Icon size={18} />
+                    <span className="font-medium">{type.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Subtitle */}
+            <p className="text-gray-500 text-lg">
+              {typeData.find(t => t.id === activeType)?.description}
+            </p>
+          </div>
+        </>
       )}
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 w-full mt-8">
@@ -169,16 +215,16 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
             variant="basic"
             onClick={handleNext}
             disabled={currentIndex >= maxIndex}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0 -mr-4 cursor-pointer disabled:cursor-not-allowed bg-primary/40 rounded-full py-8 "
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-30 -mr-4 cursor-pointer disabled:cursor-not-allowed bg-primary/40 rounded-full py-8 text-white"
           >
             {" "}
             <ChevronRight size={40} color="white" />
           </Button>
-          <div className="overflow-hidden w-full  py-4 -my-4">
+          <div className=" w-full py-4 -my-4">
             {error && <ErrorMessage message={error.message} />}
             {!isLoading && data && (
               <motion.div
-                className="flex gap-4 touch-pan-y cursor-grab active:cursor-grabbing"
+                className="flex gap-4 touch-pan-y cursor-grab"
                 style={{ touchAction: "pan-y", overscrollBehaviorX: "none" }}
                 animate={{ x: -currentIndex * TOTAL_MOVE }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
@@ -196,14 +242,16 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
                 }}
               > <>
 
-                  {sortedPlans?.map((plan) => (
-                    <motion.div key={plan.id} className="shrink-0 w-80">
+                  {filteredPlans?.map((plan) => (
+                    <motion.div key={plan.id} className="shrink-0 w-[440px]">
                       <PlanCard
                         key={plan.id}
                         plan={plan}
                         isCurrentPlan={
                           plan.id === organization?.subscriptions?.[0]?.oiPackage?.id
                         }
+                        isSelected={selectedPlanId === plan.id}
+                        onClick={() => setSelectedPlanId(plan.id)}
                         subscriptionStatus={organization?.subscriptions?.[0]?.status}
                         subscriptionId={organization?.subscriptions?.[0]?.id}
                       />

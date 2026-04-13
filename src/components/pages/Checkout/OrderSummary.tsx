@@ -72,9 +72,8 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   }, [taxDetails]);
 
   return (
-    <div className="bg-bg-secondary border rounded-xl p-6 sticky top-8">
+    <div className="bg-bg-secondary border rounded-xl p-6">
       <h2 className="text-lg font-semibold mb-6">Order Summary</h2>
-
       <div className="space-y-4 mb-6">
         <div className="flex justify-between text-sm">
           <span className="text-text">Plan</span>
