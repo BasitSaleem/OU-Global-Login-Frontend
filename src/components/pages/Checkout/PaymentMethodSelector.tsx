@@ -1,5 +1,5 @@
 import React from "react";
-import { CreditCard } from "lucide-react";
+import { CreditCard, Plus } from "lucide-react";
 import { Button } from "@/components/ui";
 import { PaymentMethod } from "@/apiHooks.ts/paymentMethod/paymentMethod.types";
 import { SvgIcon } from "@/components/ui/SvgIcon";
@@ -39,7 +39,7 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
         <div className="text-center py-8 border-2 border-dashed rounded-lg">
           <CreditCard className="w-10 h-10 text-text mx-auto mb-3 opacity-40" />
           <p className="text-sm text-text mb-3">No payment methods found</p>
-          <Button variant="primary" onClick={onManageCards}>
+          <Button variant="primary" onClick={onManageCards} leftIcon={<Plus />}>
             Add Payment Method
           </Button>
         </div>
@@ -48,26 +48,24 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
           {paymentMethods.map((method) => (
             <label
               key={method.id}
-              className={`flex items-center gap-4 p-4 rounded-lg border-2  transition-all duration-200 ${
-                selectedPaymentMethodId === method.id
-                  ? "border-primary bg-primary/5"
-                  : "border-border bg-background"
-              }`}
+              className={`flex items-center gap-4 p-4 rounded-lg border-2  transition-all duration-200 ${selectedPaymentMethodId === method.id
+                ? "border-primary bg-primary/5"
+                : "border-border bg-background"
+                }`}
             >
               <input
                 type="radio"
                 name="paymentMethod"
                 value={method.id}
                 checked={selectedPaymentMethodId === method.id}
-                onChange={() => {}}
+                onChange={() => { }}
                 className="sr-only"
               />
               <div
-                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                  selectedPaymentMethodId === method.id
-                    ? "border-primary"
-                    : "border-gray-300"
-                }`}
+                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${selectedPaymentMethodId === method.id
+                  ? "border-primary"
+                  : "border-gray-300"
+                  }`}
               >
                 {selectedPaymentMethodId === method.id && (
                   <div className="w-2.5 h-2.5 rounded-full bg-primary" />

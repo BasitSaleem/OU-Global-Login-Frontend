@@ -12,11 +12,14 @@ import NotFound from "@/components/NotFound";
 import { useAppSelector } from "@/redux/store";
 function BillingPage() {
   const { orgId } = useParams();
+  const decodedId = atob(orgId as string);
+  console.log(decodedId, "DECODED ID");
+
   const {
     data: organization,
     isLoading,
     error,
-  } = useOrganizationDetails(orgId as string);
+  } = useOrganizationDetails(decodedId);
 
   if (error) {
     return <NotFound title={error?.message} />;

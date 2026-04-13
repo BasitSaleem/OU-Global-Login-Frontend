@@ -51,7 +51,7 @@ export default function OrganizationDetailsLayout({
   useEffect(() => {
     async function getOrgId() {
       const orgID = (await params).orgId;
-      setOrgId(orgID);
+      setOrgId(atob(orgID));
     }
     getOrgId();
   }, [params]);

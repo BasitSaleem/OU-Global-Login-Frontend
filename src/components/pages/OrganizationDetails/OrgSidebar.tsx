@@ -22,19 +22,19 @@ interface SidebarItem {
 const sidebarItems: SidebarItem[] = [
   {
     label: "Payment Cards",
-    href: (orgId) => `/organization-details/${orgId}/payment-cards`,
+    href: (orgId) => `/organization-details/${btoa(orgId)}/payment-cards`,
     icon: "payment-methods",
     showForRoles: ["OWNER",],
   },
   {
     label: "Billings",
-    href: (orgId) => `/organization-details/${orgId}/billing`,
+    href: (orgId) => `/organization-details/${btoa(orgId)}/billing`,
     icon: "billing",
     showForRoles: ["OWNER", "ADMIN"],
   },
   {
     label: "Notifications",
-    href: (orgId) => `/organization-details/${orgId}/notifications`,
+    href: (orgId) => `/organization-details/${btoa(orgId)}/notifications`,
     icon: "notification",
     showForRoles: ["OWNER", "ADMIN", "MEMBER"],
   },

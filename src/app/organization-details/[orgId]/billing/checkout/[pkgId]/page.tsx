@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,6 +27,7 @@ import { toast } from "@/hooks/useToast";
 import { checkoutSchema } from "@/schemas/checkout.schemas";
 import CheckoutHeader from "@/components/pages/Checkout/CheckoutHeader";
 import CheckOutSkeleton from "@/components/pages/Checkout/CheckOutSkeleton";
+import StripeWrapper from "@/components/pages/OrganizationDetails/PaymentMethods/StripeWrapper";
 
 type BillingCycle = "monthly" | "yearly";
 
@@ -42,18 +43,15 @@ function CheckoutPage() {
     {},
   );
 
-  // --- Data fetching ---
   const { data: planData, isPending: loadingPlan } = useGetPlanDetails(pkgId);
   const { data: paymentMethodsData, isPending: loadingPaymentMethods } =
-    useGetPaymentMethods(orgId);
+    useGetPaymentMethods(atob(orgId as string));
   const { data: organization, isPending: loadingOrg } =
-    useOrganizationDetails(orgId);
+    useOrganizationDetails(atob(orgId as string));
 
-  // Derive subscription from organization
   const currentSubscription = organization?.subscriptions?.[0];
   const subscriptionId = currentSubscription?.id ?? null;
 
-  // --- Derived data ---
   const selectedPlan = useMemo(() => {
     if (!planData?.plans) return undefined;
     if (Array.isArray(planData.plans)) {
@@ -66,7 +64,7 @@ function CheckoutPage() {
     if (!selectedPlan?.packageAddOns) return [];
     return selectedPlan.packageAddOns.filter((a) => a.addOn.is_active);
   }, [selectedPlan]);
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const paymentMethods: PaymentMethod[] =
     paymentMethodsData?.paymentMethods || [];
 
@@ -171,14 +169,12 @@ function CheckoutPage() {
     }
   }, [watchFields.country, setValue]);
 
-  // --- Mutation ---
   const { mutateAsync: upgradePlan, isPending: isProcessing } =
     useUpgradePlan();
 
   const { mutateAsync: buyNewPlan, isPending: isProcessingBuyNewPlan } =
     useBuyNewPlan();
 
-  // Auto-select primary payment method
   useEffect(() => {
     if (!selectedPaymentMethodId && paymentMethods.length > 0) {
       const primary = paymentMethods.find((m) => m.is_primary);
@@ -186,7 +182,6 @@ function CheckoutPage() {
     }
   }, [paymentMethods, selectedPaymentMethodId]);
 
-  // --- Callbacks ---
   const updateAddOnQuantity = useCallback(
     (addOnId: string, quantity: number) => {
       setSelectedAddOns((prev) => {
@@ -202,7 +197,6 @@ function CheckoutPage() {
     [],
   );
 
-  // --- Pricing calculations ---
   const basePlanPrice =
     billingCycle === "monthly"
       ? parseFloat(selectedPlan?.monthly_price || "0")
@@ -275,7 +269,6 @@ function CheckoutPage() {
   const handleCheckout = async (data: CheckoutFormValues) => {
     if (!selectedPaymentMethodId || !stripePriceId) return;
 
-    // Build the structured add-ons payload
     const addOnPayload: { priceId: string; quantity: number }[] = [];
 
     Object.entries(selectedAddOns).forEach(([id, quantity]) => {
@@ -339,6 +332,7 @@ function CheckoutPage() {
     }
   };
 
+
   if (loadingPlan || loadingPaymentMethods || loadingOrg) {
     return <CheckOutSkeleton />;
   }
@@ -379,15 +373,14 @@ function CheckoutPage() {
             paymentMethods={paymentMethods}
             selectedPaymentMethodId={selectedPaymentMethodId}
             onSelectPaymentMethod={setSelectedPaymentMethodId}
-            onManageCards={() =>
-              router.push(`/organization-details/${orgId}/payment-cards`)
-            }
+            onManageCards={() => setIsModalOpen(true)}
           />
         </div>
 
         <div className="lg:col-span-1">
           <OrderSummary
             country={watchFields.country}
+            isPaymentMethodAvailable={paymentMethods.length > 0}
             packageName={selectedPlan.package_name}
             currency={selectedPlan.currency}
             billingCycle={billingCycle}
@@ -404,8 +397,16 @@ function CheckoutPage() {
             isCalculatingTax={isCalculatingTax}
             canCheckout={!!selectedPaymentMethodId && !!stripePriceId}
             onCheckout={handleSubmit(handleCheckout)}
+            onManageCards={() => setIsModalOpen(true)}
+
           />
         </div>
+        {isModalOpen && (
+          <StripeWrapper
+            orgId={orgId}
+            onClose={() => setIsModalOpen(false)}
+          />
+        )}
       </div>
     </div>
   );

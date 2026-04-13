@@ -27,7 +27,7 @@ export interface PaymentCardsType {
 
 const PaymentCardsPage = () => {
   const { orgId } = useParams<{ orgId: string }>();
-  const { data, isLoading, error } = useGetPaymentMethods(orgId);
+  const { data, isLoading, error } = useGetPaymentMethods(atob(orgId as string));
 
   const makePrimaryMutation = useMakePrimaryPaymentMethod();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -76,19 +76,11 @@ const PaymentCardsPage = () => {
 
           {isModalOpen && modalMode === "add" && (
             <StripeWrapper
-              orgId={orgId}
+              orgId={atob(orgId as string)}
               onClose={() => setIsModalOpen(false)}
             />
           )}
           {isLoading && <PaymentCardSkeleton />}
-          {/* {error && (
-            <ErrorMessage
-              message={
-                (error as any)?.message ||
-                "Failed to load payment methods. Please try again."
-              }
-            />
-          )} */}
           {visiblePaymentMethods.map((method: PaymentMethod) => (
             <PaymentMethodCard
               key={method.id}

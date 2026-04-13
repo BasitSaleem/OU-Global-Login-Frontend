@@ -29,7 +29,7 @@ export default function PaymentFailedPage() {
 
         <div className="pt-4 flex flex-col space-y-3">
           <Link
-            href={`/organization-details/${orgId}/billing`}
+            href={`/organization-details/${atob(orgId as string)}/billing`}
             className="inline-flex items-center justify-center rounded-lg bg-primary text-white px-6 py-2.5 text-sm font-medium  hover:bg-primary/80 transition-colors w-full"
           >
             Return to Billing

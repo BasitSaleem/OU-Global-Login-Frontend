@@ -24,14 +24,18 @@ interface OrderSummaryProps {
   isCalculatingTax?: boolean;
   canCheckout: boolean;
   country: string;
+  isPaymentMethodAvailable: boolean;
   onCheckout: () => void;
+  onManageCards: () => void;
 }
 
 const OrderSummary: React.FC<OrderSummaryProps> = ({
   packageName,
   currency,
+  isPaymentMethodAvailable,
   billingCycle,
   basePrice,
+  onManageCards,
   yearlyPerMonth,
   discount,
   yearlySavings,
@@ -50,15 +54,13 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   const numSelectedAddOns = Object.keys(selectedAddOns).length;
 
   const finalTotal = isCalculatingTax
-    ? "..." // Tax is being calculated
+    ? "..."
     : taxDetails?.total != null
-      ? taxDetails.total.toFixed(2) // Tax is calculated
-      : totalPrice.toFixed(2); // Fallback
+      ? taxDetails.total.toFixed(2)
+      : totalPrice.toFixed(2);
 
   const taxPercent = useMemo(() => {
     if (!taxDetails) return "0";
-
-    // Try to get percentage from breakdown first
     const percentage =
       taxDetails.breakdown?.[0]?.tax_rate_details?.percentage_decimal;
     if (percentage) {
@@ -74,7 +76,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       <h2 className="text-lg font-semibold mb-6">Order Summary</h2>
 
       <div className="space-y-4 mb-6">
-        {/* Base plan */}
         <div className="flex justify-between text-sm">
           <span className="text-text">Plan</span>
           <span className="font-medium">{packageName}</span>
@@ -103,7 +104,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           </div>
         )}
 
-        {/* Selected add-ons */}
         {numSelectedAddOns > 0 && (
           <>
             <div className="border-t pt-3">
@@ -201,22 +201,31 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         billingCycle === "yearly" && (
           <DiscountAlert yearlySavings={yearlySavings} />
         )}
-
-      <Button
-        variant="primary"
-        className="w-full py-5 text-base"
-        disabled={!canCheckout || isProcessing || isCalculatingTax}
-        onClick={onCheckout}
-      >
-        {isProcessing ? (
-          <div className="flex items-center gap-2">
-            <LoadingSpinner size={4} className="border-white" />
-            Processing...
-          </div>
-        ) : (
-          `Subscribe  $${finalTotal}/${periodLabel}`
-        )}
-      </Button>
+      {isPaymentMethodAvailable ? (
+        <Button
+          variant="primary"
+          className="w-full py-5 text-base"
+          disabled={!canCheckout || isProcessing || isCalculatingTax}
+          onClick={onCheckout}
+        >
+          {isProcessing ? (
+            <div className="flex items-center gap-2">
+              <LoadingSpinner size={4} className="border-white" />
+              Processing...
+            </div>
+          ) : (
+            `Subscribe  $${finalTotal}/${periodLabel}`
+          )}
+        </Button>
+      ) : (
+        <Button
+          variant="primary"
+          className="w-full py-5 text-base"
+          onClick={onManageCards}
+        >
+          Add Payment Method
+        </Button>
+      )}
 
       <div className="flex items-center justify-center gap-2 mt-4 text-xs text-text">
         <Shield className="w-3.5 h-3.5" />

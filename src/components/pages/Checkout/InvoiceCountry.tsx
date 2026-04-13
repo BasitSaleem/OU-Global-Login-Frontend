@@ -36,7 +36,6 @@ const InvoiceCountry = ({
   errors,
   watchCountry,
 }: InvoiceCountryProps) => {
-  // Watch the state field to update cities dynamically
   const selectedState = useWatch({
     control,
     name: "billing_state",
@@ -71,20 +70,13 @@ const InvoiceCountry = ({
                 onChange={field.onChange}
                 placeholder="Select Country"
                 error={errors.country?.message}
+                isSearchable={true}
               />
             )}
           />
 
           {watchCountry === "US" && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-1">
-              <Input
-                label="Billing Address"
-                placeholder="123 Main St"
-                {...register("billing_address")}
-                isRequired={true}
-                error={errors.billing_address?.message}
-                className="md:col-span-2"
-              />
               <Controller
                 name="billing_state"
                 control={control}
@@ -96,10 +88,14 @@ const InvoiceCountry = ({
                     value={field.value}
                     onChange={field.onChange}
                     placeholder="Select State"
+                    isSearchable={true}
+
                     error={errors.billing_state?.message}
                   />
                 )}
               />
+
+
 
               <Controller
                 name="billing_city"
@@ -113,8 +109,17 @@ const InvoiceCountry = ({
                     onChange={field.onChange}
                     placeholder="Select City"
                     error={errors.billing_city?.message}
+                    isSearchable={true}
                   />
                 )}
+              />
+              <Input
+                label="Billing Address"
+                placeholder="123 Main St"
+                {...register("billing_address")}
+                isRequired={true}
+                error={errors.billing_address?.message}
+                className="md:col-span-2"
               />
               <Input
                 label="Billing Postal Code"

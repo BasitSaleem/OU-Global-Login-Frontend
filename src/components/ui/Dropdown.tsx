@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Asterisk, ChevronDown } from "lucide-react";
+import { Asterisk, ChevronDown, Search } from "lucide-react";
 import { cn } from "@/utils/helpers";
 
 export interface DropdownOption {
@@ -20,6 +20,7 @@ export interface DropdownProps {
   disabled?: boolean;
   placeholder?: string;
   ariaLabel?: string;
+  isSearchable?: boolean;
 }
 
 export function Dropdown({
@@ -33,12 +34,35 @@ export function Dropdown({
   disabled = false,
   placeholder = "Select an option",
   ariaLabel,
+  isSearchable = false,
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const filteredOptions = options.filter((option) => {
+    if (!isSearchable || !searchQuery) return true;
+    const labelText =
+      typeof option.label === "string"
+        ? option.label
+        : option.value;
+    return labelText.toLowerCase().includes(searchQuery.toLowerCase());
+  });
 
   const selectedOption = options.find((o) => o.value === value);
   const displayLabel = selectedOption?.label ?? placeholder;
+
+  useEffect(() => {
+    if (isOpen && isSearchable) {
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 0);
+    }
+    if (!isOpen) {
+      setSearchQuery("");
+    }
+  }, [isOpen, isSearchable]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -112,35 +136,50 @@ export function Dropdown({
         </button>
 
         {isOpen && (
-          <ul
-            className="absolute z-50 mt-1 w-full max-h-60 overflow-auto rounded-lg border border-border bg-bg-secondary py-1 shadow-lg"
-            role="listbox"
-          >
-            {options.length === 0 ? (
-              <li className="px-3 py-2 text-sm text-text-secondary">
-                No options
-              </li>
-            ) : (
-              options.map((option) => (
-                <li
-                  key={option.value}
-                  role="option"
-                  aria-selected={value === option.value}
-                >
-                  <button
-                    type="button"
-                    className={cn(
-                      "w-full px-3 py-2 text-left text-sm text-text hover:bg-primary/10",
-                      value === option.value && "bg-primary/10 font-medium",
-                    )}
-                    onClick={() => handleSelect(option)}
-                  >
-                    {option.label}
-                  </button>
-                </li>
-              ))
+          <div className="absolute z-50 mt-1 w-full max-h-60 overflow-hidden rounded-lg border border-border bg-bg-secondary shadow-lg flex flex-col">
+            {isSearchable && (
+              <div className="p-2 border-b border-border sticky top-0 bg-bg-secondary z-10">
+                <div className="relative">
+                  <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-primary" />
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    className="w-full pl-8 pr-3 py-1.5 text-sm bg-input-bg border rounded-md focus:outline-none focus:ring-1 focus:ring-primary text-text"
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </div>
+              </div>
             )}
-          </ul>
+            <ul className="overflow-auto py-1" role="listbox">
+              {filteredOptions.length === 0 ? (
+                <li className="px-3 py-2 text-sm text-text-secondary">
+                  No options found
+                </li>
+              ) : (
+                filteredOptions.map((option) => (
+                  <li
+                    key={option.value}
+                    role="option"
+                    aria-selected={value === option.value}
+                  >
+                    <button
+                      type="button"
+                      className={cn(
+                        "w-full px-3 py-2 text-left text-sm text-text hover:bg-primary/10 transition-colors",
+                        value === option.value && "bg-primary/10 font-medium",
+                      )}
+                      onClick={() => handleSelect(option)}
+                    >
+                      {option.label}
+                    </button>
+                  </li>
+                ))
+              )}
+            </ul>
+          </div>
         )}
       </div>
 
