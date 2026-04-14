@@ -26,7 +26,7 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   const typeData = [
-    { id: "RETAIL", label: "Retail", icon: Store, description: "Perfect for stores, Shops and multi locations business" },
+    { id: "RETAIL", label: "Retail", icon: Store, description: "Perfect for stores, shops and multi locations business" },
     { id: "MANUFACTURING", label: "Manufacturing", icon: Factory, description: "Ideal for factories and production line management" },
     { id: "ECOMMERCE", label: "Ecommerce", icon: ShoppingCart, description: "Best for online stores and digital marketplaces" },
     { id: "HYBRID", label: "Hybrid", icon: Layers, description: "Versatile solutions for combined business models" },
@@ -126,7 +126,7 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
               ) : (
                 <Button
                   variant="destructive"
-                  className="rounded-full w-full md:w-auto"
+                  className="rounded-full md:w-auto md:mt-2 bg-transparent text-text border-none hover:text-white active:bg-red-700"
                   onClick={cancelSubscription}
                 >
                   Cancel Subscription

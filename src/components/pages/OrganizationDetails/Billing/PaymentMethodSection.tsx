@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { SvgIcon } from "@/components/ui/SvgIcon";
 
 import { IdCard } from "lucide-react";
@@ -6,14 +6,14 @@ import { useGetPaymentMethods } from "@/apiHooks.ts/paymentMethod/paymentMethod.
 import { useParams, useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui";
+import StripeWrapper from "../PaymentMethods/StripeWrapper";
 
 const PaymentMethodSection = ({ loading }: { loading: boolean }) => {
   const { orgId } = useParams();
-  console.log(orgId, "ORG IDiuabsdiubasiub");
 
   const { data, isLoading } = useGetPaymentMethods(atob(orgId as string));
   const router = useRouter();
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   if (isLoading || loading) {
     return (
       <div className="flex flex-col space-y-4 mt-6">
@@ -73,11 +73,17 @@ const PaymentMethodSection = ({ loading }: { loading: boolean }) => {
         className="w-full mt-10 py-5 text-text hover:text-text"
         leftIcon={<IdCard className="text-current" />}
         onClick={() =>
-          router.push(`/organization-details/${orgId}/payment-cards`)
+          setIsModalOpen(true)
         }
       >
         Add Card
       </Button>
+      {isModalOpen && (
+        <StripeWrapper
+          orgId={atob(orgId as string)}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
     </>
   );
 };

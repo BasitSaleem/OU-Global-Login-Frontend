@@ -43,7 +43,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       secondary: 'bg-bg-secondary py-4 hover:bg-primary border-primary hover:!text-btn-text border rounded-lg',
       outline: 'border border-gray-300 bg-transparent text-primary hover:bg-gray-50 focus:ring-gray-500',
       ghost: 'text-gray-700 py-4 hover:bg-primary/80 rounded-lg focus:ring-gray-500 border rounded-lg hover:!text-btn-text ',
-      destructive: 'bg-red py-4 !text-btn-text hover:bg-red-700 focus:ring-red-500 rounded-lg border-red border',
+      destructive: 'bg-red py-4 text-btn-text hover:bg-red-700 focus:ring-red-500 rounded-lg border-red border',
       basic: ''
     };
 
