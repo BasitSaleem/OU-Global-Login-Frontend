@@ -33,6 +33,8 @@ type BillingCycle = "monthly" | "yearly";
 
 function CheckoutPage() {
   const { orgId, pkgId } = useParams<{ orgId: string; pkgId: string }>();
+  const decodedOrgId = atob(orgId as string);
+  const decodedPkgId = atob(pkgId as string);
   const router = useRouter();
 
   const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
@@ -43,11 +45,11 @@ function CheckoutPage() {
     {},
   );
 
-  const { data: planData, isPending: loadingPlan } = useGetPlanDetails(atob(pkgId as string));
+  const { data: planData, isPending: loadingPlan } = useGetPlanDetails(decodedPkgId);
   const { data: paymentMethodsData, isPending: loadingPaymentMethods } =
-    useGetPaymentMethods(atob(orgId as string));
+    useGetPaymentMethods(decodedOrgId);
   const { data: organization, isPending: loadingOrg } =
-    useOrganizationDetails(atob(orgId as string));
+    useOrganizationDetails(decodedOrgId);
 
   const currentSubscription = organization?.subscriptions?.[0];
   const subscriptionId = currentSubscription?.id ?? null;
@@ -55,10 +57,10 @@ function CheckoutPage() {
   const selectedPlan = useMemo(() => {
     if (!planData?.plans) return undefined;
     if (Array.isArray(planData.plans)) {
-      return planData.plans.find((p) => p.id === pkgId) || planData.plans[0];
+      return planData.plans.find((p) => p.id === decodedPkgId) || planData.plans[0];
     }
     return planData.plans;
-  }, [planData, pkgId]);
+  }, [planData, decodedPkgId]);
 
   const availableAddOns: packageAddOnsType[] = useMemo(() => {
     if (!selectedPlan?.packageAddOns) return [];
@@ -122,7 +124,7 @@ function CheckoutPage() {
       const isUS = watchFields.country === "US";
 
       const payload: any = {
-        packageId: pkgId,
+        packageId: decodedPkgId,
         billingCycle: billingCycle.toUpperCase() as "MONTHLY" | "YEARLY",
         addOnPriceIds: addOnPayload,
         country: watchFields.country,
@@ -151,7 +153,7 @@ function CheckoutPage() {
     return () => clearTimeout(timer);
   }, [
     getTax,
-    pkgId,
+    decodedPkgId,
     billingCycle,
     addOnPayload,
     watchFields.country,
@@ -302,8 +304,8 @@ function CheckoutPage() {
 
     try {
       const payload = {
-        orgId: atob(orgId as string),
-        packageId: atob(pkgId as string),
+        orgId: decodedOrgId,
+        packageId: decodedPkgId,
         subscriptionId,
         billingCycle: billingCycle.toUpperCase() as "MONTHLY" | "YEARLY",
         priceId: stripePriceId,
@@ -320,7 +322,7 @@ function CheckoutPage() {
 
       if (
         currentSubscription?.status === "TRIAL" &&
-        currentSubscription?.oiPackage?.id === pkgId
+        currentSubscription?.oiPackage?.id === decodedPkgId
       ) {
         await upgradePlan(payload);
       } else {
@@ -337,7 +339,7 @@ function CheckoutPage() {
     return <CheckOutSkeleton />;
   }
 
-  if (!selectedPlan) return <PackageNotFound orgId={orgId} />;
+  if (!selectedPlan) return <PackageNotFound orgId={decodedOrgId} />;
 
   return (
     <div className="w-full max-w-full mx-auto md:px-8 pb-60">
@@ -403,7 +405,7 @@ function CheckoutPage() {
         </div>
         {isModalOpen && (
           <StripeWrapper
-            orgId={atob(orgId as string)}
+            orgId={decodedOrgId}
             onClose={() => setIsModalOpen(false)}
           />
         )}
