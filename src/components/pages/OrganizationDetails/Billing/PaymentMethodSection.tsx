@@ -12,7 +12,6 @@ const PaymentMethodSection = ({ loading }: { loading: boolean }) => {
   const { orgId } = useParams();
 
   const { data, isLoading } = useGetPaymentMethods(atob(orgId as string));
-  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   if (isLoading || loading) {
     return (

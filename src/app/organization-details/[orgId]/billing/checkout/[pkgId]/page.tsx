@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, useCallback } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useGetPlanDetails } from "@/apiHooks.ts/plans/plans.api";
@@ -28,6 +28,7 @@ import { checkoutSchema } from "@/schemas/checkout.schemas";
 import CheckoutHeader from "@/components/pages/Checkout/CheckoutHeader";
 import CheckOutSkeleton from "@/components/pages/Checkout/CheckOutSkeleton";
 import StripeWrapper from "@/components/pages/OrganizationDetails/PaymentMethods/StripeWrapper";
+import PaymentSuccessModal from "@/components/modals/PaymentSuccessModal";
 
 type BillingCycle = "monthly" | "yearly";
 
@@ -35,7 +36,6 @@ function CheckoutPage() {
   const { orgId, pkgId } = useParams<{ orgId: string; pkgId: string }>();
   const decodedOrgId = atob(orgId as string);
   const decodedPkgId = atob(pkgId as string);
-  const router = useRouter();
 
   const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<
@@ -44,6 +44,7 @@ function CheckoutPage() {
   const [selectedAddOns, setSelectedAddOns] = useState<Record<string, number>>(
     {},
   );
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
   const { data: planData, isPending: loadingPlan } = useGetPlanDetails(decodedPkgId);
   const { data: paymentMethodsData, isPending: loadingPaymentMethods } =
@@ -328,7 +329,8 @@ function CheckoutPage() {
       } else {
         await buyNewPlan({ ...payload, subscriptionId: null });
       }
-      router.push(`/organization-details/${orgId}/payment/success`);
+
+      setIsSuccessModalOpen(true);
     } catch (error) {
       console.error("Checkout error:", error);
     }
@@ -409,6 +411,12 @@ function CheckoutPage() {
             onClose={() => setIsModalOpen(false)}
           />
         )}
+
+        <PaymentSuccessModal
+          isOpen={isSuccessModalOpen}
+          onClose={() => setIsSuccessModalOpen(false)}
+          planName={selectedPlan.package_name}
+        />
       </div>
     </div>
   );
