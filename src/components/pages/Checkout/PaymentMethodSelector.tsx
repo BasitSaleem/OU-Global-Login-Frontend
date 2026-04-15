@@ -4,19 +4,23 @@ import { Button } from "@/components/ui";
 import { PaymentMethod } from "@/apiHooks.ts/paymentMethod/paymentMethod.types";
 import { SvgIcon } from "@/components/ui/SvgIcon";
 import { brandMap } from "@/components/pages/OrganizationDetails/PaymentMethods/PaymentMethodCard";
+import { useRouter } from "next/navigation";
 
 interface PaymentMethodSelectorProps {
   paymentMethods: PaymentMethod[];
   selectedPaymentMethodId: string | null;
   onSelectPaymentMethod: (id: string) => void;
   onManageCards: () => void;
+  orgId: string;
 }
 
 const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
   paymentMethods,
   selectedPaymentMethodId,
   onManageCards,
+  orgId
 }) => {
+  const router = useRouter();
   return (
     <div className="bg-bg-secondary border rounded-xl p-6">
       <div className="flex items-center justify-between mb-4">
@@ -29,7 +33,7 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
         <Button
           variant="basic"
           className="text-primary text-sm"
-          onClick={onManageCards}
+          onClick={() => { router.push(`/organization-details/${orgId}/payment-methods`) }}
         >
           Manage Cards
         </Button>

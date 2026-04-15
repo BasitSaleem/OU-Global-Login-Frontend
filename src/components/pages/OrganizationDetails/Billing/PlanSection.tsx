@@ -94,18 +94,28 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
               <Skeleton width={180} height={24} className="mt-1" />
             ) : (
               <>
-                You are on
-                <span className="pl-1.5 text-primary font-semibold">
-                  {organization?.subscriptions?.[0]?.oiPackage?.package_name}
-                </span>{" "}
-                plan
+                {organization?.subscriptions?.[0]?.status === "CANCELLED" ? (
+                  <>
+                    You just cancelled your
+                    <span className={`pl-1.5 bg-transparent font-semibold ${SUBSCRIPTION_STATUS_COLOR[organization?.subscriptions?.[0]?.status ?? ""]} ${organization?.subscriptions?.[0]?.status === "CANCELLED" ? "line-through" : ""}`}>
+                      {organization?.subscriptions?.[0]?.oiPackage?.package_name}
+                    </span>{" "}
+                    plan
+                  </>
+                ) : (
+                  <>
+                    You are on
+                    <span className="pl-1.5 text-primary font-semibold">
+                      {organization?.subscriptions?.[0]?.oiPackage?.package_name}
+                    </span>{" "}
+                    plan
+                  </>
+                )}
               </>
             )}
           </h1>
-          <div>
 
-          </div>
-          {loading ? (
+          {/* {loading ? (
             <Skeleton width={80} height={24} circle />
           ) : (
             <span
@@ -116,7 +126,7 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
             >
               {organization?.subscriptions?.[0]?.status ?? "No Subscription"}
             </span>
-          )}
+          )} */}
         </div>
         {organization?.subscriptions?.[0]?.status !== "TRIAL" &&
           organization?.subscriptions?.[0]?.status !== "CANCELLED" && (

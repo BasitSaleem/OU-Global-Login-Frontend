@@ -18,6 +18,7 @@ const PlanCard: React.FC<PlanCardProps> = ({
   isCurrentPlan = false,
   isSelected = false,
   onClick,
+  subscriptionStatus,
   className = "",
 }) => {
   const { orgId } = useParams();
@@ -68,9 +69,8 @@ const PlanCard: React.FC<PlanCardProps> = ({
       {/* Header */}
       <div className="flex justify-between items-start mb-4">
         <h3 className="text-2xl font-bold text-text">{plan.package_name}</h3>
-        {isCurrentPlan && (
-          <span className="flex items-center gap-1.5 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold">
-            <span className=" h-1.5 bg-primary rounded-full text-nowrap" />
+        {isCurrentPlan && subscriptionStatus !== "CANCELLED" && (
+          <span className="flex items-center gap-1.5 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold text-nowrap">
             Current Plan
           </span>
         )}
@@ -97,7 +97,7 @@ const PlanCard: React.FC<PlanCardProps> = ({
           router.push(`/organization-details/${orgId}/billing/checkout/${btoa(plan.id as string)}`);
         }}
       >
-        {isCurrentPlan ? "Current Plan" : "Upgrade Now"}
+        {isCurrentPlan && subscriptionStatus !== "CANCELLED" ? "Current Plan" : "Upgrade Now"}
       </button>
 
       <div className="space-y-4">

@@ -378,6 +378,7 @@ function CheckoutPage() {
             selectedPaymentMethodId={selectedPaymentMethodId}
             onSelectPaymentMethod={setSelectedPaymentMethodId}
             onManageCards={() => setIsModalOpen(true)}
+            orgId={decodedOrgId}
           />
         </div>
 

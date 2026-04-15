@@ -50,7 +50,7 @@ export const useProgressTracking = (
 
   const connect = useCallback(() => {
     if (!url || eventSourceRef.current) {
-      console.log("⚠️ SSE connection already exists or invalid URL");
+      console.log("SSE connection already exists or invalid URL");
       return;
     }
     setProgress(null);
@@ -80,18 +80,6 @@ export const useProgressTracking = (
 
             case "progress":
               if (data.data) {
-                // Filter by operationType if provided
-                if (
-                  operationType &&
-                  data.data.operationType &&
-                  data.data.operationType !== operationType
-                ) {
-                  console.log(
-                    `Skipping progress for ${data.data.operationType} (expected ${operationType})`,
-                  );
-                  return;
-                }
-
                 setProgress(data.data);
                 onProgress?.(data.data);
 
@@ -210,14 +198,22 @@ export const useDeleteOrganizationProgress = (
   organizationId: string | null,
   options: UseProgressTrackingOptions = {},
 ) => {
-  const baseUrl =
-    process.env.NODE_ENV === "development"
-      ? process.env.NEXT_PUBLIC_API_BASE_URL
-      : process.env.NEXT_PUBLIC_API_PROD_BASE_URL;
+  const baseUrl = useMemo(
+    () =>
+      process.env.NODE_ENV === "development"
+        ? process.env.NEXT_PUBLIC_API_BASE_URL
+        : process.env.NEXT_PUBLIC_API_PROD_BASE_URL,
+    [],
+  );
+
   const url = organizationId
-    ? `${baseUrl}/og/progress/delete-organization/${organizationId}/stream`
+    ? `${baseUrl}/og/progress/organization/${organizationId}/stream?type=deletion`
     : null;
-  return useProgressTracking(url, { ...options, operationType: "deletion" });
+
+  return useProgressTracking(url, {
+    ...options,
+    operationType: "deletion",
+  });
 };
 
 // Hook specifically for organization progress tracking
@@ -232,8 +228,9 @@ export const useCreateOrganizationProgress = (
         : process.env.NEXT_PUBLIC_API_PROD_BASE_URL,
     [],
   );
+
   const url = organizationId
-    ? `${baseUrl}/og/progress/create-organization/${organizationId}/stream`
+    ? `${baseUrl}/og/progress/organization/${organizationId}/stream?type=registration`
     : null;
 
   return useProgressTracking(url, {
