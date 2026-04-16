@@ -33,7 +33,10 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
         <Button
           variant="basic"
           className="text-primary text-sm"
-          onClick={() => { router.push(`/organization-details/${orgId}/payment-methods`) }}
+          onClick={() => {
+            const url = `/organization-details/${btoa(orgId)}/payment-cards`;
+            window.open(url, "_blank");
+          }}
         >
           Manage Cards
         </Button>
