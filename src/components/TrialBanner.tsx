@@ -68,7 +68,7 @@ const TrialBanner = ({
           Dismiss
         </Button>
         <Button
-          leftIcon={<Crown className="w-5 h-5" />}
+          leftIcon={<Crown className="w-5 h-5 animate-crown-attention" />}
           onClick={handleNavigation}
           className="bg-[#1AD1B9] text-white px-6 py-5 rounded-xl font-bold flex items-center gap-2 hover:opacity-90 transition-all shadow-sm"
         >

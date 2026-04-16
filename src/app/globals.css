@@ -468,4 +468,31 @@
     caret-color: var(--color-foreground) !important;
   }
 
+  @keyframes crown-vibrate {
+
+    0%,
+    14%,
+    100% {
+      transform: scale(1) rotate(0);
+    }
+
+    3.5% {
+      transform: scale(1.2) rotate(-10deg);
+    }
+
+    7% {
+      transform: scale(1.2) rotate(10deg);
+    }
+
+    10.5% {
+      transform: scale(1.2) rotate(-10deg);
+    }
+  }
+
+  .animate-crown-attention {
+    animation: crown-vibrate 5s ease-in-out infinite;
+    animation-delay: 3s;
+    display: inline-block;
+  }
+
 }
