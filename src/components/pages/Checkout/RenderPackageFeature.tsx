@@ -1,0 +1,295 @@
+import React, { useMemo } from "react";
+import { Check } from "lucide-react";
+import { OiPlanType } from "@/apiHooks.ts/plans/plans.types";
+
+interface RenderPackageFeatureProps {
+  selectedPlan: OiPlanType;
+}
+
+export const getPlanFeatures = (selectedPlan: OiPlanType): string[] => {
+  if (!selectedPlan) return [];
+
+  const features: string[] = [];
+
+  // =========================
+  // PEOPLE / CORE USERS
+  // =========================
+  // if (selectedPlan.show_people) features.push("People");
+  if (selectedPlan.show_users)
+    features.push(`${selectedPlan.no_of_users} Users`);
+  if (selectedPlan.show_customers)
+    features.push(`${selectedPlan.no_of_customers} Customers`);
+  if (selectedPlan.show_suppliers)
+    features.push(`${selectedPlan.no_of_suppliers} Suppliers`);
+
+  // =========================
+  // HUMAN RESOURCE
+  // =========================
+  // if (selectedPlan.show_human_resource) features.push("Human Resource");
+  if (selectedPlan.show_employees)
+    features.push(`${selectedPlan.no_of_employees} Employees`);
+  if (selectedPlan.show_departments)
+    features.push(`${selectedPlan.no_of_departments} Departments`);
+  if (selectedPlan.show_designations)
+    features.push(`${selectedPlan.no_of_designations} Designations`);
+  if (selectedPlan.show_payslips)
+    features.push(`${selectedPlan.no_of_payslips} Payslips`);
+
+  // =========================
+  // RESTAURANT
+  // =========================
+  // if (selectedPlan.show_resturants) features.push("Restaurants");
+  if (selectedPlan.show_floors)
+    features.push(`${selectedPlan.no_of_floors} Floors`);
+  if (selectedPlan.show_tables)
+    features.push(`${selectedPlan.no_of_tables} Tables`);
+  if (selectedPlan.show_decorations)
+    features.push(`${selectedPlan.no_of_decorations} Decorations`);
+
+  // =========================
+  // PRODUCTS / INVENTORY
+  // =========================
+  // if (selectedPlan.show_product) features.push("Product Module");
+  if (selectedPlan.show_products)
+    features.push(`${selectedPlan.no_of_products} Products`);
+  if (selectedPlan.show_categories)
+    features.push(`${selectedPlan.no_of_categories} Categories`);
+  if (selectedPlan.show_brands)
+    features.push(`${selectedPlan.no_of_brands} Brands`);
+  if (selectedPlan.show_barcode_tracking)
+    features.push(`${selectedPlan.no_of_barcode_tracking} Barcode Tracking`);
+  if (selectedPlan.show_product_images)
+    features.push(`${selectedPlan.no_of_product_images} Product Images`);
+  if (selectedPlan.show_bulk_product_import)
+    features.push(
+      `${selectedPlan.no_of_bulk_product_import} Bulk Product Import`,
+    );
+  if (selectedPlan.show_bulk_price_updates)
+    features.push(
+      `${selectedPlan.no_of_bulk_price_updates} Bulk Price Updates`,
+    );
+
+  // =========================
+  // SALES / POS / ORDERS
+  // =========================
+  // if (selectedPlan.show_sales_and_orders) features.push("Sales & Orders");
+  if (selectedPlan.show_pos)
+    features.push(`${selectedPlan.no_of_pos} POS Terminals`);
+  if (selectedPlan.show_invoices)
+    features.push(`${selectedPlan.no_of_invoices} Invoices`);
+  if (selectedPlan.show_quotations)
+    features.push(`${selectedPlan.no_of_quotations} Quotations`);
+  if (selectedPlan.show_sale_orders)
+    features.push(`${selectedPlan.no_of_sale_orders} Sale Orders`);
+  if (selectedPlan.show_sale_returns)
+    features.push(`${selectedPlan.no_of_sale_returns} Sale Returns`);
+  if (selectedPlan.show_hold_sale)
+    features.push(`${selectedPlan.no_of_hold_sale} Hold Sales`);
+  if (selectedPlan.show_sample_sale)
+    features.push(`${selectedPlan.no_of_sample_sale} Sample Sales`);
+
+  // =========================
+  // PURCHASES
+  // =========================
+  // if (selectedPlan.show_purchases) features.push("Purchases");
+  if (selectedPlan.show_purchase_order)
+    features.push(`${selectedPlan.no_of_purchase_order} Purchase Orders`);
+  if (selectedPlan.show_bulk_purchase)
+    features.push(`${selectedPlan.no_of_bulk_purchase} Bulk Purchases`);
+
+  // =========================
+  // INVENTORY OPERATIONS
+  // =========================
+  // if (selectedPlan.show_inventory_operation)
+  // features.push("Inventory Operations");
+  if (selectedPlan.show_transfers)
+    features.push(`${selectedPlan.no_of_transfers} Transfers`);
+  if (selectedPlan.show_stock_issuing)
+    features.push(`${selectedPlan.no_of_stock_issuing} Stock Issuing`);
+  if (selectedPlan.show_stock_receiving)
+    features.push(`${selectedPlan.no_of_stock_receiving} Stock Receiving`);
+  if (selectedPlan.show_stock_adjustments)
+    features.push(`${selectedPlan.no_of_stock_adjustments} Stock Adjustments`);
+  if (selectedPlan.show_bulk_import_stocks)
+    features.push(`${selectedPlan.no_of_bulk_import_stocks} Bulk Stock Import`);
+
+  // =========================
+  // ECOMMERCE
+  // =========================
+  // if (selectedPlan.show_ecommerce) features.push("Ecommerce");
+  if (selectedPlan.show_campaigns)
+    features.push(`${selectedPlan.no_of_campaigns} Campaigns`);
+  if (selectedPlan.show_collections)
+    features.push(`${selectedPlan.no_of_collections} Collections`);
+  if (selectedPlan.show_themes)
+    features.push(`${selectedPlan.no_of_themes} Themes`);
+  if (selectedPlan.show_orders)
+    features.push(`${selectedPlan.no_of_orders} Orders`);
+  if (selectedPlan.show_discount)
+    features.push(`${selectedPlan.no_of_discount} Discounts`);
+  if (selectedPlan.show_domains)
+    features.push(`${selectedPlan.no_of_domains} Domains`);
+  // if (selectedPlan.show_marketing) features.push("Marketing");
+  if (selectedPlan.show_coupons)
+    features.push(`${selectedPlan.no_of_coupons} Coupons`);
+  if (selectedPlan.show_loyalty)
+    features.push(`${selectedPlan.no_of_loyalty} Loyalty`);
+
+  // =========================
+  // MANUFACTURING
+  // =========================
+  // if (selectedPlan.show_manufacturing) features.push("Manufacturing");
+  if (selectedPlan.show_moulds)
+    features.push(`${selectedPlan.no_of_moulds} Moulds`);
+  if (selectedPlan.show_quality_and_inspections)
+    features.push(
+      `${selectedPlan.no_of_quality_and_inspections} Quality Inspections`,
+    );
+  if (selectedPlan.show_production_orders)
+    features.push(`${selectedPlan.no_of_production_orders} Production Orders`);
+  if (selectedPlan.show_machines)
+    features.push(`${selectedPlan.no_of_machines} Machines`);
+
+  // =========================
+  // FINANCIAL / ACCOUNTING
+  // =========================
+  // if (selectedPlan.show_accounting_and_financial)
+  // features.push("Accounting & Financial");
+  if (selectedPlan.show_expenses)
+    features.push(`${selectedPlan.no_of_expenses} Expenses`);
+  if (selectedPlan.show_billing_payments)
+    features.push(`${selectedPlan.no_of_billing_payments} Billing Payments`);
+  if (selectedPlan.show_payable_receivables)
+    features.push(`${selectedPlan.no_of_payable_receivables} Payables`);
+  if (selectedPlan.show_financial_reports)
+    features.push(`${selectedPlan.no_of_financial_reports} Financial Reports`);
+  if (selectedPlan.show_balance_sheet)
+    features.push(`${selectedPlan.no_of_balance_sheet} Balance Sheet`);
+  if (selectedPlan.show_chart_of_accounts)
+    features.push(`${selectedPlan.no_of_chart_of_accounts} Chart of Accounts`);
+  if (selectedPlan.show_journal_entry_reports)
+    features.push(
+      `${selectedPlan.no_of_journal_entry_reports} Journal Reports`,
+    );
+  if (selectedPlan.show_assets)
+    features.push(`${selectedPlan.no_of_assets} Assets`);
+
+  // =========================
+  // ANALYTICS
+  // =========================
+  // if (selectedPlan.show_analytics) features.push("Analytics");
+  if (selectedPlan.show_manufacturing_reports)
+    features.push("Manufacturing Reports");
+  if (selectedPlan.show_sale_reports) features.push("Sales Reports");
+  if (selectedPlan.show_purchase_reports) features.push("Purchase Reports");
+  if (selectedPlan.show_inventory_reports) features.push("Inventory Reports");
+  if (selectedPlan.show_shift_reports) features.push("Shift Reports");
+  if (selectedPlan.show_commission_reports) features.push("Commission Reports");
+
+  // =========================
+  // REPORTS / TOOLS
+  // =========================
+  if (selectedPlan.show_standard_reports)
+    features.push(`${selectedPlan.no_of_standard_reports} Standard Reports`);
+  if (selectedPlan.show_cash_reports)
+    features.push(`${selectedPlan.no_of_cash_reports} Cash Reports`);
+  if (selectedPlan.show_advance_reports)
+    features.push(`${selectedPlan.no_of_advance_reports} Advance Reports`);
+  // if (selectedPlan.show_general_tools) features.push("General Tools");
+  if (selectedPlan.show_roles)
+    features.push(`${selectedPlan.no_of_roles} Roles`);
+  if (selectedPlan.show_notifications)
+    features.push(`${selectedPlan.no_of_notifications} Notifications`);
+  if (selectedPlan.show_stock_alerts)
+    features.push(`${selectedPlan.no_of_stock_alerts} Stock Alerts`);
+  if (selectedPlan.show_activity_logs)
+    features.push(`${selectedPlan.no_of_activity_logs} Activity Logs`);
+  if (selectedPlan.show_automations)
+    features.push(`${selectedPlan.no_of_automations} Automations`);
+
+  // =========================
+  // INTEGRATIONS
+  // =========================
+  //  if (selectedPlan.show_integrations) features.push("Integrations");
+  if (selectedPlan.show_fbr) features.push("FBR Integration");
+  if (selectedPlan.show_api_call) features.push("API Calls");
+  if (selectedPlan.show_stripe) features.push("Stripe");
+  if (selectedPlan.show_paypal) features.push("PayPal");
+  if (selectedPlan.show_dhl) features.push("DHL");
+  if (selectedPlan.show_leopard) features.push("Leopard");
+  if (selectedPlan.show_zapier) features.push("Zapier");
+  if (selectedPlan.show_make) features.push("Make");
+
+  // =========================
+  // FACILITIES
+  // =========================
+  // if (selectedPlan.show_facilities) features.push("Facilities");
+  if (selectedPlan.show_stores)
+    features.push(`${selectedPlan.no_of_stores} Stores`);
+  if (selectedPlan.show_warehouses)
+    features.push(`${selectedPlan.no_of_warehouses} Warehouses`);
+  if (selectedPlan.show_pos_terminal)
+    features.push(`${selectedPlan.no_of_pos_terminal} POS Terminals`);
+  if (selectedPlan.show_online_store)
+    features.push(`${selectedPlan.no_of_online_store} Online Store`);
+  if (selectedPlan.show_production_floor)
+    features.push(`${selectedPlan.no_of_production_floor} Production Floor`);
+
+  // =========================
+  // API / INTEGRATIONS
+  // =========================
+  if (selectedPlan.show_api_call)
+    features.push(`${selectedPlan.no_of_api_call} API Calls`);
+  if (selectedPlan.show_stripe)
+    features.push(`${selectedPlan.no_of_stripe} Stripe`);
+  if (selectedPlan.show_paypal)
+    features.push(`${selectedPlan.no_of_paypal} PayPal`);
+  if (selectedPlan.show_dhl) features.push(`${selectedPlan.no_of_dhl} DHL`);
+  if (selectedPlan.show_leopard)
+    features.push(`${selectedPlan.no_of_leopard} Leopard`);
+  if (selectedPlan.show_zapier)
+    features.push(`${selectedPlan.no_of_zapier} Zapier`);
+  if (selectedPlan.show_make) features.push(`${selectedPlan.no_of_make} Make`);
+
+  // =========================
+  // SUPPORT
+  // =========================
+  // if (selectedPlan.show_support) features.push("Support");
+  if (selectedPlan.show_onboarding_support)
+    features.push(
+      `${selectedPlan.no_of_onboarding_support} Onboarding Support`,
+    );
+  if (selectedPlan.show_email_support)
+    features.push(`${selectedPlan.no_of_email_support} Email Support`);
+  if (selectedPlan.show_live_chat_support)
+    features.push(`${selectedPlan.no_of_live_chat_support} Live Chat Support`);
+  if (selectedPlan.show_phone_support)
+    features.push(`${selectedPlan.no_of_phone_support} Phone Support`);
+  if (selectedPlan.show_dedicated_account_manager)
+    features.push(
+      `${selectedPlan.no_of_dedicated_account_manager} Account Manager`,
+    );
+
+  return features;
+};
+
+const RenderPackageFeature: React.FC<RenderPackageFeatureProps> = ({
+  selectedPlan,
+}) => {
+  const planFeatures = useMemo(() => {
+    return getPlanFeatures(selectedPlan);
+  }, [selectedPlan]);
+
+  return (
+    <div className="grid grid-cols-2 gap-2">
+      {planFeatures.map((feature, idx) => (
+        <div key={idx} className="flex items-center gap-2 text-sm">
+          <Check className="w-4 h-4 text-green-500 shrink-0" />
+          <span className="text-text">{feature}</span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default RenderPackageFeature;

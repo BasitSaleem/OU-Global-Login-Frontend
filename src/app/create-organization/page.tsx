@@ -29,7 +29,8 @@ export default function CreateOrgPage() {
   // Resolve pkgId: prefer query params, fall back to localStorage
   const pkgId =
     queryPkgId ||
-    (typeof window !== "undefined" ? localStorage.getItem("pkgId") : null);
+    (typeof window !== "undefined" ? localStorage.getItem("pkgId") : null) ||
+    "d755fe7d-4372-426c-af33-e63b71a6521f";
 
   // Store pkgId in localStorage so it survives the auth redirect
   useEffect(() => {
@@ -54,8 +55,6 @@ function CreateOrgContent({ initialPkgId }: { initialPkgId: string | null }) {
   const [organizationData, setOrganizationData] =
     useState<CreateOrganizationResponse | null>(null);
   const [isSuggestionSubdomain, setIsSuggestionSubdomain] = useState(false);
-
-  console.log("initialPkgId", initialPkgId);
 
   const debouncedCompanyName = useDebounce(companyName.trim(), 1500);
   const debouncedSubDomain = useDebounce(subDomain.trim(), 1500);
@@ -193,13 +192,15 @@ function CreateOrgContent({ initialPkgId }: { initialPkgId: string | null }) {
                     type="button"
                     disabled={product.isDisabled}
                     onClick={() => setSelectedProduct(product.name)}
-                    className={`flex items-center gap-2 border rounded-lg px-3 py-3 text-base font-medium transition ${selectedProduct === product.name
-                      ? "border-primary bg-bg-secondary hover:text-text hover:bg-primary/70 text-primary"
-                      : "border text-text"
-                      } ${product.isDisabled
+                    className={`flex items-center gap-2 border rounded-lg px-3 py-3 text-base font-medium transition ${
+                      selectedProduct === product.name
+                        ? "border-primary bg-bg-secondary hover:text-text hover:bg-primary/70 text-primary"
+                        : "border text-text"
+                    } ${
+                      product.isDisabled
                         ? "cursor-not-allowed opacity-50 "
                         : "cursor-pointer"
-                      }`}
+                    }`}
                   >
                     <SvgIcon name={product.icon} className="w-6 h-6" />
                     {product.fullname}

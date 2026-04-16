@@ -12,6 +12,7 @@ interface OrderSummaryProps {
   currency: string;
   billingCycle: BillingCycle;
   basePrice: number;
+  discountedBasePrice: number;
   yearlyPerMonth: number;
   discount: string | null;
   yearlySavings: string | null;
@@ -31,10 +32,10 @@ interface OrderSummaryProps {
 
 const OrderSummary: React.FC<OrderSummaryProps> = ({
   packageName,
-  currency,
   isPaymentMethodAvailable,
   billingCycle,
   basePrice,
+  discountedBasePrice,
   onManageCards,
   yearlyPerMonth,
   discount,
@@ -43,21 +44,50 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   selectedAddOns,
   availableAddOns,
   addOnsTotal,
-  totalPrice,
   taxDetails,
   isProcessing,
   isCalculatingTax,
   canCheckout,
   onCheckout,
 }) => {
+  const { totalAddOnsOriginal, totalAddOnsDiscounted } = useMemo(() => {
+    let original = 0;
+    let discounted = 0;
+    Object.entries(selectedAddOns).forEach(([id, quantity]) => {
+      const entry = availableAddOns.find((a) => a.addOnId === id);
+      if (entry) {
+        const monthlyOriginal = parseFloat(entry.addOn.monthly_price || "0");
+        const yearlyOriginal = parseFloat(entry.addOn.yearly_price || "0");
+        const originalPrice =
+          billingCycle === "monthly" ? monthlyOriginal : yearlyOriginal;
+
+        let unitPrice = 0;
+        if (billingCycle === "monthly") {
+          const discPercent = parseFloat(entry.addOn.monthly_discount || "0");
+          unitPrice = originalPrice * (1 - discPercent / 100);
+        } else {
+          unitPrice = parseFloat(
+            entry.addOn.discounted_yearly_price ||
+              entry.addOn.yearly_price ||
+              "0",
+          );
+        }
+
+        original += originalPrice * quantity;
+        discounted += unitPrice * quantity;
+      }
+    });
+    return { totalAddOnsOriginal: original, totalAddOnsDiscounted: discounted };
+  }, [selectedAddOns, availableAddOns, billingCycle]);
+
+  const addOnsSavings = totalAddOnsOriginal - totalAddOnsDiscounted;
+  const planSavings = basePrice - discountedBasePrice;
+  const totalDiscountAmount = planSavings + addOnsSavings;
+
   const periodLabel = billingCycle === "monthly" ? "mo" : "yr";
   const numSelectedAddOns = Object.keys(selectedAddOns).length;
 
-  const finalTotal = isCalculatingTax
-    ? "..."
-    : taxDetails?.total != null
-      ? taxDetails.total.toFixed(2)
-      : totalPrice.toFixed(2);
+  const subtotal = discountedBasePrice + addOnsTotal;
 
   const taxPercent = useMemo(() => {
     if (!taxDetails) return "0";
@@ -70,6 +100,15 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
     if (!taxDetails.subtotal || !taxDetails.tax) return "0";
     return ((taxDetails.tax / taxDetails.subtotal) * 100).toFixed(1);
   }, [taxDetails]);
+
+  const taxAmount = subtotal * (parseFloat(taxPercent) / 100);
+  const displayTotal = subtotal + taxAmount;
+
+  const finalTotal = isCalculatingTax
+    ? "..."
+    : taxDetails?.total != null
+      ? displayTotal.toFixed(2)
+      : subtotal.toFixed(2);
 
   return (
     <div className="bg-bg-secondary border rounded-xl p-6">
@@ -93,16 +132,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             <span className="font-medium">${yearlyPerMonth.toFixed(2)}</span>
           </div>
         )}
-        {discount && parseFloat(discount) > 0 && (
-          <div className="flex justify-between text-sm">
-            <span className="text-text flex items-center gap-1">
-              <Tag className="w-3.5 h-3.5" />
-              Discount
-            </span>
-            <span className="font-medium text-green-600">-{discount}%</span>
-          </div>
-        )}
-
         {numSelectedAddOns > 0 && (
           <>
             <div className="border-t pt-3">
@@ -113,11 +142,17 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             {Object.entries(selectedAddOns).map(([id, quantity]) => {
               const entry = availableAddOns.find((a) => a.addOnId === id);
               if (!entry) return null;
-              const unitPrice =
-                billingCycle === "monthly"
-                  ? parseFloat(entry.addOn.monthly_price || "0")
-                  : parseFloat(entry.addOn.yearly_price || "0");
-              const totalAddOnPrice = unitPrice * quantity;
+              const monthlyOriginal = parseFloat(
+                entry.addOn.monthly_price || "0",
+              );
+              const yearlyOriginal = parseFloat(
+                entry.addOn.yearly_price || "0",
+              );
+              const originalPrice =
+                billingCycle === "monthly" ? monthlyOriginal : yearlyOriginal;
+
+              const totalOriginalPrice = originalPrice * quantity;
+
               return (
                 <div key={id} className="flex justify-between text-sm">
                   <span className="text-text flex items-center gap-1.5 flex-1 pr-2">
@@ -126,20 +161,40 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                       {entry.addOn.name} {quantity > 1 ? `(x${quantity})` : ""}
                     </span>
                   </span>
-                  <span className="font-medium shrink-0">
-                    {/* {entry.addOn.currency} */}${totalAddOnPrice.toFixed(2)}
-                  </span>
+                  <div className="text-right">
+                    <span className="font-medium shrink-0">
+                      ${totalOriginalPrice.toFixed(2)}
+                    </span>
+                  </div>
                 </div>
               );
             })}
             <div className="flex justify-between text-sm border-t border-dashed pt-2">
               <span className="text-text">Add-ons subtotal</span>
-              <span className="font-medium">${addOnsTotal.toFixed(2)}</span>
+              <span className="font-medium">
+                ${totalAddOnsOriginal.toFixed(2)}
+              </span>
             </div>
           </>
         )}
 
+        {totalDiscountAmount > 0 && (
+          <div className="flex justify-between text-sm border-t pt-3">
+            <span className="text-text flex items-center gap-1">
+              <Tag className="w-3.5 h-3.5" />
+              Discount {discount && `(${discount}%)`}
+            </span>
+            <span className="font-medium text-green-600">
+              -${totalDiscountAmount.toFixed(2)}
+            </span>
+          </div>
+        )}
+
         <div className="border-t pt-3 space-y-3">
+          <div className="flex justify-between text-sm">
+            <span className="text-text font-medium">Subtotal</span>
+            <span className="font-semibold">${subtotal.toFixed(2)}</span>
+          </div>
           <div className="flex justify-between text-sm">
             <span className="text-text">Tax</span>
             <span className="font-medium">
@@ -147,7 +202,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                 "..."
               ) : (
                 <div className="text-right">
-                  <div>${(taxDetails?.tax ?? 0).toFixed(2)}</div>
+                  <div>${taxAmount.toFixed(2)}</div>
                   <div className="text-[10px] text-text-secondary">
                     ({taxPercent}%)
                   </div>
@@ -158,20 +213,20 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
           {(taxDetails?.breakdown?.[0]?.tax_rate_details?.country ||
             country) && (
-              <div className="flex justify-between text-sm">
-                <span className="text-text">
-                  Applicable Tax Rate (
-                  {taxDetails?.breakdown?.[0]?.tax_rate_details?.country ||
-                    country}
-                  )
-                </span>
-                <span className="font-medium">
-                  {taxDetails?.breakdown?.[0]?.tax_rate_details
-                    ?.percentage_decimal ?? 0}
-                  %
-                </span>
-              </div>
-            )}
+            <div className="flex justify-between text-sm">
+              <span className="text-text">
+                Applicable Tax Rate (
+                {taxDetails?.breakdown?.[0]?.tax_rate_details?.country ||
+                  country}
+                )
+              </span>
+              <span className="font-medium">
+                {taxDetails?.breakdown?.[0]?.tax_rate_details
+                  ?.percentage_decimal ?? 0}
+                %
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Total */}
