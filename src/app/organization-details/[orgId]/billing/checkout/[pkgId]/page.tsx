@@ -34,8 +34,8 @@ type BillingCycle = "monthly" | "yearly";
 
 function CheckoutPage() {
   const { orgId, pkgId } = useParams<{ orgId: string; pkgId: string }>();
-  const decodedOrgId = atob(orgId as string);
-  const decodedPkgId = atob(pkgId as string);
+  const decodedOrgId = orgId ? atob(orgId as string) : "";
+  const decodedPkgId = pkgId ? atob(pkgId as string) : "";
 
   const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<
@@ -46,7 +46,8 @@ function CheckoutPage() {
   );
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
-  const { data: planData, isPending: loadingPlan } = useGetPlanDetails(decodedPkgId);
+  const { data: planData, isPending: loadingPlan } =
+    useGetPlanDetails(decodedPkgId);
   const { data: paymentMethodsData, isPending: loadingPaymentMethods } =
     useGetPaymentMethods(decodedOrgId);
   const { data: organization, isPending: loadingOrg } =
@@ -58,7 +59,9 @@ function CheckoutPage() {
   const selectedPlan = useMemo(() => {
     if (!planData?.plans) return undefined;
     if (Array.isArray(planData.plans)) {
-      return planData.plans.find((p) => p.id === decodedPkgId) || planData.plans[0];
+      return (
+        planData.plans.find((p) => p.id === decodedPkgId) || planData.plans[0]
+      );
     }
     return planData.plans;
   }, [planData, decodedPkgId]);
@@ -210,10 +213,17 @@ function CheckoutPage() {
     Object.entries(selectedAddOns).forEach(([id, quantity]) => {
       const entry = availableAddOns.find((a) => a.addOnId === id);
       if (entry) {
-        const price =
-          billingCycle === "monthly"
-            ? parseFloat(entry.addOn.monthly_price || "0")
-            : parseFloat(entry.addOn.yearly_price || "0");
+        let price = 0;
+        if (billingCycle === "monthly") {
+          const discPercent = parseFloat(entry.addOn.monthly_discount || "0");
+          price =
+            parseFloat(entry.addOn.monthly_price || "0") *
+            (1 - discPercent / 100);
+        } else {
+          price = parseFloat(
+            entry.addOn.discounted_yearly_price || entry.addOn.yearly_price || "0",
+          );
+        }
         total += price * quantity;
       }
     });
@@ -223,51 +233,51 @@ function CheckoutPage() {
   const yearlyPerMonth = parseFloat(selectedPlan?.yearly_price || "0") / 12;
   const originalMonthlyPrice = parseFloat(selectedPlan?.monthly_price || "0");
 
-  const yearlySavings =
-    billingCycle === "yearly"
-      ? (
-        originalMonthlyPrice * 12 -
-        parseFloat(selectedPlan?.yearly_price || "0")
-      ).toFixed(2)
-      : null;
+  const totalMonthlyOriginal = useMemo(() => {
+    let total = originalMonthlyPrice;
+    Object.entries(selectedAddOns).forEach(([id, quantity]) => {
+      const entry = availableAddOns.find((a) => a.addOnId === id);
+      if (entry) {
+        total += parseFloat(entry.addOn.monthly_price || "0") * quantity;
+      }
+    });
+    return total;
+  }, [originalMonthlyPrice, selectedAddOns, availableAddOns]);
 
   const discount =
     billingCycle === "monthly"
       ? (selectedPlan?.monthly_discount ?? null)
       : (selectedPlan?.yearly_discount ?? null);
 
-  const totalPrice = useMemo(() => {
+  const discountedBasePrice = useMemo(() => {
+    if (billingCycle === "yearly" && selectedPlan?.discounted_yearly_price) {
+      return parseFloat(selectedPlan.discounted_yearly_price);
+    }
     const discPercent = parseFloat(discount || "0");
-    const discountedBase = basePlanPrice * (1 - discPercent / 100);
-    return discountedBase + addOnsTotal;
-  }, [basePlanPrice, addOnsTotal, discount]);
+    return basePlanPrice * (1 - discPercent / 100);
+  }, [selectedPlan, billingCycle, discount, basePlanPrice]);
+
+  const yearlySavings = useMemo(() => {
+    if (billingCycle !== "yearly") return null;
+
+    // Total cost if paid monthly for a year
+    const totalMonthlyCostForYear = totalMonthlyOriginal * 12;
+
+    // Total cost if paid yearly upfront
+    const totalYearlyCost = discountedBasePrice + addOnsTotal;
+
+    const savings = totalMonthlyCostForYear - totalYearlyCost;
+    return savings > 0 ? savings.toFixed(2) : null;
+  }, [billingCycle, totalMonthlyOriginal, discountedBasePrice, addOnsTotal]);
+
+  const totalPrice = useMemo(() => {
+    return discountedBasePrice + addOnsTotal;
+  }, [discountedBasePrice, addOnsTotal]);
 
   const stripePriceId =
     billingCycle === "monthly"
       ? selectedPlan?.stripe_price_monthly_id
       : selectedPlan?.stripe_price_yearly_id;
-
-  const planFeatures = useMemo(() => {
-    if (!selectedPlan) return [];
-    const features: string[] = [];
-    if (selectedPlan.no_of_users)
-      features.push(`${selectedPlan.no_of_users} Users`);
-    if (selectedPlan.no_of_stores)
-      features.push(`${selectedPlan.no_of_stores} Stores`);
-    if (selectedPlan.no_of_warehouses)
-      features.push(`${selectedPlan.no_of_warehouses} Warehouses`);
-    if (selectedPlan.no_of_products)
-      features.push(`${selectedPlan.no_of_products} Products`);
-    if (selectedPlan.no_of_pos)
-      features.push(`${selectedPlan.no_of_pos} POS Terminals`);
-    if (selectedPlan.no_of_customers)
-      features.push(`${selectedPlan.no_of_customers} Customers`);
-    if (selectedPlan.no_of_suppliers)
-      features.push(`${selectedPlan.no_of_suppliers} Suppliers`);
-    if (selectedPlan.show_online_store) features.push("Online Store");
-    if (selectedPlan.show_manufacturing) features.push("Manufacturing");
-    return features;
-  }, [selectedPlan]);
 
   const handleCheckout = async (data: CheckoutFormValues) => {
     if (!selectedPaymentMethodId || !stripePriceId) return;
@@ -336,7 +346,6 @@ function CheckoutPage() {
     }
   };
 
-
   if (loadingPlan || loadingPaymentMethods || loadingOrg) {
     return <CheckOutSkeleton />;
   }
@@ -356,7 +365,8 @@ function CheckoutPage() {
             billingCycle={billingCycle}
             setBillingCycle={setBillingCycle}
             yearlySavings={yearlySavings}
-            features={planFeatures}
+            selectedPlan={selectedPlan}
+            yearlyDiscount={selectedPlan.yearly_discount}
           />
 
           <AddOnsSection
@@ -390,6 +400,7 @@ function CheckoutPage() {
             currency={selectedPlan.currency}
             billingCycle={billingCycle}
             basePrice={basePlanPrice}
+            discountedBasePrice={discountedBasePrice}
             yearlyPerMonth={yearlyPerMonth}
             discount={discount}
             yearlySavings={yearlySavings}
@@ -403,7 +414,6 @@ function CheckoutPage() {
             canCheckout={!!selectedPaymentMethodId && !!stripePriceId}
             onCheckout={handleSubmit(handleCheckout)}
             onManageCards={() => setIsModalOpen(true)}
-
           />
         </div>
         {isModalOpen && (

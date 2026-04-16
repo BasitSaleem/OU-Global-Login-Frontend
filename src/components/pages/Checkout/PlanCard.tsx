@@ -1,5 +1,7 @@
 import React from "react";
 import { Check, Zap } from "lucide-react";
+import { OiPlanType } from "@/apiHooks.ts/plans/plans.types";
+import RenderPackageFeature from "./RenderPackageFeature";
 
 type BillingCycle = "monthly" | "yearly";
 
@@ -7,6 +9,7 @@ interface BillingCycleToggleProps {
   billingCycle: BillingCycle;
   setBillingCycle: (cycle: BillingCycle) => void;
   yearlySavings: string | null;
+  yearlyDiscount: string | null;
 }
 
 interface PlanCardProps {
@@ -17,13 +20,15 @@ interface PlanCardProps {
   billingCycle: BillingCycle;
   setBillingCycle: (cycle: BillingCycle) => void;
   yearlySavings: string | null;
-  features: string[];
+  features?: string[];
+  yearlyDiscount: null | string;
+  selectedPlan: OiPlanType;
 }
 
 const BillingCycleToggle: React.FC<BillingCycleToggleProps> = ({
   billingCycle,
   setBillingCycle,
-  yearlySavings,
+  yearlyDiscount,
 }) => (
   <div className="mb-6">
     <label className="block text-sm font-medium mb-3">Billing Cycle</label>
@@ -47,7 +52,7 @@ const BillingCycleToggle: React.FC<BillingCycleToggleProps> = ({
         }`}
       >
         Yearly
-        {yearlySavings && parseFloat(yearlySavings) > 0 && (
+        {parseFloat(yearlyDiscount || "0") > 0 && (
           <span
             className={`text-xs px-1.5 py-0.5 rounded-full ${
               billingCycle === "yearly"
@@ -55,7 +60,7 @@ const BillingCycleToggle: React.FC<BillingCycleToggleProps> = ({
                 : "bg-green-100 text-green-700"
             }`}
           >
-            Save ${yearlySavings}
+            Save {yearlyDiscount}%
           </span>
         )}
       </button>
@@ -70,7 +75,9 @@ const PlanCard: React.FC<PlanCardProps> = ({
   billingCycle,
   setBillingCycle,
   yearlySavings,
-  features,
+  // features,
+  yearlyDiscount,
+  selectedPlan,
 }) => {
   return (
     <div className="bg-bg-secondary border rounded-xl p-6">
@@ -100,23 +107,15 @@ const PlanCard: React.FC<PlanCardProps> = ({
         billingCycle={billingCycle}
         setBillingCycle={setBillingCycle}
         yearlySavings={yearlySavings}
+        yearlyDiscount={yearlyDiscount}
       />
 
-      {features.length > 0 && (
-        <div>
-          <label className="block text-sm font-medium mb-3">
-            What&apos;s included
-          </label>
-          <div className="grid grid-cols-2 gap-2">
-            {features.map((feature, idx) => (
-              <div key={idx} className="flex items-center gap-2 text-sm">
-                <Check className="w-4 h-4 text-green-500 shrink-0" />
-                <span className="text-text">{feature}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <div className="mt-6">
+        <label className="block text-sm font-medium mb-3">
+          What&apos;s included
+        </label>
+        <RenderPackageFeature selectedPlan={selectedPlan} />
+      </div>
     </div>
   );
 };
