@@ -20,6 +20,7 @@ import { SubdomainSuggestion } from "@/components/SubdomainSuggestion";
 import { AvailabilityStatus } from "@/components/AvailabilityStatus";
 import { CreateOrganizationGuard } from "@/components/HOCs/createOrgRoute.guard";
 import { SvgIcon } from "@/components/ui/SvgIcon";
+import logger from "@/utils/logger";
 // import OgPlanSelector from "@/components/pages/Organizations/OgPlanSelector";
 
 export default function CreateOrgPage() {
@@ -138,7 +139,7 @@ function CreateOrgContent({ initialPkgId }: { initialPkgId: string | null }) {
         const message =
           (error as Error)?.message || "Organization creation failed";
         toast.error("Failed to create organization", message);
-        console.error("Organization creation failed:", error);
+        logger.error("Organization creation failed:", error);
       },
     });
   };
@@ -150,7 +151,7 @@ function CreateOrgContent({ initialPkgId }: { initialPkgId: string | null }) {
   };
 
   const handleProgressComplete = () => {
-    console.log("handleProgressComplete");
+    logger.log("handleProgressComplete");
   };
 
   const handleGoHome = () => {
@@ -192,15 +193,13 @@ function CreateOrgContent({ initialPkgId }: { initialPkgId: string | null }) {
                     type="button"
                     disabled={product.isDisabled}
                     onClick={() => setSelectedProduct(product.name)}
-                    className={`flex items-center gap-2 border rounded-lg px-3 py-3 text-base font-medium transition ${
-                      selectedProduct === product.name
-                        ? "border-primary bg-bg-secondary hover:text-text hover:bg-primary/70 text-primary"
-                        : "border text-text"
-                    } ${
-                      product.isDisabled
+                    className={`flex items-center gap-2 border rounded-lg px-3 py-3 text-base font-medium transition ${selectedProduct === product.name
+                      ? "border-primary bg-bg-secondary hover:text-text hover:bg-primary/70 text-primary"
+                      : "border text-text"
+                      } ${product.isDisabled
                         ? "cursor-not-allowed opacity-50 "
                         : "cursor-pointer"
-                    }`}
+                      }`}
                   >
                     <SvgIcon name={product.icon} className="w-6 h-6" />
                     {product.fullname}

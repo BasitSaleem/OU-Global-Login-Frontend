@@ -10,6 +10,7 @@ import { NotificationItemProps } from "./Header.types";
 import { SvgIcon } from "@/components/ui/SvgIcon";
 import Image from "next/image";
 import { Button } from "@/components/ui";
+import logger from "@/utils/logger";
 interface HeaderProps {
   onToggleSidebar: () => void;
   onToggleMobileSidebar: () => void;
@@ -53,7 +54,7 @@ export default function AppHeader({
 
   const handleSettingsClick = () => {
     try {
-      console.log("under development");
+      logger.log("under development");
     } catch (e) {
       setErr(e as Error); // triggers a re-render; boundary will catch on next render
     }

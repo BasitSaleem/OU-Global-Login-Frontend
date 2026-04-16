@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { OTPInput } from "@/components/ui/otp-input";
 import { useDispatch } from "react-redux";
 import { setAuth } from "@/redux/slices/auth.slice";
+import logger from "@/utils/logger";
 export default function OTPPage() {
   const { mutate: verifyOtp, isPending, error } = useVerifyOtp();
   const { mutate: resendOtp, isPending: isResending } = useResendOtp();
@@ -57,7 +58,7 @@ export default function OTPPage() {
           router.push("/create-organization")
         },
         onError: (error) => {
-          console.error("OTP verification failed:", error);
+          logger.error("OTP verification failed:", error);
         },
       }
     );

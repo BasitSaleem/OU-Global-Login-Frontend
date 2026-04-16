@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { JobProgress, SSEEvent } from "@/types/progressTypes";
+import logger from "@/utils/logger";
 
 export interface UseProgressTrackingOptions {
   onProgress?: (progress: JobProgress) => void;
@@ -50,7 +51,7 @@ export const useProgressTracking = (
 
   const connect = useCallback(() => {
     if (!url || eventSourceRef.current) {
-      console.log("SSE connection already exists or invalid URL");
+      logger.log("SSE connection already exists or invalid URL");
       return;
     }
     setProgress(null);
@@ -62,7 +63,7 @@ export const useProgressTracking = (
       eventSourceRef.current = eventSource;
 
       eventSource.onopen = () => {
-        console.log("SSE connection opened");
+        logger.log("SSE connection opened");
         setIsConnected(true);
         setIsConnecting(false);
         setError(null);
@@ -75,7 +76,7 @@ export const useProgressTracking = (
           const data: SSEEvent = JSON.parse(event.data);
           switch (data.type) {
             case "connected":
-              console.log("SSE connected:", data.message);
+              logger.log("SSE connected:", data.message);
               break;
 
             case "progress":
@@ -95,21 +96,21 @@ export const useProgressTracking = (
               break;
 
             case "error":
-              console.error("SSE error event:", data.message);
+              logger.error("SSE error event:", data.message);
               setError(data.message || "Unknown error");
               onError?.(data.message || "Unknown error");
               break;
 
             default:
-              console.log("Unknown SSE event type:", data.type);
+              logger.log("Unknown SSE event type:", data.type);
           }
         } catch (parseError) {
-          console.error("Failed to parse SSE message:", parseError, event.data);
+          logger.error("Failed to parse SSE message:", parseError, event.data);
         }
       };
 
       eventSource.onerror = (event) => {
-        console.error("SSE connection error:", event);
+        logger.error("SSE connection error:", event);
         setIsConnected(false);
         setIsConnecting(false);
 
@@ -125,7 +126,7 @@ export const useProgressTracking = (
             30000,
           );
 
-          console.log(
+          logger.log(
             `Attempting to reconnect in ${delay}ms (attempt ${reconnectAttemptsRef.current}/${maxReconnectAttempts})`,
           );
 
@@ -138,7 +139,7 @@ export const useProgressTracking = (
         }
       };
     } catch (error) {
-      console.error("Failed to create SSE connection:", error);
+      logger.error("Failed to create SSE connection:", error);
       setIsConnecting(false);
       setError("Failed to establish connection");
       onError?.("Failed to establish connection");

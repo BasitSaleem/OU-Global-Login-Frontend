@@ -8,6 +8,7 @@ import {
   GetPaymentMethodResponse,
   PaymentSecretRespons,
 } from "./paymentMethod.types";
+import logger from "@/utils/logger";
 
 //ENDPOINTS
 const ENDPOINTS = {
@@ -116,9 +117,9 @@ export const useDeletePaymentMethod = (onSuccess?: () => void) => {
 
       // Snapshot the previous value
       const previousData = queryClient.getQueryData(["payment-methods"]);
-      console.log("=== DELETE OPTIMISTIC UPDATE ===");
-      console.log("pmId to delete:", pmId);
-      console.log(
+      logger.log("=== DELETE OPTIMISTIC UPDATE ===");
+      logger.log("pmId to delete:", pmId);
+      logger.log(
         "Cache data BEFORE update:",
         JSON.stringify(previousData, null, 2),
       );
@@ -126,20 +127,20 @@ export const useDeletePaymentMethod = (onSuccess?: () => void) => {
       // Optimistically remove the deleted payment method from the cache
       queryClient.setQueryData(["payment-methods"], (old: any) => {
         if (!old) {
-          console.log("Cache is empty/null, skipping optimistic update");
+          logger.log("Cache is empty/null, skipping optimistic update");
           return old;
         }
 
         // Handle both possible data shapes
         const methods = old.paymentMethods || old.data?.paymentMethods || [];
-        console.log("Found methods in cache:", methods.length);
-        console.log(
+        logger.log("Found methods in cache:", methods.length);
+        logger.log(
           "Method IDs in cache:",
           methods.map((m: any) => m.id),
         );
 
         const filtered = methods.filter((method: any) => method.id !== pmId);
-        console.log("Methods after filter:", filtered.length);
+        logger.log("Methods after filter:", filtered.length);
 
         // Preserve the original shape
         if (old.paymentMethods) {
@@ -152,7 +153,7 @@ export const useDeletePaymentMethod = (onSuccess?: () => void) => {
       });
 
       const afterData = queryClient.getQueryData(["payment-methods"]);
-      console.log(
+      logger.log(
         "Cache data AFTER update:",
         JSON.stringify(afterData, null, 2),
       );
@@ -161,12 +162,12 @@ export const useDeletePaymentMethod = (onSuccess?: () => void) => {
       return { previousData };
     },
     onSuccess: () => {
-      console.log("=== DELETE SUCCESS ===");
+      logger.log("=== DELETE SUCCESS ===");
       toast.success("Payment method deleted successfully!");
       onSuccess?.();
     },
     onError: (error: any, _pmId, context) => {
-      console.log("=== DELETE ERROR ===", error);
+      logger.log("=== DELETE ERROR ===", error);
       // Roll back to the previous data if the mutation fails
       if (context?.previousData) {
         queryClient.setQueryData(["payment-methods"], context.previousData);
@@ -176,7 +177,7 @@ export const useDeletePaymentMethod = (onSuccess?: () => void) => {
       toast.error("Failed to delete payment method", message);
     },
     onSettled: () => {
-      console.log("=== DELETE SETTLED, invalidating queries ===");
+      logger.log("=== DELETE SETTLED, invalidating queries ===");
       // Always refetch after mutation to ensure cache is in sync with server
       queryClient.invalidateQueries({ queryKey: ["payment-methods"] });
     },

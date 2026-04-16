@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from '@/hooks/useToast';
 import { useScrollLock } from '@/hooks/useScrollLock';
 import { ROUTES } from '@/constants';
+import logger from '@/utils/logger';
 
 interface ProgressModalProps {
   isOpen: boolean;
@@ -32,7 +33,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
   useScrollLock(isOpen)
   const router = useRouter()
   const handleProgress = useCallback((progress: any) => {
-    console.log("Progress update:", progress);
+    logger.log("Progress update:", progress);
   }, []);
 
   const handleComplete = useCallback(
@@ -78,7 +79,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
 
   useEffect(() => {
     if (isCompleted) {
-      console.log("Organization creation completed successfully");
+      logger.log("Organization creation completed successfully");
     }
   }, [isCompleted]);
 

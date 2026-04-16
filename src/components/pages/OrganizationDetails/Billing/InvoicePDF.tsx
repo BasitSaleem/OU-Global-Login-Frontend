@@ -5,6 +5,7 @@ import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
 
 import { User } from "@/types/auth.types";
+import logger from "@/utils/logger";
 
 // Note: Standard fonts in @react-pdf/renderer are limited to a few base ones unless registered.
 // We'll stick to Helvetica but use weights and sizes to create hierarchy.
@@ -250,7 +251,7 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({ invoice, orgName, user }) => {
     try {
       metaObj = JSON.parse(metaObj);
     } catch (e) {
-      console.error("Failed to parse metadata string in PDF", e);
+      logger.error("Failed to parse metadata string in PDF", e);
     }
   }
 
@@ -260,7 +261,7 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({ invoice, orgName, user }) => {
     try {
       addOns = JSON.parse(addOns_raw);
     } catch (e) {
-      console.error("Failed to parse addOns string in PDF", e);
+      logger.error("Failed to parse addOns string in PDF", e);
     }
   } else if (Array.isArray(addOns_raw)) {
     addOns = addOns_raw;
@@ -321,12 +322,12 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({ invoice, orgName, user }) => {
               Period:{" "}
               {new Date(
                 invoice.subscription?.current_period_start ||
-                  invoice.billing_period_start,
+                invoice.billing_period_start,
               ).toLocaleDateString()}{" "}
               -{" "}
               {new Date(
                 invoice.subscription?.current_period_end ||
-                  invoice.billing_period_end,
+                invoice.billing_period_end,
               ).toLocaleDateString()}
             </Text>
           </View>

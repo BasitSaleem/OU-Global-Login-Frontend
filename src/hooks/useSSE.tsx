@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "./useToast";
+import logger from "@/utils/logger";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const SSE_EVENTS = {
   SUBSCRIPTION_CREATED: "subscription:created",
@@ -25,19 +26,19 @@ export const useSSE = (orgId: string | undefined, subscriptionId: string) => {
     esRef.current = es;
 
     es.onopen = () => {
-      console.log(`SSE connected for org: ${orgId}`);
+      logger.log(`SSE connected for org: ${orgId}`);
     };
 
     es.onerror = (err) => {
-      console.error(` SSE error for org: ${orgId}`, err);
+      logger.error(` SSE error for org: ${orgId}`, err);
     };
 
     es.onmessage = (e) => {
       try {
         const data = JSON.parse(e.data);
-        console.log("SSE Message received:", data);
+        logger.log("SSE Message received:", data);
         if (data.type === "connected") {
-          console.log("SSE Stream confirmed active connection");
+          logger.log("SSE Stream confirmed active connection");
         }
       } catch (err) {
       }
@@ -71,7 +72,7 @@ export const useSSE = (orgId: string | undefined, subscriptionId: string) => {
     });
     //2.INVOICE EVENTS
     es.addEventListener(SSE_EVENTS.INVOICE_PAID, (e: any) => {
-      console.log("INVOICE_PAID", orgId);
+      logger.log("INVOICE_PAID", orgId);
       const data = JSON.parse(e.data);
       toast.success(data.title, data.message);
       queryClient.invalidateQueries({ queryKey: ["org-invoices", orgId] });
@@ -80,14 +81,14 @@ export const useSSE = (orgId: string | undefined, subscriptionId: string) => {
     });
     //2.2.INVOICE PAYMENT FAILED
     es.addEventListener(SSE_EVENTS.INVOICE_PAYMENT_FAILED, (e) => {
-      console.log("INVOICE_PAYMENT_FAILED", orgId);
+      logger.log("INVOICE_PAYMENT_FAILED", orgId);
       const data = JSON.parse(e.data);
       toast.error(data.title, data.message);
       queryClient.invalidateQueries({ queryKey: ["org-invoices", orgId] });
     });
     //3.PAYMENT METHOD EVENTS
     es.addEventListener(SSE_EVENTS.PAYMENT_METHOD_ADDED, (e: any) => {
-      console.log("PAYMENT_METHOD_ADDED", orgId);
+      logger.log("PAYMENT_METHOD_ADDED", orgId);
       const data = JSON.parse(e.data);
       toast.success(data.title, data.message);
       queryClient.invalidateQueries({ queryKey: ["payment-methods"] });

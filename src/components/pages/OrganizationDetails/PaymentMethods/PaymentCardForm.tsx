@@ -11,6 +11,7 @@ import { Button, Input } from "@/components/ui";
 import { toast } from "@/hooks/useToast";
 import { useQueryClient } from "@tanstack/react-query";
 import { Modal } from "@/components/modals/GenericModal";
+import logger from "@/utils/logger";
 
 interface AddPaymentCardFormProps {
   clientSecret: string; // from backend SetupIntent
@@ -98,7 +99,7 @@ const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
         onClose();
       }
     } catch (err: any) {
-      console.error("AddPaymentCardForm: Unexpected error:", err);
+      logger.error("AddPaymentCardForm: Unexpected error:", err);
       setError(err.message || "Something went wrong");
       toast.error(err.message || "Something went wrong");
     } finally {

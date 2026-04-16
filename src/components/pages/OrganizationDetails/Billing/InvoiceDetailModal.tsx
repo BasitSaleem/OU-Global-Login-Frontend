@@ -8,6 +8,7 @@ import { Button } from "@/components/ui";
 import { Subscription } from "@/apiHooks.ts/organization/organization.types";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
+import logger from "@/utils/logger";
 
 interface InvoiceDetailModalProps {
   isOpen: boolean;
@@ -32,7 +33,7 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
     try {
       metaObj = JSON.parse(metaObj);
     } catch (e) {
-      console.error("Failed to parse metadata string", e);
+      logger.error("Failed to parse metadata string", e);
     }
   }
 
@@ -43,7 +44,7 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
     try {
       addOns = JSON.parse(addOns_raw);
     } catch (e) {
-      console.error("Failed to parse addOns string", e);
+      logger.error("Failed to parse addOns string", e);
     }
   } else if (Array.isArray(addOns_raw)) {
     addOns = addOns_raw;
@@ -184,13 +185,12 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
               Status
             </p>
             <span
-              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold mt-1 ${
-                invoice.status === "PAID"
-                  ? "bg-green-100 text-green-700"
-                  : invoice.status === "PENDING"
-                    ? "bg-yellow-100 text-yellow-700"
-                    : "bg-red-100 text-red-700"
-              }`}
+              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold mt-1 ${invoice.status === "PAID"
+                ? "bg-green-100 text-green-700"
+                : invoice.status === "PENDING"
+                  ? "bg-yellow-100 text-yellow-700"
+                  : "bg-red-100 text-red-700"
+                }`}
             >
               {invoice.status}
             </span>

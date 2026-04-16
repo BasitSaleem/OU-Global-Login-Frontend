@@ -39,7 +39,7 @@ const AuthLayout = ({ children }: AuthLayoutProp) => {
 
   const app = searchParams.get("app") || "OG";
   const redirectUrlParam = searchParams.get("redirect_url") || searchParams.get("redirect_uri") || "/"
-  console.log(redirectUrlParam, "this is redirect url params ");
+  logger.log(redirectUrlParam, "this is redirect url params ");
 
   useEffect(() => {
     if (searchParams.get('client_id')) {
@@ -77,14 +77,14 @@ const AuthLayout = ({ children }: AuthLayoutProp) => {
           })
         );
         if (response_redirect_url) {
-          console.log(response_redirect_url, "response_redirect_url");
+          logger.log(response_redirect_url, "response_redirect_url");
           router.replace(response_redirect_url);
         } else if (search_redirect_uri) {
-          console.log(search_redirect_uri, "search_redirect_uri");
+          logger.log(search_redirect_uri, "search_redirect_uri");
 
           router.push(search_redirect_uri);
         } else {
-          console.log("ROUTES.DASHBOARD");
+          logger.log("ROUTES.DASHBOARD");
 
           router.push(ROUTES.DASHBOARD);
         }

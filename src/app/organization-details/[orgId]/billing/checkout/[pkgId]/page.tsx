@@ -29,6 +29,7 @@ import CheckoutHeader from "@/components/pages/Checkout/CheckoutHeader";
 import CheckOutSkeleton from "@/components/pages/Checkout/CheckOutSkeleton";
 import StripeWrapper from "@/components/pages/OrganizationDetails/PaymentMethods/StripeWrapper";
 import PaymentSuccessModal from "@/components/modals/PaymentSuccessModal";
+import logger from "@/utils/logger";
 
 type BillingCycle = "monthly" | "yearly";
 
@@ -342,7 +343,7 @@ function CheckoutPage() {
 
       setIsSuccessModalOpen(true);
     } catch (error) {
-      console.error("Checkout error:", error);
+      logger.error("Checkout error:", error);
     }
   };
 

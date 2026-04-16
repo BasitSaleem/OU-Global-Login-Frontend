@@ -1,9 +1,9 @@
-import React from 'react'
 import { Modal } from './GenericModal'
 import { Button } from '../ui'
+import logger from '@/utils/logger'
 
 const RemoveIdentityModal = ({ showDeleteModal, setShowDeleteModal, identityToDelete, handleRemoveIdentity, isRemoving }: any) => {
-    console.log(identityToDelete, "/////");
+    logger.log(identityToDelete, "/////");
 
     return (
         <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)} size="md" ariaLabel="Remove Connected Account">

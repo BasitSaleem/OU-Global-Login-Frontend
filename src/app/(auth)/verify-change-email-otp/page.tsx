@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { clearAuth } from "@/redux/slices/auth.slice";
 import { useAppDispatch } from "@/redux/store";
 import { toast } from "@/hooks/useToast";
+import logger from "@/utils/logger";
 
 export default function VerifyChangeEmailOTPPage() {
   const { mutate: logout, isPending } = useLogout();
@@ -87,7 +88,7 @@ export default function VerifyChangeEmailOTPPage() {
           });
         },
         onError: (error) => {
-          console.error("Email change failed:", error);
+          logger.error("Email change failed:", error);
         },
       },
     );

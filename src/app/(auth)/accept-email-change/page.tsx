@@ -7,6 +7,7 @@ import { useValidateAcceptEmailToken } from "@/apiHooks.ts/auth/auth.api";
 import { AlertCircle } from "lucide-react";
 import { useVerifyPassword } from "@/apiHooks.ts/auth/auth.api";
 import { useSendOtpForChangeEmail } from "@/apiHooks.ts/auth/auth.api";
+import logger from "@/utils/logger";
 
 interface EmailChangeData {
     userId: string;
@@ -57,7 +58,7 @@ export default function AcceptEmailChangePage() {
                 });
             },
             onError: (error) => {
-                console.log(error);
+                logger.log(error);
             }
         });
     }
