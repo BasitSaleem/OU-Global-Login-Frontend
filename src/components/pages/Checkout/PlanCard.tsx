@@ -35,30 +35,27 @@ const BillingCycleToggle: React.FC<BillingCycleToggleProps> = ({
     <div className="inline-flex bg-background rounded-lg p-1 border">
       <button
         onClick={() => setBillingCycle("monthly")}
-        className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all duration-200 ${
-          billingCycle === "monthly"
-            ? "bg-primary text-white shadow-sm"
-            : "text-text hover:text-primary"
-        }`}
+        className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer ${billingCycle === "monthly"
+          ? "bg-primary text-white shadow-sm"
+          : "text-text hover:text-primary"
+          }`}
       >
         Monthly
       </button>
       <button
         onClick={() => setBillingCycle("yearly")}
-        className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
-          billingCycle === "yearly"
-            ? "bg-primary text-white shadow-sm"
-            : "text-text hover:text-primary"
-        }`}
+        className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-2 cursor-pointer ${billingCycle === "yearly"
+          ? "bg-primary text-white shadow-sm"
+          : "text-text hover:text-primary"
+          }`}
       >
         Yearly
         {parseFloat(yearlyDiscount || "0") > 0 && (
           <span
-            className={`text-xs px-1.5 py-0.5 rounded-full ${
-              billingCycle === "yearly"
-                ? "bg-white/20 text-white"
-                : "bg-green-100 text-green-700"
-            }`}
+            className={`text-xs px-1.5 py-0.5 rounded-full ${billingCycle === "yearly"
+              ? "bg-white/20 text-white"
+              : "bg-green-100 text-green-700"
+              }`}
           >
             Save {yearlyDiscount}%
           </span>

@@ -2,7 +2,6 @@ import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
 import { Dots } from "@/components/ui";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDate } from "@/utils/helpers";
-import React from "react";
 
 const RenewalSection = ({ organization, loading }: { organization?: OgOrganization, loading: boolean }) => {
   const { subscriptions } = organization || {};

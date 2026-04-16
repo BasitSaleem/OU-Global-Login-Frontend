@@ -16,8 +16,8 @@ export type Subscription = {
   billing_cycle: "MONTHLY" | "YEARLY";
   cancel_at_period_end: boolean;
   cancelled_at: string | null;
-  current_period_start: string; // ISO date
-  current_period_end: string; // ISO date
+  current_period_start: string;
+  current_period_end: string;
   trial_ends_at: string | null;
   status: "TRIAL" | "ACTIVE" | "CANCELLED" | "PAST_DUE";
   payment_method: string | null;

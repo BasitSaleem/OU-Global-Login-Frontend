@@ -85,6 +85,35 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
     setCancelSubscriptionModal(true);
   }
 
+  const handleActivePlanClick = () => {
+    const currentPkgId = organization?.subscriptions?.[0]?.oiPackage?.id;
+    if (!currentPkgId || !data?.plans) return;
+
+    const fullPlan = data.plans.find((p: any) => p.id === currentPkgId);
+    if (fullPlan) {
+      setActiveType(fullPlan.type);
+      setSelectedPlanId(fullPlan.id);
+
+      const packageOrder = ["BASIC", "PRO", "PREMIUM"];
+      const plansOfType = data.plans
+        .filter((plan: any) => plan.type === fullPlan.type)
+        .sort((a: any, b: any) => {
+          const aName = a.package_name.toUpperCase();
+          const bName = b.package_name.toUpperCase();
+
+          const aLevel = packageOrder.findIndex((p) => aName.includes(p));
+          const bLevel = packageOrder.findIndex((p) => bName.includes(p));
+
+          return aLevel - bLevel;
+        });
+
+      const index = plansOfType.findIndex((p: any) => p.id === currentPkgId);
+      if (index !== -1) {
+        setCurrentIndex(index);
+      }
+    }
+  };
+
   return (
     <div className="text-center md:text-left">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
@@ -97,7 +126,10 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
                 {organization?.subscriptions?.[0]?.status === "CANCELLED" ? (
                   <>
                     You just cancelled your
-                    <span className={`pl-1.5 bg-transparent font-semibold ${SUBSCRIPTION_STATUS_COLOR[organization?.subscriptions?.[0]?.status ?? ""]} ${organization?.subscriptions?.[0]?.status === "CANCELLED" ? "line-through" : ""}`}>
+                    <span
+                      onClick={handleActivePlanClick}
+                      className={`pl-1.5 bg-transparent font-semibold cursor-pointer hover:underline underline-offset-4 decoration-primary/50 transition-all ${SUBSCRIPTION_STATUS_COLOR[organization?.subscriptions?.[0]?.status ?? ""]} ${organization?.subscriptions?.[0]?.status === "CANCELLED" ? "line-through" : ""}`}
+                    >
                       {organization?.subscriptions?.[0]?.oiPackage?.package_name}
                     </span>{" "}
                     plan
@@ -105,7 +137,10 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
                 ) : (
                   <>
                     You are on
-                    <span className="pl-1.5 text-primary font-semibold">
+                    <span
+                      onClick={handleActivePlanClick}
+                      className="pl-1.5 text-primary font-semibold cursor-pointer hover:underline underline-offset-4 decoration-primary/50 transition-all"
+                    >
                       {organization?.subscriptions?.[0]?.oiPackage?.package_name}
                     </span>{" "}
                     plan
@@ -115,7 +150,7 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
             )}
           </h1>
 
-          {/* {loading ? (
+          {loading ? (
             <Skeleton width={80} height={24} circle />
           ) : (
             <span
@@ -126,7 +161,7 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
             >
               {organization?.subscriptions?.[0]?.status ?? "No Subscription"}
             </span>
-          )} */}
+          )}
         </div>
         {organization?.subscriptions?.[0]?.status !== "TRIAL" &&
           organization?.subscriptions?.[0]?.status !== "CANCELLED" && (
@@ -193,8 +228,6 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
                 );
               })}
             </div>
-
-            {/* Subtitle */}
             <p className="text-gray-500 text-lg">
               {typeData.find(t => t.id === activeType)?.description}
             </p>

@@ -68,8 +68,8 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         } else {
           unitPrice = parseFloat(
             entry.addOn.discounted_yearly_price ||
-              entry.addOn.yearly_price ||
-              "0",
+            entry.addOn.yearly_price ||
+            "0",
           );
         }
 
@@ -213,20 +213,20 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
           {(taxDetails?.breakdown?.[0]?.tax_rate_details?.country ||
             country) && (
-            <div className="flex justify-between text-sm">
-              <span className="text-text">
-                Applicable Tax Rate (
-                {taxDetails?.breakdown?.[0]?.tax_rate_details?.country ||
-                  country}
-                )
-              </span>
-              <span className="font-medium">
-                {taxDetails?.breakdown?.[0]?.tax_rate_details
-                  ?.percentage_decimal ?? 0}
-                %
-              </span>
-            </div>
-          )}
+              <div className="flex justify-between text-sm">
+                <span className="text-text">
+                  Applicable Tax Rate (
+                  {taxDetails?.breakdown?.[0]?.tax_rate_details?.country ||
+                    country}
+                  )
+                </span>
+                <span className="font-medium">
+                  {taxDetails?.breakdown?.[0]?.tax_rate_details
+                    ?.percentage_decimal ?? 0}
+                  %
+                </span>
+              </div>
+            )}
         </div>
 
         {/* Total */}
