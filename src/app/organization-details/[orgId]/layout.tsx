@@ -43,7 +43,6 @@ export default function OrganizationDetailsLayout({
     setCollapsed(!collapsed);
   };
 
-  useSSE(orgId || undefined, organizationDetails?.subscriptions?.[0]?.id || "");
 
   const onToggleMobileSidebar = () => {
     setSidebarOpen(!sidebarOpen);

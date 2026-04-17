@@ -11,6 +11,7 @@ import { toast } from '@/hooks/useToast';
 import { useScrollLock } from '@/hooks/useScrollLock';
 import { ROUTES } from '@/constants';
 import logger from '@/utils/logger';
+import { useSSE } from '@/hooks/useSSE';
 
 interface ProgressModalProps {
   isOpen: boolean;
@@ -78,7 +79,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
       onClose();
     }
   };
-
+  useSSE(organizationData?.data?.organization.id);
   useEffect(() => {
     if (isCompleted) {
       logger.log("Organization creation completed successfully");

@@ -56,7 +56,6 @@ export default function CreateOrgModal({
     useGenerateSubdomainSuggestions(
       !isNameDebouncing ? debouncedCompanyName : "",
     );
-
   useEffect(() => {
     if (isSuggestionSubdomain && !suggestions?.includes(subDomain.trim())) {
       setIsSuggestionSubdomain(false);
