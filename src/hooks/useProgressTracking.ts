@@ -59,7 +59,7 @@ export const useProgressTracking = (
     setError(null);
 
     try {
-      const eventSource = new EventSource(url);
+      const eventSource = new EventSource(url, { withCredentials: true });
       eventSourceRef.current = eventSource;
 
       eventSource.onopen = () => {

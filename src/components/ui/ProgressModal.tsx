@@ -65,6 +65,8 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
       onProgress: handleProgress,
       onComplete: handleComplete,
       onError: handleError,
+      autoReconnect: true,
+      maxReconnectAttempts: 10,
     }
   );
   const isCompleted = progress?.status === 'completed';
