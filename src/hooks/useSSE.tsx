@@ -2,7 +2,9 @@ import { useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "./useToast";
 import logger from "@/utils/logger";
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const BASE_URL = process.env.NODE_ENV === "development"
+  ? process.env.NEXT_PUBLIC_API_BASE_URL
+  : process.env.NEXT_PUBLIC_API_PROD_BASE_URL;
 const SSE_EVENTS = {
   SUBSCRIPTION_CREATED: "subscription:created",
   SUBSCRIPTION_UPDATED: "subscription:updated",
