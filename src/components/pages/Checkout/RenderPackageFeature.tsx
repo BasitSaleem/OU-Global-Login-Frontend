@@ -12,17 +12,6 @@ export const getPlanFeatures = (selectedPlan: OiPlanType): string[] => {
   const features: string[] = [];
 
   // =========================
-  // PEOPLE / CORE USERS
-  // =========================
-  // if (selectedPlan.show_people) features.push("People");
-  if (selectedPlan.show_users)
-    features.push(`${selectedPlan.no_of_users} Users`);
-  if (selectedPlan.show_customers)
-    features.push(`${selectedPlan.no_of_customers} Customers`);
-  if (selectedPlan.show_suppliers)
-    features.push(`${selectedPlan.no_of_suppliers} Suppliers`);
-
-  // =========================
   // HUMAN RESOURCE
   // =========================
   // if (selectedPlan.show_human_resource) features.push("Human Resource");
@@ -45,57 +34,6 @@ export const getPlanFeatures = (selectedPlan: OiPlanType): string[] => {
     features.push(`${selectedPlan.no_of_tables} Tables`);
   if (selectedPlan.show_decorations)
     features.push(`${selectedPlan.no_of_decorations} Decorations`);
-
-  // =========================
-  // PRODUCTS / INVENTORY
-  // =========================
-  // if (selectedPlan.show_product) features.push("Product Module");
-  if (selectedPlan.show_products)
-    features.push(`${selectedPlan.no_of_products} Products`);
-  if (selectedPlan.show_categories)
-    features.push(`${selectedPlan.no_of_categories} Categories`);
-  if (selectedPlan.show_brands)
-    features.push(`${selectedPlan.no_of_brands} Brands`);
-  if (selectedPlan.show_barcode_tracking)
-    features.push(`${selectedPlan.no_of_barcode_tracking} Barcode Tracking`);
-  if (selectedPlan.show_product_images)
-    features.push(`${selectedPlan.no_of_product_images} Product Images`);
-  if (selectedPlan.show_bulk_product_import)
-    features.push(
-      `${selectedPlan.no_of_bulk_product_import} Bulk Product Import`,
-    );
-  if (selectedPlan.show_bulk_price_updates)
-    features.push(
-      `${selectedPlan.no_of_bulk_price_updates} Bulk Price Updates`,
-    );
-
-  // =========================
-  // SALES / POS / ORDERS
-  // =========================
-  // if (selectedPlan.show_sales_and_orders) features.push("Sales & Orders");
-  if (selectedPlan.show_pos)
-    features.push(`${selectedPlan.no_of_pos} POS Terminals`);
-  if (selectedPlan.show_invoices)
-    features.push(`${selectedPlan.no_of_invoices} Invoices`);
-  if (selectedPlan.show_quotations)
-    features.push(`${selectedPlan.no_of_quotations} Quotations`);
-  if (selectedPlan.show_sale_orders)
-    features.push(`${selectedPlan.no_of_sale_orders} Sale Orders`);
-  if (selectedPlan.show_sale_returns)
-    features.push(`${selectedPlan.no_of_sale_returns} Sale Returns`);
-  if (selectedPlan.show_hold_sale)
-    features.push(`${selectedPlan.no_of_hold_sale} Hold Sales`);
-  if (selectedPlan.show_sample_sale)
-    features.push(`${selectedPlan.no_of_sample_sale} Sample Sales`);
-
-  // =========================
-  // PURCHASES
-  // =========================
-  // if (selectedPlan.show_purchases) features.push("Purchases");
-  if (selectedPlan.show_purchase_order)
-    features.push(`${selectedPlan.no_of_purchase_order} Purchase Orders`);
-  if (selectedPlan.show_bulk_purchase)
-    features.push(`${selectedPlan.no_of_bulk_purchase} Bulk Purchases`);
 
   // =========================
   // INVENTORY OPERATIONS
@@ -149,30 +87,6 @@ export const getPlanFeatures = (selectedPlan: OiPlanType): string[] => {
     features.push(`${selectedPlan.no_of_production_orders} Production Orders`);
   if (selectedPlan.show_machines)
     features.push(`${selectedPlan.no_of_machines} Machines`);
-
-  // =========================
-  // FINANCIAL / ACCOUNTING
-  // =========================
-  // if (selectedPlan.show_accounting_and_financial)
-  // features.push("Accounting & Financial");
-  if (selectedPlan.show_expenses)
-    features.push(`${selectedPlan.no_of_expenses} Expenses`);
-  if (selectedPlan.show_billing_payments)
-    features.push(`${selectedPlan.no_of_billing_payments} Billing Payments`);
-  if (selectedPlan.show_payable_receivables)
-    features.push(`${selectedPlan.no_of_payable_receivables} Payables`);
-  if (selectedPlan.show_financial_reports)
-    features.push(`${selectedPlan.no_of_financial_reports} Financial Reports`);
-  if (selectedPlan.show_balance_sheet)
-    features.push(`${selectedPlan.no_of_balance_sheet} Balance Sheet`);
-  if (selectedPlan.show_chart_of_accounts)
-    features.push(`${selectedPlan.no_of_chart_of_accounts} Chart of Accounts`);
-  if (selectedPlan.show_journal_entry_reports)
-    features.push(
-      `${selectedPlan.no_of_journal_entry_reports} Journal Reports`,
-    );
-  if (selectedPlan.show_assets)
-    features.push(`${selectedPlan.no_of_assets} Assets`);
 
   // =========================
   // ANALYTICS
@@ -236,6 +150,92 @@ export const getPlanFeatures = (selectedPlan: OiPlanType): string[] => {
     features.push(`${selectedPlan.no_of_production_floor} Production Floor`);
 
   // =========================
+  // FINANCIAL / ACCOUNTING
+  // =========================
+  if (selectedPlan.show_accounting_and_financial)
+    features.push("Accounting & Finance");
+  if (selectedPlan.show_expenses)
+    features.push(`${selectedPlan.no_of_expenses} Expenses`);
+  if (selectedPlan.show_billing_payments)
+    features.push(`${selectedPlan.no_of_billing_payments} Billing Payments`);
+  if (selectedPlan.show_payable_receivables)
+    features.push(`${selectedPlan.no_of_payable_receivables} Payables`);
+  if (selectedPlan.show_financial_reports)
+    features.push(`${selectedPlan.no_of_financial_reports} Financial Reports`);
+  if (selectedPlan.show_balance_sheet)
+    features.push(`${selectedPlan.no_of_balance_sheet} Balance Sheet`);
+  if (selectedPlan.show_chart_of_accounts)
+    features.push(`${selectedPlan.no_of_chart_of_accounts} Chart of Accounts`);
+  if (selectedPlan.show_journal_entry_reports)
+    features.push(
+      `${selectedPlan.no_of_journal_entry_reports} Journal Reports`,
+    );
+  if (selectedPlan.show_assets)
+    features.push(`${selectedPlan.no_of_assets} Assets`);
+
+  // =========================
+  // PEOPLE / CORE USERS
+  // =========================
+  // if (selectedPlan.show_people) features.push("People");
+  if (selectedPlan.show_users)
+    features.push(`${selectedPlan.no_of_users} Users`);
+  if (selectedPlan.show_customers)
+    features.push(`${selectedPlan.no_of_customers} Customers`);
+  if (selectedPlan.show_suppliers)
+    features.push(`${selectedPlan.no_of_suppliers} Suppliers`);
+
+  // =========================
+  // PURCHASES
+  // =========================
+  if (selectedPlan.show_purchases) features.push("Unlimited Purchases");
+  if (selectedPlan.show_purchase_order)
+    features.push(`${selectedPlan.no_of_purchase_order} Purchase Orders`);
+  if (selectedPlan.show_bulk_purchase)
+    features.push(`${selectedPlan.no_of_bulk_purchase} Bulk Purchases`);
+
+  // =========================
+  // PRODUCTS / INVENTORY
+  // =========================
+  // if (selectedPlan.show_product) features.push("Product Module");
+  if (selectedPlan.show_products)
+    features.push(`${selectedPlan.no_of_products} Products`);
+  if (selectedPlan.show_categories)
+    features.push(`${selectedPlan.no_of_categories} Categories`);
+  if (selectedPlan.show_brands)
+    features.push(`${selectedPlan.no_of_brands} Brands`);
+  if (selectedPlan.show_barcode_tracking)
+    features.push(`${selectedPlan.no_of_barcode_tracking} Barcode Tracking`);
+  if (selectedPlan.show_product_images)
+    features.push(`${selectedPlan.no_of_product_images} Product Images`);
+  if (selectedPlan.show_bulk_product_import)
+    features.push(
+      `${selectedPlan.no_of_bulk_product_import} Bulk Product Import`,
+    );
+  if (selectedPlan.show_bulk_price_updates)
+    features.push(
+      `${selectedPlan.no_of_bulk_price_updates} Bulk Price Updates`,
+    );
+
+  // =========================
+  // SALES / POS / ORDERS
+  // =========================
+  // if (selectedPlan.show_sales_and_orders) features.push("Sales & Orders");
+  if (selectedPlan.show_pos)
+    features.push(`${selectedPlan.no_of_pos} POS Terminals`);
+  if (selectedPlan.show_invoices)
+    features.push(`${selectedPlan.no_of_invoices} Orders & Invoices`);
+  if (selectedPlan.show_quotations)
+    features.push(`${selectedPlan.no_of_quotations} Quotations`);
+  if (selectedPlan.show_sale_orders)
+    features.push(`${selectedPlan.no_of_sale_orders} Sale Orders`);
+  if (selectedPlan.show_sale_returns)
+    features.push(`${selectedPlan.no_of_sale_returns} Sale Returns`);
+  if (selectedPlan.show_hold_sale)
+    features.push(`${selectedPlan.no_of_hold_sale} Hold Sales`);
+  if (selectedPlan.show_sample_sale)
+    features.push(`${selectedPlan.no_of_sample_sale} Sample Sales`);
+
+  // =========================
   // API / INTEGRATIONS
   // =========================
   if (selectedPlan.show_api_call)
@@ -255,20 +255,24 @@ export const getPlanFeatures = (selectedPlan: OiPlanType): string[] => {
   // SUPPORT
   // =========================
   // if (selectedPlan.show_support) features.push("Support");
-  if (selectedPlan.show_onboarding_support)
-    features.push(
-      `${selectedPlan.no_of_onboarding_support} Onboarding Support`,
-    );
-  if (selectedPlan.show_email_support)
-    features.push(`${selectedPlan.no_of_email_support} Email Support`);
-  if (selectedPlan.show_live_chat_support)
-    features.push(`${selectedPlan.no_of_live_chat_support} Live Chat Support`);
-  if (selectedPlan.show_phone_support)
-    features.push(`${selectedPlan.no_of_phone_support} Phone Support`);
+  if (selectedPlan.show_onboarding_support && selectedPlan.show_email_support) {
+    features.push(`Onboarding Assistance & Email Support`);
+  } else if (selectedPlan.show_onboarding_support) {
+    features.push(`Onboarding Assistance`);
+  } else if (selectedPlan.show_email_support) {
+    features.push(`Email Support`);
+  }
+
+  if (selectedPlan.show_live_chat_support && selectedPlan.show_phone_support) {
+    features.push(`Live Chat Support & Phone Support`);
+  } else if (selectedPlan.show_live_chat_support) {
+    features.push(`Live Chat Support`);
+  } else if (selectedPlan.show_phone_support) {
+    features.push(`Phone Support`);
+  }
+
   if (selectedPlan.show_dedicated_account_manager)
-    features.push(
-      `${selectedPlan.no_of_dedicated_account_manager} Account Manager`,
-    );
+    features.push(`Dedicated Account Manager`);
 
   return features;
 };
@@ -285,7 +289,7 @@ const RenderPackageFeature: React.FC<RenderPackageFeatureProps> = ({
       {planFeatures.map((feature, idx) => (
         <div key={idx} className="flex items-center gap-2 text-sm">
           <Check className="w-4 h-4 text-green-500 shrink-0" />
-          <span className="text-text">{feature}</span>
+          <span className="text-text capitalize">{feature}</span>
         </div>
       ))}
     </div>

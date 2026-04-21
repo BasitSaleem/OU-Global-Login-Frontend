@@ -2,7 +2,14 @@ import React from "react";
 import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui";
-import { ChevronLeft, ChevronRight, Store, Factory, ShoppingCart, Layers } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Store,
+  Factory,
+  ShoppingCart,
+  Layers,
+} from "lucide-react";
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
 import TrialBanner from "@/components/TrialBanner";
 import { useGetAllPlans } from "@/apiHooks.ts/plans/plans.api";
@@ -12,12 +19,22 @@ import PlanCard from "@/components/PlanCard";
 import { SUBSCRIPTION_STATUS_COLOR } from "@/utils/ColorClasses";
 import CancelSubscriptionModal from "@/components/modals/CancelSubscriptionModal";
 import { Skeleton } from "@/components/ui/skeleton";
-const PlanSection = ({ organization, loading }: { organization?: OgOrganization, loading: boolean }) => {
+
+const PlanSection = ({
+  organization,
+  loading,
+}: {
+  organization?: OgOrganization;
+  loading: boolean;
+}) => {
   const { data, isLoading, error } = useGetAllPlans();
-  const [cancelSubscriptionModal, setCancelSubscriptionModal] = React.useState(false);
+  const [cancelSubscriptionModal, setCancelSubscriptionModal] =
+    React.useState(false);
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [activeType, setActiveType] = React.useState<string>("RETAIL");
-  const [selectedPlanId, setSelectedPlanId] = React.useState<string | null>(null);
+  const [selectedPlanId, setSelectedPlanId] = React.useState<string | null>(
+    null,
+  );
 
   const CARD_WIDTH = 440; // Increased to match larger cards
   const GAP = 16;
@@ -26,20 +43,39 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   const typeData = [
-    { id: "RETAIL", label: "Retail", icon: Store, description: "Perfect for stores, shops and multi locations business" },
-    { id: "MANUFACTURING", label: "Manufacturing", icon: Factory, description: "Ideal for factories and production line management" },
-    { id: "ECOMMERCE", label: "Ecommerce", icon: ShoppingCart, description: "Best for online stores and digital marketplaces" },
-    { id: "HYBRID", label: "Hybrid", icon: Layers, description: "Versatile solutions for combined business models" },
+    {
+      id: "RETAIL",
+      label: "Retail",
+      icon: Store,
+      description: "Perfect for stores, shops and multi locations business",
+    },
+    {
+      id: "MANUFACTURING",
+      label: "Manufacturing",
+      icon: Factory,
+      description: "Ideal for factories and production line management",
+    },
+    {
+      id: "ECOMMERCE",
+      label: "Ecommerce",
+      icon: ShoppingCart,
+      description: "Best for online stores and digital marketplaces",
+    },
+    {
+      id: "HYBRID",
+      label: "Hybrid",
+      icon: Layers,
+      description: "Versatile solutions for combined business models",
+    },
   ];
 
   const filteredPlans = React.useMemo(() => {
     if (!data?.plans) return [];
 
-    const typeOrder = ["RETAIL", "MANUFACTURING", "ECOMMERCE", "HYBRID"];
     const packageOrder = ["BASIC", "PRO", "PREMIUM"];
 
     return [...data.plans]
-      .filter(plan => plan.type === activeType)
+      .filter((plan) => plan.type === activeType)
       .sort((a, b) => {
         const aName = a.package_name.toUpperCase();
         const bName = b.package_name.toUpperCase();
@@ -83,7 +119,7 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
   };
   const cancelSubscription = () => {
     setCancelSubscriptionModal(true);
-  }
+  };
 
   const handleActivePlanClick = () => {
     const currentPkgId = organization?.subscriptions?.[0]?.oiPackage?.id;
@@ -130,7 +166,10 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
                       onClick={handleActivePlanClick}
                       className={`pl-1.5 bg-transparent font-semibold cursor-pointer hover:underline underline-offset-4 decoration-primary/50 transition-all ${SUBSCRIPTION_STATUS_COLOR[organization?.subscriptions?.[0]?.status ?? ""]} ${organization?.subscriptions?.[0]?.status === "CANCELLED" ? "line-through" : ""}`}
                     >
-                      {organization?.subscriptions?.[0]?.oiPackage?.package_name}
+                      {
+                        organization?.subscriptions?.[0]?.oiPackage
+                          ?.package_name
+                      }
                     </span>{" "}
                     plan
                   </>
@@ -141,7 +180,10 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
                       onClick={handleActivePlanClick}
                       className="pl-1.5 text-primary font-semibold cursor-pointer hover:underline underline-offset-4 decoration-primary/50 transition-all"
                     >
-                      {organization?.subscriptions?.[0]?.oiPackage?.package_name}
+                      {
+                        organization?.subscriptions?.[0]?.oiPackage
+                          ?.package_name
+                      }
                     </span>{" "}
                     plan
                   </>
@@ -154,10 +196,11 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
             <Skeleton width={80} height={24} circle />
           ) : (
             <span
-              className={`px-3 py-1 rounded-full text-xs text-text font-semibold capitalize ${SUBSCRIPTION_STATUS_COLOR[
-                organization?.subscriptions?.[0]?.status ?? ""
-              ]
-                }`}
+              className={`px-3 py-1 rounded-full text-xs text-text font-semibold capitalize ${
+                SUBSCRIPTION_STATUS_COLOR[
+                  organization?.subscriptions?.[0]?.status ?? ""
+                ]
+              }`}
             >
               {organization?.subscriptions?.[0]?.status ?? "No Subscription"}
             </span>
@@ -167,7 +210,12 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
           organization?.subscriptions?.[0]?.status !== "CANCELLED" && (
             <div className="w-full md:w-auto">
               {loading ? (
-                <Skeleton width="100%" height={40} className="md:w-[200px]" circle />
+                <Skeleton
+                  width="100%"
+                  height={40}
+                  className="md:w-[200px]"
+                  circle
+                />
               ) : (
                 <Button
                   variant="destructive"
@@ -217,10 +265,11 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
                       setActiveType(type.id);
                       setCurrentIndex(0);
                     }}
-                    className={`flex items-center gap-2 px-4  cursor-pointer py-2 rounded-xl transition-all duration-200 ${isActive
-                      ? "bg-primary text-white shadow-md"
-                      : "text-black hover:bg-primary/10"
-                      }`}
+                    className={`flex items-center gap-2 px-4  cursor-pointer py-2 rounded-xl transition-all duration-200 ${
+                      isActive
+                        ? "bg-primary text-white shadow-md"
+                        : "text-black hover:bg-primary/10"
+                    }`}
                   >
                     <Icon size={18} />
                     <span className="font-medium">{type.label}</span>
@@ -229,7 +278,7 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
               })}
             </div>
             <p className="text-gray-500 text-lg">
-              {typeData.find(t => t.id === activeType)?.description}
+              {typeData.find((t) => t.id === activeType)?.description}
             </p>
           </div>
         </>
@@ -283,26 +332,28 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
                     setCurrentIndex((prev) => prev - 1);
                   }
                 }}
-              > <>
-
+              >
+                {" "}
+                <>
                   {filteredPlans?.map((plan) => (
                     <motion.div key={plan.id} className="shrink-0 w-[440px]">
                       <PlanCard
                         key={plan.id}
                         plan={plan}
                         isCurrentPlan={
-                          plan.id === organization?.subscriptions?.[0]?.oiPackage?.id
+                          plan.id ===
+                          organization?.subscriptions?.[0]?.oiPackage?.id
                         }
                         isSelected={selectedPlanId === plan.id}
                         onClick={() => setSelectedPlanId(plan.id)}
-                        subscriptionStatus={organization?.subscriptions?.[0]?.status}
+                        subscriptionStatus={
+                          organization?.subscriptions?.[0]?.status
+                        }
                         subscriptionId={organization?.subscriptions?.[0]?.id}
                       />
                     </motion.div>
                   ))}
-
                 </>
-
               </motion.div>
             )}
           </div>
@@ -314,7 +365,7 @@ const PlanSection = ({ organization, loading }: { organization?: OgOrganization,
         subscriptionId={organization?.subscriptions?.[0]?.id as string}
         orgId={organization?.id as string}
       />
-    </div >
+    </div>
   );
 };
 

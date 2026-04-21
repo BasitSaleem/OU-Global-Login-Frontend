@@ -4,7 +4,8 @@ import { Button } from "@/components/ui";
 import { PaymentMethod } from "@/apiHooks.ts/paymentMethod/paymentMethod.types";
 import { SvgIcon } from "@/components/ui/SvgIcon";
 import { brandMap } from "@/components/pages/OrganizationDetails/PaymentMethods/PaymentMethodCard";
-import { useRouter } from "next/navigation";
+import { useMakePrimaryPaymentMethod } from "@/apiHooks.ts/paymentMethod/paymentMethod.api";
+import { LoadingSpinner } from "@/components/ui";
 
 interface PaymentMethodSelectorProps {
   paymentMethods: PaymentMethod[];
@@ -17,10 +18,22 @@ interface PaymentMethodSelectorProps {
 const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
   paymentMethods,
   selectedPaymentMethodId,
+  onSelectPaymentMethod,
   onManageCards,
-  orgId
+  orgId,
 }) => {
-  const router = useRouter();
+  const [syncingId, setSyncingId] = React.useState<string | null>(null);
+  const { mutate: makePrimary, isPending: isSettingPrimary } =
+    useMakePrimaryPaymentMethod();
+
+  const handleSelect = (id: string) => {
+    if (isSettingPrimary) return;
+    setSyncingId(id);
+    onSelectPaymentMethod(id);
+    makePrimary(id, {
+      onSettled: () => setSyncingId(null),
+    });
+  };
   return (
     <div className="bg-bg-secondary border rounded-xl p-6">
       <div className="flex items-center justify-between mb-4">
@@ -55,27 +68,33 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
           {paymentMethods.map((method) => (
             <label
               key={method.id}
-              className={`flex items-center gap-4 p-4 rounded-lg border-2  transition-all duration-200 ${selectedPaymentMethodId === method.id
-                ? "border-primary bg-primary/5"
-                : "border-border bg-background"
-                }`}
+              className={`flex items-center gap-4 p-4 rounded-lg border-2 transition-all duration-200 relative ${
+                selectedPaymentMethodId === method.id
+                  ? "border-primary bg-primary/5"
+                  : "border-border bg-background"
+              } ${isSettingPrimary ? "opacity-70 pointer-events-none" : "cursor-pointer"}`}
             >
               <input
                 type="radio"
                 name="paymentMethod"
                 value={method.id}
                 checked={selectedPaymentMethodId === method.id}
-                onChange={() => { }}
+                onChange={() => handleSelect(method.id)}
                 className="sr-only"
               />
               <div
-                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${selectedPaymentMethodId === method.id
-                  ? "border-primary"
-                  : "border-gray-300"
-                  }`}
+                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                  selectedPaymentMethodId === method.id
+                    ? "border-primary"
+                    : "border-gray-300"
+                }`}
               >
-                {selectedPaymentMethodId === method.id && (
-                  <div className="w-2.5 h-2.5 rounded-full bg-primary" />
+                {syncingId === method.id ? (
+                  <LoadingSpinner size={3} className="text-primary" />
+                ) : (
+                  selectedPaymentMethodId === method.id && (
+                    <div className="w-2.5 h-2.5 rounded-full bg-primary" />
+                  )
                 )}
               </div>
               <div className="flex items-center gap-3 flex-1">

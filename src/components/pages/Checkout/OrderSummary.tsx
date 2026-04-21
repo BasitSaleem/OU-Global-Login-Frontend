@@ -68,8 +68,8 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         } else {
           unitPrice = parseFloat(
             entry.addOn.discounted_yearly_price ||
-            entry.addOn.yearly_price ||
-            "0",
+              entry.addOn.yearly_price ||
+              "0",
           );
         }
 
@@ -87,6 +87,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   const periodLabel = billingCycle === "monthly" ? "mo" : "yr";
   const numSelectedAddOns = Object.keys(selectedAddOns).length;
 
+  const originalSubtotal = basePrice + totalAddOnsOriginal;
   const subtotal = discountedBasePrice + addOnsTotal;
 
   const taxPercent = useMemo(() => {
@@ -178,21 +179,28 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           </>
         )}
 
-        {totalDiscountAmount > 0 && (
-          <div className="flex justify-between text-sm border-t pt-3">
-            <span className="text-text flex items-center gap-1">
-              <Tag className="w-3.5 h-3.5" />
-              Discount {discount && `(${discount}%)`}
-            </span>
-            <span className="font-medium text-green-600">
-              -${totalDiscountAmount.toFixed(2)}
-            </span>
+        <div className="border-t pt-3 space-y-3">
+          <div className="flex justify-between text-sm">
+            <span className="text-text">Subtotal</span>
+            <span className="font-medium">${originalSubtotal.toFixed(2)}</span>
           </div>
-        )}
+
+          {totalDiscountAmount > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-text flex items-center gap-1">
+                <Tag className="w-3.5 h-3.5" />
+                Discount {discount && `(${discount}%)`}
+              </span>
+              <span className="font-medium text-green-600">
+                -${totalDiscountAmount.toFixed(2)}
+              </span>
+            </div>
+          )}
+        </div>
 
         <div className="border-t pt-3 space-y-3">
           <div className="flex justify-between text-sm">
-            <span className="text-text font-medium">Subtotal</span>
+            <span className="text-text font-medium">Net Total</span>
             <span className="font-semibold">${subtotal.toFixed(2)}</span>
           </div>
           <div className="flex justify-between text-sm">
@@ -213,20 +221,20 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
           {(taxDetails?.breakdown?.[0]?.tax_rate_details?.country ||
             country) && (
-              <div className="flex justify-between text-sm">
-                <span className="text-text">
-                  Applicable Tax Rate (
-                  {taxDetails?.breakdown?.[0]?.tax_rate_details?.country ||
-                    country}
-                  )
-                </span>
-                <span className="font-medium">
-                  {taxDetails?.breakdown?.[0]?.tax_rate_details
-                    ?.percentage_decimal ?? 0}
-                  %
-                </span>
-              </div>
-            )}
+            <div className="flex justify-between text-sm">
+              <span className="text-text">
+                Applicable Tax Rate (
+                {taxDetails?.breakdown?.[0]?.tax_rate_details?.country ||
+                  country}
+                )
+              </span>
+              <span className="font-medium">
+                {taxDetails?.breakdown?.[0]?.tax_rate_details
+                  ?.percentage_decimal ?? 0}
+                %
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Total */}

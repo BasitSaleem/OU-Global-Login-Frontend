@@ -92,13 +92,15 @@ const PlanCard: React.FC<PlanCardProps> = ({
         className={`w-full py-4 rounded-2xl text-white font-bold text-lg mb-8 transition-opacity cursor-pointer hover:opacity-90 ${buttonColor}`}
         onClick={(e) => {
           e.stopPropagation();
-          if (isCurrentPlan) return;
+          if (isCurrentPlan && subscriptionStatus !== "CANCELLED") return;
           router.push(
             `/organization-details/${orgId}/billing/checkout/${btoa(plan.id as string)}`,
           );
         }}
       >
-        {isCurrentPlan && subscriptionStatus !== "CANCELLED" ? "Current Plan" : "Upgrade Now"}
+        {isCurrentPlan && subscriptionStatus !== "CANCELLED"
+          ? "Current Plan"
+          : "Upgrade Now"}
       </button>
 
       <div className="space-y-4">
