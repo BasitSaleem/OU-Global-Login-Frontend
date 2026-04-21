@@ -95,7 +95,7 @@ const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
       } else if (setupIntent?.status === "succeeded") {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         await queryClient.invalidateQueries({ queryKey: ["payment-methods"] });
-        toast.success("Card added successfully!");
+        // toast.success("Card added successfully!");
         onClose();
       }
     } catch (err: any) {
@@ -163,7 +163,6 @@ const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
                   options={cardNumberOptions}
                 />
               </div>
-
             </div>
 
             <div
@@ -212,7 +211,7 @@ const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
           </div>
         </Modal.Footer>
       </form>
-    </Modal >
+    </Modal>
   );
 };
 
