@@ -30,8 +30,13 @@ export interface Invoice {
   subscription: {
     current_period_end: string;
     current_period_start: string;
+    billing_cycle: "MONTHLY" | "YEARLY";
     oiPackage: {
       package_name: string;
+      monthly_price: string;
+      yearly_price: string;
+      discounted_yearly_price: string;
+      yearly_discount: string;
     };
   };
 }
