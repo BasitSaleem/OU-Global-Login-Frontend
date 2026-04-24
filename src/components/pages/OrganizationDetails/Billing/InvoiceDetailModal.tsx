@@ -255,7 +255,7 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
           fileName={`invoice-${invoice.invoice_number}.pdf`}
         >
           {({ loading }) => (
-            <Button disabled={loading} className="gap-2">
+            <Button disabled={loading} className="gap-2 bg-primary text-white">
               <Download size={16} />
               {loading ? "Preparing..." : "Download"}
             </Button>

@@ -22,8 +22,16 @@ const PaymentMethodSection = ({ loading }: { loading: boolean }) => {
               <div className="flex gap-2">
                 <Skeleton width={30} height={30} circle />
                 <div className="flex flex-col gap-y-2 w-full sm:w-auto items-center sm:items-start text-center sm:text-left">
-                  <Skeleton width="150px" height={10} className="sm:w-[200px]" />
-                  <Skeleton width="130px" height={10} className="sm:w-[190px]" />
+                  <Skeleton
+                    width="150px"
+                    height={10}
+                    className="sm:w-[200px]"
+                  />
+                  <Skeleton
+                    width="130px"
+                    height={10}
+                    className="sm:w-[190px]"
+                  />
                 </div>
               </div>
               <div className="flex flex-col gap-y-2 w-full sm:w-auto items-center sm:items-end text-center sm:text-right">
@@ -68,12 +76,10 @@ const PaymentMethodSection = ({ loading }: { loading: boolean }) => {
         ))}
       </div>
       <Button
-        variant="ghost"
-        className="w-full mt-10 py-5 text-text hover:text-text"
-        leftIcon={<IdCard className="text-current" />}
-        onClick={() =>
-          setIsModalOpen(true)
-        }
+        variant="outline"
+        className="w-full text-foreground mt-10 py-5 hover:bg-primary/10 hover:text-primary"
+        leftIcon={<IdCard className="" />}
+        onClick={() => setIsModalOpen(true)}
       >
         Add Card
       </Button>

@@ -28,6 +28,7 @@ interface OrderSummaryProps {
   isPaymentMethodAvailable: boolean;
   onCheckout: () => void;
   onManageCards: () => void;
+  onAddBillingInfo?: () => void;
 }
 
 const OrderSummary: React.FC<OrderSummaryProps> = ({
@@ -49,6 +50,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   isCalculatingTax,
   canCheckout,
   onCheckout,
+  onAddBillingInfo,
 }) => {
   const { totalAddOnsOriginal, totalAddOnsDiscounted } = useMemo(() => {
     let original = 0;
@@ -204,37 +206,42 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             <span className="font-semibold">${subtotal.toFixed(2)}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-text">Tax</span>
+            <span className="text-text flex gap-2">
+              Tax
+              {(taxDetails?.breakdown?.[0]?.tax_rate_details?.country ||
+                country) && (
+                <div className="flex justify-between text-sm">
+                  (
+                  <span className="text-text">
+                    Tax Rate -{" "}
+                    {taxDetails?.breakdown?.[0]?.tax_rate_details?.country ||
+                      country}
+                  </span>
+                  )
+                </div>
+              )}
+            </span>
             <span className="font-medium">
               {isCalculatingTax && !taxDetails ? (
                 "..."
               ) : (
                 <div className="text-right">
-                  <div>${taxAmount.toFixed(2)}</div>
-                  <div className="text-[10px] text-text-secondary">
-                    ({taxPercent}%)
+                  <div>
+                    ${taxAmount.toFixed(2)} &nbsp;
+                    <span className="font-medium">
+                      (
+                      {taxDetails?.breakdown?.[0]?.tax_rate_details
+                        ?.percentage_decimal ?? 0}
+                      %)
+                    </span>
                   </div>
+                  {/* <div className="text-[10px] text-text-secondary">
+                    ({taxPercent}%)
+                  </div> */}
                 </div>
               )}
             </span>
           </div>
-
-          {(taxDetails?.breakdown?.[0]?.tax_rate_details?.country ||
-            country) && (
-            <div className="flex justify-between text-sm">
-              <span className="text-text">
-                Applicable Tax Rate (
-                {taxDetails?.breakdown?.[0]?.tax_rate_details?.country ||
-                  country}
-                )
-              </span>
-              <span className="font-medium">
-                {taxDetails?.breakdown?.[0]?.tax_rate_details
-                  ?.percentage_decimal ?? 0}
-                %
-              </span>
-            </div>
-          )}
         </div>
 
         {/* Total */}
@@ -267,14 +274,18 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         <Button
           variant="primary"
           className="w-full py-5 text-base"
-          disabled={!canCheckout || isProcessing || isCalculatingTax}
-          onClick={onCheckout}
+          disabled={
+            (country && !canCheckout) || isProcessing || isCalculatingTax
+          }
+          onClick={!country && onAddBillingInfo ? onAddBillingInfo : onCheckout}
         >
           {isProcessing ? (
             <div className="flex items-center gap-2">
               <LoadingSpinner size={4} className="border-white" />
               Processing...
             </div>
+          ) : !country ? (
+            "Add Billing Info"
           ) : (
             `Subscribe  $${finalTotal}/${periodLabel}`
           )}

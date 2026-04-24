@@ -36,17 +36,17 @@ const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
         className="px-6 py-4 whitespace-nowrap text-sm  cursor-pointer"
         onClick={() => onView(invoice)}
       >
-        ${originalSubtotal}
+        ${originalSubtotal.toFixed(2)}
       </td>
       <td
         className="px-6 py-4 whitespace-nowrap text-sm  cursor-pointer"
         onClick={() => onView(invoice)}
       >
-        {discountPercent.toFixed(2)}%
+        {discountPercent}%
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm">
         {"$"}
-        {invoice.payment?.subtotal || invoice.amount}
+        {Number(invoice.payment?.subtotal ?? invoice.amount ?? 0).toFixed(2)}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm">
         {"$"}
@@ -55,7 +55,8 @@ const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
       <td className="px-6 py-4 whitespace-nowrap text-sm">
         {/* {invoice.currency.toUpperCase()} */}
         {"$"}
-        {invoice.amount}
+
+        {Number(invoice.amount ?? 0).toFixed(2)}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm">
         <span

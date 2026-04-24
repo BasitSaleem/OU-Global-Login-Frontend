@@ -60,13 +60,13 @@ const TrialBanner = ({
 
       {/* Right section: Action Buttons */}
       <div className="flex items-center gap-6">
-        <Button
+        {/* <Button
           variant="ghost"
           onClick={() => setIsVisible(false)}
           className="border-none py-5 rounded-xl"
         >
           Dismiss
-        </Button>
+        </Button> */}
         <Button
           leftIcon={<Crown className="w-5 h-5 animate-crown-attention" />}
           onClick={handleNavigation}

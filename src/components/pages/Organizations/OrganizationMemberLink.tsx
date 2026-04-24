@@ -88,10 +88,10 @@ const OILink = ({ org, subscription }: OILinkProps) => {
           </span>
 
           {(isDisabled || isStatusDisabled) && (
-            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover/member:block">
+            <div className="absolute bottom-full left-1/3 -translate-x-1/2 mb-1 hidden group-hover/member:block">
               <div className="rounded-md px-2 py-1 text-[11px] font-medium text-white bg-primary shadow-lg whitespace-nowrap">
                 {isStatusDisabled
-                  ? `No Subscription` // ${subscription?.status}`
+                  ? `Upgrade Subscription` // ${subscription?.status}`
                   : "Processing..."}
               </div>
             </div>

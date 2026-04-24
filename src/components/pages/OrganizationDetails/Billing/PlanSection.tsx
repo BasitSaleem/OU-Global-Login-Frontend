@@ -80,13 +80,24 @@ const PlanSection = ({
         const aName = a.package_name.toUpperCase();
         const bName = b.package_name.toUpperCase();
 
+        // 👉 Special handling for HYBRID category
+        if (activeType === "HYBRID") {
+          const getHybridOrder = (name: string) => {
+            if (name.includes("BUSINESS")) return 0;
+            if (name.includes("ENTERPRISE")) return 1;
+            return 2; // fallback
+          };
+
+          return getHybridOrder(aName) - getHybridOrder(bName);
+        }
+
+        // 👉 Default sorting
         const aLevel = packageOrder.findIndex((p) => aName.includes(p));
         const bLevel = packageOrder.findIndex((p) => bName.includes(p));
 
         return aLevel - bLevel;
       });
   }, [data?.plans, activeType]);
-
   const planCount = filteredPlans.length;
 
   React.useEffect(() => {
