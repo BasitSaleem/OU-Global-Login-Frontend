@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, useCallback } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useGetPlanDetails } from "@/apiHooks.ts/plans/plans.api";
@@ -39,7 +39,15 @@ function CheckoutPage() {
   const decodedOrgId = orgId ? atob(orgId as string) : "";
   const decodedPkgId = pkgId ? atob(pkgId as string) : "";
 
-  const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
+  const searchParams = useSearchParams();
+  const initialBillingCycle =
+    (searchParams.get("billingCycle") as BillingCycle) || "monthly";
+
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>(
+    ["monthly", "yearly"].includes(initialBillingCycle)
+      ? initialBillingCycle
+      : "monthly",
+  );
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<
     string | null
   >(null);

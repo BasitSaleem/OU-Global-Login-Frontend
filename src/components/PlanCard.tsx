@@ -2,7 +2,10 @@ import React from "react";
 import { OiPlanType } from "@/apiHooks.ts/plans/plans.types";
 import { useParams, useRouter } from "next/navigation";
 import { SvgIcon } from "./ui/SvgIcon";
-import { getPlanFeatures } from "./pages/Checkout/RenderPackageFeature";
+import {
+  getPlanFeatures,
+  formatFeature,
+} from "./pages/Checkout/RenderPackageFeature";
 
 interface PlanCardProps {
   plan: OiPlanType;
@@ -12,6 +15,7 @@ interface PlanCardProps {
   subscriptionStatus?: string;
   className?: string;
   subscriptionId?: string;
+  billingCycle: "monthly" | "yearly";
 }
 
 const PlanCard: React.FC<PlanCardProps> = ({
@@ -21,6 +25,7 @@ const PlanCard: React.FC<PlanCardProps> = ({
   onClick,
   subscriptionStatus,
   className = "",
+  billingCycle,
 }) => {
   const { orgId } = useParams();
   const router = useRouter();
@@ -83,7 +88,11 @@ const PlanCard: React.FC<PlanCardProps> = ({
         <span
           className={`text-4xl font-bold ${plan.package_name.toUpperCase().includes("ENTERPRISE") ? "text-[#5588DF]" : "text-[#1AD1B9]"}`}
         >
-          ${plan.monthly_price}
+          $
+          {billingCycle === "monthly"
+            ? plan.monthly_price
+            : (Number(plan.discounted_yearly_price) / 12).toFixed(2) ||
+              plan.yearly_price}
         </span>
         <span className="text-text font-medium">/month</span>
       </div>
@@ -94,7 +103,7 @@ const PlanCard: React.FC<PlanCardProps> = ({
           e.stopPropagation();
           if (isCurrentPlan && subscriptionStatus !== "CANCELLED") return;
           router.push(
-            `/organization-details/${orgId}/billing/checkout/${btoa(plan.id as string)}`,
+            `/organization-details/${orgId}/billing/checkout/${btoa(plan.id as string)}?billingCycle=${billingCycle}`,
           );
         }}
       >
@@ -109,8 +118,8 @@ const PlanCard: React.FC<PlanCardProps> = ({
             <div className="shrink-0 w-5 h-5 flex items-center justify-center">
               <SvgIcon name="check" className="text-primary" />
             </div>
-            <span className="text-text font-medium capitalize">
-              {feature.text}
+            <span className="text-text font-medium ">
+              {formatFeature(feature.text)}
             </span>
           </div>
         ))}
