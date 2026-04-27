@@ -8,81 +8,74 @@ import {
   CreateOrganizationData,
   CreateOrganizationResponse,
 } from "@/apiHooks.ts/organization/organization.types";
-import { PRODUCTS, ROUTES } from "@/constants";
+import { ROUTES } from "@/constants";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { toast } from "@/hooks/useToast";
 import ProgressModal from "@/components/ui/ProgressModal";
-import { Button, Dots, Input, Loader, LoadingSpinner } from "@/components/ui";
-import { AuthGuard } from "@/components/HOCs/auth-guard";
-import { SubdomainSuggestion } from "@/components/SubdomainSuggestion";
-import { AvailabilityStatus } from "@/components/AvailabilityStatus";
-import { CreateOrganizationGuard } from "@/components/HOCs/createOrgRoute.guard";
-import { SvgIcon } from "@/components/ui/SvgIcon";
+import { Loader } from "@/components/ui";
 import logger from "@/utils/logger";
-// import OgPlanSelector from "@/components/pages/Organizations/OgPlanSelector";
+import { AnimatePresence, motion } from "framer-motion";
+import { StepIndicator } from "@/components/pages/CreateOrganization/StepIndicator";
+import { OrganizationStep } from "@/components/pages/CreateOrganization/OrganizationStep";
+import { SetupStep } from "@/components/pages/CreateOrganization/SetupStep";
+import { ReviewStep } from "@/components/pages/CreateOrganization/ReviewStep";
+import { CreateOrganizationGuard } from "@/components/HOCs/createOrgRoute.guard";
+import { AuthGuard } from "@/components/HOCs/auth-guard";
 
 export default function CreateOrgPage() {
   const searchParams = useSearchParams();
   const queryPkgId = searchParams.get("pkgId");
 
-  // Resolve pkgId: prefer query params, fall back to localStorage
   const pkgId =
     queryPkgId ||
     (typeof window !== "undefined" ? localStorage.getItem("pkgId") : null) ||
     "d755fe7d-4372-426c-af33-e63b71a6521f";
 
-  // Store pkgId in localStorage so it survives the auth redirect
   useEffect(() => {
     if (queryPkgId) {
       localStorage.setItem("pkgId", queryPkgId);
     }
   }, [queryPkgId]);
 
-  return (
-    <AuthGuard>
-      <CreateOrgContent initialPkgId={pkgId} />
-    </AuthGuard>
-  );
+  return <CreateOrgContent initialPkgId={pkgId} />;
 }
 
 function CreateOrgContent({ initialPkgId }: { initialPkgId: string | null }) {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [direction, setDirection] = useState(0);
+
   const [companyName, setCompanyName] = useState("");
-  // const [selectedPlan, setSelectedPlan] = useState<string | null>(initialPkgId);
   const [subDomain, setSubDomain] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("OI");
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(initialPkgId);
   const [showProgressModal, setShowProgressModal] = useState(false);
-  const [organizationData, setOrganizationData] =
-    useState<CreateOrganizationResponse | null>(null);
+  const [organizationData, setOrganizationData] = useState<CreateOrganizationResponse | null>(null);
   const [isSuggestionSubdomain, setIsSuggestionSubdomain] = useState(false);
 
   const debouncedCompanyName = useDebounce(companyName.trim(), 1500);
   const debouncedSubDomain = useDebounce(subDomain.trim(), 1500);
 
   const isNameDebouncing =
-    companyName.trim() !== debouncedCompanyName &&
-    companyName.trim().length > 0;
+    companyName.trim() !== debouncedCompanyName && companyName.trim().length > 0;
+
   const isSubDomainDebouncing =
     !isSuggestionSubdomain &&
     subDomain.trim() !== debouncedSubDomain &&
     subDomain.trim().length > 0;
-  const { data: suggestions, isPending: fetchingSubdomainSuggestions } =
-    useGenerateSubdomainSuggestions(
-      !isNameDebouncing ? debouncedCompanyName : "",
-    );
 
-  const { mutate: createOrgMutation, isPending: creatingOrg } =
-    useCreateOrganization();
+  const { data: suggestions, isPending: fetchingSubdomainSuggestions } =
+    useGenerateSubdomainSuggestions(!isNameDebouncing ? debouncedCompanyName : "");
+
+  const { mutate: createOrgMutation, isPending: creatingOrg } = useCreateOrganization();
   const router = useRouter();
 
   const shouldCheckAvailability =
     selectedProduct === "OI" && debouncedSubDomain && !isSuggestionSubdomain;
 
   const { data: isSubAvailable, isFetching: checkingSub } =
-    useCheckSubDomainAvailability(
-      shouldCheckAvailability ? debouncedSubDomain : "",
-    );
+    useCheckSubDomainAvailability(shouldCheckAvailability ? debouncedSubDomain : "");
 
   const finalIsSubAvailable = isSuggestionSubdomain ? true : isSubAvailable;
 
@@ -98,6 +91,7 @@ function CreateOrgContent({ initialPkgId }: { initialPkgId: string | null }) {
       setIsSuggestionSubdomain(true);
     }
   }, [suggestions]);
+
   const handleSuggestionClick = (suggestion: string) => {
     setIsSuggestionSubdomain(true);
     setSubDomain(suggestion);
@@ -106,9 +100,9 @@ function CreateOrgContent({ initialPkgId }: { initialPkgId: string | null }) {
   const canSubmit = () => {
     if (!companyName.trim()) return false;
     if (selectedProduct === "OI" && !subDomain.trim()) return false;
-    if (selectedProduct === "OI" && (isSubDomainDebouncing || checkingSub))
-      return false;
+    if (selectedProduct === "OI" && (isSubDomainDebouncing || checkingSub)) return false;
     if (selectedProduct === "OI" && finalIsSubAvailable === false) return false;
+    if (!selectedPlanId) return false;
     if (creatingOrg) return false;
     return true;
   };
@@ -120,7 +114,7 @@ function CreateOrgContent({ initialPkgId }: { initialPkgId: string | null }) {
       name: trimmedName,
       subDomainName: trimmedSubDomain,
       product: [selectedProduct],
-      packageId: initialPkgId,
+      packageId: selectedPlanId,
     };
 
     createOrgMutation(payload, {
@@ -136,168 +130,140 @@ function CreateOrgContent({ initialPkgId }: { initialPkgId: string | null }) {
         localStorage.removeItem("pkgId");
       },
       onError: (error: any) => {
-        const message =
-          (error as Error)?.message || "Organization creation failed";
+        const message = (error as Error)?.message || "Organization creation failed";
         toast.error("Failed to create organization", message);
         logger.error("Organization creation failed:", error);
       },
     });
   };
 
-  const handleModalClose = () => {
-    setShowProgressModal(false);
-    setOrganizationData(null);
-    router.push(ROUTES.DASHBOARD);
+  const nextStep = () => {
+    setDirection(1);
+    setCurrentStep((prev) => Math.min(prev + 1, 3));
   };
 
-  const handleProgressComplete = () => {
-    logger.log("handleProgressComplete");
+  const prevStep = () => {
+    setDirection(-1);
+    setCurrentStep((prev) => Math.max(prev - 1, 1));
   };
 
-  const handleGoHome = () => {
-    setShowProgressModal(false);
-    setOrganizationData(null);
-    router.push(ROUTES.DASHBOARD);
+  const handleReset = () => {
+    setCompanyName("");
+    setSubDomain("");
+    setSelectedProduct("OI");
+    setSelectedPlanId(initialPkgId);
+    setCurrentStep(1);
+    setDirection(-1);
+  };
+
+  const steps = [
+    { id: 1, label: "Organization" },
+    { id: 2, label: "Setup" },
+  ];
+
+  const variants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 500 : -500,
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction: number) => ({
+      x: direction < 0 ? 500 : -500,
+      opacity: 0,
+    }),
   };
 
   return (
-    <>
-      {creatingOrg && <Loader text="Initializing organization creation" />}
+    <AuthGuard>
       <CreateOrganizationGuard>
-        <div className="min-h-screen w-full flex items-center justify-center bg-background p-4 sm:p-8">
-          <div className="bg-bg-secondary rounded-xl shadow-lg p-6 sm:p-12 w-full max-w-2xl border">
-            <h1 className="mb-8 text-2xl sm:text-3xl font-bold text-center ">
-              Create an Organization
-            </h1>
+        {creatingOrg && <Loader text="Initializing organization creation" />}
+        <div className="min-h-48 w-full bg-background flex flex-col items-center py-12 px-4">
+          <StepIndicator steps={steps} currentStep={currentStep > 2 ? 2 : currentStep} />
 
-            <div className="mb-6">
-              <Input
-                isRequired
-                label="Company Name"
-                type="text"
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-                placeholder="Enter company name"
-              />
-            </div>
-
-            {/* Products */}
-            <div className="mb-6">
-              <label className="block text-base font-medium mb-3">
-                Products
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {PRODUCTS.map((product) => (
-                  <button
-                    key={product.id}
-                    type="button"
-                    disabled={product.isDisabled}
-                    onClick={() => setSelectedProduct(product.name)}
-                    className={`flex items-center gap-2 border rounded-lg px-3 py-3 text-base font-medium transition ${selectedProduct === product.name
-                      ? "border-primary bg-bg-secondary hover:text-text hover:bg-primary/70 text-primary"
-                      : "border text-text"
-                      } ${product.isDisabled
-                        ? "cursor-not-allowed opacity-50 "
-                        : "cursor-pointer"
-                      }`}
-                  >
-                    <SvgIcon name={product.icon} className="w-6 h-6" />
-                    {product.fullname}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="mb-2">
-              <Input
-                isRequired
-                type="text"
-                label="Sub-Domain Name"
-                value={subDomain}
-                onChange={(e) =>
-                  setSubDomain(
-                    e.target.value
-                      .toLocaleLowerCase()
-                      .trim()
-                      .replace(/[^a-z0-9-]/g, ""),
-                  )
-                }
-                disabled={
-                  selectedProduct !== "OI" || fetchingSubdomainSuggestions
-                }
-                placeholder="Enter sub-domain"
-              />
-
-              {selectedProduct === "OI" && companyName.trim().length > 1 && (
-                <SubdomainSuggestion
-                  suggestions={suggestions}
-                  onSuggestionClick={handleSuggestionClick}
-                  isLoading={fetchingSubdomainSuggestions}
-                />
-              )}
-
-              {selectedProduct === "OI" && (
-                <AvailabilityStatus
-                  isLoading={checkingSub}
-                  isAvailable={finalIsSubAvailable}
-                  isDebouncing={isSubDomainDebouncing}
-                  fieldName="Sub-domain"
-                  value={subDomain}
-                />
-              )}
-
-              {/* <div className="mt-2">
-                <OgPlanSelector
-                  selectedPlane={selectedPlan}
-                  setSelectedPlan={setSelectedPlan}
-                />
-              </div> */}
-            </div>
-
-            {/* Actions */}
-            <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 mt-8">
-              <Button
-                variant="secondary"
-                className="py-5"
-                onClick={() => {
-                  setCompanyName("");
-                  setSubDomain("");
-                  setSelectedProduct("OI");
+          <div className="w-full max-w-4xl bg-white rounded-[32px] shadow-xl border border-gray-100 overflow-hidden relative">
+            <AnimatePresence mode="wait" custom={direction}>
+              <motion.div
+                key={currentStep}
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  x: { type: "spring", stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.2 },
                 }}
-                disabled={creatingOrg}
+                className="p-8 md:p-12"
               >
-                Reset
-              </Button>
-              <Button
-                onClick={handleSubmit}
-                variant="primary"
-                className="py-5"
-                disabled={!canSubmit()}
-              >
-                {creatingOrg ? (
-                  <div className="flex items-center gap-2">
-                    <LoadingSpinner size={4} className="border-white" />
-                    <span>
-                      Creating
-                      <Dots dotSize="3px" className="text-white mt-1" />
-                    </span>
-                  </div>
-                ) : (
-                  "Continue"
+                {currentStep === 1 && (
+                  <OrganizationStep
+                    companyName={companyName}
+                    setCompanyName={setCompanyName}
+                    selectedProduct={selectedProduct}
+                    setSelectedProduct={setSelectedProduct}
+                    onNext={nextStep}
+                    onReset={handleReset}
+                  />
                 )}
-              </Button>
-            </div>
+
+                {currentStep === 2 && (
+                  <SetupStep
+                    companyName={companyName}
+                    selectedProduct={selectedProduct}
+                    subDomain={subDomain}
+                    setSubDomain={setSubDomain}
+                    suggestions={suggestions}
+                    fetchingSubdomainSuggestions={fetchingSubdomainSuggestions}
+                    handleSuggestionClick={handleSuggestionClick}
+                    checkingSub={checkingSub}
+                    finalIsSubAvailable={finalIsSubAvailable}
+                    isSubDomainDebouncing={isSubDomainDebouncing}
+                    selectedPlanId={selectedPlanId}
+                    setSelectedPlanId={setSelectedPlanId}
+                    onBack={prevStep}
+                    onCreate={nextStep}
+                    canSubmit={canSubmit()}
+                    creatingOrg={creatingOrg}
+                  />
+                )}
+
+                {currentStep === 3 && (
+                  <ReviewStep
+                    companyName={companyName}
+                    selectedProduct={selectedProduct}
+                    subDomain={subDomain}
+                    selectedPlanId={selectedPlanId}
+                    onBack={prevStep}
+                    onCreate={handleSubmit}
+                    creatingOrg={creatingOrg}
+                  />
+                )}
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
+
+        <ProgressModal
+          isOpen={showProgressModal}
+          organizationData={organizationData}
+          onClose={() => {
+            setShowProgressModal(false);
+            setOrganizationData(null);
+            router.push(ROUTES.DASHBOARD);
+          }}
+          onComplete={() => logger.log("handleProgressComplete")}
+          onGoHome={() => {
+            setShowProgressModal(false);
+            setOrganizationData(null);
+            router.push(ROUTES.DASHBOARD);
+          }}
+          isFromMain={true}
+        />
       </CreateOrganizationGuard>
-      <ProgressModal
-        isOpen={showProgressModal}
-        organizationData={organizationData}
-        onClose={handleModalClose}
-        onComplete={handleProgressComplete}
-        onGoHome={handleGoHome}
-        isFromMain={true}
-      />
-    </>
+    </AuthGuard>
   );
 }
+
