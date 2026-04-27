@@ -35,7 +35,7 @@ const TrialBanner = ({
 
   const handleNavigation = () => {
     router.push(
-      `/organization-details/${btoa(orgId)}/billing/checkout/${btoa(subscription?.oiPackage?.id || "")}`,
+      `/organization-details/${orgId}/billing/checkout/${subscription?.oiPackage?.id || ""}`,
     );
   };
 

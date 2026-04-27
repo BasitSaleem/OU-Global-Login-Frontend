@@ -103,7 +103,7 @@ const PlanCard: React.FC<PlanCardProps> = ({
           e.stopPropagation();
           if (isCurrentPlan && subscriptionStatus !== "CANCELLED") return;
           router.push(
-            `/organization-details/${orgId}/billing/checkout/${btoa(plan.id as string)}?billingCycle=${billingCycle}`,
+            `/organization-details/${orgId}/billing/checkout/${plan.id as string}?billingCycle=${billingCycle}`,
           );
         }}
       >
