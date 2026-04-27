@@ -46,7 +46,9 @@ const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm">
         {"$"}
-        {Number(invoice.payment?.subtotal ?? invoice.amount ?? 0).toFixed(2)}
+        {Number(
+          invoice.payment?.subtotal ?? invoice.payment.amount ?? 0,
+        ).toFixed(2)}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm">
         {"$"}

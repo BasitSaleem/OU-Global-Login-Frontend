@@ -13,7 +13,6 @@ import { useAppSelector } from "@/redux/store";
 function BillingPage() {
   const { orgId } = useParams();
   const decodedId = atob(orgId as string);
-  const router = useRouter();
   const {
     data: organization,
     isLoading,

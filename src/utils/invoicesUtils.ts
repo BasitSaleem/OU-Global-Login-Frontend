@@ -37,7 +37,7 @@ export interface InvoiceFinancial {
 
 export const calculateInvoiceFinancial = (
   invoice: Invoice,
-  billingCycle?: "MONTHLY" | "YEARLY",
+  billingCycle: "MONTHLY" | "YEARLY",
 ): InvoiceFinancial => {
   const payment = invoice.payment;
   const effectiveSubtotal = parseFloat(payment?.subtotal || "0");
@@ -97,16 +97,9 @@ export const calculateInvoiceFinancial = (
       ? parseFloat(invoice.subscription?.oiPackage?.yearly_price || "0")
       : parseFloat(invoice.subscription?.oiPackage?.monthly_price || "0");
 
-  // Fallback if package details are missing from the response
-  // if (originalBasePlan === 0) {
-  //   originalBasePlan = effectiveBasePlan;
-  //   if (billingCycle === "YEARLY") {
-  //     originalBasePlan = effectiveBasePlan / 0.8;
-  //   }
-  // }
-
   const originalSubtotal = originalBasePlan + originalAddOnsTotal;
-  const savings = originalSubtotal - effectiveSubtotal;
+  const savings =
+    billingCycle === "YEARLY" ? originalSubtotal - effectiveSubtotal : 0;
   const hasDiscount = savings > 0.1;
   const finalDiscountPercent = hasDiscount
     ? (savings / originalSubtotal) * 100
