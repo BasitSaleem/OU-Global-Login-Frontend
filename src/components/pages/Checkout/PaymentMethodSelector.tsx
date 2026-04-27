@@ -47,7 +47,7 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
           variant="basic"
           className="text-primary text-sm"
           onClick={() => {
-            const url = `/organization-details/${btoa(orgId)}/payment-cards`;
+            const url = `/organization-details/${orgId}/payment-cards`;
             window.open(url, "_blank");
           }}
         >

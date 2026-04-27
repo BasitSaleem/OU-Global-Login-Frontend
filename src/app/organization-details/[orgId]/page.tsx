@@ -1,9 +1,11 @@
-"use client"
-import { useParams, useRouter } from 'next/navigation'
+"use client";
+import { useParams, useRouter } from "next/navigation";
 const page = () => {
-    const params = useParams()
-    const orgId = params.orgId
-    const router = useRouter()
-    return router.push(`/organization-details/${btoa(orgId as string)}/payment-methods`)
-}
-export default page
+  const params = useParams();
+  const orgId = params.orgId;
+  const router = useRouter();
+  return router.push(
+    `/organization-details/${orgId as string}/payment-methods`,
+  );
+};
+export default page;
