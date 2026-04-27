@@ -103,7 +103,7 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
         </div>
 
         <div
-          className={`overflow-y-auto ${addOns.length > 3 ? "max-h-64" : ""}`}
+          className={`overflow-y-auto ${addOns.length > 3 ? "max-h-52" : "max-h-48"}`}
         >
           <table className="w-full text-left text-sm">
             <thead className="bg-background border-b">
@@ -157,12 +157,10 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
                     </td>
                     <td className="px-4 py-4 text-center">{addOnQty}</td>
                     <td className="px-4 py-4 text-right">
-                      {/* {addon.currency || invoice.currency.toUpperCase()} */}
                       {"$"}
                       {price.toFixed(2)}
                     </td>
                     <td className="px-4 py-4 text-right font-medium">
-                      {/* {addon.currency || invoice.currency.toUpperCase()} */}
                       {"$"}
                       {total.toFixed(2)}
                     </td>
