@@ -20,6 +20,33 @@ import { SUBSCRIPTION_STATUS_COLOR } from "@/utils/ColorClasses";
 import CancelSubscriptionModal from "@/components/modals/CancelSubscriptionModal";
 import { Skeleton } from "@/components/ui/skeleton";
 
+const typeData = [
+  {
+    id: "RETAIL",
+    label: "Retail",
+    icon: Store,
+    description: "Perfect for stores, shops and multi locations business",
+  },
+  {
+    id: "MANUFACTURING",
+    label: "Manufacturing",
+    icon: Factory,
+    description: "Ideal for factories and production line management",
+  },
+  {
+    id: "ECOMMERCE",
+    label: "Ecommerce",
+    icon: ShoppingCart,
+    description: "Best for online stores and digital marketplaces",
+  },
+  {
+    id: "HYBRID",
+    label: "Hybrid",
+    icon: Layers,
+    description: "Versatile solutions for combined business models",
+  },
+];
+
 const PlanSection = ({
   organization,
   loading,
@@ -35,39 +62,15 @@ const PlanSection = ({
   const [selectedPlanId, setSelectedPlanId] = React.useState<string | null>(
     null,
   );
+  const [billingCycle, setBillingCycle] = React.useState<"monthly" | "yearly">(
+    "monthly",
+  );
 
   const CARD_WIDTH = 440; // Increased to match larger cards
   const GAP = 16;
   const TOTAL_MOVE = CARD_WIDTH + GAP;
   const [maxIndex, setMaxIndex] = React.useState(0);
   const containerRef = React.useRef<HTMLDivElement>(null);
-
-  const typeData = [
-    {
-      id: "RETAIL",
-      label: "Retail",
-      icon: Store,
-      description: "Perfect for stores, shops and multi locations business",
-    },
-    {
-      id: "MANUFACTURING",
-      label: "Manufacturing",
-      icon: Factory,
-      description: "Ideal for factories and production line management",
-    },
-    {
-      id: "ECOMMERCE",
-      label: "Ecommerce",
-      icon: ShoppingCart,
-      description: "Best for online stores and digital marketplaces",
-    },
-    {
-      id: "HYBRID",
-      label: "Hybrid",
-      icon: Layers,
-      description: "Versatile solutions for combined business models",
-    },
-  ];
 
   const filteredPlans = React.useMemo(() => {
     if (!data?.plans) return [];
@@ -80,13 +83,24 @@ const PlanSection = ({
         const aName = a.package_name.toUpperCase();
         const bName = b.package_name.toUpperCase();
 
+        // 👉 Special handling for HYBRID category
+        if (activeType === "HYBRID") {
+          const getHybridOrder = (name: string) => {
+            if (name.includes("BUSINESS")) return 0;
+            if (name.includes("ENTERPRISE")) return 1;
+            return 2; // fallback
+          };
+
+          return getHybridOrder(aName) - getHybridOrder(bName);
+        }
+
+        // 👉 Default sorting
         const aLevel = packageOrder.findIndex((p) => aName.includes(p));
         const bLevel = packageOrder.findIndex((p) => bName.includes(p));
 
         return aLevel - bLevel;
       });
   }, [data?.plans, activeType]);
-
   const planCount = filteredPlans.length;
 
   React.useEffect(() => {
@@ -253,29 +267,64 @@ const PlanSection = ({
           />
 
           <div className="mt-8 flex flex-col gap-6">
-            {/* Plan Type Selector */}
-            <div className="flex flex-wrap items-center gap-2 p-1.5 bg-[#EEEDF0]  rounded-2xl w-fit">
-              {typeData.map((type) => {
-                const Icon = type.icon;
-                const isActive = activeType === type.id;
-                return (
-                  <button
-                    key={type.id}
-                    onClick={() => {
-                      setActiveType(type.id);
-                      setCurrentIndex(0);
-                    }}
-                    className={`flex items-center gap-2 px-4  cursor-pointer py-2 rounded-xl transition-all duration-200 ${
-                      isActive
-                        ? "bg-primary text-white shadow-md"
-                        : "text-black hover:bg-primary/10"
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+              {/* Plan Type Selector */}
+              <div className="flex flex-wrap items-center gap-2 p-1.5 bg-[#EEEDF0]  rounded-2xl w-fit">
+                {typeData.map((type) => {
+                  const Icon = type.icon;
+                  const isActive = activeType === type.id;
+                  return (
+                    <button
+                      key={type.id}
+                      onClick={() => {
+                        setActiveType(type.id);
+                        setCurrentIndex(0);
+                      }}
+                      className={`flex items-center gap-2 px-4  cursor-pointer py-2 rounded-xl transition-all duration-200 ${
+                        isActive
+                          ? "bg-primary text-white shadow-md"
+                          : "text-black hover:bg-primary/10"
+                      }`}
+                    >
+                      <Icon size={18} />
+                      <span className="font-medium">{type.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Billing Cycle Toggle */}
+              <div className="flex items-center gap-2 p-1.5 bg-[#EEEDF0] rounded-2xl w-fit">
+                <button
+                  onClick={() => setBillingCycle("monthly")}
+                  className={`px-6 py-2 rounded-xl font-medium transition-all duration-200 cursor-pointer ${
+                    billingCycle === "monthly"
+                      ? "bg-primary text-white shadow-md"
+                      : "text-black hover:bg-primary/10"
+                  }`}
+                >
+                  Monthly
+                </button>
+                <button
+                  onClick={() => setBillingCycle("yearly")}
+                  className={`px-6 py-2 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 cursor-pointer ${
+                    billingCycle === "yearly"
+                      ? "bg-primary text-white shadow-md"
+                      : "text-black hover:bg-primary/10"
+                  }`}
+                >
+                  Yearly
+                  <span
+                    className={`text-[10px] px-2 py-0.5 rounded-full ${
+                      billingCycle === "yearly"
+                        ? "bg-white/20 text-white"
+                        : "bg-primary/10 text-primary"
                     }`}
                   >
-                    <Icon size={18} />
-                    <span className="font-medium">{type.label}</span>
-                  </button>
-                );
-              })}
+                    Save up to 20%
+                  </span>
+                </button>
+              </div>
             </div>
             <p className="text-gray-500 text-lg">
               {typeData.find((t) => t.id === activeType)?.description}
@@ -350,6 +399,7 @@ const PlanSection = ({
                           organization?.subscriptions?.[0]?.status
                         }
                         subscriptionId={organization?.subscriptions?.[0]?.id}
+                        billingCycle={billingCycle}
                       />
                     </motion.div>
                   ))}

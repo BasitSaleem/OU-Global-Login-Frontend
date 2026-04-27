@@ -44,11 +44,25 @@ const InvoiceHistoryTable = ({ org }: { org: Partial<Organization> }) => {
               >
                 Invoice
               </th>
+
               <th
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
               >
                 Subtotal
+              </th>
+
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
+              >
+                Discount
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
+              >
+                Net Total
               </th>
               <th
                 scope="col"

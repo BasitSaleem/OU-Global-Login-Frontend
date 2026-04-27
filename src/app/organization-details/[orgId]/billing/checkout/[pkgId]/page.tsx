@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, useCallback } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useGetPlanDetails } from "@/apiHooks.ts/plans/plans.api";
@@ -12,6 +12,7 @@ import {
   useGetStripeTax,
   useUpgradePlan,
 } from "@/apiHooks.ts/subscription/subscription.api";
+import { useGetBillingInfo } from "@/apiHooks.ts/billing/billing.api";
 import { PaymentMethod } from "@/apiHooks.ts/paymentMethod/paymentMethod.types";
 import { packageAddOnsType } from "@/apiHooks.ts/plans/plans.types";
 import {
@@ -38,7 +39,15 @@ function CheckoutPage() {
   const decodedOrgId = orgId ? atob(orgId as string) : "";
   const decodedPkgId = pkgId ? atob(pkgId as string) : "";
 
-  const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
+  const searchParams = useSearchParams();
+  const initialBillingCycle =
+    (searchParams.get("billingCycle") as BillingCycle) || "monthly";
+
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>(
+    ["monthly", "yearly"].includes(initialBillingCycle)
+      ? initialBillingCycle
+      : "monthly",
+  );
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<
     string | null
   >(null);
@@ -53,6 +62,8 @@ function CheckoutPage() {
     useGetPaymentMethods(decodedOrgId);
   const { data: organization, isPending: loadingOrg } =
     useOrganizationDetails(decodedOrgId);
+  const { data: billingInfo, isPending: loadingBillingInfo } =
+    useGetBillingInfo();
 
   const currentSubscription = organization?.subscriptions?.[0];
   const subscriptionId = currentSubscription?.id ?? null;
@@ -87,6 +98,7 @@ function CheckoutPage() {
     control,
     watch,
     setValue,
+    reset,
     formState: { errors: formErrors },
   } = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
@@ -98,6 +110,21 @@ function CheckoutPage() {
       billing_postal_code: "",
     },
   });
+
+  const [hasPrefilled, setHasPrefilled] = useState(false);
+
+  useEffect(() => {
+    if (billingInfo && !hasPrefilled) {
+      reset({
+        country: billingInfo.country || "",
+        billing_address: billingInfo.address || "",
+        billing_city: billingInfo.city || "",
+        billing_state: billingInfo.state || "",
+        billing_postal_code: billingInfo.postal_code || "",
+      });
+      setHasPrefilled(true);
+    }
+  }, [billingInfo, reset, hasPrefilled]);
 
   const watchFields = watch();
 
@@ -168,7 +195,7 @@ function CheckoutPage() {
 
   // Reset US fields if country changes
   useEffect(() => {
-    if (watchFields.country !== "US") {
+    if (watchFields.country && watchFields.country !== "US") {
       setValue("billing_address", "");
       setValue("billing_city", "");
       setValue("billing_state", "");
@@ -222,7 +249,9 @@ function CheckoutPage() {
             (1 - discPercent / 100);
         } else {
           price = parseFloat(
-            entry.addOn.discounted_yearly_price || entry.addOn.yearly_price || "0",
+            entry.addOn.discounted_yearly_price ||
+              entry.addOn.yearly_price ||
+              "0",
           );
         }
         total += price * quantity;
@@ -347,7 +376,19 @@ function CheckoutPage() {
     }
   };
 
-  if (loadingPlan || loadingPaymentMethods || loadingOrg) {
+  const handleScrollToBillingInfo = () => {
+    const element = document.getElementById("billing-info-section");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  if (
+    loadingPlan ||
+    loadingPaymentMethods ||
+    loadingOrg ||
+    loadingBillingInfo
+  ) {
     return <CheckOutSkeleton />;
   }
 
@@ -377,12 +418,14 @@ function CheckoutPage() {
             onUpdateQuantity={updateAddOnQuantity}
           />
 
-          <InvoiceCountry
-            control={control}
-            register={register}
-            errors={formErrors}
-            watchCountry={watchFields.country}
-          />
+          <div id="billing-info-section" className="scroll-mt-24">
+            <InvoiceCountry
+              control={control}
+              register={register}
+              errors={formErrors}
+              watchCountry={watchFields.country}
+            />
+          </div>
 
           <PaymentMethodSelector
             paymentMethods={paymentMethods}
@@ -415,6 +458,7 @@ function CheckoutPage() {
             canCheckout={!!selectedPaymentMethodId && !!stripePriceId}
             onCheckout={handleSubmit(handleCheckout)}
             onManageCards={() => setIsModalOpen(true)}
+            onAddBillingInfo={handleScrollToBillingInfo}
           />
         </div>
         {isModalOpen && (

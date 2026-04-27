@@ -21,17 +21,18 @@ interface SidebarItem {
 
 const sidebarItems: SidebarItem[] = [
   {
-    label: "Payment Cards",
-    href: (orgId) => `/organization-details/${btoa(orgId)}/payment-cards`,
-    icon: "payment-methods",
-    showForRoles: ["OWNER",],
-  },
-  {
     label: "Billings",
     href: (orgId) => `/organization-details/${btoa(orgId)}/billing`,
     icon: "billing",
     showForRoles: ["OWNER", "ADMIN"],
   },
+  {
+    label: "Payment Cards",
+    href: (orgId) => `/organization-details/${btoa(orgId)}/payment-cards`,
+    icon: "payment-methods",
+    showForRoles: ["OWNER"],
+  },
+
   {
     label: "Notifications",
     href: (orgId) => `/organization-details/${btoa(orgId)}/notifications`,
@@ -46,8 +47,10 @@ export default function OrgSidebar({
   organizationDetails,
 }: OrgSidebarProps) {
   const pathname = usePathname();
-  const user = useAppSelector((s) => s.auth.user)
-  const userRole = organizationDetails?.memberships?.find((m) => m.user_id === user?.id)?.role as string
+  const user = useAppSelector((s) => s.auth.user);
+  const userRole = organizationDetails?.memberships?.find(
+    (m) => m.user_id === user?.id,
+  )?.role as string;
 
   return (
     <aside
@@ -57,31 +60,40 @@ export default function OrgSidebar({
         className,
       )}
     >
-
       <Link
         isShow={true}
         href="/"
         className={cn(
           "h-14 flex items-center justify-start border-b cursor-pointer",
           collapsed ? "px-3" : "px-3",
-
         )}
-        rightIcon={!collapsed ? (
-          <SvgIcon name="ownersInventory" className="text-foreground" width={130} height={130} />
-        ) : (
-          <SvgIcon name="OI" className="text-foreground" width={40} height={40} />
-        )}
-      >
-      </Link>
+        rightIcon={
+          !collapsed ? (
+            <SvgIcon
+              name="ownersInventory"
+              className="text-foreground"
+              width={130}
+              height={130}
+            />
+          ) : (
+            <SvgIcon
+              name="OI"
+              className="text-foreground"
+              width={40}
+              height={40}
+            />
+          )
+        }
+      />
       <nav className="px-3 py-1.5 space-y-1 ">
         <div
           className={cn(
-            "flex items-center text-sm font-medium rounded-lg transition-colors p-2 mb-2 text-icon",
-            collapsed ? "justify-center bg-primary/10 " : "ml-5",
+            "flex items-center text-sm font-medium rounded-lg transition-colors p-2 text-icon",
+            collapsed ? "justify-center bg-primary/10 " : "ml-1",
           )}
         >
           {collapsed ? (
-            <span className="w-8 h-8 flex items-center justify-center text-xs font-semibold">
+            <span className="w-8 h-8 flex items-center justify-center text-[12px] font-semibold">
               {organizationDetails?.name
                 ?.split(" ")
                 .map((n) => n[0])
@@ -90,7 +102,9 @@ export default function OrgSidebar({
                 .substring(0, 2)}
             </span>
           ) : (
-            organizationDetails?.name
+            <span className="text-[12px] font-semibold -ml-3">
+              {organizationDetails?.name}
+            </span>
           )}
         </div>
         {sidebarItems.map((item) => {

@@ -32,6 +32,7 @@ export type Package = {
   free_trial_days: number;
   monthly_price: string;
   yearly_price: string;
+  discounted_yearly_price: string;
 };
 export interface CreateOrganizationData {
   name: string;

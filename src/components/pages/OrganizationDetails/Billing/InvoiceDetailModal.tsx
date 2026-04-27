@@ -5,9 +5,10 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import InvoicePDF from "./InvoicePDF";
 import { Download, FileText } from "lucide-react";
 import { Button } from "@/components/ui";
-import { Subscription } from "@/apiHooks.ts/organization/organization.types";
+
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
+import { parseAddOns, calculateInvoiceFinancial } from "@/utils/invoicesUtils";
 import logger from "@/utils/logger";
 
 interface InvoiceDetailModalProps {
@@ -25,7 +26,6 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
 }) => {
   const { user } = useSelector((state: RootState) => state.auth);
   if (!invoice) return null;
-  const payment = invoice.payment;
 
   // 1. Parse metadata if it's a string (happens on some environments)
   let metaObj = invoice.metadata as any;
@@ -37,26 +37,22 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
     }
   }
 
-  // 2. Extract add-ons with case-insensitive check and parsing
-  let addOns_raw = metaObj?.addOns || metaObj?.addons || [];
-  let addOns: any[] = [];
-  if (typeof addOns_raw === "string" && addOns_raw !== "") {
-    try {
-      addOns = JSON.parse(addOns_raw);
-    } catch (e) {
-      logger.error("Failed to parse addOns string", e);
-    }
-  } else if (Array.isArray(addOns_raw)) {
-    addOns = addOns_raw;
-  }
+  const addOns = parseAddOns(
+    metaObj?.addOns || metaObj?.addons || [],
+    "DetailModal",
+  );
 
-  const addOnsTotal = addOns.reduce((acc: number, addon: any) => {
-    const qty = addon.quantity || addon.no_of_users || addon.no_of_stores || 1;
-    const price = parseFloat(addon.price) || 0;
-    return acc + price * qty;
-  }, 0);
-
-  const basePlanAmount = invoice.amount - addOnsTotal;
+  const {
+    originalSubtotal,
+    savings,
+    subtotal: effectiveSubtotal,
+    tax,
+    total,
+    discountPercent,
+    hasDiscount,
+    originalBasePlan,
+    addOnsWithPricing,
+  } = calculateInvoiceFinancial(invoice, invoice.subscription?.billing_cycle);
 
   return (
     <Modal
@@ -133,19 +129,17 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
                 </td>
                 <td className="px-4 py-2 text-center">1</td>
                 <td className="px-4 py-2 text-right">
-                  {/* {invoice.currency.toUpperCase()} */}
                   {"$"}
-                  {basePlanAmount.toFixed(2)}
+                  {originalBasePlan.toFixed(2)}
                 </td>
                 <td className="px-4 py-2 text-right font-medium">
-                  {/* {invoice.currency.toUpperCase()} */}
                   {"$"}
-                  {basePlanAmount.toFixed(2)}
+                  {originalBasePlan.toFixed(2)}
                 </td>
               </tr>
 
               {/* Add-ons */}
-              {addOns.map((addon: any, index: number) => {
+              {addOnsWithPricing.map((addon: any, index: number) => {
                 const addOnName =
                   addon.name || addon.package_name || "Add-on Module";
                 const addOnQty =
@@ -153,7 +147,7 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
                   addon.no_of_users ||
                   addon.no_of_stores ||
                   1;
-                const price = parseFloat(addon.price) || 0;
+                const price = addon.originalPrice;
                 const total = price * addOnQty;
                 return (
                   <tr key={index}>
@@ -185,30 +179,51 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
               Status
             </p>
             <span
-              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold mt-1 ${invoice.status === "PAID"
-                ? "bg-green-100 text-green-700"
-                : invoice.status === "PENDING"
-                  ? "bg-yellow-100 text-yellow-700"
-                  : "bg-red-100 text-red-700"
-                }`}
+              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold mt-1 ${
+                invoice.status === "PAID"
+                  ? "bg-green-100 text-green-700"
+                  : invoice.status === "PENDING"
+                    ? "bg-yellow-100 text-yellow-700"
+                    : "bg-red-100 text-red-700"
+              }`}
             >
               {invoice.status}
             </span>
           </div>
 
           <div className="space-y-1 text-right">
-            <div className="flex justify-between gap-8 text-sm">
-              <span className="text-gray-500">Subtotal</span>
+            {hasDiscount && (
+              <>
+                <div className="flex justify-between gap-8 text-sm">
+                  <span className="text-gray-500">Sub total</span>
+                  <span className="font-semibold text-text">
+                    {"$"}
+                    {originalSubtotal.toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex justify-between gap-8 text-sm text-green-600">
+                  <span className="text-green-600/80">
+                    Yearly Savings ({discountPercent.toFixed(0)}% Off)
+                  </span>
+                  <span className="font-semibold">
+                    {"-$"}
+                    {savings.toFixed(2)}
+                  </span>
+                </div>
+              </>
+            )}
+            <div className="flex justify-between gap-8 text-sm pt-1">
+              <span className="text-gray-500">Net total</span>
               <span className="font-semibold text-text">
                 {"$"}
-                {payment?.subtotal || (invoice.amount - addOnsTotal).toFixed(2)}
+                {effectiveSubtotal.toFixed(2)}
               </span>
             </div>
             <div className="flex justify-between gap-8 text-sm">
               <span className="text-gray-500">Tax</span>
               <span className="font-semibold text-text">
                 {"$"}
-                {payment?.tax_amount || "0.00"}
+                {tax.toFixed(2)}
               </span>
             </div>
             <div className="pt-2 border-t border-primary/10">
@@ -217,7 +232,7 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
               </p>
               <p className="text-2xl font-bold text-primary">
                 {"$"}
-                {payment?.total || invoice.amount.toFixed(2)}
+                {total.toFixed(2)}
               </p>
             </div>
           </div>
@@ -230,12 +245,17 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
         </Button>
         <PDFDownloadLink
           document={
-            <InvoicePDF invoice={invoice} orgName={orgName} user={user} />
+            <InvoicePDF
+              invoice={invoice}
+              orgName={orgName}
+              user={user}
+              billingCycle={invoice.subscription?.billing_cycle || "MONTHLY"}
+            />
           }
           fileName={`invoice-${invoice.invoice_number}.pdf`}
         >
           {({ loading }) => (
-            <Button disabled={loading} className="gap-2">
+            <Button disabled={loading} className="gap-2 bg-primary text-white">
               <Download size={16} />
               {loading ? "Preparing..." : "Download"}
             </Button>

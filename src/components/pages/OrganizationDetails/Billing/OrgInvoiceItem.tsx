@@ -5,6 +5,7 @@ import InvoicePDF from "./InvoicePDF";
 import { Button } from "@/components/ui";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { calculateInvoiceFinancial } from "@/utils/invoicesUtils";
 
 interface OrgInvoiceItemProps {
   invoice: Invoice;
@@ -14,6 +15,11 @@ interface OrgInvoiceItemProps {
 
 const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
   const { user } = useSelector((state: RootState) => state.auth);
+  const { originalSubtotal, discountPercent } = calculateInvoiceFinancial(
+    invoice,
+    invoice.subscription?.billing_cycle,
+  );
+
   return (
     <tr>
       <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -25,9 +31,22 @@ const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
       >
         {invoice.invoice_number}
       </td>
+
+      <td
+        className="px-6 py-4 whitespace-nowrap text-sm  cursor-pointer"
+        onClick={() => onView(invoice)}
+      >
+        ${originalSubtotal.toFixed(2)}
+      </td>
+      <td
+        className="px-6 py-4 whitespace-nowrap text-sm  cursor-pointer"
+        onClick={() => onView(invoice)}
+      >
+        {discountPercent}%
+      </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm">
         {"$"}
-        {invoice.payment?.subtotal || invoice.amount}
+        {Number(invoice.payment?.subtotal ?? invoice.amount ?? 0).toFixed(2)}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm">
         {"$"}
@@ -36,7 +55,8 @@ const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
       <td className="px-6 py-4 whitespace-nowrap text-sm">
         {/* {invoice.currency.toUpperCase()} */}
         {"$"}
-        {invoice.amount}
+
+        {Number(invoice.amount ?? 0).toFixed(2)}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm">
         <span
@@ -62,7 +82,12 @@ const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
 
         <PDFDownloadLink
           document={
-            <InvoicePDF invoice={invoice} orgName={orgName} user={user} />
+            <InvoicePDF
+              invoice={invoice}
+              orgName={orgName}
+              user={user}
+              billingCycle={invoice?.subscription?.billing_cycle || "MONTHLY"}
+            />
           }
           fileName={`invoice-${invoice.invoice_number}.pdf`}
         >

@@ -119,7 +119,7 @@ export default function CreateOrgModal({
       <Modal.Body className="pb-10">
         <div className="mb-4">
           <Input
-            label="Company Name"
+            label="Organization Name"
             isRequired
             value={companyName}
             onChange={(e) =>
@@ -137,13 +137,15 @@ export default function CreateOrgModal({
               key={product.id}
               onClick={() => setSelectedProduct(product.name)}
               disabled={product.isDisabled}
-              className={`flex items-center gap-2 border justify-start rounded-lg px-3 py-3 text-base font-medium transition mb-1 ${selectedProduct === product.name
-                ? "border-primary bg-bg-secondary text-primary"
-                : "border text-text bg-bg-secondary hover:bg-primary/10"
-                } ${product.isDisabled
+              className={`flex items-center text-foreground gap-2 border justify-start rounded-lg px-3 py-3 text-base font-medium transition mb-1 hover:bg-primary/10   hover:text-primary ${
+                selectedProduct === product.name
+                  ? "border-primary bg-bg-secondary"
+                  : "border text-text bg-bg-secondary hover:bg-primary/10"
+              } ${
+                product.isDisabled
                   ? "cursor-not-allowed opacity-50  bg-primary/10"
                   : "cursor-pointer"
-                }`}
+              }`}
             >
               <SvgIcon name={product.icon} width={16} height={16} />
               {product.fullname}

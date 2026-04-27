@@ -5,6 +5,7 @@ import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
 
 import { User } from "@/types/auth.types";
+import { parseAddOns, calculateInvoiceFinancial } from "@/utils/invoicesUtils";
 import logger from "@/utils/logger";
 
 // Note: Standard fonts in @react-pdf/renderer are limited to a few base ones unless registered.
@@ -224,6 +225,7 @@ const styles = StyleSheet.create({
 interface InvoicePDFProps {
   invoice: Invoice;
   orgName?: string;
+  billingCycle: "MONTHLY" | "YEARLY";
   user: User | null;
 }
 
@@ -240,12 +242,14 @@ const getStatusStyle = (status: string) => {
   }
 };
 
-const InvoicePDF: React.FC<InvoicePDFProps> = ({ invoice, orgName, user }) => {
-  const payment = invoice.payment;
-
+const InvoicePDF: React.FC<InvoicePDFProps> = ({
+  invoice,
+  orgName,
+  user,
+  billingCycle,
+}) => {
   const statusStyle = getStatusStyle(invoice.status);
 
-  // Robust parsing for add-ons metadata
   let metaObj = invoice.metadata as any;
   if (typeof metaObj === "string" && metaObj !== "") {
     try {
@@ -255,25 +259,20 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({ invoice, orgName, user }) => {
     }
   }
 
-  let addOns_raw = metaObj?.addOns || metaObj?.addons || [];
-  let addOns: any[] = [];
-  if (typeof addOns_raw === "string" && addOns_raw !== "") {
-    try {
-      addOns = JSON.parse(addOns_raw);
-    } catch (e) {
-      logger.error("Failed to parse addOns string in PDF", e);
-    }
-  } else if (Array.isArray(addOns_raw)) {
-    addOns = addOns_raw;
-  }
+  const addOns = parseAddOns(metaObj?.addOns || metaObj?.addons || [], "PDF");
 
-  const addOnsTotal = addOns.reduce((acc: number, addon: any) => {
-    const qty = addon.quantity || addon.no_of_users || addon.no_of_stores || 1;
-    const price = parseFloat(addon.price) || 0;
-    return acc + price * qty;
-  }, 0);
-
-  const basePlanAmount = invoice.amount - addOnsTotal;
+  const {
+    originalSubtotal,
+    savings,
+    subtotal: effectiveSubtotal,
+    tax,
+    total,
+    discountPercent,
+    hasDiscount,
+    effectiveBasePlan,
+    originalBasePlan,
+    addOnsWithPricing,
+  } = calculateInvoiceFinancial(invoice, billingCycle);
 
   return (
     <Document title={`Invoice-${invoice.invoice_number}`}>
@@ -322,12 +321,12 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({ invoice, orgName, user }) => {
               Period:{" "}
               {new Date(
                 invoice.subscription?.current_period_start ||
-                invoice.billing_period_start,
+                  invoice.billing_period_start,
               ).toLocaleDateString()}{" "}
               -{" "}
               {new Date(
                 invoice.subscription?.current_period_end ||
-                invoice.billing_period_end,
+                  invoice.billing_period_end,
               ).toLocaleDateString()}
             </Text>
           </View>
@@ -369,24 +368,22 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({ invoice, orgName, user }) => {
             </View>
             <Text style={styles.colQty}>1</Text>
             <Text style={styles.colPrice}>
-              {/* {invoice.currency.toUpperCase()}  */}
               {"$"}
-              {basePlanAmount.toFixed(2)}
+              {originalBasePlan.toFixed(2)}
             </Text>
             <Text style={styles.colTotal}>
-              {/* {invoice.currency.toUpperCase()} */}
               {"$"}
-              {basePlanAmount.toFixed(2)}
+              {originalBasePlan.toFixed(2)}
             </Text>
           </View>
 
           {/* Add-ons Rows */}
-          {addOns.map((addon: any, index: number) => {
+          {addOnsWithPricing.map((addon: any, index: number) => {
             const addOnName =
               addon.name || addon.package_name || "Additional Module";
             const addOnQty =
               addon.quantity || addon.no_of_users || addon.no_of_stores || 1;
-            const price = parseFloat(addon.price) || 0;
+            const price = addon.originalPrice;
             const total = price * addOnQty;
             return (
               <View style={styles.tableRow} key={index}>
@@ -410,28 +407,47 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({ invoice, orgName, user }) => {
           })}
         </View>
 
-        {/* Summary */}
         <View style={styles.summarySection}>
           <View style={styles.summaryGrid}>
+            {hasDiscount && (
+              <>
+                <View style={styles.summaryRow}>
+                  <Text style={styles.summaryLabel}>Sub total</Text>
+                  <Text style={styles.summaryValue}>
+                    {"$"}
+                    {originalSubtotal.toFixed(2)}
+                  </Text>
+                </View>
+                <View style={styles.summaryRow}>
+                  <Text style={styles.summaryLabel}>
+                    Yearly Savings ({discountPercent.toFixed(0)}% Off)
+                  </Text>
+                  <Text style={[styles.summaryValue, { color: "#059669" }]}>
+                    {"-$"}
+                    {savings.toFixed(2)}
+                  </Text>
+                </View>
+              </>
+            )}
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Subtotal</Text>
               <Text style={styles.summaryValue}>
                 {"$"}
-                {payment?.subtotal}
+                {effectiveSubtotal.toFixed(2)}
               </Text>
             </View>
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Tax</Text>
               <Text style={styles.summaryValue}>
                 {"$"}
-                {payment?.tax_amount || "0.00"}
+                {tax.toFixed(2)}
               </Text>
             </View>
             <View style={styles.grandTotalRow}>
               <Text style={styles.grandTotalLabel}>Total</Text>
               <Text style={styles.grandTotalValue}>
                 {"$"}
-                {payment?.total || invoice.amount.toFixed(2)}
+                {total.toFixed(2)}
               </Text>
             </View>
           </View>
