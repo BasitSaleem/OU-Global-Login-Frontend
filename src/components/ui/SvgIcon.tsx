@@ -1,4 +1,4 @@
-export type IconName = 'ownersUniverse' | 'search' | 'calendar' | 'dashboard' | 'settings' | 'profile' | 'notification' | 'logout' | 'home' | 'organization' | 'email' | 'changePassword' | 'hamburgerLeft' | 'hamburgerRight' | 'ownersInventory' | 'ownersUniverseColl' | "AllProducts" | "billing" | "visa" | "payment-methods" | "mastercard" | "time" | "OA" | "OI" | "OM" | "OJ" | "expand" | "ownersInventory" | "google" | "check";
+export type IconName = 'ownersUniverse' | 'search' | 'calendar' | 'dashboard' | 'settings' | 'profile' | 'notification' | 'logout' | 'home' | 'organization' | 'email' | 'changePassword' | 'hamburgerLeft' | 'hamburgerRight' | 'ownersInventory' | 'ownersUniverseColl' | "AllProducts" | "billing" | "visa" | "payment-methods" | "mastercard" | "time" | "OA" | "OI" | "OM" | "OJ" | "expand" | "ownersInventory" | "google" | "check" | "OI-white";
 interface SvgIconProps {
   name: IconName | string;
   className?: string;
@@ -367,6 +367,31 @@ export function SvgIcon({ name, className = "", width, height }: SvgIconProps) {
           <svg width={width} height={height} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
             <path d="M8.00065 14.6663C11.6673 14.6663 14.6673 11.6663 14.6673 7.99967C14.6673 4.33301 11.6673 1.33301 8.00065 1.33301C4.33398 1.33301 1.33398 4.33301 1.33398 7.99967C1.33398 11.6663 4.33398 14.6663 8.00065 14.6663Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
             <path d="M5.16602 7.99995L7.05268 9.88661L10.8327 6.11328" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        )
+      case "OI-white":
+        return (
+          <svg width={width} height={height} viewBox="0 0 63 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g filter="url(#filter0_i_3605_49891)">
+              <path d="M45.8679 22.6264C45.8679 24.7871 45.5605 26.88 44.9857 28.8618C44.6859 29.8904 44.3173 30.8888 43.88 31.8495C42.6234 34.6263 40.8131 37.1091 38.5902 39.1568C36.0065 41.5379 32.867 43.3389 29.3819 44.3429C27.3367 44.9326 25.1711 45.249 22.933 45.249C22.0049 45.249 21.0902 45.1925 20.1907 45.087C8.81686 43.7514 0 34.2043 0 22.6264C0 10.1292 10.2682 0 22.933 0C32.3858 0 40.5018 5.64012 44.0117 13.6972C45.2072 16.4362 45.8679 19.4541 45.8679 22.6264Z" fill="#F1EFFE" />
+            </g>
+            <path d="M38.5948 31.8496V39.1569C36.011 41.538 32.8715 43.3371 29.3845 44.343C27.3412 44.9326 25.1737 45.2491 22.9356 45.2491C22.0075 45.2491 21.0928 45.1945 20.1934 45.0871V31.8496H38.5948Z" fill="#E4DFFD" />
+            <path d="M38.5948 39.1572V50.0004H20.1934V45.0874C21.0928 45.1929 22.0094 45.2495 22.9356 45.2495C25.1737 45.2495 27.3393 44.933 29.3845 44.3433C32.8715 43.3393 36.011 41.5384 38.5948 39.1572Z" fill="#F1EFFE" />
+            <path d="M62.6378 31.8496H44.2383V50.0001H62.6378V31.8496Z" fill="#F1EFFE" />
+            <path d="M45.8669 22.6255C45.8669 24.7881 45.5595 26.8792 44.9847 28.8628C44.6849 29.8914 44.3163 30.8879 43.879 31.8505H32.2148V13.6963H44.0108C45.2062 16.4353 45.8669 19.4532 45.8669 22.6255Z" fill="#E4DFFD" />
+            <path d="M50.6143 13.6952V31.8476H43.8809C44.3182 30.8869 44.6867 29.8884 44.9865 28.8599C45.5614 26.8781 45.8688 24.7852 45.8688 22.6226C45.8688 19.4522 45.2081 16.4324 44.0107 13.6934H50.6143V13.6952Z" fill="#F1EFFE" />
+            <defs>
+              <filter id="filter0_i_3605_49891" x="0" y="0" width="45.8672" height="45.249" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+                <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+                <feOffset />
+                <feGaussianBlur stdDeviation="1" />
+                <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
+                <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0" />
+                <feBlend mode="normal" in2="shape" result="effect1_innerShadow_3605_49891" />
+              </filter>
+            </defs>
           </svg>
         )
       default:

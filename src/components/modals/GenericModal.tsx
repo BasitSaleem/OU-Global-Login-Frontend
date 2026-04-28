@@ -5,12 +5,14 @@ import React, { useEffect } from 'react';
 import { Button } from '../ui';
 import { useScrollLock } from '@/hooks/useScrollLock';
 
-type ModalSize = 'sm' | 'md' | 'lg';
+type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
 const sizeClasses: Record<ModalSize, string> = {
   sm: 'w-[360px]',
   md: 'w-[480px]',
   lg: 'w-[560px]',
+  xl: 'w-[640px]',
+  xxl: 'w-[820px]',
 };
 
 interface ModalRootProps {
