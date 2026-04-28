@@ -55,146 +55,69 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-          {/* Backdrop */}
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-background/40 backdrop-blur-md"
+            className="absolute inset-0 bg-black/20 backdrop-blur-sm"
           />
 
-          {/* Modal Content */}
           <motion.div
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{
               scale: 1,
               opacity: 1,
               y: 0,
-              transition: {
-                type: "spring",
-                damping: 25,
-                stiffness: 300,
-              },
+              transition: { type: "spring", damping: 25, stiffness: 300 },
             }}
             exit={{ scale: 0.95, opacity: 0, y: 10 }}
-            className="relative w-full max-w-md bg-bg-secondary rounded-[32px] shadow-2xl border border-border overflow-hidden"
+            className="relative w-full max-w-sm bg-white rounded-[32px] shadow-2xl overflow-hidden p-8 pt-12"
           >
-            {/* Animated Celebration Particles (Subtle) */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
-              {[...Array(6)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{
-                    opacity: [0, 1, 0],
-                    scale: [0, 1, 0.5],
-                    x: [0, (i % 2 === 0 ? 1 : -1) * (40 + i * 20)],
-                    y: [0, -60 - i * 10],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    delay: i * 0.4,
-                    ease: "easeOut",
-                  }}
-                  className={`absolute left-1/2 top-1/2 w-2 h-2 rounded-full ${
-                    i % 3 === 0
-                      ? "bg-primary"
-                      : i % 3 === 1
-                        ? "bg-[#1AD1B9]"
-                        : "bg-primary/40"
-                  }`}
-                />
-              ))}
-            </div>
+            <div className="absolute top-0 left-0 w-32 h-32 bg-primary/70 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-200/70 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
 
-            <div className="p-8 text-center relative z-10">
-              {/* Success Icon Animation */}
-              <div className="flex justify-center mb-8 ">
+            <div className="text-center relative z-10 space-y-6">
+              <div className="flex justify-center">
                 <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{
-                    type: "spring",
-                    damping: 12,
-                    stiffness: 200,
-                    delay: 0.2,
-                  }}
-                  className="relative flex items-center justify-center w-24 h-24 rounded-full bg-card/20 shadow-inner"
+                  initial={{ scale: 0, rotate: -45 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: "spring", damping: 15, stiffness: 200 }}
+                  className="relative flex items-center justify-center w-28 h-28"
                 >
-                  <motion.div
-                    initial={{ pathLength: 0, opacity: 0 }}
-                    animate={{ pathLength: 1, opacity: 1 }}
-                    transition={{ duration: 0.6, delay: 0.5 }}
-                    className="absolute inset-0 rounded-full border-4 border-primary"
-                    style={{
-                      clipPath: "circle(50% at 50% 50%)",
-                    }}
-                  />
-                  <motion.div
-                    initial={{ scale: 0, rotate: -45 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    transition={{
-                      type: "spring",
-                      damping: 10,
-                      stiffness: 300,
-                      delay: 0.6,
-                    }}
-                    className="flex items-center justify-center  w-16 h-16 rounded-full from-primary to-primary/40 bg-gradient-to-br text-white shadow-lg"
-                  >
-                    <Check size={32} strokeWidth={3} />
-                  </motion.div>
+                  <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full drop-shadow-xl">
+                    <defs>
+                      <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#7C3AED" />
+                        <stop offset="100%" stopColor="#14B8A6" />
+                      </linearGradient>
+                    </defs>
+                    <path
+                      d="M50 0L58.5 12.5L73.5 8.5L77.5 23.5L91.5 28.5L87.5 43.5L100 50L87.5 56.5L91.5 71.5L77.5 76.5L73.5 91.5L58.5 87.5L50 100L41.5 87.5L26.5 91.5L22.5 76.5L8.5 71.5L12.5 56.5L0 50L12.5 43.5L8.5 28.5L22.5 23.5L26.5 8.5L41.5 12.5L50 0Z"
+                      fill="url(#iconGradient)"
+                    />
+                  </svg>
+                  <Check size={48} color="white" strokeWidth={4} className="relative z-10" />
                 </motion.div>
               </div>
 
-              <motion.h2
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8 }}
-                className="text-heading-1 mb-2"
-              >
-                Payment Successful!
-              </motion.h2>
+              <div className="space-y-2">
+                <h2 className="text-2xl font-bold text-gray-900">Payment Successful</h2>
+                <p className="text-sm text-gray-500 px-4 leading-relaxed">
+                  Thanks for your purchase. Your subscriptions to the <span className="font-bold text-gray-700">{planName}</span> is now active.
+                </p>
+              </div>
 
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1 }}
-                className="text-body-small text-text/70 mb-8 px-4"
-              >
-                Thank you for your purchase. Your subscription to the{" "}
-                <span className="font-bold text-text">{planName}</span> is now
-                active.
-              </motion.p>
-
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.2 }}
-                className="space-y-3"
-              >
+              <div className="pt-4">
                 <Button
                   onClick={handleDone}
-                  className="w-full py-6 rounded-2xl bg-gradient-to-br from-primary to-primary/40 hover:opacity-90 transition-opacity font-bold text-lg text-white shadow-xl flex items-center justify-center gap-2 group cursor-pointer"
+                  className="w-full py-6 rounded-xl bg-primary hover:bg-primary/80 text-white font-semibold flex items-center justify-center gap-2 group transition-all"
                 >
                   Return to Billing
-                  <motion.span
-                    animate={{ x: [0, 4, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                  >
-                    <ArrowRight size={20} />
-                  </motion.span>
+                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </Button>
-
-                {/* <button
-                                    onClick={onClose}
-                                    className="w-full py-2 text-text/50 hover:text-text text-sm font-medium transition-colors cursor-pointer"
-                                >
-                                    Dismiss
-                                </button> */}
-              </motion.div>
+              </div>
             </div>
           </motion.div>
         </div>

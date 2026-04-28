@@ -381,8 +381,8 @@ export function SvgIcon({ name, className = "", width, height }: SvgIconProps) {
             <path d="M45.8669 22.6255C45.8669 24.7881 45.5595 26.8792 44.9847 28.8628C44.6849 29.8914 44.3163 30.8879 43.879 31.8505H32.2148V13.6963H44.0108C45.2062 16.4353 45.8669 19.4532 45.8669 22.6255Z" fill="#E4DFFD" />
             <path d="M50.6143 13.6952V31.8476H43.8809C44.3182 30.8869 44.6867 29.8884 44.9865 28.8599C45.5614 26.8781 45.8688 24.7852 45.8688 22.6226C45.8688 19.4522 45.2081 16.4324 44.0107 13.6934H50.6143V13.6952Z" fill="#F1EFFE" />
             <defs>
-              <filter id="filter0_i_3605_49891" x="0" y="0" width="45.8672" height="45.249" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+              <filter id="filter0_i_3605_49891" x="0" y="0" width="45.8672" height="45.249" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                <feFlood floodOpacity="0" result="BackgroundImageFix" />
                 <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
                 <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
                 <feOffset />

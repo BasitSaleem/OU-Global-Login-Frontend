@@ -248,8 +248,8 @@ function CheckoutPage() {
         } else {
           price = parseFloat(
             entry.addOn.discounted_yearly_price ||
-              entry.addOn.yearly_price ||
-              "0",
+            entry.addOn.yearly_price ||
+            "0",
           );
         }
         total += price * quantity;
