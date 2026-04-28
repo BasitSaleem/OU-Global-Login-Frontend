@@ -16,6 +16,7 @@ const SSE_EVENTS = {
 export const useSSE = (orgId: string | undefined, subscriptionId?: string) => {
   const queryClient = useQueryClient();
   const esRef = useRef<EventSource | null>(null);
+  const errorCountRef = useRef(0);
 
   useEffect(() => {
     if (!orgId) return;
@@ -29,10 +30,17 @@ export const useSSE = (orgId: string | undefined, subscriptionId?: string) => {
 
     es.onopen = () => {
       logger.log(`SSE connected for org: ${orgId}`);
+      errorCountRef.current = 0;
     };
 
     es.onerror = (err) => {
       logger.error(` SSE error for org: ${orgId}`, err);
+      errorCountRef.current += 1;
+
+      if (errorCountRef.current >= 5) {
+        logger.error(`Too many SSE errors for org: ${orgId}, closing connection.`);
+        es.close();
+      }
     };
 
     es.onmessage = (e) => {
