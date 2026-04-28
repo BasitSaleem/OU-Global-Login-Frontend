@@ -4,7 +4,7 @@ import Header from "@/components/layout/Header/Header";
 import OrgSidebar from "@/components/pages/OrganizationDetails/OrgSidebar";
 import { useOrganizationDetails } from "@/apiHooks.ts/organization/organization.api";
 import { useSSE } from "@/hooks/useSSE";
-import { usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useAppSelector } from "@/redux/store";
 import { Loader } from "@/components/ui";
 
@@ -17,9 +17,10 @@ export default function OrganizationDetailsLayout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
-  const [orgId, setOrgId] = useState<string>("");
-  const { data: organizationDetails, isLoading } =
-    useOrganizationDetails(orgId);
+  const { orgId } = useParams();
+  const { data: organizationDetails, isLoading } = useOrganizationDetails(
+    orgId as string,
+  );
   const router = useRouter();
 
   const pathname = usePathname();
@@ -30,6 +31,13 @@ export default function OrganizationDetailsLayout({
   )?.role;
 
   useEffect(() => {
+    if (!user) {
+      router.replace("/login");
+      return;
+    }
+  }, [user, router]);
+
+  useEffect(() => {
     if (!isLoading && organizationDetails && pathname) {
       const isBillingPage = pathname.includes("/billing");
       const isPaymentPage = pathname.includes("/payment-cards");
@@ -38,24 +46,36 @@ export default function OrganizationDetailsLayout({
         router.push(`/organization-details/${orgId}/notifications`);
       }
     }
-  }, [pathname, userRole, organizationDetails, isLoading, orgId, router]);
+  }, [
+    pathname,
+    userRole,
+    organizationDetails,
+    isLoading,
+    orgId,
+    router,
+    user,
+    router,
+  ]);
   const onToggleSidebar = () => {
     setCollapsed(!collapsed);
   };
 
-  useSSE(orgId || undefined, organizationDetails?.subscriptions?.[0]?.id || "");
+  useSSE(
+    (orgId as string) || undefined,
+    organizationDetails?.subscriptions?.[0]?.id || "",
+  );
 
   const onToggleMobileSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  useEffect(() => {
-    async function getOrgId() {
-      const orgID = (await params).orgId;
-      setOrgId(orgID);
-    }
-    getOrgId();
-  }, [params]);
+  // useEffect(() => {
+  //   async function getOrgId() {
+  //     const orgID = (await params).orgId;
+  //     setOrgId(orgID);
+  //   }
+  //   getOrgId();
+  // }, [params]);
   if (isLoading) {
     return <Loader text="Loading organization details" />;
   }

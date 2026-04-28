@@ -103,7 +103,7 @@ const InvoiceHistoryTable = ({ org }: { org: Partial<Organization> }) => {
             ) : (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={9}
                   className="px-6 py-10 text-center text-sm text-gray-500"
                 >
                   No Invoices Found.
