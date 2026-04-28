@@ -1,11 +1,6 @@
 import React from "react";
 import { Modal } from "@/components/modals/GenericModal";
 import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import InvoicePDF from "./InvoicePDF";
-import { Download } from "lucide-react";
-import { Button } from "@/components/ui";
-
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 import { parseAddOns, calculateInvoiceFinancial } from "@/utils/invoicesUtils";
@@ -28,7 +23,7 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
 }) => {
   const { user } = useSelector((state: RootState) => state.auth);
   if (!invoice) return null;
-
+  logger.info("invoice details--------", invoice)
   // 1. Parse metadata if it's a string (happens on some environments)
   let metaObj = invoice.metadata as any;
   if (typeof metaObj === "string" && metaObj !== "") {
@@ -39,10 +34,10 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
     }
   }
 
-  const addOns = parseAddOns(
-    metaObj?.addOns || metaObj?.addons || [],
-    "DetailModal",
-  );
+  // const addOns = parseAddOns(
+  //   metaObj?.addOns || metaObj?.addons || [],
+  //   "DetailModal",
+  // );
 
   const {
     originalSubtotal,
@@ -170,10 +165,10 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
               <div>
                 <p className="text-text text-xs font-bold uppercase tracking-wider mb-2">Payment Info</p>
                 <div className="flex items-center gap-2">
-                  <p className="font-bold text-text text-base">Credit Card, 3554***</p>
-                  <div className="bg-[#1434CB] text-white px-1.5 py-0.5 rounded text-[8px] font-black italic tracking-tighter">VISA</div>
+                  <p className="font-bold text-text text-base">Credit Card, {invoice?.payment.payment_method?.last4}</p>
+                  <SvgIcon name={invoice?.payment.payment_method?.brand?.toLowerCase()} width={25} height={25} />
                 </div>
-                <p className="text-text text-sm mt-1">Billed in USD</p>
+                <p className="text-text text-sm mt-1">Billed in <span className="font-bold text-primary">{invoice?.payment.currency}</span></p>
               </div>
             </div>
 

@@ -167,10 +167,8 @@ function CheckoutPage() {
           watchFields.billing_address &&
           watchFields.billing_city;
 
-        // Don't call API if ANY field is missing
         if (!isComplete) return;
 
-        // All fields exist → add them
         payload.billing_state = watchFields.billing_state;
         payload.billing_postal_code = watchFields.billing_postal_code;
         payload.billing_address = watchFields.billing_address;
@@ -191,7 +189,6 @@ function CheckoutPage() {
     watchFields.billing_postal_code,
   ]);
 
-  // Reset US fields if country changes
   useEffect(() => {
     if (watchFields.country && watchFields.country !== "US") {
       setValue("billing_address", "");
@@ -288,10 +285,8 @@ function CheckoutPage() {
   const yearlySavings = useMemo(() => {
     if (billingCycle !== "yearly") return null;
 
-    // Total cost if paid monthly for a year
     const totalMonthlyCostForYear = totalMonthlyOriginal * 12;
 
-    // Total cost if paid yearly upfront
     const totalYearlyCost = discountedBasePrice + addOnsTotal;
 
     const savings = totalMonthlyCostForYear - totalYearlyCost;

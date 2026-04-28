@@ -30,6 +30,10 @@ export interface UpgradePlanResponse {
 }
 
 export interface PaymentType {
+  payment_method: {
+    last4: string;
+    brand: string;
+  };
   amount: number;
   created_at: string;
   currency: string;
