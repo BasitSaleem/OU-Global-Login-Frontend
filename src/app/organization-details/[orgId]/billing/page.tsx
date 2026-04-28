@@ -10,6 +10,8 @@ import { useOrganizationDetails } from "@/apiHooks.ts/organization/organization.
 
 import NotFound from "@/components/NotFound";
 import { useAppSelector } from "@/redux/store";
+import { AuthGuard } from "@/components/HOCs/auth-guard";
+
 function BillingPage() {
   const { orgId } = useParams();
 
@@ -32,13 +34,15 @@ function BillingPage() {
     return null;
   }
   return (
-    <div className="px-2 py-12 w-full mx-auto   md:px-11 overflow-x-hidden ">
-      <BillingSection loading={isLoading} />
-      <PlanSection organization={organization} loading={isLoading} />
-      <RenewalSection organization={organization} loading={isLoading} />
-      <PaymentMethodSection loading={isLoading} />
-      <InvoicesSection organization={organization} loading={isLoading} />
-    </div>
+    <AuthGuard>
+      <div className="px-2 py-12 w-full mx-auto   md:px-11 overflow-x-hidden ">
+        <BillingSection loading={isLoading} />
+        <PlanSection organization={organization} loading={isLoading} />
+        <RenewalSection organization={organization} loading={isLoading} />
+        <PaymentMethodSection loading={isLoading} />
+        <InvoicesSection organization={organization} loading={isLoading} />
+      </div>
+    </AuthGuard>
   );
 }
 
