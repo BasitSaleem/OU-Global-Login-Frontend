@@ -35,7 +35,7 @@ export default function OrganizationDetailsLayout({
       const isPaymentPage = pathname.includes("/payment-cards");
 
       if ((isBillingPage || isPaymentPage) && userRole !== "OWNER") {
-        router.push(`/organization-details/${btoa(orgId)}/notifications`);
+        router.push(`/organization-details/${orgId}/notifications`);
       }
     }
   }, [pathname, userRole, organizationDetails, isLoading, orgId, router]);
@@ -52,7 +52,7 @@ export default function OrganizationDetailsLayout({
   useEffect(() => {
     async function getOrgId() {
       const orgID = (await params).orgId;
-      setOrgId(atob(orgID));
+      setOrgId(orgID);
     }
     getOrgId();
   }, [params]);

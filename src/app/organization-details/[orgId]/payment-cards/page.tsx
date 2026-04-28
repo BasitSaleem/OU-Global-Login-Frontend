@@ -18,7 +18,14 @@ import { useParams } from "next/navigation";
 
 export interface PaymentCardsType {
   id: string;
-  cardType: "visa" | "mastercard" | "amex" | "discover" | "jcb" | "diners" | "unionpay";
+  cardType:
+    | "visa"
+    | "mastercard"
+    | "amex"
+    | "discover"
+    | "jcb"
+    | "diners"
+    | "unionpay";
   last4: string;
   expiry: string;
   isPrimary: boolean;
@@ -27,7 +34,7 @@ export interface PaymentCardsType {
 
 const PaymentCardsPage = () => {
   const { orgId } = useParams<{ orgId: string }>();
-  const { data, isLoading, error } = useGetPaymentMethods(atob(orgId as string));
+  const { data, isLoading, error } = useGetPaymentMethods(orgId as string);
 
   const makePrimaryMutation = useMakePrimaryPaymentMethod();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -57,8 +64,7 @@ const PaymentCardsPage = () => {
       await deletePaymentMethod(deleteId);
       setDeletedIds((prev) => new Set(prev).add(deleteId));
       setDeleteId(null);
-    } catch {
-    }
+    } catch {}
   }, [deleteId, deletePaymentMethod]);
 
   return (
@@ -76,7 +82,7 @@ const PaymentCardsPage = () => {
 
           {isModalOpen && modalMode === "add" && (
             <StripeWrapper
-              orgId={atob(orgId as string)}
+              orgId={orgId as string}
               onClose={() => setIsModalOpen(false)}
             />
           )}
@@ -103,7 +109,7 @@ const PaymentCardsPage = () => {
           isDeleting={isDeleting}
           onClose={() => setDeleteId(null)}
           onDelete={handleDeleteClick}
-        // initialData={selectedMethod}
+          // initialData={selectedMethod}
         />
       </div>
     </AuthGuard>

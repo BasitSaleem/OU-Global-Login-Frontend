@@ -19,7 +19,13 @@ export type Subscription = {
   current_period_start: string;
   current_period_end: string;
   trial_ends_at: string | null;
-  status: "TRIAL" | "ACTIVE" | "CANCELLED" | "PAST_DUE";
+  status:
+    | "TRIAL"
+    | "ACTIVE"
+    | "CANCELLED"
+    | "PAST_DUE"
+    | "EXPIRED"
+    | "INCOMPLETE";
   payment_method: string | null;
   oiPackage: Package;
   payments: PaymentType[];

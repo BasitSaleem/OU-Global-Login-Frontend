@@ -31,10 +31,9 @@ export function OrganizationGridComponent({
   );
   const bgColor = useMemo(() => getColorFromId(org.id), [org.id]);
   const router = useRouter();
-  const encodedId = btoa(org.id);
   const onClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    router.push(`/organization-details/${encodedId}/billing`);
+    router.push(`/organization-details/${org.id}/billing`);
   };
 
   return (

@@ -11,7 +11,7 @@ import StripeWrapper from "../PaymentMethods/StripeWrapper";
 const PaymentMethodSection = ({ loading }: { loading: boolean }) => {
   const { orgId } = useParams();
 
-  const { data, isLoading } = useGetPaymentMethods(atob(orgId as string));
+  const { data, isLoading } = useGetPaymentMethods(orgId as string);
   const [isModalOpen, setIsModalOpen] = useState(false);
   if (isLoading || loading) {
     return (
@@ -85,7 +85,7 @@ const PaymentMethodSection = ({ loading }: { loading: boolean }) => {
       </Button>
       {isModalOpen && (
         <StripeWrapper
-          orgId={atob(orgId as string)}
+          orgId={orgId as string}
           onClose={() => setIsModalOpen(false)}
         />
       )}
