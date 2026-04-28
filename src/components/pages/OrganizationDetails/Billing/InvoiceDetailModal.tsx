@@ -65,9 +65,7 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
       className="h-[90vh]! overflow-y-auto text-white"
     >
       <Modal.Body className="p-0">
-        {/* Purple Header Section */}
-        <div className="bg-[#8B5CF6] -m-6 p-8 text-white flex justify-between items-start"
-        >
+        <div className="bg-[#8B5CF6] -m-6 p-8 text-white flex justify-between items-start">
           <div>
             <div className=" p-3 rounded-full w-fit mb-6">
               <SvgIcon name="OI-white"
@@ -85,7 +83,6 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
         </div>
 
         <div className="p-8 space-y-8">
-          {/* Memo & Status Row */}
           <div className="flex justify-between items-end border-b pb-6">
             <div>
               <p className="text-gray-400 text-sm mb-1">Invoice Memo</p>
@@ -104,7 +101,6 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
             </div>
           </div>
 
-          {/* Detailed Table */}
           <div className="max-h-[350px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
             <table className="w-full text-sm ">
               <thead className="sticky top-0 z-10 bg-background p-2 rounded-2xl">
@@ -112,16 +108,15 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
                   <th className="pb-4 font-semibold">Product</th>
                   <th className="pb-4 font-semibold text-center">Type</th>
                   <th className="pb-4 font-semibold text-center">Quantity</th>
-                  <th className="pb-4 font-semibold text-right">Unit Price</th>
-                  <th className="pb-4 font-semibold text-right">Sub-Total</th>
-                  <th className="pb-4 font-semibold text-right">Net Total</th>
-                  <th className="pb-4 font-semibold text-right">Tax</th>
-                  <th className="pb-4 font-semibold text-right">Discount</th>
-                  <th className="pb-4 font-semibold text-right">Amount</th>
+                  <th className="pb-4 font-semibold text-center">Unit Price</th>
+                  <th className="pb-4 font-semibold text-center">Sub-Total</th>
+                  <th className="pb-4 font-semibold text-center">Net Total</th>
+                  <th className="pb-4 font-semibold text-center">Tax</th>
+                  <th className="pb-4 font-semibold text-center">Discount</th>
+                  <th className="pb-4 font-semibold text-center">Amount</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {/* Base Plan */}
                 <tr>
                   <td className="py-4 font-medium text-gray-700">
                     {invoice.metadata?.packageName || invoice.subscription?.oiPackage?.package_name || "Retail Pro"}
@@ -130,15 +125,14 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
                     <span className="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full text-[10px] font-bold">Subscription</span>
                   </td>
                   <td className="py-4 text-center">1</td>
-                  <td className="py-4 text-right">${originalBasePlan.toFixed(2)}</td>
-                  <td className="py-4 text-right">${originalBasePlan.toFixed(2)}</td>
-                  <td className="py-4 text-right">${originalBasePlan.toFixed(2)}</td>
-                  <td className="py-4 text-right">$0.00</td>
-                  <td className="py-4 text-right text-gray-400">-</td>
-                  <td className="py-4 text-right font-bold">${originalBasePlan.toFixed(2)}</td>
+                  <td className="py-4 text-center">${originalBasePlan.toFixed(2)}</td>
+                  <td className="py-4 text-center">${originalBasePlan.toFixed(2)}</td>
+                  <td className="py-4 text-center">${originalBasePlan.toFixed(2)}</td>
+                  <td className="py-4 text-center">$0.00</td>
+                  <td className="py-4 text-center text-gray-400">-</td>
+                  <td className="py-4 text-center font-bold">${originalBasePlan.toFixed(2)}</td>
                 </tr>
 
-                {/* Add-ons */}
                 {addOnsWithPricing.map((addon: any, idx: number) => {
                   const qty = addon.quantity || addon.no_of_users || addon.no_of_stores || 1;
                   const price = addon.originalPrice;
@@ -155,14 +149,14 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
                         <span className="bg-amber-50 text-amber-600 px-3 py-1 rounded-full text-[10px] font-bold">Add-ons</span>
                       </td>
                       <td className="py-4 text-center">{qty}</td>
-                      <td className="py-4 text-right">${price.toFixed(2)}</td>
-                      <td className="py-4 text-right">${itemTotal.toFixed(2)}</td>
-                      <td className="py-4 text-right">${itemTotal.toFixed(2)}</td>
-                      <td className="py-4 text-right">$0.00</td>
-                      <td className="py-4 text-right text-emerald-500 font-bold">
+                      <td className="py-4 text-center">${price.toFixed(2)}</td>
+                      <td className="py-4 text-center">${itemTotal.toFixed(2)}</td>
+                      <td className="py-4 text-center">${itemTotal.toFixed(2)}</td>
+                      <td className="py-4 text-center">$0.00</td>
+                      <td className="py-4 text-center text-emerald-500 font-bold">
                         {hasDiscount ? `-$${itemSavings.toFixed(2)}` : "-"}
                       </td>
-                      <td className="py-4 text-right font-bold">${finalAmount.toFixed(2)}</td>
+                      <td className="py-4 text-center font-bold">${finalAmount.toFixed(2)}</td>
                     </tr>
                   );
                 })}
