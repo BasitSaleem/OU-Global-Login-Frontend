@@ -199,88 +199,88 @@ function CreateOrgContent({
   };
 
   return (
-    // <AuthGuard>
-    <>
-      {creatingOrg && <Loader text="Initializing organization creation" />}
-      <div className="min-h-48 w-full bg-background flex flex-col items-center py-12 px-4 ">
-        <div className="w-full max-w-4xl bg-bg-secondary rounded-2xl border border-border  relative">
-          {!queryPkgId && <StepIndicator steps={steps} currentStep={currentStep > 2 ? 2 : currentStep} />}
-          <AnimatePresence mode="wait" custom={direction}>
-            <motion.div
-              key={currentStep}
-              custom={direction}
-              variants={variants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{
-                x: { type: "spring", stiffness: 300, damping: 30 },
-                opacity: { duration: 0.2 },
-              }}
-              className="p-8 md:p-4"
-            >
-              {currentStep === 1 && !queryPkgId && (
-                <OrganizationStep
-                  companyName={companyName}
-                  setCompanyName={setCompanyName}
-                  selectedProduct={selectedProduct}
-                  setSelectedProduct={setSelectedProduct}
-                  onNext={nextStep}
-                  onReset={handleReset}
-                />
-              )}
+    <AuthGuard>
+      <CreateOrganizationGuard>
+        {creatingOrg && <Loader text="Initializing organization creation" />}
+        <div className="min-h-48 w-full bg-background flex flex-col items-center py-12 px-4 ">
+          <div className="w-full max-w-4xl bg-bg-secondary rounded-2xl border border-border  relative">
+            {!queryPkgId && <StepIndicator steps={steps} currentStep={currentStep > 2 ? 2 : currentStep} />}
+            <AnimatePresence mode="wait" custom={direction}>
+              <motion.div
+                key={currentStep}
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  x: { type: "spring", stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.2 },
+                }}
+                className="p-8 md:p-4"
+              >
+                {currentStep === 1 && !queryPkgId && (
+                  <OrganizationStep
+                    companyName={companyName}
+                    setCompanyName={setCompanyName}
+                    selectedProduct={selectedProduct}
+                    setSelectedProduct={setSelectedProduct}
+                    onNext={nextStep}
+                    onReset={handleReset}
+                  />
+                )}
 
-              {(currentStep === 2 || (queryPkgId && currentStep === 1)) && (
-                <SetupStep
-                  companyName={companyName}
-                  setCompanyName={setCompanyName}
-                  selectedProduct={selectedProduct}
-                  subDomain={subDomain}
-                  setSubDomain={setSubDomain}
-                  suggestions={suggestions}
-                  fetchingSubdomainSuggestions={fetchingSubdomainSuggestions}
-                  handleSuggestionClick={handleSuggestionClick}
-                  checkingSub={checkingSub}
-                  finalIsSubAvailable={finalIsSubAvailable}
-                  isSubDomainDebouncing={isSubDomainDebouncing}
-                  selectedPlanId={selectedPlanId}
-                  setSelectedPlanId={setSelectedPlanId}
-                  onBack={() => {
-                    if (queryPkgId) {
-                      setSelectedPlanId(initialPkgId);
-                    } else {
-                      prevStep();
-                    }
-                  }}
-                  onCreate={handleSubmit}
-                  canSubmit={canSubmit()}
-                  creatingOrg={creatingOrg}
-                  isDirectFlow={!!queryPkgId}
-                />
-              )}
-            </motion.div>
-          </AnimatePresence>
+                {(currentStep === 2 || (queryPkgId && currentStep === 1)) && (
+                  <SetupStep
+                    companyName={companyName}
+                    setCompanyName={setCompanyName}
+                    selectedProduct={selectedProduct}
+                    subDomain={subDomain}
+                    setSubDomain={setSubDomain}
+                    suggestions={suggestions}
+                    fetchingSubdomainSuggestions={fetchingSubdomainSuggestions}
+                    handleSuggestionClick={handleSuggestionClick}
+                    checkingSub={checkingSub}
+                    finalIsSubAvailable={finalIsSubAvailable}
+                    isSubDomainDebouncing={isSubDomainDebouncing}
+                    selectedPlanId={selectedPlanId}
+                    setSelectedPlanId={setSelectedPlanId}
+                    onBack={() => {
+                      if (queryPkgId) {
+                        setSelectedPlanId(initialPkgId);
+                      } else {
+                        prevStep();
+                      }
+                    }}
+                    onCreate={handleSubmit}
+                    canSubmit={canSubmit()}
+                    creatingOrg={creatingOrg}
+                    isDirectFlow={!!queryPkgId}
+                  />
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </div>
-      </div>
 
-      <ProgressModal
-        isOpen={showProgressModal}
-        organizationData={organizationData}
-        onClose={() => {
-          setShowProgressModal(false);
-          setOrganizationData(null);
-          router.push(ROUTES.DASHBOARD);
-        }}
-        onComplete={() => logger.log("handleProgressComplete")}
-        onGoHome={() => {
-          setShowProgressModal(false);
-          setOrganizationData(null);
-          router.push(ROUTES.DASHBOARD);
-        }}
-        isFromMain={true}
-      />
-    </>
-    // </AuthGuard>
+        <ProgressModal
+          isOpen={showProgressModal}
+          organizationData={organizationData}
+          onClose={() => {
+            setShowProgressModal(false);
+            setOrganizationData(null);
+            router.push(ROUTES.DASHBOARD);
+          }}
+          onComplete={() => logger.log("handleProgressComplete")}
+          onGoHome={() => {
+            setShowProgressModal(false);
+            setOrganizationData(null);
+            router.push(ROUTES.DASHBOARD);
+          }}
+          isFromMain={true}
+        />
+      </CreateOrganizationGuard>
+    </AuthGuard>
   );
 }
 

@@ -147,13 +147,12 @@ export const SetupStep: React.FC<SetupStepProps> = ({
               type="text"
               label="Organization Name"
               value={companyName}
+              isRequired
               onChange={(e) => setCompanyName(e.target.value)}
               placeholder="Enter organization name"
               className="w-full px-6 bg-background py-5 rounded-xl focus:border-primary focus:ring-0 transition-all font-medium pr-24"
             />
-            <div className="absolute right-4 top-13 -translate-y-1/2 text-[10px] text-text uppercase tracking-widest  px-2 py-1 ">
-              Required
-            </div>
+
           </div>
         </div>
       )}
@@ -165,6 +164,7 @@ export const SetupStep: React.FC<SetupStepProps> = ({
               type="text"
               label="Sub-Domain Name"
               value={subDomain}
+              isRequired
               onChange={(e) =>
                 setSubDomain(
                   e.target.value
@@ -177,9 +177,6 @@ export const SetupStep: React.FC<SetupStepProps> = ({
               placeholder="Enter Sub-Domain"
               className="w-full px-6 bg-background py-5  rounded-xl focus:border-primary focus:ring-0 transition-all font-medium pr-24"
             />
-            <div className="absolute right-4 top-13 -translate-y-1/2 text-[10px] text-text uppercase tracking-widest px-2 py-1">
-              Required
-            </div>
           </div>
 
           <SubdomainSuggestion
