@@ -1,18 +1,19 @@
 "use client";
-import React, { useMemo, useState, useEffect, useRef } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Input, Button, LoadingSpinner, Dots } from "@/components/ui";
 import { SubdomainSuggestion } from "@/components/SubdomainSuggestion";
 import { AvailabilityStatus } from "@/components/AvailabilityStatus";
 import { useGetAllPlans } from "@/apiHooks.ts/plans/plans.api";
 import { PRODUCTS } from "@/constants";
 import { SvgIcon } from "@/components/ui/SvgIcon";
-import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Store, Factory, ShoppingCart, Layers } from "lucide-react";
 import PlanSelectionCard from "./PlanSelectionCard";
-import PricingSkeleton from "@/components/PricingSkeleton";
+import PlanCardSkeleton from "@/components/PlanCardSkeleton";
+import Link from "next/link";
 
 interface SetupStepProps {
   companyName: string;
+  setCompanyName: (val: string) => void;
   selectedProduct: string;
   subDomain: string;
   setSubDomain: (val: string) => void;
@@ -28,6 +29,7 @@ interface SetupStepProps {
   onCreate: () => void;
   creatingOrg: boolean;
   canSubmit: boolean;
+  isDirectFlow?: boolean;
 }
 
 const typeData = [
@@ -38,6 +40,8 @@ const typeData = [
 ];
 
 export const SetupStep: React.FC<SetupStepProps> = ({
+  companyName,
+  setCompanyName,
   selectedProduct,
   subDomain,
   setSubDomain,
@@ -53,16 +57,24 @@ export const SetupStep: React.FC<SetupStepProps> = ({
   onCreate,
   creatingOrg,
   canSubmit,
+  isDirectFlow = false,
 }) => {
   const { data: plansData, isPending: loadingPlans } = useGetAllPlans();
   const [activeType, setActiveType] = useState<string>("RETAIL");
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [planPage, setPlanPage] = useState(0);
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const CARD_WIDTH = 300;
-  const GAP = 16;
-  const TOTAL_MOVE = CARD_WIDTH + GAP;
+  useEffect(() => {
+    if (isDirectFlow && selectedPlanId && plansData?.plans) {
+      const selectedPlan = plansData.plans.find(p => p.id === selectedPlanId);
+      if (selectedPlan) {
+        setActiveType(selectedPlan.type);
+      }
+    }
+  }, [isDirectFlow, selectedPlanId, plansData]);
+  useEffect(() => {
+    setPlanPage(0);
+  }, [activeType]);
 
   const filteredPlans = useMemo(() => {
     if (!plansData?.plans) return [];
@@ -77,54 +89,98 @@ export const SetupStep: React.FC<SetupStepProps> = ({
         return aLevel - bLevel;
       });
   }, [plansData?.plans, activeType]);
+  const nextPlan = () => {
+    if (!filteredPlans.length) return;
+    if (isDirectFlow) {
+      const currentIndex = filteredPlans.findIndex((p) => p.id === selectedPlanId);
+      const nextIndex = (currentIndex + 1) % filteredPlans.length;
+      setSelectedPlanId(filteredPlans[nextIndex].id);
+    } else {
+      const maxPage = Math.ceil(filteredPlans.length / 3) - 1;
+      if (planPage < maxPage) setPlanPage(prev => prev + 1);
+    }
+  };
 
-  const maxIndex = Math.max(0, filteredPlans.length - 1);
-
-  const handleNextPlan = () => currentIndex < maxIndex && setCurrentIndex(prev => prev + 1);
-  const handlePrevPlan = () => currentIndex > 0 && setCurrentIndex(prev => prev - 1);
-
-  const productInfo = PRODUCTS.find(p => p.name === selectedProduct);
+  const prevPlan = () => {
+    if (!filteredPlans.length) return;
+    if (isDirectFlow) {
+      const currentIndex = filteredPlans.findIndex((p) => p.id === selectedPlanId);
+      const prevIndex = (currentIndex - 1 + filteredPlans.length) % filteredPlans.length;
+      setSelectedPlanId(filteredPlans[prevIndex].id);
+    } else {
+      if (planPage > 0) setPlanPage(prev => prev - 1);
+    }
+  };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 ">
       <div className="text-center md:text-left">
-        <h2 className="text-3xl font-bold text-text mb-2">Setup Your Workspace</h2>
-        <p className="text-gray-500">Configure your domain and choose a plan for each product</p>
+        <h2 className="text-xl font-bold text-text mb-2">Setup Your Workspace</h2>
+        <p className="text-text">Configure your domain and choose a plan for each product</p>
       </div>
 
-      {/* Selected Products */}
-      <div className="space-y-3">
-        <label className="block text-base font-semibold text-text">Selected Products</label>
-        <div className="flex flex-wrap gap-2">
-          {productInfo && (
-            <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-full font-medium">
-              <SvgIcon name={productInfo.icon} className="w-5 h-5" />
-              {productInfo.fullname}
-            </div>
-          )}
+      <div className="space-y-2">
+        <label className="block text-sm font-bold text-text tracking-wider">Selected Products</label>
+        <div className="flex flex-wrap gap-3">
+          {PRODUCTS.map((product) => {
+            const isSelected = selectedProduct === product.name;
+            return (
+              <div
+                key={product.name}
+                className={`flex items-center gap-3 px-5 py-2.5 rounded-xl border-border border transition-all ${isSelected
+                  ? " bg-primary/5 text-primary"
+                  : "border-gray-100 bg-white text-gray-500 opacity-60 grayscale hidden"
+                  }`}
+              >
+                <SvgIcon name={product.icon} className="w-5 h-5" />
+                <span className="font-bold text-sm whitespace-nowrap">Owners {product.fullname.split(' ')[1]}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* Subdomain */}
+      {isDirectFlow && (
+        <div className="space-y-0">
+          <div className="relative group">
+            <Input
+              type="text"
+              label="Organization Name"
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+              placeholder="Enter organization name"
+              className="w-full px-6 bg-background py-5 rounded-xl focus:border-primary focus:ring-0 transition-all font-medium pr-24"
+            />
+            <div className="absolute right-4 top-13 -translate-y-1/2 text-[10px] text-text uppercase tracking-widest  px-2 py-1 ">
+              Required
+            </div>
+          </div>
+        </div>
+      )}
+
       {selectedProduct === "OI" && (
-        <div className="space-y-2">
-          <Input
-            isRequired
-            type="text"
-            label="Sub-Domain Name"
-            value={subDomain}
-            onChange={(e) =>
-              setSubDomain(
-                e.target.value
-                  .toLocaleLowerCase()
-                  .trim()
-                  .replace(/[^a-z0-9]/g, ""),
-              )
-            }
-            disabled={fetchingSubdomainSuggestions}
-            placeholder="Enter sub-domain"
-            className="py-6"
-          />
+        <div className="space-y-0">
+          <div className="relative group">
+            <Input
+              type="text"
+              label="Sub-Domain Name"
+              value={subDomain}
+              onChange={(e) =>
+                setSubDomain(
+                  e.target.value
+                    .toLocaleLowerCase()
+                    .trim()
+                    .replace(/[^a-z0-9]/g, ""),
+                )
+              }
+              disabled={fetchingSubdomainSuggestions}
+              placeholder="Enter Sub-Domain"
+              className="w-full px-6 bg-background py-5  rounded-xl focus:border-primary focus:ring-0 transition-all font-medium pr-24"
+            />
+            <div className="absolute right-4 top-13 -translate-y-1/2 text-[10px] text-text uppercase tracking-widest px-2 py-1">
+              Required
+            </div>
+          </div>
 
           <SubdomainSuggestion
             suggestions={suggestions!}
@@ -142,122 +198,157 @@ export const SetupStep: React.FC<SetupStepProps> = ({
         </div>
       )}
 
-      <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <label className="text-base font-semibold text-text">Pricing Plan</label>
-          <div className="flex items-center gap-2 p-1 bg-gray-100  rounded-xl">
-            <button
-              onClick={() => setBillingCycle("monthly")}
-              className={`px-4 py-1.5 rounded-lg text-sm font-medium cursor-pointer transition-all ${billingCycle === "monthly" ? "bg-white shadow-sm text-primary" : "text-gray-500"
-                }`}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => setBillingCycle("yearly")}
-              className={`px-4 py-1.5 rounded-lg text-sm font-medium cursor-pointer transition-all ${billingCycle === "yearly" ? "bg-white shadow-sm text-primary" : "text-gray-500"
-                }`}
-            >
-              Yearly
-            </button>
+      <div className="space-y-2">
+        <div className="space-y-0">
+          <div className="flex justify-between items-center w-full">
+            <div>
+              <p className="text-text pb-1">{isDirectFlow ? "Your Selected Plan" : "Pricing Plan"}</p>
+              <div className="flex items-center gap-4">
+                <h3 className="text-xl font-bold text-text">
+                  Owners Inventory <span className="text-text font-medium text-sm">
+                    {isDirectFlow
+                      ? `· ${activeType.charAt(0) + activeType.slice(1).toLowerCase()}`
+                      : `(${typeData.findIndex(t => t.id === activeType) + 1}/${typeData.length})`}
+                  </span>
+                </h3>
+              </div>
+            </div>
+            {!isDirectFlow && (
+              <Link href="https://ownersinventory.com/pricing" target="_blank" className="text-primary cursor-pointer text-sm font-bold hover:underline">View all packages</Link>
+            )}
+            {isDirectFlow && (
+              <span className="text-text text-xs font-medium">{billingCycle === 'yearly' ? 'Yearly billing' : 'Monthly billing'}</span>
+            )}
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-2 p-1 bg-gray-100 rounded-2xl w-fit">
-          {typeData.map((type) => {
-            const Icon = type.icon;
-            const isActive = activeType === type.id;
-            return (
-              <button
-                key={type.id}
-                onClick={() => {
-                  setActiveType(type.id);
-                  setCurrentIndex(0);
-                }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl cursor-pointer transition-all ${isActive ? "bg-primary text-white shadow-md" : "text-gray-600 hover:bg-gray-200"
-                  }`}
-              >
-                <Icon size={18} />
-                <span className="font-medium text-sm">{type.label}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="relative group " ref={containerRef}>
-          {currentIndex > 0 && (
-            <Button
-              variant="basic"
-              leftIcon={<ChevronLeft size={24} />}
-              onClick={handlePrevPlan}
-              className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-primary/80 hover:bg-primary text-white rounded-full px-1"
-            >
-            </Button>
-          )}
-
-          {currentIndex < maxIndex && (
-            <Button
-              variant="basic"
-              rightIcon={<ChevronRight size={24} />}
-              onClick={handleNextPlan}
-              className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-primary/80 hover:bg-primary text-white rounded-full px-1"
-            >
-            </Button>
-          )}
-
-          <div className="w-full ">
-            {loadingPlans ? (
-              <div className="flex gap-4">
-                <PricingSkeleton />
-                <PricingSkeleton className="hidden md:block" />
+        {!isDirectFlow && (
+          <div className="flex justify-between items-center py-2">
+            <div className="flex flex-wrap gap-2 p-1.5 bg-gray-100/80 rounded-2xl w-fit">
+              {typeData.map((type) => {
+                const Icon = type.icon;
+                const isActive = activeType === type.id;
+                return (
+                  <button
+                    key={type.id}
+                    onClick={() => {
+                      setActiveType(type.id);
+                    }}
+                    className={`flex items-center gap-2 px-6 py-2.5 rounded-xl cursor-pointer transition-all ${isActive ? "bg-primary text-white shadow-md" : "text-gray-500 hover:text-gray-700"
+                      }`}
+                  >
+                    <Icon size={18} />
+                    <span className="font-bold text-sm">{type.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="flex items-center gap-6 pb-1">
+              <div className="flex items-center gap-3">
+                <span className={`text-sm font-bold ${billingCycle === 'monthly' ? 'text-text' : 'text-gray-400'}`}>Monthly</span>
+                <div
+                  onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
+                  className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-all duration-300 ${billingCycle === 'yearly' ? 'bg-[#1AD1B9]' : 'bg-gray-200'}`}
+                >
+                  <div className={`w-4 h-4 bg-bg-secondary rounded-full shadow-sm transition-all duration-300 ${billingCycle === 'yearly' ? 'translate-x-6' : 'translate-x-0'}`} />
+                </div>
+                <span className={`text-sm font-bold ${billingCycle === 'yearly' ? 'text-text' : 'text-gray-400'}`}>Yearly</span>
               </div>
-            ) : (
-              <motion.div
-                className="flex gap-4"
-                animate={{ x: -currentIndex * TOTAL_MOVE }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              >
-                {filteredPlans.map((plan) => (
-                  <div key={plan.id} className="shrink-0 w-[300px] max-w-full">
+            </div>
+          </div>
+        )}
+
+        <div className="relative group">
+          {loadingPlans ? (
+            <div className={!isDirectFlow ? "grid grid-cols-1 md:grid-cols-3 gap-4" : "w-full"}>
+              <PlanCardSkeleton />
+              {!isDirectFlow && (
+                <>
+                  <PlanCardSkeleton />
+                  <PlanCardSkeleton />
+                </>
+              )}
+            </div>
+          ) : (
+            <>
+              {(isDirectFlow ? filteredPlans.length > 3 : filteredPlans.length > 1) && (
+                <>
+                  <Button
+                    variant="basic"
+                    onClick={prevPlan}
+                    disabled={!isDirectFlow && planPage === 0}
+                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 transition-all opacity-0 group-hover:opacity-100 -ml-12 cursor-pointer bg-primary/40 rounded-full py-8 text-white disabled:opacity-0"
+                  >
+                    <ChevronLeft size={40} />
+                  </Button>
+                  <Button
+                    variant="basic"
+                    onClick={nextPlan}
+                    disabled={!isDirectFlow && planPage >= Math.ceil(filteredPlans.length / 3) - 1}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 transition-all opacity-0 group-hover:opacity-100 -mr-12 cursor-pointer bg-primary/40 rounded-full py-8 text-white disabled:opacity-0"
+                  >
+                    <ChevronRight size={40} />
+                  </Button>
+                </>
+              )}
+              <div className={!isDirectFlow ? "grid grid-cols-1 md:grid-cols-3 gap-4" : "w-full"}>
+                {filteredPlans
+                  .filter(plan => isDirectFlow ? plan.id === selectedPlanId : true)
+                  .slice(isDirectFlow ? 0 : planPage * 3, isDirectFlow ? 1 : (planPage + 1) * 3)
+                  .map((plan) => (
                     <PlanSelectionCard
+                      key={plan.id}
                       plan={plan}
                       isSelected={selectedPlanId === plan.id}
                       onClick={() => setSelectedPlanId(plan.id)}
                       billingCycle={billingCycle}
+                      isDirectFlow={isDirectFlow}
                     />
-                  </div>
-                ))}
-              </motion.div>
-            )}
-          </div>
+                  ))}
+              </div>
+            </>
+          )}
         </div>
+        {isDirectFlow && (
+          <div className="mt-2">
+            <span className="text-text text-sm">Not the right plan? </span>
+            <Link href="https://ownersinventory.com/pricing"
+              target="_blank"
+              className="text-primary text-sm font-bold hover:underline cursor-pointer"
+            >
+              Change plan
+            </Link>
+          </div>
+        )}
       </div>
+      <div className={`${isDirectFlow ? "flex justify-end" : "flex justify-between gap-4"} pt-4`}>
+        {!isDirectFlow && (
+          <Button
+            variant="secondary"
+            onClick={onBack}
+            className="mr-auto"
+          >
+            Back
+          </Button>
+        )}
 
-      {/* Actions */}
-      <div className="flex justify-between gap-4 pt-6 border-t">
-        <Button
-          variant="secondary"
-          className="px-8 py-6 rounded-xl font-bold"
-          onClick={onBack}
-        >
-          Back
-        </Button>
         <Button
           variant="primary"
-          className="px-8 py-6 rounded-xl font-bold min-w-[150px]"
           onClick={onCreate}
           disabled={!canSubmit || creatingOrg}
         >
           {creatingOrg ? (
             <div className="flex items-center gap-2">
               <LoadingSpinner size={4} className="border-white" />
-              <span>Creating<Dots /></span>
+              <span>
+                Creating<Dots />
+              </span>
             </div>
           ) : (
-            "Create Organization"
+            "Create"
           )}
         </Button>
       </div>
-    </div>
+    </div >
   );
 };

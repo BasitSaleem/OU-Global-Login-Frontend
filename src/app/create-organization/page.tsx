@@ -20,35 +20,57 @@ import { AnimatePresence, motion } from "framer-motion";
 import { StepIndicator } from "@/components/pages/CreateOrganization/StepIndicator";
 import { OrganizationStep } from "@/components/pages/CreateOrganization/OrganizationStep";
 import { SetupStep } from "@/components/pages/CreateOrganization/SetupStep";
-import { ReviewStep } from "@/components/pages/CreateOrganization/ReviewStep";
-import { CreateOrganizationGuard } from "@/components/HOCs/createOrgRoute.guard";
 import { AuthGuard } from "@/components/HOCs/auth-guard";
+import { CreateOrganizationGuard } from "@/components/HOCs/createOrgRoute.guard";
 
 export default function CreateOrgPage() {
   const searchParams = useSearchParams();
   const queryPkgId = searchParams.get("pkgId");
+  const queryProduct = searchParams.get("product");
 
   const pkgId =
     queryPkgId ||
     (typeof window !== "undefined" ? localStorage.getItem("pkgId") : null) ||
     "d755fe7d-4372-426c-af33-e63b71a6521f";
 
+  const product =
+    queryProduct ||
+    (typeof window !== "undefined" ? localStorage.getItem("product") : null) ||
+    "OI";
+
   useEffect(() => {
     if (queryPkgId) {
       localStorage.setItem("pkgId", queryPkgId);
     }
-  }, [queryPkgId]);
+    if (queryProduct) {
+      localStorage.setItem("product", queryProduct);
+    }
+  }, [queryPkgId, queryProduct]);
 
-  return <CreateOrgContent initialPkgId={pkgId} />;
+  return (
+    <CreateOrgContent
+      initialPkgId={pkgId}
+      initialProduct={product}
+      queryPkgId={queryPkgId}
+    />
+  );
 }
 
-function CreateOrgContent({ initialPkgId }: { initialPkgId: string | null }) {
+function CreateOrgContent({
+  initialPkgId,
+  initialProduct,
+  queryPkgId,
+}: {
+  initialPkgId: string | null;
+  initialProduct: string;
+  queryPkgId: string | null;
+}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [direction, setDirection] = useState(0);
 
   const [companyName, setCompanyName] = useState("");
   const [subDomain, setSubDomain] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState("OI");
+  const [selectedProduct, setSelectedProduct] = useState(initialProduct);
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(initialPkgId);
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [organizationData, setOrganizationData] = useState<CreateOrganizationResponse | null>(null);
@@ -65,7 +87,7 @@ function CreateOrgContent({ initialPkgId }: { initialPkgId: string | null }) {
     subDomain.trim() !== debouncedSubDomain &&
     subDomain.trim().length > 0;
 
-  const { data: suggestions, isPending: fetchingSubdomainSuggestions } =
+  const { data: suggestions, isFetching: fetchingSubdomainSuggestions } =
     useGenerateSubdomainSuggestions(!isNameDebouncing ? debouncedCompanyName : "");
 
   const { mutate: createOrgMutation, isPending: creatingOrg } = useCreateOrganization();
@@ -177,93 +199,88 @@ function CreateOrgContent({ initialPkgId }: { initialPkgId: string | null }) {
   };
 
   return (
-    <AuthGuard>
-      <CreateOrganizationGuard>
-        {creatingOrg && <Loader text="Initializing organization creation" />}
-        <div className="min-h-48 w-full bg-background flex flex-col items-center py-12 px-4">
-          <StepIndicator steps={steps} currentStep={currentStep > 2 ? 2 : currentStep} />
+    // <AuthGuard>
+    <>
+      {creatingOrg && <Loader text="Initializing organization creation" />}
+      <div className="min-h-48 w-full bg-background flex flex-col items-center py-12 px-4 ">
+        <div className="w-full max-w-4xl bg-bg-secondary rounded-2xl border border-border  relative">
+          {!queryPkgId && <StepIndicator steps={steps} currentStep={currentStep > 2 ? 2 : currentStep} />}
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={currentStep}
+              custom={direction}
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                x: { type: "spring", stiffness: 300, damping: 30 },
+                opacity: { duration: 0.2 },
+              }}
+              className="p-8 md:p-4"
+            >
+              {currentStep === 1 && !queryPkgId && (
+                <OrganizationStep
+                  companyName={companyName}
+                  setCompanyName={setCompanyName}
+                  selectedProduct={selectedProduct}
+                  setSelectedProduct={setSelectedProduct}
+                  onNext={nextStep}
+                  onReset={handleReset}
+                />
+              )}
 
-          <div className="w-full max-w-4xl bg-white rounded-[32px] shadow-xl border border-gray-100 overflow-hidden relative">
-            <AnimatePresence mode="wait" custom={direction}>
-              <motion.div
-                key={currentStep}
-                custom={direction}
-                variants={variants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{
-                  x: { type: "spring", stiffness: 300, damping: 30 },
-                  opacity: { duration: 0.2 },
-                }}
-                className="p-8 md:p-12"
-              >
-                {currentStep === 1 && (
-                  <OrganizationStep
-                    companyName={companyName}
-                    setCompanyName={setCompanyName}
-                    selectedProduct={selectedProduct}
-                    setSelectedProduct={setSelectedProduct}
-                    onNext={nextStep}
-                    onReset={handleReset}
-                  />
-                )}
-
-                {currentStep === 2 && (
-                  <SetupStep
-                    companyName={companyName}
-                    selectedProduct={selectedProduct}
-                    subDomain={subDomain}
-                    setSubDomain={setSubDomain}
-                    suggestions={suggestions}
-                    fetchingSubdomainSuggestions={fetchingSubdomainSuggestions}
-                    handleSuggestionClick={handleSuggestionClick}
-                    checkingSub={checkingSub}
-                    finalIsSubAvailable={finalIsSubAvailable}
-                    isSubDomainDebouncing={isSubDomainDebouncing}
-                    selectedPlanId={selectedPlanId}
-                    setSelectedPlanId={setSelectedPlanId}
-                    onBack={prevStep}
-                    onCreate={nextStep}
-                    canSubmit={canSubmit()}
-                    creatingOrg={creatingOrg}
-                  />
-                )}
-
-                {currentStep === 3 && (
-                  <ReviewStep
-                    companyName={companyName}
-                    selectedProduct={selectedProduct}
-                    subDomain={subDomain}
-                    selectedPlanId={selectedPlanId}
-                    onBack={prevStep}
-                    onCreate={handleSubmit}
-                    creatingOrg={creatingOrg}
-                  />
-                )}
-              </motion.div>
-            </AnimatePresence>
-          </div>
+              {(currentStep === 2 || (queryPkgId && currentStep === 1)) && (
+                <SetupStep
+                  companyName={companyName}
+                  setCompanyName={setCompanyName}
+                  selectedProduct={selectedProduct}
+                  subDomain={subDomain}
+                  setSubDomain={setSubDomain}
+                  suggestions={suggestions}
+                  fetchingSubdomainSuggestions={fetchingSubdomainSuggestions}
+                  handleSuggestionClick={handleSuggestionClick}
+                  checkingSub={checkingSub}
+                  finalIsSubAvailable={finalIsSubAvailable}
+                  isSubDomainDebouncing={isSubDomainDebouncing}
+                  selectedPlanId={selectedPlanId}
+                  setSelectedPlanId={setSelectedPlanId}
+                  onBack={() => {
+                    if (queryPkgId) {
+                      setSelectedPlanId(initialPkgId);
+                    } else {
+                      prevStep();
+                    }
+                  }}
+                  onCreate={handleSubmit}
+                  canSubmit={canSubmit()}
+                  creatingOrg={creatingOrg}
+                  isDirectFlow={!!queryPkgId}
+                />
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
+      </div>
 
-        <ProgressModal
-          isOpen={showProgressModal}
-          organizationData={organizationData}
-          onClose={() => {
-            setShowProgressModal(false);
-            setOrganizationData(null);
-            router.push(ROUTES.DASHBOARD);
-          }}
-          onComplete={() => logger.log("handleProgressComplete")}
-          onGoHome={() => {
-            setShowProgressModal(false);
-            setOrganizationData(null);
-            router.push(ROUTES.DASHBOARD);
-          }}
-          isFromMain={true}
-        />
-      </CreateOrganizationGuard>
-    </AuthGuard>
+      <ProgressModal
+        isOpen={showProgressModal}
+        organizationData={organizationData}
+        onClose={() => {
+          setShowProgressModal(false);
+          setOrganizationData(null);
+          router.push(ROUTES.DASHBOARD);
+        }}
+        onComplete={() => logger.log("handleProgressComplete")}
+        onGoHome={() => {
+          setShowProgressModal(false);
+          setOrganizationData(null);
+          router.push(ROUTES.DASHBOARD);
+        }}
+        isFromMain={true}
+      />
+    </>
+    // </AuthGuard>
   );
 }
 

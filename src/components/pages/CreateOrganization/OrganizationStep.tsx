@@ -30,24 +30,29 @@ export const OrganizationStep: React.FC<OrganizationStepProps> = ({
   onReset,
 }) => {
   return (
-    <div className="space-y-8">
+    <div className="space-y-4">
       <div className="text-center md:text-left mb-8">
         <h2 className="text-3xl font-bold text-text mb-2">Create an Organization</h2>
         <p className="text-gray-500">Set up your workspace in just 2 steps</p>
       </div>
 
-      <div className="space-y-6">
-        <Input
-          isRequired
-          label="Organization Name"
-          type="text"
-          value={companyName}
-          onChange={(e) => setCompanyName(e.target.value)}
-          placeholder="Enter organization name"
-          className="py-6"
-        />
+      <div className="space-y-4">
+        <div className="relative group">
+          <Input
+            isRequired
+            label="Organization Name"
+            type="text"
+            value={companyName}
+            onChange={(e) => setCompanyName(e.target.value)}
+            placeholder="Enter organization name"
+            className="w-full px-6 bg-background py-5  rounded-xl focus:border-primary focus:ring-0 transition-all font-medium pr-24"
+          />
+          <div className="absolute right-4 top-13 -translate-y-1/2 text-[10px]  text-text uppercase  px-2 py-1 ">
+            Required
+          </div>
+        </div>
 
-        <div className="space-y-4">
+        <div className="space-y-2">
           <label className="block text-base font-semibold text-text">Select Products</label>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {PRODUCTS.map((product) => (
@@ -67,10 +72,9 @@ export const OrganizationStep: React.FC<OrganizationStepProps> = ({
         </div>
       </div>
 
-      <div className="flex justify-end gap-4 pt-6 border-t">
+      <div className="flex justify-end gap-4">
         <Button
           variant="secondary"
-          className="px-8 py-6 rounded-xl font-bold"
           onClick={onReset}
         >
           Reset
@@ -78,7 +82,6 @@ export const OrganizationStep: React.FC<OrganizationStepProps> = ({
         <Button
           variant="primary"
           rightIcon={<ArrowRight />}
-          className="px-8 py-6 rounded-xl font-bold"
           onClick={onNext}
           disabled={!companyName.trim() || !selectedProduct}
         >

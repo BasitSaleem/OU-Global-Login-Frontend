@@ -66,7 +66,7 @@ const PlanSection = ({
     "monthly",
   );
 
-  const CARD_WIDTH = 440; // Increased to match larger cards
+  const CARD_WIDTH = 440;
   const GAP = 16;
   const TOTAL_MOVE = CARD_WIDTH + GAP;
   const [maxIndex, setMaxIndex] = React.useState(0);

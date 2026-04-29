@@ -38,7 +38,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
       <div className="space-y-6">
         {/* Selected Product */}
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Selected Products</label>
+          <label className="text-sm font-semibold text-text uppercase tracking-wider">Selected Products</label>
           <div className="flex">
             {productInfo && (
               <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-full font-medium">
@@ -64,7 +64,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
         </div>
 
         <div className="space-y-3">
-          <label className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Your Selected Plan</label>
+          <label className="text-text">Your Selected Plan</label>
           <div className="flex items-center justify-between">
             <span className="text-gray-600 font-medium">
               {productInfo?.fullname} • <span className="text-text font-bold">{selectedPlan?.type}</span>

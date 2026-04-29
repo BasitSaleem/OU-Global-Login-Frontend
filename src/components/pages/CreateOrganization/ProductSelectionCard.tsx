@@ -26,8 +26,8 @@ export const ProductSelectionCard: React.FC<ProductSelectionCardProps> = ({
   return (
     <div
       onClick={() => !isDisabled && onClick()}
-      className={`relative flex items-center gap-4 p-4 rounded-xl border-2 transition-all duration-300 cursor-pointer ${isDisabled
-        ? "opacity-50 cursor-not-allowed bg-gray-50 border-gray-100"
+      className={`relative flex items-center gap-4 p-4 rounded-xl transition-all duration-300 cursor-pointer ${isDisabled
+        ? "opacity-50 cursor-not-allowed bg-gray-50 border-border border"
         : isSelected
           ? "border-primary bg-primary/5 ring-1 ring-primary"
           : "border-border hover:border-primary/50 bg-background"
@@ -37,7 +37,7 @@ export const ProductSelectionCard: React.FC<ProductSelectionCardProps> = ({
         <SvgIcon name={icon as IconName} className="w-8 h-8" />
       </div>
       <div className="flex-1">
-        <h3 className="font-bold text-text">{fullname}</h3>
+        <h3 className="font-bold text-gray-500">{fullname}</h3>
         <p className="text-sm text-gray-500">{description}</p>
       </div>
       {isSelected && (
