@@ -57,12 +57,12 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
       onClose={onClose}
       size="xxl"
       ariaLabel="Invoice Details"
-      className="h-[90vh]! overflow-y-auto text-white"
+      className="h-fit overflow-y-auto text-white"
     >
       <Modal.Body className="p-0">
         <div className="bg-[#8B5CF6] -m-6 p-8 text-white flex justify-between items-start">
           <div>
-            <div className=" p-3 rounded-full w-fit mb-6">
+            <div className="rounded-full w-fit mb-6">
               <SvgIcon name="OI-white"
                 height={60}
                 width={60}
@@ -77,7 +77,7 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
           </div>
         </div>
 
-        <div className="p-8 space-y-8">
+        <div className="p-  pt-12 space-y-8">
           <div className="flex justify-between items-end border-b pb-6">
             <div>
               <p className="text-gray-400 text-sm mb-1">Invoice Memo</p>
@@ -96,9 +96,9 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
             </div>
           </div>
 
-          <div className="max-h-[350px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
+          <div className="max-h-fit overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
             <table className="w-full text-sm ">
-              <thead className="sticky top-0 z-10 bg-background p-2 rounded-2xl">
+              <thead className="sticky top-0 z-10  p-2 rounded-2xl">
                 <tr className="text-text font-medium  border-b border-border text-left">
                   <th className="pb-4 font-semibold">Product</th>
                   <th className="pb-4 font-semibold text-center">Type</th>
@@ -160,7 +160,7 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
           </div>
 
           {/* Summary Section */}
-          <div className="flex justify-between items-start gap-12 bg-background p-6 rounded-2xl">
+          <div className="flex justify-between items-start gap-12 bg-background px-4 py-5 rounded-2xl">
             <div className="space-y-4">
               <div>
                 <p className="text-text text-xs font-bold uppercase tracking-wider mb-2">Payment Info</p>

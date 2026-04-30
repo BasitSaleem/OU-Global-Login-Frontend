@@ -10,24 +10,26 @@ import logger from "@/utils/logger";
 import { oiLogoBase64 } from "./logoBase64";
 const styles = StyleSheet.create({
   page: {
-    padding: 40,
+    padding: 20,
     fontSize: 10,
     fontFamily: "Helvetica",
-    color: "#1F2937", // text-gray-800
+    color: "#1F2937",
     backgroundColor: "#FFFFFF",
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
+    width: "100%",
     alignItems: "flex-start",
     marginBottom: 40,
   },
   brandSection: {
     flexDirection: "column",
+    gap: 5,
   },
   logoPlaceholder: {
-    width: 50,
-    height: 50,
+    width: 45,
+    height: 40,
     marginBottom: 10,
   },
   companyName: {
@@ -42,7 +44,9 @@ const styles = StyleSheet.create({
     lineHeight: 1.5,
   },
   invoiceTitleSection: {
-    textAlign: "right",
+    flex: 1,
+    alignItems: "flex-end",
+    gap: 5,
   },
   invoiceTitle: {
     fontSize: 28,
@@ -58,7 +62,6 @@ const styles = StyleSheet.create({
   invoiceDateRow: {
     flexDirection: "row",
     justifyContent: "flex-end",
-    marginBottom: 4,
   },
   invoiceDateLabel: {
     fontSize: 10,
@@ -71,6 +74,7 @@ const styles = StyleSheet.create({
     color: "#6B7280",
     width: 80,
     textAlign: "right",
+    whiteSpace: "nowrap",
   },
   invoiceStatusRow: {
     flexDirection: "row",
@@ -236,11 +240,11 @@ const styles = StyleSheet.create({
     position: "relative",
     borderTopWidth: 1,
     borderTopColor: "#F3F4F6",
-    paddingTop: 40,
+    paddingTop: 20,
     textAlign: "center",
   },
   footerText: {
-    fontSize: 8,
+    fontSize: 10,
     color: "#9CA3AF",
     lineHeight: 1.5,
   },

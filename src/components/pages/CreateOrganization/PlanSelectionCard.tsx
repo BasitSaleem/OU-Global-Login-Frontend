@@ -28,7 +28,7 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
       <div
         onClick={onClick}
         className={`relative w-full flex flex-col p-6 rounded-[32px] border-2 transition-all duration-300 cursor-pointer h-full ${isSelected
-          ? "bg-card border-[#B2A5FF]"
+          ? "bg-primary/10 border-[#B2A5FF]"
           : isPro
             ? "bg-white border-transparent"
             : "bg-white border-gray-100"
