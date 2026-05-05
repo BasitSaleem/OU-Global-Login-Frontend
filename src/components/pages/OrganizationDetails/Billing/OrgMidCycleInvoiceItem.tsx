@@ -5,20 +5,23 @@ import InvoicePDF from "./InvoicePDF";
 import { Button } from "@/components/ui";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { calculateInvoiceFinancial } from "@/utils/invoicesUtils";
+import { calculateMidCycleAddonFinancial } from "@/utils/invoicesUtils";
 
-interface OrgInvoiceItemProps {
+interface OrgMidCycleInvoiceItemProps {
   invoice: Invoice;
   onView: (invoice: Invoice) => void;
   orgName: string;
 }
 
-const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
+const OrgMidCycleInvoiceItem = ({
+  invoice,
+  onView,
+  orgName,
+}: OrgMidCycleInvoiceItemProps) => {
   const { user } = useSelector((state: RootState) => state.auth);
 
-  const { originalSubtotal, discountPercent, subtotal, tax } =
-    calculateInvoiceFinancial(invoice, invoice.subscription?.billing_cycle);
-
+  const paymentSubtotal = invoice?.payment?.subtotal || invoice.amount || "0";
+  const { subtotal, tax } = calculateMidCycleAddonFinancial(invoice);
   return (
     <tr>
       {/* Date */}
@@ -34,33 +37,33 @@ const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
         {invoice.invoice_number}
       </td>
 
-      {/* Subtotal */}
+      {/* Subtotal — addon prices only, no base package */}
       <td
         className="px-6 py-4 whitespace-nowrap text-sm cursor-pointer"
         onClick={() => onView(invoice)}
       >
-        ${originalSubtotal.toFixed(2)}
+        ${Number(paymentSubtotal).toFixed(2)}
       </td>
 
-      {/* Discount */}
+      {/* Discount — always 0% for mid-cycle purchases */}
       <td
         className="px-6 py-4 whitespace-nowrap text-sm cursor-pointer"
         onClick={() => onView(invoice)}
       >
-        {Number(discountPercent).toFixed(0)}%
+        0%
       </td>
 
       {/* Net Total */}
       <td className="px-6 py-4 whitespace-nowrap text-sm">
-        ${Number(invoice.payment?.subtotal ?? invoice.payment?.amount ?? 0).toFixed(2)}
+        ${Number(paymentSubtotal).toFixed(2)}
       </td>
 
       {/* Tax */}
       <td className="px-6 py-4 whitespace-nowrap text-sm">
-        ${invoice.payment?.tax_amount || "0.00"}
+        ${Number(tax).toFixed(2)}
       </td>
 
-      {/* Amount */}
+      {/* Amount (Stripe grand total) */}
       <td className="px-6 py-4 whitespace-nowrap text-sm">
         ${Number(invoice.amount ?? 0).toFixed(2)}
       </td>
@@ -116,4 +119,4 @@ const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
   );
 };
 
-export default OrgInvoiceItem;
+export default OrgMidCycleInvoiceItem;

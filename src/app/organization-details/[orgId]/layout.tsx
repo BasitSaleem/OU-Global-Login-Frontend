@@ -69,6 +69,11 @@ export default function OrganizationDetailsLayout({
     setSidebarOpen(!sidebarOpen);
   };
 
+  useEffect(() => {
+    if (!isLoading && !organizationDetails) {
+      router.replace("/organization");
+    }
+  }, [isLoading, organizationDetails, router]);
   // useEffect(() => {
   //   async function getOrgId() {
   //     const orgID = (await params).orgId;

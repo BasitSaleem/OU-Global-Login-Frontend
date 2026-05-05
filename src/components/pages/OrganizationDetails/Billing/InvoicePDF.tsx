@@ -304,8 +304,6 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
     }
   }
 
-  const addOns = parseAddOns(metaObj?.addOns || metaObj?.addons || [], "PDF");
-
   const {
     originalSubtotal,
     savings,
@@ -317,6 +315,7 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
     effectiveBasePlan,
     originalBasePlan,
     addOnsWithPricing,
+    midCycleAddons,
   } = calculateInvoiceFinancial(invoice, billingCycle);
 
   return (
@@ -439,8 +438,7 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
           {addOnsWithPricing.map((addon: any, index: number) => {
             const addOnName =
               addon.name || addon.package_name || "Additional Module";
-            const addOnQty =
-              addon.quantity || addon.no_of_users || addon.no_of_stores || 1;
+            const addOnQty = addon.quantity || 1;
             const price = addon.originalPrice;
             const total = price * addOnQty;
             return (
@@ -476,6 +474,56 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
             );
           })}
         </View>
+
+        {/* Mid-Cycle Add-Ons Section — only rendered when present */}
+        {midCycleAddons.length > 0 && (
+          <View style={{ marginTop: 16 }}>
+            <Text
+              style={{
+                fontSize: 9,
+                fontWeight: "bold",
+                color: "#9CA3AF",
+                textTransform: "uppercase",
+                letterSpacing: 1,
+                marginBottom: 6,
+              }}
+            >
+              Mid-Cycle Add-Ons
+            </Text>
+            <View style={styles.table}>
+              <View style={styles.tableHeader}>
+                <Text style={[styles.tableHeaderItem, styles.colDesc]}>
+                  Description
+                </Text>
+                <Text style={[styles.tableHeaderItem, styles.colQty]}>Qty</Text>
+                <Text style={[styles.tableHeaderItem, styles.colPrice]}>
+                  Unit Price
+                </Text>
+                <Text style={[styles.tableHeaderItem, styles.colTotal]}>
+                  Subtotal
+                </Text>
+              </View>
+              {midCycleAddons.map((addon, index) => {
+                const qty = addon.quantity || 1;
+                const price = parseFloat(addon.price || "0");
+                const rowTotal = price * qty;
+                return (
+                  <View style={styles.tableRow} key={index}>
+                    <View style={styles.colDesc}>
+                      <Text style={styles.itemTitle}>
+                        {addon.name || "Add-on Module"}
+                      </Text>
+                      <Text style={styles.itemSub}>Mid-cycle purchase</Text>
+                    </View>
+                    <Text style={styles.colQty}>{qty}</Text>
+                    <Text style={styles.colPrice}>${price.toFixed(2)}</Text>
+                    <Text style={styles.colTotal}>${rowTotal.toFixed(2)}</Text>
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+        )}
 
         <View style={styles.summarySection}>
           <View style={styles.summaryGrid}>
