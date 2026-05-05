@@ -153,19 +153,7 @@ const BaseInput = forwardRef<HTMLInputElement, BaseInputProps>(
       <div className="space-y-2">
         {label && (
           <label className="text-sm text-text ml-1">
-            {isRequired ? (
-              <>
-                {label}
-                <Asterisk
-                  className="inline mb-2"
-                  width={10}
-                  height={10}
-                  color="red"
-                />
-              </>
-            ) : (
-              label
-            )}
+            {label}
           </label>
         )}
         <div className="relative">
@@ -188,6 +176,11 @@ const BaseInput = forwardRef<HTMLInputElement, BaseInputProps>(
             ref={ref}
             {...props}
           />
+          {isRequired && (
+            <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted text-[12px]">
+              REQUIRED
+            </span>
+          )}
           {isPassword && (
             <button
               type="button"

@@ -1,4 +1,4 @@
-export type IconName = 'ownersUniverse' | 'search' | 'calendar' | 'dashboard' | 'settings' | 'profile' | 'notification' | 'logout' | 'home' | 'organization' | 'email' | 'changePassword' | 'hamburgerLeft' | 'hamburgerRight' | 'ownersInventory' | 'ownersUniverseColl' | "AllProducts" | "billing" | "visa" | "payment-methods" | "mastercard" | "time" | "OA" | "OI" | "OM" | "OJ" | "expand" | "ownersInventory" | "google" | "check";
+export type IconName = 'ownersUniverse' | 'search' | 'calendar' | 'dashboard' | 'settings' | 'profile' | 'notification' | 'logout' | 'home' | 'organization' | 'email' | 'changePassword' | 'hamburgerLeft' | 'hamburgerRight' | 'ownersInventory' | 'ownersUniverseColl' | "AllProducts" | "billing" | "visa" | "payment-methods" | "mastercard" | "time" | "OA" | "OI" | "OM" | "OJ" | "expand" | "ownersInventory" | "google" | "check" | "OI-white" | "check3";
 interface SvgIconProps {
   name: IconName | string;
   className?: string;
@@ -360,6 +360,44 @@ export function SvgIcon({ name, className = "", width, height }: SvgIconProps) {
         return (
           <svg width={width} height={height} viewBox="0 0 15 13" xmlns="http://www.w3.org/2000/svg" className={className}>
             <path d="M6.39959 12.3594C6.35715 12.3594 6.31517 12.3506 6.27629 12.3336C6.2374 12.3166 6.20246 12.2917 6.17365 12.2606L0.0817469 5.67088C0.0411367 5.62695 0.0142147 5.57213 0.00427583 5.51313C-0.00566304 5.45414 0.00181231 5.39352 0.0257871 5.33871C0.0497619 5.2839 0.0891961 5.23726 0.139263 5.20452C0.189331 5.17177 0.247859 5.15433 0.307685 5.15432H3.23999C3.28402 5.15433 3.32753 5.16378 3.3676 5.18203C3.40766 5.20029 3.44334 5.22692 3.47224 5.26014L5.50818 7.60242C5.72821 7.13208 6.15415 6.34894 6.90159 5.39466C8.00658 3.98389 10.0619 1.90909 13.5783 0.0361075C13.6463 -8.57097e-05 13.7254 -0.00947928 13.7999 0.00978174C13.8745 0.0290428 13.9391 0.0755582 13.981 0.140143C14.023 0.204728 14.0392 0.282687 14.0264 0.358628C14.0137 0.434568 13.9729 0.502968 13.9122 0.550323C13.8988 0.560815 12.5429 1.62851 10.9826 3.58417C9.54652 5.38386 7.63753 8.32663 6.69818 12.1257C6.68168 12.1925 6.6433 12.2517 6.58916 12.2941C6.53503 12.3365 6.46825 12.3595 6.3995 12.3596L6.39959 12.3594Z" fill="currentColor" />
+          </svg>
+        )
+      case "check2":
+        return (
+          <svg width={width} height={height} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+            <path d="M8.00065 14.6663C11.6673 14.6663 14.6673 11.6663 14.6673 7.99967C14.6673 4.33301 11.6673 1.33301 8.00065 1.33301C4.33398 1.33301 1.33398 4.33301 1.33398 7.99967C1.33398 11.6663 4.33398 14.6663 8.00065 14.6663Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M5.16602 7.99995L7.05268 9.88661L10.8327 6.11328" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        )
+      case "OI-white":
+        return (
+          <svg width={width} height={height} viewBox="0 0 63 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g filter="url(#filter0_i_3605_49891)">
+              <path d="M45.8679 22.6264C45.8679 24.7871 45.5605 26.88 44.9857 28.8618C44.6859 29.8904 44.3173 30.8888 43.88 31.8495C42.6234 34.6263 40.8131 37.1091 38.5902 39.1568C36.0065 41.5379 32.867 43.3389 29.3819 44.3429C27.3367 44.9326 25.1711 45.249 22.933 45.249C22.0049 45.249 21.0902 45.1925 20.1907 45.087C8.81686 43.7514 0 34.2043 0 22.6264C0 10.1292 10.2682 0 22.933 0C32.3858 0 40.5018 5.64012 44.0117 13.6972C45.2072 16.4362 45.8679 19.4541 45.8679 22.6264Z" fill="#F1EFFE" />
+            </g>
+            <path d="M38.5948 31.8496V39.1569C36.011 41.538 32.8715 43.3371 29.3845 44.343C27.3412 44.9326 25.1737 45.2491 22.9356 45.2491C22.0075 45.2491 21.0928 45.1945 20.1934 45.0871V31.8496H38.5948Z" fill="#E4DFFD" />
+            <path d="M38.5948 39.1572V50.0004H20.1934V45.0874C21.0928 45.1929 22.0094 45.2495 22.9356 45.2495C25.1737 45.2495 27.3393 44.933 29.3845 44.3433C32.8715 43.3393 36.011 41.5384 38.5948 39.1572Z" fill="#F1EFFE" />
+            <path d="M62.6378 31.8496H44.2383V50.0001H62.6378V31.8496Z" fill="#F1EFFE" />
+            <path d="M45.8669 22.6255C45.8669 24.7881 45.5595 26.8792 44.9847 28.8628C44.6849 29.8914 44.3163 30.8879 43.879 31.8505H32.2148V13.6963H44.0108C45.2062 16.4353 45.8669 19.4532 45.8669 22.6255Z" fill="#E4DFFD" />
+            <path d="M50.6143 13.6952V31.8476H43.8809C44.3182 30.8869 44.6867 29.8884 44.9865 28.8599C45.5614 26.8781 45.8688 24.7852 45.8688 22.6226C45.8688 19.4522 45.2081 16.4324 44.0107 13.6934H50.6143V13.6952Z" fill="#F1EFFE" />
+            <defs>
+              <filter id="filter0_i_3605_49891" x="0" y="0" width="45.8672" height="45.249" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                <feFlood floodOpacity="0" result="BackgroundImageFix" />
+                <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+                <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+                <feOffset />
+                <feGaussianBlur stdDeviation="1" />
+                <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
+                <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0" />
+                <feBlend mode="normal" in2="shape" result="effect1_innerShadow_3605_49891" />
+              </filter>
+            </defs>
+          </svg>
+        )
+      case "check3":
+        return (
+          <svg width={width} height={height} viewBox="0 0 14 13" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className={className}>
+            <path fillRule="evenodd" clipRule="evenodd" d="M12.5375 0.320176L4.18414 8.38184L1.96747 6.01351C1.55914 5.62851 0.917473 5.60518 0.450807 5.93184C-0.00419315 6.27018 -0.132527 6.86518 0.147473 7.34351L2.77247 11.6135C3.02914 12.0102 3.47247 12.2552 3.97414 12.2552C4.45247 12.2552 4.90747 12.0102 5.16414 11.6135C5.58414 11.0652 13.5991 1.51018 13.5991 1.51018C14.6491 0.436843 13.3775 -0.508157 12.5375 0.30851V0.320176Z" fill="currentColor" />
           </svg>
         )
       default:

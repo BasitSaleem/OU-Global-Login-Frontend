@@ -1,15 +1,12 @@
 import React from "react";
 import { Modal } from "@/components/modals/GenericModal";
 import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import InvoicePDF from "./InvoicePDF";
-import { Download, FileText } from "lucide-react";
-import { Button } from "@/components/ui";
-
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 import { parseAddOns, calculateInvoiceFinancial } from "@/utils/invoicesUtils";
 import logger from "@/utils/logger";
+import { oiLogoBase64 } from "./logoBase64";
+import { SvgIcon } from "@/components/ui/SvgIcon";
 
 interface InvoiceDetailModalProps {
   isOpen: boolean;
@@ -26,8 +23,8 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
 }) => {
   const { user } = useSelector((state: RootState) => state.auth);
   if (!invoice) return null;
+  logger.info("invoice details--------", invoice);
 
-  // 1. Parse metadata if it's a string (happens on some environments)
   let metaObj = invoice.metadata as any;
   if (typeof metaObj === "string" && metaObj !== "") {
     try {
@@ -36,11 +33,6 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
       logger.error("Failed to parse metadata string", e);
     }
   }
-
-  const addOns = parseAddOns(
-    metaObj?.addOns || metaObj?.addons || [],
-    "DetailModal",
-  );
 
   const {
     originalSubtotal,
@@ -59,118 +51,175 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="lg"
+      size="xxl"
       ariaLabel="Invoice Details"
+      className="h-fit overflow-y-auto text-white"
     >
-      <Modal.Header>
-        <div className="flex items-center gap-2">
-          <FileText className="text-primary w-6 h-6" />
-          <Modal.Title>Invoice #{invoice.invoice_number}</Modal.Title>
-        </div>
-      </Modal.Header>
-
-      <Modal.Body className="flex flex-col gap-2">
-        <div className="grid grid-cols-2 gap-8 py-4">
+      <Modal.Body className="p-0">
+        {/* Header */}
+        <div className="bg-[#8B5CF6] -m-6 p-8 text-white flex justify-between items-start">
           <div>
-            <p className="text-xs text-gray-400 uppercase font-bold mb-1">
-              Bill To
-            </p>
-            <p className="text-sm text-text">
-              {user?.first_name + " " + user?.last_name}
-            </p>
-            <p className="text-sm text-text">{user?.email}</p>
-            <p className="font-semibold text-text">{orgName}</p>
+            <div className="rounded-full w-fit mb-6">
+              <SvgIcon name="OI-white" height={60} width={60} />
+            </div>
+            <h1 className="text-3xl font-bold">Thanks For your Subscription</h1>
           </div>
-          <div className="text-right">
-            <p className="text-xs text-gray-400 uppercase font-bold mb-1">
-              Billing Period
-            </p>
-            <p className="text-sm">
-              {new Date(
-                invoice.subscription?.current_period_start,
-              ).toLocaleDateString()}{" "}
-              -{" "}
-              {new Date(
-                invoice.subscription?.current_period_end,
-              ).toLocaleDateString()}
-            </p>
-            <p className="text-xs text-gray-400 uppercase font-bold mt-3 mb-1">
-              Date Issued
-            </p>
-            <p className="text-sm">
-              {new Date(invoice.created_at).toLocaleDateString()}
-            </p>
+          <div className="text-right space-y-1 opacity-90 text-sm">
+            <p className="font-bold text-base">Owners Inventory LLC</p>
+            <p>support@ownersinventory.com</p>
+            <p>www.ownersinventory.com</p>
           </div>
         </div>
 
-        {midCycleAddons.length > 0 ? null : (
-          <div
-            className={`overflow-y-auto ${addOns.length > 3 ? "max-h-52" : "max-h-48"}`}
-          >
-            <table className="w-full text-left text-sm">
-              <thead className="bg-background border-b">
-                <tr>
-                  <th className="px-4 py-2 font-semibold">Description</th>
-                  <th className="px-4 py-2 font-semibold text-center">Qty</th>
-                  <th className="px-4 py-2 font-semibold text-right">
-                    Unit Price
-                  </th>
-                  <th className="px-4 py-3 font-semibold text-right">
-                    Subtotal
-                  </th>
+        <div className="p-8 pt-12 space-y-8">
+          {/* Invoice Memo + Status */}
+          <div className="flex justify-between items-end border-b pb-6">
+            <div>
+              <p className="text-gray-400 text-sm mb-1">Invoice Memo</p>
+              <h2 className="text-xl font-bold text-gray-800">
+                {user?.first_name
+                  ? `${user.first_name} ${user.last_name || ""}`
+                  : orgName}
+              </h2>
+            </div>
+            <div className="text-right">
+              <div className="flex justify-end mb-2">
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-bold ${
+                    invoice.status === "PAID"
+                      ? "bg-green-100 text-green-600"
+                      : "bg-yellow-100 text-yellow-600"
+                  }`}
+                >
+                  {invoice.status}
+                </span>
+              </div>
+              <p className="text-lg font-mono font-bold text-gray-700">
+                {invoice.invoice_number}
+              </p>
+            </div>
+          </div>
+
+          {/* Line Items Table */}
+          <div className="max-h-fit overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
+            <table className="w-full text-sm">
+              <thead className="sticky top-0 z-10 p-2 rounded-2xl">
+                <tr className="text-text font-medium border-b border-border text-left">
+                  <th className="pb-4 font-semibold">Product</th>
+                  <th className="pb-4 font-semibold text-center">Type</th>
+                  <th className="pb-4 font-semibold text-center">Quantity</th>
+                  <th className="pb-4 font-semibold text-center">Unit Price</th>
+                  <th className="pb-4 font-semibold text-center">Sub-Total</th>
+                  <th className="pb-4 font-semibold text-center">Net Total</th>
+                  <th className="pb-4 font-semibold text-center">Tax</th>
+                  <th className="pb-4 font-semibold text-center">Discount</th>
+                  <th className="pb-4 font-semibold text-center">Amount</th>
                 </tr>
               </thead>
-              <tbody className="divide-y">
-                {/* Base Plan */}
+              <tbody className="divide-y divide-border">
+                {/* Base Plan Row */}
                 <tr>
-                  <td className="px-4 py-2">
-                    <p className="font-medium">
-                      {invoice.metadata?.packageName ||
-                        invoice.subscription?.oiPackage?.package_name ||
-                        "Subscription Plan"}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Base subscription fee
-                    </p>
+                  <td className="py-4 font-medium text-gray-700">
+                    {invoice.metadata?.packageName ||
+                      invoice.subscription?.oiPackage?.package_name ||
+                      "Retail Pro"}
                   </td>
-                  <td className="px-4 py-2 text-center">1</td>
-                  <td className="px-4 py-2 text-right">
-                    {"$"}
-                    {originalBasePlan.toFixed(2)}
+                  <td className="py-4 text-center">
+                    <span className="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full text-[10px] font-bold">
+                      Subscription
+                    </span>
                   </td>
-                  <td className="px-4 py-2 text-right font-medium">
-                    {"$"}
-                    {originalBasePlan.toFixed(2)}
+                  <td className="py-4 text-center">1</td>
+                  <td className="py-4 text-center">
+                    ${originalBasePlan.toFixed(2)}
+                  </td>
+                  <td className="py-4 text-center">
+                    ${originalBasePlan.toFixed(2)}
+                  </td>
+                  <td className="py-4 text-center">
+                    ${originalBasePlan.toFixed(2)}
+                  </td>
+                  <td className="py-4 text-center">$0.00</td>
+                  <td className="py-4 text-center text-gray-400">-</td>
+                  <td className="py-4 text-center font-bold">
+                    ${originalBasePlan.toFixed(2)}
                   </td>
                 </tr>
 
-                {/* Add-ons */}
-                {addOnsWithPricing.map((addon: any, index: number) => {
-                  const addOnName =
-                    addon.name || addon.package_name || "Add-on Module";
-                  const addOnQty =
+                {/* Initial Add-on Rows */}
+                {addOnsWithPricing.map((addon: any, idx: number) => {
+                  const qty =
                     addon.quantity ||
                     addon.no_of_users ||
                     addon.no_of_stores ||
                     1;
                   const price = addon.originalPrice;
-                  const total = price * addOnQty;
+                  const itemTotal = price * qty;
+                  const itemSavings = hasDiscount
+                    ? (itemTotal * discountPercent) / 100
+                    : 0;
+                  const finalAmount = itemTotal - itemSavings;
+
                   return (
-                    <tr key={index}>
-                      <td className="px-4 py-2">
-                        <p className="font-medium">{addOnName}</p>
-                        <p className="text-xs text-gray-500">
-                          Additional module
+                    <tr key={`addon-${idx}`}>
+                      <td className="py-4 font-medium text-gray-700">
+                        {addon.name || addon.package_name || "Module"}
+                      </td>
+                      <td className="py-4 text-center">
+                        <span className="bg-amber-50 text-amber-600 px-3 py-1 rounded-full text-[10px] font-bold">
+                          Add-on
+                        </span>
+                      </td>
+                      <td className="py-4 text-center">{qty}</td>
+                      <td className="py-4 text-center">${price.toFixed(2)}</td>
+                      <td className="py-4 text-center">
+                        ${itemTotal.toFixed(2)}
+                      </td>
+                      <td className="py-4 text-center">
+                        ${itemTotal.toFixed(2)}
+                      </td>
+                      <td className="py-4 text-center">$0.00</td>
+                      <td className="py-4 text-center text-emerald-500 font-bold">
+                        {hasDiscount ? `-$${itemSavings.toFixed(2)}` : "-"}
+                      </td>
+                      <td className="py-4 text-center font-bold">
+                        ${finalAmount.toFixed(2)}
+                      </td>
+                    </tr>
+                  );
+                })}
+
+                {/* Mid-Cycle Add-on Rows */}
+                {midCycleAddons?.map((addon: any, idx: number) => {
+                  const qty = addon.quantity || 1;
+                  const price = parseFloat(addon.price || "0");
+                  const itemTotal = price * qty;
+
+                  return (
+                    <tr key={`mid-cycle-${idx}`}>
+                      <td className="py-4 font-medium text-gray-700">
+                        {addon.name || "Add-on Module"}
+                        <p className="text-xs text-gray-400 font-normal">
+                          Mid-cycle purchase
                         </p>
                       </td>
-                      <td className="px-4 py-4 text-center">{addOnQty}</td>
-                      <td className="px-4 py-4 text-right">
-                        {"$"}
-                        {price.toFixed(2)}
+                      <td className="py-4 text-center">
+                        <span className="bg-purple-50 text-purple-600 px-3 py-1 rounded-full text-[10px] font-bold">
+                          Mid-cycle
+                        </span>
                       </td>
-                      <td className="px-4 py-4 text-right font-medium">
-                        {"$"}
-                        {total.toFixed(2)}
+                      <td className="py-4 text-center">{qty}</td>
+                      <td className="py-4 text-center">${price.toFixed(2)}</td>
+                      <td className="py-4 text-center">
+                        ${itemTotal.toFixed(2)}
+                      </td>
+                      <td className="py-4 text-center">
+                        ${itemTotal.toFixed(2)}
+                      </td>
+                      <td className="py-4 text-center">$0.00</td>
+                      <td className="py-4 text-center text-gray-400">-</td>
+                      <td className="py-4 text-center font-bold">
+                        ${itemTotal.toFixed(2)}
                       </td>
                     </tr>
                   );
@@ -178,145 +227,63 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
               </tbody>
             </table>
           </div>
-        )}
 
-        {/* Mid-Cycle Add-Ons Section — only when present, no base package */}
-        {midCycleAddons?.length > 0 && (
-          <div className="mt-2">
-            <div className="overflow-y-auto max-h-40">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-background border-b">
-                  <tr>
-                    <th className="px-4 py-2 font-semibold">Description</th>
-                    <th className="px-4 py-2 font-semibold text-center">Qty</th>
-                    <th className="px-4 py-2 font-semibold text-right">
-                      Unit Price
-                    </th>
-                    <th className="px-4 py-3 font-semibold text-right">
-                      Subtotal
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {midCycleAddons.map((addon, index) => {
-                    const qty = addon.quantity || 1;
-                    const price = parseFloat(addon.price || "0");
-                    const rowTotal = price * qty;
-                    return (
-                      <tr key={index}>
-                        <td className="px-4 py-2">
-                          <p className="font-medium">
-                            {addon.name || "Add-on Module"}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            Mid-cycle purchase
-                          </p>
-                        </td>
-                        <td className="px-4 py-2 text-center">{qty}</td>
-                        <td className="px-4 py-2 text-right">
-                          ${price.toFixed(2)}
-                        </td>
-                        <td className="px-4 py-2 text-right font-medium">
-                          ${rowTotal.toFixed(2)}
-                        </td>
-                      </tr>
-                    );
+          {/* Summary Section */}
+          <div className="flex justify-between items-start gap-12 bg-background px-4 py-5 rounded-2xl">
+            <div className="space-y-4">
+              <div>
+                <p className="text-text text-xs font-bold uppercase tracking-wider mb-2">
+                  Payment Info
+                </p>
+                <div className="flex items-center gap-2">
+                  <p className="font-bold text-text text-base">
+                    Credit Card, {invoice?.payment.payment_method?.last4}
+                  </p>
+                  <SvgIcon
+                    name={invoice?.payment.payment_method?.brand?.toLowerCase()}
+                    width={25}
+                    height={25}
+                  />
+                </div>
+                <p className="text-text text-sm mt-1">
+                  Billed in{" "}
+                  <span className="font-bold text-primary">
+                    {invoice?.payment.currency}
+                  </span>
+                </p>
+              </div>
+            </div>
+
+            <div className="w-full max-w-xs space-y-3">
+              <div className="flex justify-between text-sm text-text">
+                <span>Subtotal:</span>
+                <span className="font-bold text-text">
+                  ${originalSubtotal.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm text-text">
+                <span>Discounts:</span>
+                <span className="font-bold text-text">
+                  -${savings.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm text-text">
+                <span>Tax:</span>
+                <span className="font-bold text-text">${tax.toFixed(2)}</span>
+              </div>
+              <div className="pt-4 border-t border-border flex justify-between items-end">
+                <span className="text-lg font-bold text-text">Total:</span>
+                <span className="text-3xl font-black text-[#0D9488]">
+                  $
+                  {total.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
                   })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        <div className="flex justify-between items-start p-4 bg-primary/5 rounded-xl border border-primary/10">
-          <div>
-            <p className="text-xs text-primary/60 uppercase font-bold">
-              Status
-            </p>
-            <span
-              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold mt-1 ${
-                invoice.status === "PAID"
-                  ? "bg-green-100 text-green-700"
-                  : invoice.status === "PENDING"
-                    ? "bg-yellow-100 text-yellow-700"
-                    : "bg-red-100 text-red-700"
-              }`}
-            >
-              {invoice.status}
-            </span>
-          </div>
-
-          <div className="space-y-1 text-right">
-            {hasDiscount && (
-              <>
-                <div className="flex justify-between gap-8 text-sm">
-                  <span className="text-gray-500">Sub total</span>
-                  <span className="font-semibold text-text">
-                    {"$"}
-                    {originalSubtotal.toFixed(2)}
-                  </span>
-                </div>
-                <div className="flex justify-between gap-8 text-sm text-green-600">
-                  <span className="text-green-600/80">
-                    Yearly Savings ({discountPercent.toFixed(0)}% Off)
-                  </span>
-                  <span className="font-semibold">
-                    {"-$"}
-                    {savings.toFixed(2)}
-                  </span>
-                </div>
-              </>
-            )}
-            <div className="flex justify-between gap-8 text-sm pt-1">
-              <span className="text-gray-500">Net total</span>
-              <span className="font-semibold text-text">
-                {"$"}
-                {effectiveSubtotal.toFixed(2)}
-              </span>
-            </div>
-            <div className="flex justify-between gap-8 text-sm">
-              <span className="text-gray-500">Tax</span>
-              <span className="font-semibold text-text">
-                {"$"}
-                {tax.toFixed(2)}
-              </span>
-            </div>
-            <div className="pt-2 border-t border-primary/10">
-              <p className="text-xs text-primary/60 uppercase font-bold">
-                Total
-              </p>
-              <p className="text-2xl font-bold text-primary">
-                {"$"}
-                {total.toFixed(2)}
-              </p>
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </Modal.Body>
-
-      <Modal.Footer>
-        <Button variant="basic" onClick={onClose} className="border">
-          Close
-        </Button>
-        <PDFDownloadLink
-          document={
-            <InvoicePDF
-              invoice={invoice}
-              orgName={orgName}
-              user={user}
-              billingCycle={invoice.subscription?.billing_cycle || "MONTHLY"}
-            />
-          }
-          fileName={`invoice-${invoice.invoice_number}.pdf`}
-        >
-          {({ loading }) => (
-            <Button disabled={loading} className="gap-2 bg-primary text-white">
-              <Download size={16} />
-              {loading ? "Preparing..." : "Download"}
-            </Button>
-          )}
-        </PDFDownloadLink>
-      </Modal.Footer>
     </Modal>
   );
 };

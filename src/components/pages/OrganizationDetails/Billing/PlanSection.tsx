@@ -67,7 +67,7 @@ const PlanSection = ({
     "monthly",
   );
 
-  const CARD_WIDTH = 440; // Increased to match larger cards
+  const CARD_WIDTH = 440;
   const GAP = 16;
   const TOTAL_MOVE = CARD_WIDTH + GAP;
   const [maxIndex, setMaxIndex] = React.useState(0);
@@ -84,18 +84,16 @@ const PlanSection = ({
         const aName = a.package_name.toUpperCase();
         const bName = b.package_name.toUpperCase();
 
-        // 👉 Special handling for HYBRID category
         if (activeType === "HYBRID") {
           const getHybridOrder = (name: string) => {
             if (name.includes("BUSINESS")) return 0;
             if (name.includes("ENTERPRISE")) return 1;
-            return 2; // fallback
+            return 2;
           };
 
           return getHybridOrder(aName) - getHybridOrder(bName);
         }
 
-        // 👉 Default sorting
         const aLevel = packageOrder.findIndex((p) => aName.includes(p));
         const bLevel = packageOrder.findIndex((p) => bName.includes(p));
 
@@ -211,11 +209,10 @@ const PlanSection = ({
             <Skeleton width={80} height={24} circle />
           ) : (
             <span
-              className={`px-3 py-1 rounded-full text-xs text-text font-semibold capitalize ${
-                SUBSCRIPTION_STATUS_COLOR[
-                  organization?.subscriptions?.[0]?.status ?? ""
-                ]
-              }`}
+              className={`px-3 py-1 rounded-full text-xs text-text font-semibold capitalize ${SUBSCRIPTION_STATUS_COLOR[
+                organization?.subscriptions?.[0]?.status ?? ""
+              ]
+                }`}
             >
               {organization?.subscriptions?.[0]?.status ?? "No Subscription"}
             </span>
@@ -269,7 +266,6 @@ const PlanSection = ({
 
           <div className="mt-8 flex flex-col gap-6">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-              {/* Plan Type Selector */}
               <div className="flex flex-wrap items-center gap-2 p-1.5 bg-[#EEEDF0]  rounded-2xl w-fit">
                 {typeData.map((type) => {
                   const Icon = type.icon;
@@ -281,11 +277,10 @@ const PlanSection = ({
                         setActiveType(type.id);
                         setCurrentIndex(0);
                       }}
-                      className={`flex items-center gap-2 px-4  cursor-pointer py-2 rounded-xl transition-all duration-200 ${
-                        isActive
-                          ? "bg-primary text-white shadow-md"
-                          : "text-black hover:bg-primary/10"
-                      }`}
+                      className={`flex items-center gap-2 px-4  cursor-pointer py-2 rounded-xl transition-all duration-200 ${isActive
+                        ? "bg-primary text-white shadow-md"
+                        : "text-black hover:bg-primary/10"
+                        }`}
                     >
                       <Icon size={18} />
                       <span className="font-medium">{type.label}</span>
