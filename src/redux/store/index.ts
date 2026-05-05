@@ -1,6 +1,7 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import authReducer from '../slices/auth.slice';
+import checkoutReducer from '../slices/checkout.slice';
 import createWebStorage from 'redux-persist/es/storage/createWebStorage';
 import { persistReducer, persistStore } from 'redux-persist';
 function createNoopStorage() {
@@ -24,12 +25,13 @@ const storageEngine = isServer
 
 
 const rootReducer = combineReducers({
-  auth: authReducer
+  auth: authReducer,
+  checkout: checkoutReducer,
 });
 const persistConfig = {
   key: "root",
   storage: storageEngine,
-  whitelist: ["auth"],
+  whitelist: ["auth", "checkout"],
 };
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
@@ -60,5 +62,7 @@ export const selectUser = (state: RootState) => state.auth.user;
 export const selectIsAuthenticated = (state: RootState) => state.auth.isAuthenticated;
 export const selectIsLoading = (state: RootState) => state.auth.isLoading;
 export const selectAuthError = (state: RootState) => state.auth.error;
+export const selectCheckout = (state: RootState) => state.checkout;
+export const selectSelectedAddons = (state: RootState) => state.checkout.selectedAddons;
 
 

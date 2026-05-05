@@ -33,7 +33,75 @@ export interface InvoiceFinancial {
   addOnsWithPricing: Array<
     AddOn & { originalPrice: number; effectivePrice: number }
   >;
+  midCycleAddons: AddOn[];
 }
+
+/**
+ * Returns true when the invoice is a mid-cycle add-on purchase.
+ * Detected by: midCycleAddons present AND regular addOns is empty
+ * (mid-cycle invoices only carry midCycleAddons — no base plan row).
+ */
+export const isMidCycleInvoice = (invoice: Invoice): boolean => {
+  let metaObj = invoice.metadata as any;
+  if (typeof metaObj === "string" && metaObj !== "") {
+    try {
+      metaObj = JSON.parse(metaObj);
+    } catch {
+      return false;
+    }
+  }
+  const midCycle = parseAddOns(metaObj?.midCycleAddons || []);
+  const regular = parseAddOns(metaObj?.addOns || metaObj?.addons || []);
+  return midCycle.length > 0 && regular.length === 0;
+};
+
+export interface MidCycleAddonFinancial {
+  subtotal: number; // sum of (price × qty) for all mid-cycle addons only
+  tax: number;
+  total: number;
+  discountPercent: 0;
+  hasDiscount: false;
+  midCycleAddons: AddOn[];
+}
+
+/**
+ * Financial calculation for mid-cycle add-on invoices.
+ * Does NOT include the base package price — no discount logic applied.
+ */
+export const calculateMidCycleAddonFinancial = (
+  invoice: Invoice,
+): MidCycleAddonFinancial => {
+  let metaObj = invoice.metadata as any;
+  if (typeof metaObj === "string" && metaObj !== "") {
+    try {
+      metaObj = JSON.parse(metaObj);
+    } catch (e) {
+      logger.error("Failed to parse metadata in mid-cycle financial calc", e);
+    }
+  }
+
+  const midCycleAddons = parseAddOns(metaObj?.midCycleAddons || []);
+
+  const subtotal = midCycleAddons.reduce((sum, addon) => {
+    const price = parseFloat((addon as any).price || "0");
+    const qty = addon.quantity || 1;
+    return sum + price * qty;
+  }, 0);
+
+  const tax = parseFloat(invoice.payment?.tax_amount || "0");
+  const total = parseFloat(
+    invoice.payment?.total || invoice.amount?.toString() || "0",
+  );
+
+  return {
+    subtotal,
+    tax,
+    total,
+    discountPercent: 0,
+    hasDiscount: false,
+    midCycleAddons,
+  };
+};
 
 export const calculateInvoiceFinancial = (
   invoice: Invoice,
@@ -55,6 +123,7 @@ export const calculateInvoiceFinancial = (
   }
 
   const addOns = parseAddOns(metaObj?.addOns || metaObj?.addons || []);
+  const midCycleAddons = parseAddOns(metaObj?.midCycleAddons || []);
 
   // 1. Calculate Add-ons Effective and Original
   let effectiveAddOnsTotal = 0;
@@ -116,5 +185,6 @@ export const calculateInvoiceFinancial = (
     effectiveBasePlan,
     originalBasePlan,
     addOnsWithPricing,
+    midCycleAddons,
   };
 };

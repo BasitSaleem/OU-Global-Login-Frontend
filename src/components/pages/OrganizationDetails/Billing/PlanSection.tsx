@@ -19,6 +19,7 @@ import PlanCard from "@/components/PlanCard";
 import { SUBSCRIPTION_STATUS_COLOR } from "@/utils/ColorClasses";
 import CancelSubscriptionModal from "@/components/modals/CancelSubscriptionModal";
 import { Skeleton } from "@/components/ui/skeleton";
+import BillingCycleToggle from "./BillingCycleToggle";
 
 const typeData = [
   {
@@ -293,38 +294,10 @@ const PlanSection = ({
                 })}
               </div>
 
-              {/* Billing Cycle Toggle */}
-              <div className="flex items-center gap-2 p-1.5 bg-[#EEEDF0] rounded-2xl w-fit">
-                <button
-                  onClick={() => setBillingCycle("monthly")}
-                  className={`px-6 py-2 rounded-xl font-medium transition-all duration-200 cursor-pointer ${
-                    billingCycle === "monthly"
-                      ? "bg-primary text-white shadow-md"
-                      : "text-black hover:bg-primary/10"
-                  }`}
-                >
-                  Monthly
-                </button>
-                <button
-                  onClick={() => setBillingCycle("yearly")}
-                  className={`px-6 py-2 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 cursor-pointer ${
-                    billingCycle === "yearly"
-                      ? "bg-primary text-white shadow-md"
-                      : "text-black hover:bg-primary/10"
-                  }`}
-                >
-                  Yearly
-                  <span
-                    className={`text-[10px] px-2 py-0.5 rounded-full ${
-                      billingCycle === "yearly"
-                        ? "bg-white/20 text-white"
-                        : "bg-primary/10 text-primary"
-                    }`}
-                  >
-                    Save up to 20%
-                  </span>
-                </button>
-              </div>
+              <BillingCycleToggle
+                value={billingCycle}
+                onChange={setBillingCycle}
+              />
             </div>
             <p className="text-gray-500 text-lg">
               {typeData.find((t) => t.id === activeType)?.description}

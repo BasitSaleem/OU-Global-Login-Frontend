@@ -52,6 +52,7 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
     hasDiscount,
     originalBasePlan,
     addOnsWithPricing,
+    midCycleAddons,
   } = calculateInvoiceFinancial(invoice, invoice.subscription?.billing_cycle);
 
   return (
@@ -102,74 +103,130 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
           </div>
         </div>
 
-        <div
-          className={`overflow-y-auto ${addOns.length > 3 ? "max-h-52" : "max-h-48"}`}
-        >
-          <table className="w-full text-left text-sm">
-            <thead className="bg-background border-b">
-              <tr>
-                <th className="px-4 py-2 font-semibold">Description</th>
-                <th className="px-4 py-2 font-semibold text-center">Qty</th>
-                <th className="px-4 py-2 font-semibold text-right">
-                  Unit Price
-                </th>
-                <th className="px-4 py-3 font-semibold text-right">Subtotal</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {/* Base Plan */}
-              <tr>
-                <td className="px-4 py-2">
-                  <p className="font-medium">
-                    {invoice.metadata?.packageName ||
-                      invoice.subscription?.oiPackage?.package_name ||
-                      "Subscription Plan"}
-                  </p>
-                  <p className="text-xs text-gray-500">Base subscription fee</p>
-                </td>
-                <td className="px-4 py-2 text-center">1</td>
-                <td className="px-4 py-2 text-right">
-                  {"$"}
-                  {originalBasePlan.toFixed(2)}
-                </td>
-                <td className="px-4 py-2 text-right font-medium">
-                  {"$"}
-                  {originalBasePlan.toFixed(2)}
-                </td>
-              </tr>
+        {midCycleAddons.length > 0 ? null : (
+          <div
+            className={`overflow-y-auto ${addOns.length > 3 ? "max-h-52" : "max-h-48"}`}
+          >
+            <table className="w-full text-left text-sm">
+              <thead className="bg-background border-b">
+                <tr>
+                  <th className="px-4 py-2 font-semibold">Description</th>
+                  <th className="px-4 py-2 font-semibold text-center">Qty</th>
+                  <th className="px-4 py-2 font-semibold text-right">
+                    Unit Price
+                  </th>
+                  <th className="px-4 py-3 font-semibold text-right">
+                    Subtotal
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {/* Base Plan */}
+                <tr>
+                  <td className="px-4 py-2">
+                    <p className="font-medium">
+                      {invoice.metadata?.packageName ||
+                        invoice.subscription?.oiPackage?.package_name ||
+                        "Subscription Plan"}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Base subscription fee
+                    </p>
+                  </td>
+                  <td className="px-4 py-2 text-center">1</td>
+                  <td className="px-4 py-2 text-right">
+                    {"$"}
+                    {originalBasePlan.toFixed(2)}
+                  </td>
+                  <td className="px-4 py-2 text-right font-medium">
+                    {"$"}
+                    {originalBasePlan.toFixed(2)}
+                  </td>
+                </tr>
 
-              {/* Add-ons */}
-              {addOnsWithPricing.map((addon: any, index: number) => {
-                const addOnName =
-                  addon.name || addon.package_name || "Add-on Module";
-                const addOnQty =
-                  addon.quantity ||
-                  addon.no_of_users ||
-                  addon.no_of_stores ||
-                  1;
-                const price = addon.originalPrice;
-                const total = price * addOnQty;
-                return (
-                  <tr key={index}>
-                    <td className="px-4 py-2">
-                      <p className="font-medium">{addOnName}</p>
-                      <p className="text-xs text-gray-500">Additional module</p>
-                    </td>
-                    <td className="px-4 py-4 text-center">{addOnQty}</td>
-                    <td className="px-4 py-4 text-right">
-                      {"$"}
-                      {price.toFixed(2)}
-                    </td>
-                    <td className="px-4 py-4 text-right font-medium">
-                      {"$"}
-                      {total.toFixed(2)}
-                    </td>
+                {/* Add-ons */}
+                {addOnsWithPricing.map((addon: any, index: number) => {
+                  const addOnName =
+                    addon.name || addon.package_name || "Add-on Module";
+                  const addOnQty =
+                    addon.quantity ||
+                    addon.no_of_users ||
+                    addon.no_of_stores ||
+                    1;
+                  const price = addon.originalPrice;
+                  const total = price * addOnQty;
+                  return (
+                    <tr key={index}>
+                      <td className="px-4 py-2">
+                        <p className="font-medium">{addOnName}</p>
+                        <p className="text-xs text-gray-500">
+                          Additional module
+                        </p>
+                      </td>
+                      <td className="px-4 py-4 text-center">{addOnQty}</td>
+                      <td className="px-4 py-4 text-right">
+                        {"$"}
+                        {price.toFixed(2)}
+                      </td>
+                      <td className="px-4 py-4 text-right font-medium">
+                        {"$"}
+                        {total.toFixed(2)}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Mid-Cycle Add-Ons Section — only when present, no base package */}
+        {midCycleAddons?.length > 0 && (
+          <div className="mt-2">
+            <div className="overflow-y-auto max-h-40">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-background border-b">
+                  <tr>
+                    <th className="px-4 py-2 font-semibold">Description</th>
+                    <th className="px-4 py-2 font-semibold text-center">Qty</th>
+                    <th className="px-4 py-2 font-semibold text-right">
+                      Unit Price
+                    </th>
+                    <th className="px-4 py-3 font-semibold text-right">
+                      Subtotal
+                    </th>
                   </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                </thead>
+                <tbody className="divide-y">
+                  {midCycleAddons.map((addon, index) => {
+                    const qty = addon.quantity || 1;
+                    const price = parseFloat(addon.price || "0");
+                    const rowTotal = price * qty;
+                    return (
+                      <tr key={index}>
+                        <td className="px-4 py-2">
+                          <p className="font-medium">
+                            {addon.name || "Add-on Module"}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            Mid-cycle purchase
+                          </p>
+                        </td>
+                        <td className="px-4 py-2 text-center">{qty}</td>
+                        <td className="px-4 py-2 text-right">
+                          ${price.toFixed(2)}
+                        </td>
+                        <td className="px-4 py-2 text-right font-medium">
+                          ${rowTotal.toFixed(2)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
         <div className="flex justify-between items-start p-4 bg-primary/5 rounded-xl border border-primary/10">
           <div>

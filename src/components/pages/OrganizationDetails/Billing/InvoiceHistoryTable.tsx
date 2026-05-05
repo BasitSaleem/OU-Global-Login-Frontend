@@ -3,12 +3,14 @@
 import React, { useState } from "react";
 
 import OrgInvoiceItem from "./OrgInvoiceItem";
+import OrgMidCycleInvoiceItem from "./OrgMidCycleInvoiceItem";
 import { useGetOrgInvoices } from "@/apiHooks.ts/invoice/inovice.api";
 import InvoiceHistorySkeleton from "./InvoiceHistorySkeleton";
 
 import InvoiceDetailModal from "./InvoiceDetailModal";
 import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
 import { Organization } from "@/apiHooks.ts/organization/organization.types";
+import { isMidCycleInvoice } from "@/utils/invoicesUtils";
 
 const InvoiceHistoryTable = ({ org }: { org: Partial<Organization> }) => {
   const { data, isLoading } = useGetOrgInvoices(org.id);
@@ -92,14 +94,23 @@ const InvoiceHistoryTable = ({ org }: { org: Partial<Organization> }) => {
           </thead>
           <tbody className=" divide-y divide-border">
             {invoices.length > 0 ? (
-              invoices.map((inv, index) => (
-                <OrgInvoiceItem
-                  key={inv.id || index}
-                  invoice={inv}
-                  onView={handleViewInvoice}
-                  orgName={org.name || ""}
-                />
-              ))
+              invoices.map((inv, index) =>
+                isMidCycleInvoice(inv) ? (
+                  <OrgMidCycleInvoiceItem
+                    key={inv.id || index}
+                    invoice={inv}
+                    onView={handleViewInvoice}
+                    orgName={org.name || ""}
+                  />
+                ) : (
+                  <OrgInvoiceItem
+                    key={inv.id || index}
+                    invoice={inv}
+                    onView={handleViewInvoice}
+                    orgName={org.name || ""}
+                  />
+                ),
+              )
             ) : (
               <tr>
                 <td

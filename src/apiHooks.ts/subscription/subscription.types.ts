@@ -16,6 +16,18 @@ export interface UpgradePlanPayload {
   };
 }
 
+export interface BuyAddonPayloadType {
+  orgId: string;
+  subscriptionId: string | null;
+  billingCycle: "MONTHLY" | "YEARLY";
+  addons: { priceId: string; quantity: number }[];
+  country: string;
+  billing_city?: string;
+  billing_state?: string;
+  billing_postal_code?: string;
+  billing_address?: string;
+}
+
 export interface UpgradePlanResponse {
   data: {
     subscription: {
@@ -56,4 +68,40 @@ export interface PaymentType {
   status: string;
   subscription_id: string;
   user_id: string;
+}
+
+export interface previewAddonResponse {
+  statusCode: number;
+  data: previewAddonDataType;
+  message: string;
+  success: boolean;
+}
+
+interface previewAddonDataType {
+  chargeToday: string;
+  renewalTotal: string;
+  renewalDate: string;
+  currency: string;
+  breakdown: BreakdownType[];
+}
+
+interface BreakdownType {
+  description: string;
+  amount: number;
+  period: {
+    end: number;
+    start: number;
+  };
+}
+
+export interface BuyAddonResponse {
+  data: {
+    subscriptionId: string;
+    addons: string[];
+    addonExpiresAt: Date;
+    requiresAction: boolean;
+    clientSecret: string | null;
+    message?: string;
+    success: boolean;
+  };
 }

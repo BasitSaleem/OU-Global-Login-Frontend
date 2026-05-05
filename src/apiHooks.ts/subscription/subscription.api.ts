@@ -2,7 +2,14 @@
 import { request } from "@/utils/requestFunction";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/useToast";
-import { UpgradePlanPayload, UpgradePlanResponse } from "./subscription.types";
+import {
+  BuyAddonPayloadType,
+  BuyAddonResponse,
+  UpgradePlanPayload,
+  UpgradePlanResponse,
+  previewAddonResponse,
+} from "./subscription.types";
+import { useStripe } from "@stripe/react-stripe-js";
 
 //ENDPOINTS
 const ENDPOINTS = {
@@ -11,6 +18,8 @@ const ENDPOINTS = {
   CANCEL_PLAN: `/og/subscription/cancel`,
   TAX: `/og/subscription/tax`,
   TEST_AUTO_SUBSCRIPTION: `/og/subscription/test-auto-renewal`,
+  PREVIEW_ADDON: `/og/subscription/addon/preview`,
+  BUY_ADDON: `/og/subscription/addon/buy`,
 };
 
 interface TaxPayload {
@@ -120,30 +129,6 @@ export const useCancelSubscription = () => {
   });
 };
 
-interface TaxResponse {
-  data: TaxData;
-}
-
-export interface TaxData {
-  breakdown: {
-    amount: number;
-    inclusive: boolean;
-    tax_rate_details: {
-      country: string;
-      flat_amount: string | null;
-      percentage_decimal: string;
-      rate_type: "percentage";
-      state: string;
-      tax_type: "sales_tax";
-    };
-    taxability_reason: string;
-    taxable_amount: number;
-  }[];
-  subtotal: number;
-  tax: number;
-  total: number;
-}
-
 // 3. CANCEL SUBSCRIPTION PLAN
 export const useGetStripeTax = () => {
   return useMutation({
@@ -162,30 +147,102 @@ export const useGetStripeTax = () => {
   });
 };
 
-// 3. CANCEL SUBSCRIPTION PLAN
-export const useTestAutoSubscription = () => {
-  const queryClient = useQueryClient();
+export interface PreviewAddonPayload {
+  orgId: string;
+  addons: { addonId: string; quantity: number }[];
+}
 
+export const usePreviewAddon = () => {
   return useMutation({
-    mutationFn: async (data: { subscriptionId: string; orgId: string }) => {
-      const res = await request<UpgradePlanResponse>(
-        ENDPOINTS.TEST_AUTO_SUBSCRIPTION,
+    mutationFn: async (data: PreviewAddonPayload) => {
+      const res = await request<previewAddonResponse>(
+        ENDPOINTS.PREVIEW_ADDON,
         "POST",
         {},
         data,
       );
       return res.data;
     },
-    onSuccess: (_data, variables) => {
-      // Invalidate relevant queries so the UI reflects the new plan
-      queryClient.invalidateQueries({
-        queryKey: ["organization", variables.orgId],
-      });
-      queryClient.invalidateQueries({ queryKey: ["organizations"] });
-    },
     onError: (error: any) => {
-      const message = (error as Error)?.message || "Failed to cancel plan";
-      toast.error("Cancel failed", message);
+      const message = (error as Error)?.message || "Failed to preview add-on";
+      toast.error("Preview failed", message);
     },
   });
 };
+
+export const useBuyNewAddons = () => {
+  const queryClient = useQueryClient();
+  const stripe = useStripe();
+
+  return useMutation({
+    mutationFn: async (data: BuyAddonPayloadType) => {
+      const res = await request<BuyAddonResponse>(
+        ENDPOINTS.BUY_ADDON,
+        "POST",
+        {},
+        data,
+      );
+
+      return res.data;
+    },
+
+    onSuccess: async (data, variables) => {
+      console.log("🚀 ~ useBuyNewAddons ~ data:", data);
+      try {
+        // 🔥 HANDLE SCA HERE
+        if (data.requiresAction && data.clientSecret) {
+          if (!stripe) {
+            throw new Error("Stripe not initialized");
+          }
+
+          const { error } = await stripe.confirmCardPayment(data.clientSecret);
+
+          if (error) {
+            toast.error("Payment failed", error.message);
+            return;
+          }
+        }
+
+        // ✅ Only invalidate AFTER payment success
+        queryClient.invalidateQueries({
+          queryKey: ["organization", variables.orgId],
+        });
+
+        queryClient.invalidateQueries({ queryKey: ["addons"] });
+
+        toast.success("Add-on purchased successfully");
+      } catch (err: any) {
+        toast.error("Payment error", err.message);
+      }
+    },
+
+    onError: (error: any) => {
+      const message = error?.message || "Failed to buy add-on";
+      toast.error("Buy failed", message);
+    },
+  });
+};
+
+interface TaxResponse {
+  data: TaxData;
+}
+
+export interface TaxData {
+  breakdown: {
+    amount: number;
+    inclusive: boolean;
+    tax_rate_details: {
+      country: string;
+      flat_amount: string | null;
+      percentage_decimal: string;
+      rate_type: string;
+      state: string;
+      tax_type: string;
+    };
+    taxability_reason: string;
+    taxable_amount: number;
+  }[];
+  subtotal: number;
+  tax: number;
+  total: number;
+}

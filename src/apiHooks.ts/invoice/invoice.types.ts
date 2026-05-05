@@ -43,6 +43,7 @@ export interface Invoice {
 
 export interface InvoiceMetadata {
   addOns: AddOn[];
+  midCycleAddons?: AddOn[];
   packageId: string;
   packageName: string;
   customerName?: string;
