@@ -21,7 +21,7 @@ const OrgMidCycleInvoiceItem = ({
   const { user } = useSelector((state: RootState) => state.auth);
 
   const paymentSubtotal = invoice?.payment?.subtotal || invoice.amount || "0";
-  const { subtotal, tax } = calculateMidCycleAddonFinancial(invoice);
+  const { discountPercent, tax } = calculateMidCycleAddonFinancial(invoice);
   return (
     <tr>
       {/* Date */}
@@ -50,7 +50,7 @@ const OrgMidCycleInvoiceItem = ({
         className="px-6 py-4 whitespace-nowrap text-sm cursor-pointer"
         onClick={() => onView(invoice)}
       >
-        0%
+        {discountPercent}%
       </td>
 
       {/* Net Total */}

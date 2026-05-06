@@ -3,9 +3,9 @@ import { Modal } from "@/components/modals/GenericModal";
 import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
-import { parseAddOns, calculateInvoiceFinancial } from "@/utils/invoicesUtils";
+import { calculateInvoiceFinancial } from "@/utils/invoicesUtils";
 import logger from "@/utils/logger";
-import { oiLogoBase64 } from "./logoBase64";
+
 import { SvgIcon } from "@/components/ui/SvgIcon";
 
 interface InvoiceDetailModalProps {
