@@ -110,91 +110,95 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
                   <th className="pb-4 font-semibold text-center">Quantity</th>
                   <th className="pb-4 font-semibold text-center">Unit Price</th>
                   <th className="pb-4 font-semibold text-center">Sub-Total</th>
-                  <th className="pb-4 font-semibold text-center">Net Total</th>
-                  <th className="pb-4 font-semibold text-center">Tax</th>
-                  <th className="pb-4 font-semibold text-center">Discount</th>
+                  {/* <th className="pb-4 font-semibold text-center">Net Total</th> */}
+                  {/* <th className="pb-4 font-semibold text-center">Tax</th> */}
+                  {/* <th className="pb-4 font-semibold text-center">Discount</th> */}
                   <th className="pb-4 font-semibold text-center">Amount</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {/* Base Plan Row */}
-                <tr>
-                  <td className="py-4 font-medium text-gray-700">
-                    {invoice.metadata?.packageName ||
-                      invoice.subscription?.oiPackage?.package_name ||
-                      "Retail Pro"}
-                  </td>
-                  <td className="py-4 text-center">
-                    <span className="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full text-[10px] font-bold">
-                      Subscription
-                    </span>
-                  </td>
-                  <td className="py-4 text-center">1</td>
-                  <td className="py-4 text-center">
-                    ${originalBasePlan.toFixed(2)}
-                  </td>
-                  <td className="py-4 text-center">
-                    ${originalBasePlan.toFixed(2)}
-                  </td>
-                  <td className="py-4 text-center">
-                    ${originalBasePlan.toFixed(2)}
-                  </td>
-                  <td className="py-4 text-center">$0.00</td>
-                  <td className="py-4 text-center text-gray-400">-</td>
-                  <td className="py-4 text-center font-bold">
-                    ${originalBasePlan.toFixed(2)}
-                  </td>
-                </tr>
+                {midCycleAddons.length === 0 && (
+                  <tr>
+                    <td className="py-4 font-medium text-gray-700">
+                      {invoice.metadata?.packageName ||
+                        invoice.subscription?.oiPackage?.package_name ||
+                        "Retail Pro"}
+                    </td>
+                    <td className="py-4 text-center">
+                      <span className="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full text-[10px] font-bold">
+                        Subscription
+                      </span>
+                    </td>
+                    <td className="py-4 text-center">1</td>
+                    <td className="py-4 text-center">
+                      ${originalBasePlan.toFixed(2)}
+                    </td>
+                    <td className="py-4 text-center">
+                      ${originalBasePlan.toFixed(2)}
+                    </td>
+                    {/* <td className="py-4 text-center">
+                      ${originalBasePlan.toFixed(2)}
+                    </td>
+                    <td className="py-4 text-center">$0.00</td>
+                    <td className="py-4 text-center text-gray-400">-</td> */}
+                    <td className="py-4 text-center font-bold">
+                      ${originalBasePlan.toFixed(2)}
+                    </td>
+                  </tr>
+                )}
 
                 {/* Initial Add-on Rows */}
-                {addOnsWithPricing.map((addon: any, idx: number) => {
-                  const qty =
-                    addon.quantity ||
-                    addon.no_of_users ||
-                    addon.no_of_stores ||
-                    1;
-                  const price = addon.originalPrice;
-                  const itemTotal = price * qty;
-                  const itemSavings = hasDiscount
-                    ? (itemTotal * discountPercent) / 100
-                    : 0;
-                  const finalAmount = itemTotal - itemSavings;
+                {midCycleAddons.length === 0 &&
+                  addOnsWithPricing.map((addon: any, idx: number) => {
+                    const qty =
+                      addon.quantity ||
+                      addon.no_of_users ||
+                      addon.no_of_stores ||
+                      1;
+                    const price = addon.originalPrice;
+                    const itemTotal = price * qty;
+                    const itemSavings = hasDiscount
+                      ? (itemTotal * discountPercent) / 100
+                      : 0;
+                    const finalAmount = itemTotal - itemSavings;
 
-                  return (
-                    <tr key={`addon-${idx}`}>
-                      <td className="py-4 font-medium text-gray-700">
-                        {addon.name || addon.package_name || "Module"}
-                      </td>
-                      <td className="py-4 text-center">
-                        <span className="bg-amber-50 text-amber-600 px-3 py-1 rounded-full text-[10px] font-bold">
-                          Add-on
-                        </span>
-                      </td>
-                      <td className="py-4 text-center">{qty}</td>
-                      <td className="py-4 text-center">${price.toFixed(2)}</td>
-                      <td className="py-4 text-center">
-                        ${itemTotal.toFixed(2)}
-                      </td>
-                      <td className="py-4 text-center">
-                        ${itemTotal.toFixed(2)}
-                      </td>
-                      <td className="py-4 text-center">$0.00</td>
-                      <td className="py-4 text-center text-emerald-500 font-bold">
-                        {hasDiscount ? `-$${itemSavings.toFixed(2)}` : "-"}
-                      </td>
-                      <td className="py-4 text-center font-bold">
-                        ${finalAmount.toFixed(2)}
-                      </td>
-                    </tr>
-                  );
-                })}
+                    return (
+                      <tr key={`addon-${idx}`}>
+                        <td className="py-4 font-medium text-gray-700">
+                          {addon.name || addon.package_name || "Module"}
+                        </td>
+                        <td className="py-4 text-center">
+                          <span className="bg-amber-50 text-amber-600 px-3 py-1 rounded-full text-[10px] font-bold">
+                            Add-on
+                          </span>
+                        </td>
+                        <td className="py-4 text-center">{qty}</td>
+                        <td className="py-4 text-center">
+                          ${price.toFixed(2)}
+                        </td>
+                        <td className="py-4 text-center">
+                          ${itemTotal.toFixed(2)}
+                        </td>
+                        {/* <td className="py-4 text-center">
+                          ${itemTotal.toFixed(2)}
+                        </td>
+                        <td className="py-4 text-center">$0.00</td>
+                        <td className="py-4 text-center text-emerald-500 font-bold">
+                          {hasDiscount ? `-$${itemSavings.toFixed(2)}` : "-"}
+                        </td> */}
+                        <td className="py-4 text-center font-bold">
+                          ${finalAmount.toFixed(2)}
+                        </td>
+                      </tr>
+                    );
+                  })}
 
                 {/* Mid-Cycle Add-on Rows */}
                 {midCycleAddons?.map((addon: any, idx: number) => {
                   const qty = addon.quantity || 1;
                   const price = parseFloat(addon.price || "0");
                   const itemTotal = price * qty;
-
                   return (
                     <tr key={`mid-cycle-${idx}`}>
                       <td className="py-4 font-medium text-gray-700">
@@ -213,11 +217,11 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
                       <td className="py-4 text-center">
                         ${itemTotal.toFixed(2)}
                       </td>
-                      <td className="py-4 text-center">
+                      {/* <td className="py-4 text-center">
                         ${itemTotal.toFixed(2)}
                       </td>
                       <td className="py-4 text-center">$0.00</td>
-                      <td className="py-4 text-center text-gray-400">-</td>
+                      <td className="py-4 text-center text-gray-400">-</td> */}
                       <td className="py-4 text-center font-bold">
                         ${itemTotal.toFixed(2)}
                       </td>

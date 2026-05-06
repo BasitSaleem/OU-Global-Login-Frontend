@@ -187,7 +187,6 @@ export const useBuyNewAddons = () => {
     },
 
     onSuccess: async (data, variables) => {
-      console.log("🚀 ~ useBuyNewAddons ~ data:", data);
       try {
         // 🔥 HANDLE SCA HERE
         if (data.requiresAction && data.clientSecret) {
@@ -209,8 +208,6 @@ export const useBuyNewAddons = () => {
         });
 
         queryClient.invalidateQueries({ queryKey: ["addons"] });
-
-        toast.success("Add-on purchased successfully");
       } catch (err: any) {
         toast.error("Payment error", err.message);
       }

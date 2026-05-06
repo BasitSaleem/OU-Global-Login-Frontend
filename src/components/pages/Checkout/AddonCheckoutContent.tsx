@@ -438,7 +438,8 @@ const AddonCheckoutContent = () => {
             isLoadingChargeToday={isLoadingPreview}
             canCheckout={
               !!selectedPaymentMethodId &&
-              Object.keys(selectedAddOns).length > 0
+              Object.keys(selectedAddOns).length > 0 &&
+              !isPreviewError
             }
             onCheckout={handleSubmit(handleCheckout)}
             onManageCards={() => setIsModalOpen(true)}
