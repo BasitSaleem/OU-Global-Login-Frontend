@@ -394,9 +394,9 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
             <Text style={[styles.tableHeaderItem, styles.colQty]}>Quantity</Text>
             <Text style={[styles.tableHeaderItem, styles.colPrice]}>Unit Price</Text>
             <Text style={[styles.tableHeaderItem, styles.colSub]}>Sub-Total</Text>
-            <Text style={[styles.tableHeaderItem, styles.colNet]}>Net Total</Text>
-            <Text style={[styles.tableHeaderItem, styles.colTax]}>Tax</Text>
-            <Text style={[styles.tableHeaderItem, styles.colDiscount]}>Discount</Text>
+            {/* <Text style={[styles.tableHeaderItem, styles.colNet]}>Net Total</Text> */}
+            {/* <Text style={[styles.tableHeaderItem, styles.colTax]}>Tax</Text> */}
+            {/* <Text style={[styles.tableHeaderItem, styles.colDiscount]}>Discount</Text> */}
             <Text style={[styles.tableHeaderItem, styles.colTotal]}>Amount</Text>
           </View>
 
@@ -421,12 +421,12 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
               {"$"}
               {originalBasePlan.toFixed(2)}
             </Text>
-            <Text style={styles.colNet}>
+            {/* <Text style={styles.colNet}>
               {"$"}
               {originalBasePlan.toFixed(2)}
-            </Text>
-            <Text style={styles.colTax}>$0.00</Text>
-            <Text style={styles.colDiscount}>-</Text>
+            </Text> */}
+            {/* <Text style={styles.colTax}>$0.00</Text> */}
+            {/* <Text style={styles.colDiscount}>-</Text> */}
             <Text style={styles.colTotal}>
               {"$"}
               {originalBasePlan.toFixed(2)}

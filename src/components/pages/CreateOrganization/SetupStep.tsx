@@ -6,7 +6,7 @@ import { AvailabilityStatus } from "@/components/AvailabilityStatus";
 import { useGetAllPlans } from "@/apiHooks.ts/plans/plans.api";
 import { PRODUCTS } from "@/constants";
 import { SvgIcon } from "@/components/ui/SvgIcon";
-import { ChevronLeft, ChevronRight, Store, Factory, ShoppingCart, Layers } from "lucide-react";
+import { ChevronLeft, ChevronRight, Store, Factory, ShoppingCart, Layers, ArrowLeft } from "lucide-react";
 import PlanSelectionCard from "./PlanSelectionCard";
 import PlanCardSkeleton from "@/components/PlanCardSkeleton";
 import Link from "next/link";
@@ -116,11 +116,11 @@ export const SetupStep: React.FC<SetupStepProps> = ({
     <div className="space-y-4 ">
       <div className="text-center md:text-left">
         <h2 className="text-xl font-bold text-text mb-2">Setup Your Workspace</h2>
-        <p className="text-text">Configure your domain and choose a plan for each product</p>
+        <p className="text-text-secondary">Configure your domain and choose a plan for each product</p>
       </div>
 
       <div className="space-y-2">
-        <label className="block text-sm font-bold text-text tracking-wider">Selected Products</label>
+        <label className="block text-sm font-bold text-text">Selected Products</label>
         <div className="flex flex-wrap gap-3">
           {PRODUCTS.map((product) => {
             const isSelected = selectedProduct === product.name;
@@ -323,6 +323,7 @@ export const SetupStep: React.FC<SetupStepProps> = ({
           <Button
             variant="secondary"
             onClick={onBack}
+            leftIcon={<ArrowLeft size={16} />}
             className="mr-auto"
           >
             Back

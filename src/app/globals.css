@@ -21,7 +21,8 @@
   --color-bg-secondary: #fff;
   --color-skeleton: #d1d5db;
   --color-black: #131313;
-  --color-text: #6b7280;
+  --color-text: #16151C;
+  --color-text-secondary: #686379;
   --color-red: #e53935;
   --color-text-btn: #ffffff;
   /* --color-hover: #795CF5; */
@@ -72,6 +73,7 @@
   --color-text: #ffffff;
   --color-invert: #ffffff;
   --color-text-btn: #ffffff;
+  --color-text-secondary: #9CA3AF;
   --color-red: #e53935;
   --color-icon: #ffffff;
   --color-gray: #1f2937;
@@ -128,6 +130,7 @@
   --color-btn-text: var(--color-text-btn);
   --color-icon: var(--color-icon);
   --color-gray: var(--color-gray);
+  --color-text-secondary: var(--color-text-secondary);
   /* --color-hover: var(--color-primary-900); */
   --color-google-button: var(--color-google-button);
   --color-card-secondary: var(--color-card-secondary);
