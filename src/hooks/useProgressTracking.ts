@@ -35,8 +35,13 @@ export const useProgressTracking = (
     operationType,
   } = options;
 
+  const callbacksRef = useRef({ onProgress, onComplete, onError, onConnect });
+
+  useEffect(() => {
+    callbacksRef.current = { onProgress, onComplete, onError, onConnect };
+  }, [onProgress, onComplete, onError, onConnect]);
+
   const cleanup = useCallback(() => {
-    // cleanup function is memoized because of the useCallback() so the function reference cannot be changed on every rerender rather it will be on change of change of dependency array change
     if (eventSourceRef.current) {
       eventSourceRef.current.close();
       eventSourceRef.current = null;
@@ -68,39 +73,31 @@ export const useProgressTracking = (
         setIsConnecting(false);
         setError(null);
         reconnectAttemptsRef.current = 0;
-        onConnect?.();
+        callbacksRef.current.onConnect?.();
       };
 
       eventSource.onmessage = (event) => {
         try {
           const data: SSEEvent = JSON.parse(event.data);
           switch (data.type) {
-            case "connected":
-              logger.log("SSE connected:", data.message);
-              break;
-
             case "progress":
               if (data.data) {
                 setProgress(data.data);
-                onProgress?.(data.data);
-
+                callbacksRef.current.onProgress?.(data.data);
                 if (data.data.status === "completed") {
-                  onComplete?.(data.data);
+                  callbacksRef.current.onComplete?.(data.data);
                 } else if (data.data.status === "failed") {
-                  onError?.(data.data.errorMessage || "Job failed");
+                  callbacksRef.current.onError?.(data.data.errorMessage || "Job failed");
                 }
               }
               break;
-
             case "heartbeat":
               break;
-
             case "error":
               logger.error("SSE error event:", data.message);
               setError(data.message || "Unknown error");
-              onError?.(data.message || "Unknown error");
+              callbacksRef.current.onError?.(data.message || "Unknown error");
               break;
-
             default:
               logger.log("Unknown SSE event type:", data.type);
           }
@@ -113,7 +110,6 @@ export const useProgressTracking = (
         logger.error("SSE connection error:", event);
         setIsConnected(false);
         setIsConnecting(false);
-
         const errorMessage = "Connection error occurred";
         setError(errorMessage);
         if (
@@ -135,25 +131,20 @@ export const useProgressTracking = (
             connect();
           }, delay);
         } else {
-          onError?.(errorMessage);
+          callbacksRef.current.onError?.(errorMessage);
         }
       };
     } catch (error) {
       logger.error("Failed to create SSE connection:", error);
       setIsConnecting(false);
       setError("Failed to establish connection");
-      onError?.("Failed to establish connection");
+      callbacksRef.current.onError?.("Failed to establish connection");
     }
   }, [
     url,
-    onProgress,
-    onComplete,
-    onError,
-    onConnect,
     autoReconnect,
     maxReconnectAttempts,
     cleanup,
-    operationType,
   ]);
 
   const disconnect = useCallback(() => {
@@ -176,12 +167,6 @@ export const useProgressTracking = (
 
     return cleanup;
   }, [url, connect, cleanup]);
-
-  useEffect(() => {
-    return () => {
-      cleanup();
-    };
-  }, [cleanup]);
 
   return {
     progress,

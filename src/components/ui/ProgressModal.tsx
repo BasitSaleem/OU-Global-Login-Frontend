@@ -18,7 +18,6 @@ interface ProgressModalProps {
   organizationData: CreateOrganizationResponse | null;
   onClose: () => void;
   onComplete?: () => void;
-  onGoHome?: () => void;
   isFromMain: boolean;
 }
 
@@ -27,14 +26,12 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
   organizationData,
   onClose,
   onComplete,
-  onGoHome,
   isFromMain
 }) => {
   const dispatch = useAppDispatch()
   useScrollLock(isOpen)
   const router = useRouter()
   const handleProgress = useCallback((progress: any) => {
-    logger.log("Progress update:", progress);
   }, []);
 
   const handleComplete = useCallback(

@@ -6,6 +6,7 @@ import { JobProgress } from '@/types/progressTypes';
 import { cn } from '@/utils/cn';
 import { SvgIcon, IconName } from './SvgIcon';
 import { Dots } from './Dots';
+import logger from '@/utils/logger';
 
 interface ProgressTrackerProps {
   progress: JobProgress | null;
@@ -45,7 +46,7 @@ export const ProgressTracker: React.FC<ProgressTrackerProps> = ({
         return '#9ca3af';
     }
   };
-
+  logger.log("Progress --------------------: ", progress)
   return (
     <div className={cn("w-full flex flex-col items-center justify-center py-8", className)}>
 
