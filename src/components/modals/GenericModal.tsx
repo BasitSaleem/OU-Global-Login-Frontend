@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import { X } from 'lucide-react';
-import React, { useEffect } from 'react';
-import { Button } from '../ui';
-import { useScrollLock } from '@/hooks/useScrollLock';
+import { X } from "lucide-react";
+import React, { useEffect } from "react";
+import { Button } from "../ui";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
-type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'xxxl';
+type ModalSize = "sm" | "md" | "lg" | "xl" | "xxl" | "xxxl";
 
 const sizeClasses: Record<ModalSize, string> = {
-  sm: 'w-[360px]',
-  md: 'w-[480px]',
-  lg: 'w-[560px]',
-  xl: 'w-[640px]',
-  xxl: 'w-[820px]',
-  xxxl: 'w-[1000px]',
+  sm: "w-[360px]",
+  md: "w-[480px]",
+  lg: "w-[560px]",
+  xl: "w-[640px]",
+  xxl: "w-[820px]",
+  xxxl: "w-[1000px]",
 };
 
 interface ModalRootProps {
@@ -25,27 +25,29 @@ interface ModalRootProps {
   className?: string;
   children: React.ReactNode;
   ariaLabel?: string; // fallback if no header/title is used
+  closeButtonClassName?: string;
 }
 
 function ModalRoot({
   isOpen,
   onClose,
-  size = 'md',
+  size = "md",
   closeOnOverlay = true,
   showCloseButton = true,
-  className = '',
+  className = "",
   children,
   ariaLabel,
+  closeButtonClassName,
 }: ModalRootProps) {
   useScrollLock(isOpen);
   useEffect(() => {
     if (!isOpen) return;
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === "Escape") onClose();
     };
 
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
@@ -65,11 +67,13 @@ function ModalRoot({
         {showCloseButton && (
           <Button
             onClick={onClose}
-            ariaLabel='Close'
-            variant='basic'
+            ariaLabel="Close"
+            variant="basic"
             className="absolute top-3 right-3 p-1 cursor-pointer"
           >
-            <X className="w-5 h-5 hover:scale-105 hover:text-primary transition-all duration-300" />
+            <X
+              className={`w-5 h-5 hover:scale-105 hover:text-primary transition-all duration-300 ${closeButtonClassName}`}
+            />
           </Button>
         )}
         {children}
@@ -83,20 +87,26 @@ interface SectionProps {
   className?: string;
 }
 
-function Header({ children, className = '' }: SectionProps) {
-  return <div className={`mb-4 flex items-center gap-3 ${className}`}>{children}</div>;
+function Header({ children, className = "" }: SectionProps) {
+  return (
+    <div className={`mb-4 flex items-center gap-3 ${className}`}>
+      {children}
+    </div>
+  );
 }
 
-function Title({ children, className = '' }: SectionProps) {
+function Title({ children, className = "" }: SectionProps) {
   return <h2 className={`text-lg font-semibold ${className}`}>{children}</h2>;
 }
 
-function Body({ children, className = '' }: SectionProps) {
+function Body({ children, className = "" }: SectionProps) {
   return <div className={`text-sm text-text ${className}`}>{children}</div>;
 }
 
-function Footer({ children, className = '' }: SectionProps) {
-  return <div className={`mt-6 flex justify-end gap-2 ${className}`}>{children}</div>;
+function Footer({ children, className = "" }: SectionProps) {
+  return (
+    <div className={`mt-6 flex justify-end gap-2 ${className}`}>{children}</div>
+  );
 }
 
 export const Modal = Object.assign(ModalRoot, {

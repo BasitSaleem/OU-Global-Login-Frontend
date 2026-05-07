@@ -5,6 +5,7 @@ import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 import { calculateMidCycleAddonFinancial } from "@/utils/invoicesUtils";
 import { SvgIcon } from "@/components/ui/SvgIcon";
+import InvoiceModalHeader from "./InvoiceModalHeader";
 
 interface MidCycleInvoiceDetailModalProps {
   isOpen: boolean;
@@ -32,22 +33,11 @@ const MidCycleInvoiceDetailModal: React.FC<MidCycleInvoiceDetailModalProps> = ({
       size="xxl"
       ariaLabel="Mid-Cycle Invoice Details"
       className="h-fit overflow-y-auto text-white"
+      closeButtonClassName="hover:text-white"
     >
       <Modal.Body className="p-0">
         {/* Header */}
-        <div className="bg-[#8B5CF6] -m-6 p-8 text-white flex justify-between items-start">
-          <div>
-            <div className="rounded-full w-fit mb-6">
-              <SvgIcon name="OI-white" height={60} width={60} />
-            </div>
-            <h1 className="text-3xl font-bold">Thanks For your Subscription</h1>
-          </div>
-          <div className="text-right space-y-1 opacity-90 text-sm">
-            <p className="font-bold text-base">Owners Inventory LLC</p>
-            <p>support@ownersinventory.com</p>
-            <p>www.ownersinventory.com</p>
-          </div>
-        </div>
+        <InvoiceModalHeader />
 
         <div className="p-8 pt-12 space-y-8">
           {/* Invoice Memo + Status */}

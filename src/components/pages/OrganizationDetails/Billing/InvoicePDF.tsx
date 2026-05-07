@@ -8,6 +8,7 @@ import {
   View,
   StyleSheet,
   Image,
+  Link,
 } from "@react-pdf/renderer";
 import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
 
@@ -573,17 +574,37 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
         <View style={styles.footer}>
           <Text style={styles.footerText}>
             Need help? Contact us at{" "}
-            <Text style={{ color: "#8B5CF6" }}>
+            <Link
+              href="mailto:support@ownersinventory.com"
+              style={{ color: "#8B5CF6" }}
+            >
               support@ownersinventory.com
-            </Text>
+            </Link>
             {"\n"}© {new Date().getFullYear()}{" "}
             <Text style={{ color: "#4B5563", fontWeight: "bold" }}>
               Owners Inventory
             </Text>{" "}
-            • <Text style={{ color: "#8B5CF6" }}>Privacy Policy</Text> •{" "}
-            <Text style={{ color: "#8B5CF6" }}>Terms and Conditions</Text>
+            •{" "}
+            <Link
+              href="https://ownersinventory.com/privacy-policy"
+              style={{ color: "#8B5CF6" }}
+            >
+              Privacy Policy
+            </Link>{" "}
+            •{" "}
+            <Link
+              href="https://ownersinventory.com/terms-and-conditions"
+              style={{ color: "#8B5CF6" }}
+            >
+              Terms and Conditions
+            </Link>
             {"\n"}
-            4254 Normandy Ct, Fredericksburg, VA 22408, United States
+            <Link
+              href="https://maps.google.com/?q=4254+Normandy+Ct+Fredericksburg+VA+22408"
+              style={{ color: "#8B5CF6" }}
+            >
+              4254 Normandy Ct, Fredericksburg, VA 22408, United States
+            </Link>
           </Text>
         </View>
       </Page>

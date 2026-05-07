@@ -8,6 +8,7 @@ import {
   View,
   StyleSheet,
   Image,
+  Link,
 } from "@react-pdf/renderer";
 import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
 import { User } from "@/types/auth.types";
@@ -270,7 +271,8 @@ const MidCycleInvoicePDF: React.FC<MidCycleInvoicePDFProps> = ({
   user,
 }) => {
   const statusStyle = getStatusStyle(invoice.status);
-  const { subtotal, tax, total, midCycleAddons } = calculateMidCycleAddonFinancial(invoice);
+  const { subtotal, tax, total, midCycleAddons } =
+    calculateMidCycleAddonFinancial(invoice);
 
   return (
     <Document title={`Invoice-${invoice.invoice_number}`}>
@@ -289,7 +291,9 @@ const MidCycleInvoicePDF: React.FC<MidCycleInvoicePDFProps> = ({
             <Text style={styles.invoiceTitle}>INVOICE</Text>
             <View style={styles.invoiceDateRow}>
               <Text style={styles.invoiceDateLabel}>Invoice:</Text>
-              <Text style={styles.invoiceDateValue}>{invoice.invoice_number}</Text>
+              <Text style={styles.invoiceDateValue}>
+                {invoice.invoice_number}
+              </Text>
             </View>
             <View style={styles.invoiceDateRow}>
               <Text style={styles.invoiceDateLabel}>Issue Date:</Text>
@@ -309,18 +313,35 @@ const MidCycleInvoicePDF: React.FC<MidCycleInvoicePDFProps> = ({
         {/* Info Grid */}
         <View style={styles.infoGrid}>
           <View style={[styles.infoCol, styles.billToCol]}>
-            <Text style={[styles.infoText, { fontWeight: "bold" }]}>Bill To:</Text>
-            <Text style={[styles.infoText, { fontWeight: "bold", fontSize: 12, marginTop: 4, marginBottom: 4 }]}>
-              {user?.first_name ? `${user.first_name} ${user.last_name || ""}` : orgName}
+            <Text style={[styles.infoText, { fontWeight: "bold" }]}>
+              Bill To:
+            </Text>
+            <Text
+              style={[
+                styles.infoText,
+                {
+                  fontWeight: "bold",
+                  fontSize: 12,
+                  marginTop: 4,
+                  marginBottom: 4,
+                },
+              ]}
+            >
+              {user?.first_name
+                ? `${user.first_name} ${user.last_name || ""}`
+                : orgName}
             </Text>
             <Text style={styles.infoText}>{user?.email}</Text>
             <Text style={styles.infoText}>{orgName}</Text>
           </View>
 
           <View style={[styles.infoCol, styles.detailsCol]}>
-            <Text style={[styles.infoText, { fontWeight: "bold" }]}>Payment Method</Text>
+            <Text style={[styles.infoText, { fontWeight: "bold" }]}>
+              Payment Method
+            </Text>
             <Text style={styles.infoText}>
-              {invoice?.payment?.payment_method?.brand} •••• {invoice?.payment?.payment_method?.last4}
+              {invoice?.payment?.payment_method?.brand} ••••{" "}
+              {invoice?.payment?.payment_method?.last4}
             </Text>
             <Text style={styles.infoText}>
               Paid on {new Date(invoice.created_at).toLocaleDateString()}
@@ -331,12 +352,22 @@ const MidCycleInvoicePDF: React.FC<MidCycleInvoicePDFProps> = ({
         {/* Table */}
         <View style={styles.table}>
           <View style={styles.tableHeader}>
-            <Text style={[styles.tableHeaderItem, styles.colDesc]}>Product</Text>
+            <Text style={[styles.tableHeaderItem, styles.colDesc]}>
+              Product
+            </Text>
             <Text style={[styles.tableHeaderItem, styles.colType]}>Type</Text>
-            <Text style={[styles.tableHeaderItem, styles.colQty]}>Quantity</Text>
-            <Text style={[styles.tableHeaderItem, styles.colPrice]}>Unit Price</Text>
-            <Text style={[styles.tableHeaderItem, styles.colSub]}>Sub-Total</Text>
-            <Text style={[styles.tableHeaderItem, styles.colTotal]}>Amount</Text>
+            <Text style={[styles.tableHeaderItem, styles.colQty]}>
+              Quantity
+            </Text>
+            <Text style={[styles.tableHeaderItem, styles.colPrice]}>
+              Unit Price
+            </Text>
+            <Text style={[styles.tableHeaderItem, styles.colSub]}>
+              Sub-Total
+            </Text>
+            <Text style={[styles.tableHeaderItem, styles.colTotal]}>
+              Amount
+            </Text>
           </View>
 
           {midCycleAddons.map((addon, index) => {
@@ -346,7 +377,9 @@ const MidCycleInvoicePDF: React.FC<MidCycleInvoicePDFProps> = ({
             return (
               <View style={styles.tableRow} key={index}>
                 <View style={styles.colDesc}>
-                  <Text style={styles.itemTitle}>{addon.name || "Add-on Module"}</Text>
+                  <Text style={styles.itemTitle}>
+                    {addon.name || "Add-on Module"}
+                  </Text>
                 </View>
                 <View style={styles.colType}>
                   <Text style={styles.itemSub}>Mid-cycle</Text>
@@ -382,15 +415,47 @@ const MidCycleInvoicePDF: React.FC<MidCycleInvoicePDFProps> = ({
         <View style={styles.notes}>
           <Text style={styles.notesTitle}>Notes:</Text>
           <Text style={styles.notesText}>
-            This invoice is for a mid-cycle add-on purchase. Prorated charges have been applied for the remainder of your current billing period. These add-ons will be included in your next regular subscription renewal.
+            This invoice is for a mid-cycle add-on purchase. Prorated charges
+            have been applied for the remainder of your current billing period.
+            These add-ons will be included in your next regular subscription
+            renewal.
           </Text>
         </View>
 
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            Need help? Contact us at <Text style={{ color: "#8B5CF6" }}>support@ownersinventory.com</Text>{"\n"}
-            © {new Date().getFullYear()} Owners Inventory LLC • Privacy Policy • Terms and Conditions{"\n"}
-            4254 Normandy Ct, Fredericksburg, VA 22408, United States
+            Need help? Contact us at{" "}
+            <Link
+              href="mailto:support@ownersinventory.com"
+              style={{ color: "#8B5CF6" }}
+            >
+              support@ownersinventory.com
+            </Link>
+            {"\n"}© {new Date().getFullYear()}{" "}
+            <Text style={{ color: "#4B5563", fontWeight: "bold" }}>
+              Owners Inventory
+            </Text>{" "}
+            •{" "}
+            <Link
+              href="https://ownersinventory.com/privacy-policy"
+              style={{ color: "#8B5CF6" }}
+            >
+              Privacy Policy
+            </Link>{" "}
+            •{" "}
+            <Link
+              href="https://ownersinventory.com/terms-and-conditions"
+              style={{ color: "#8B5CF6" }}
+            >
+              Terms and Conditions
+            </Link>
+            {"\n"}
+            <Link
+              href="https://maps.google.com/?q=4254+Normandy+Ct+Fredericksburg+VA+22408"
+              style={{ color: "#8B5CF6" }}
+            >
+              4254 Normandy Ct, Fredericksburg, VA 22408, United States
+            </Link>
           </Text>
         </View>
       </Page>
