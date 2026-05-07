@@ -14,9 +14,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { toast } from "@/hooks/useToast";
 import ProgressModal from "@/components/ui/ProgressModal";
-import { Loader } from "@/components/ui";
+import { Loader, Button } from "@/components/ui";
 import logger from "@/utils/logger";
 import { AnimatePresence, motion } from "framer-motion";
+import { LogOut } from "lucide-react";
+import { useLogout } from "@/apiHooks.ts/auth/auth.api";
+import { clearAuth } from "@/redux/slices/auth.slice";
+import { useAppDispatch } from "@/redux/store";
 import { StepIndicator } from "@/components/pages/CreateOrganization/StepIndicator";
 import { OrganizationStep } from "@/components/pages/CreateOrganization/OrganizationStep";
 import { SetupStep } from "@/components/pages/CreateOrganization/SetupStep";
@@ -103,7 +107,21 @@ function CreateOrgContent({
     useGenerateSubdomainSuggestions(!isNameDebouncing ? debouncedCompanyName : "");
 
   const { mutate: createOrgMutation, isPending: creatingOrg } = useCreateOrganization();
+  const { mutate: logout, isPending: loggingOut } = useLogout();
+  const dispatch = useAppDispatch();
   const router = useRouter();
+
+  const handleLogout = () => {
+    logout(undefined, {
+      onSuccess: () => {
+        dispatch(clearAuth());
+        router.push("/login");
+      },
+      onError: (error) => {
+        logger.error("Logout failed:", error);
+      },
+    });
+  };
 
   const shouldCheckAvailability =
     selectedProduct === "OI" && debouncedSubDomain && !isSuggestionSubdomain;
@@ -212,9 +230,21 @@ function CreateOrgContent({
 
   return (
     <AuthGuard>
-      <CreateOrganizationGuard>
-        {creatingOrg && <Loader text="Initializing organization creation" />}
+      <>
+        <Button
+          onClick={handleLogout}
+          disabled={loggingOut}
+          className="fixed  right-4 top-4 p-5 bg-red-500 rounded-full border border-border text-white"
+          leftIcon={<LogOut size={16}
+
+
+          />}
+        >
+          Log out
+        </Button>
+        {(creatingOrg || loggingOut) && <Loader text={loggingOut ? "Logging out" : "Initializing organization creation"} />}
         <div className="min-h-48 w-full bg-background flex flex-col items-center py-12 px-4 ">
+
           <div className="w-full max-w-4xl bg-bg-secondary rounded-2xl border border-border  relative">
             {!queryPkgId && <StepIndicator steps={steps} currentStep={currentStep > 2 ? 2 : currentStep} />}
             <AnimatePresence mode="wait" custom={direction}>
@@ -292,7 +322,7 @@ function CreateOrgContent({
           }}
           isFromMain={true}
         />
-      </CreateOrganizationGuard>
+      </>
     </AuthGuard>
   );
 }

@@ -55,8 +55,8 @@ export const AvailabilityStatus: React.FC<AvailabilityStatusProps> = ({
                 {companyName ? <div className="flex items-center gap-2 mt-2 text-sm text-red-600">
                     <XCircle className="w-4 h-4" />
                     <span>{fieldName} is already taken</span>
-                </div> : <div className="flex items-center gap-2 mt-2 text-sm text-red-600">
-                    <span>This site is already taken. <span className="text-gray-500">Try another one or choose from <br /> the suggestions below.</span></span>
+                </div> : <div className="flex items-center gap-2 mt-1 text-sm text-red-600">
+                    <span>This subdomain is already taken. <span className="text-gray-500">Try another one or choose from <br /> the suggestions above.</span></span>
                 </div>}
             </>
         );

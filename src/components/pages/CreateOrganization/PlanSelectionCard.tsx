@@ -67,18 +67,23 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
         </p>
 
         <div className="mt-auto space-y-6">
-          <div className="flex items-baseline gap-1">
-            <span
-              className={`text-4xl font-bold ${isBasic ? "text-[#1AD1B9]" : isPro ? "text-[#38ACCC]" : isEnterprise ? "text-[#5588DF]" : "text-[#1AD1B9]"
-                }`}
-            >
-              $
-              {billingCycle === "monthly"
-                ? Number(plan.monthly_price).toFixed(0)
-                : (Number(plan.discounted_yearly_price) / 12).toFixed(0) ||
-                Number(plan.yearly_price).toFixed(0)}
-            </span>
-            <span className="text-gray-400 text-lg font-medium">/month</span>
+          <div>
+            <div className="flex items-baseline gap-1">
+              <span
+                className={`text-4xl font-bold ${isBasic ? "text-[#1AD1B9]" : isPro ? "text-[#38ACCC]" : isEnterprise ? "text-[#5588DF]" : "text-[#1AD1B9]"
+                  }`}
+              >
+                $
+                {billingCycle === "monthly"
+                  ? Number(plan.monthly_price).toFixed(0)
+                  : (Number(plan.discounted_yearly_price) / 12).toFixed(0) ||
+                  Number(plan.yearly_price).toFixed(0)}
+              </span>
+              <span className="text-gray-400 text-lg font-medium">/month</span>
+            </div>
+            {billingCycle === "yearly" && (
+              <div className="text-gray-400 text-xs mt-1">Billed yearly</div>
+            )}
           </div>
 
           <div className="text-text font-bold">
@@ -96,7 +101,7 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
       className={`relative w-full flex flex-col p-4 rounded-[32px] border-2 transition-all duration-300 cursor-pointer ${isSelected
         ? "bg-[#F8F7FF] border-[#B2A5FF]"
         : isPro
-          ? "bg-white border-transparent"
+          ? "zbg-white border-transparent"
           : "bg-white border-gray-100"
         }`}
       style={
@@ -124,18 +129,23 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
           <SvgIcon name="check2" width={20} height={20} className="text-[#7C3AED]" />
         </div>
 
-        <div className="flex items-baseline gap-1">
-          <span
-            className={`text-4xl font-bold ${isBasic ? "text-[#1AD1B9]" : isPro ? "text-[#38ACCC]" : isEnterprise ? "text-[#5588DF]" : "text-[#1AD1B9]"
-              }`}
-          >
-            $
-            {billingCycle === "monthly"
-              ? Number(plan.monthly_price).toFixed(0)
-              : (Number(plan.discounted_yearly_price) / 12).toFixed(0) ||
-              Number(plan.yearly_price).toFixed(0)}
-          </span>
-          <span className="text-gray-400 text-sm font-medium">/month</span>
+        <div className="flex flex-col items-end">
+          <div className="flex items-baseline gap-1">
+            <span
+              className={`text-4xl font-bold ${isBasic ? "text-[#1AD1B9]" : isPro ? "text-[#38ACCC]" : isEnterprise ? "text-[#5588DF]" : "text-[#1AD1B9]"
+                }`}
+            >
+              $
+              {billingCycle === "monthly"
+                ? Number(plan.monthly_price).toFixed(0)
+                : (Number(plan.discounted_yearly_price) / 12).toFixed(0) ||
+                Number(plan.yearly_price).toFixed(0)}
+            </span>
+            <span className="text-gray-400 text-sm font-medium">/month</span>
+          </div>
+          {billingCycle === "yearly" && (
+            <span className="text-gray-400 text-xs">Billed yearly</span>
+          )}
         </div>
       </div>
 
