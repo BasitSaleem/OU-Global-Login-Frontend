@@ -93,7 +93,7 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`relative w-full flex flex-col p-6 rounded-[32px] border-2 transition-all duration-300 cursor-pointer ${isSelected
+      className={`relative w-full flex flex-col p-4 rounded-[32px] border-2 transition-all duration-300 cursor-pointer ${isSelected
         ? "bg-[#F8F7FF] border-[#B2A5FF]"
         : isPro
           ? "bg-white border-transparent"
@@ -116,7 +116,7 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
         </div>
       )}
 
-      <div className="flex justify-between items-start mb-2">
+      <div className="flex justify-between items-start">
         <div className="flex items-center gap-2">
           <h3 className="text-xl font-bold text-text">
             {plan.package_name?.split(' ')[1]}
@@ -139,7 +139,7 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
         </div>
       </div>
 
-      <p className="text-text text-sm mb-6 leading-tight max-w-[80%]">
+      <p className="text-text text-sm mb-3 leading-tight max-w-[80%]">
         {isPro
           ? "Ideal for growing businesses"
           : isBasic
