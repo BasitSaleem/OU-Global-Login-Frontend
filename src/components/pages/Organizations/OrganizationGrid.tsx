@@ -33,7 +33,9 @@ export default function OrganizationGrid({
   }: {
     isAddNew?: boolean;
   }) => (
-    <div className={`bg-bg-secondary p-3 py-6 rounded-xl border border-border ${isAddNew ? "border-dashed" : ""}`}>
+    <div
+      className={`bg-bg-secondary p-3 py-6 rounded-xl border border-border ${isAddNew ? "border-dashed" : ""}`}
+    >
       {isAddNew ? (
         <div className="flex items-center justify-center w-full h-full">
           <div className="flex flex-col items-center justify-center ">
@@ -54,7 +56,6 @@ export default function OrganizationGrid({
           <div className="mt-5 -mb-3">
             <Skeleton width="100%" height="26px" />
           </div>
-
         </>
       )}
     </div>
@@ -102,7 +103,9 @@ export default function OrganizationGrid({
           <h1 className="text-heading-1 font-bold text-black">
             {loading ? (
               <Skeleton width="200px" height="24px" circle />
-            ) : "Your Organizations"}
+            ) : (
+              "Your Organizations"
+            )}
           </h1>
           {loading ? (
             <Skeleton width="24px" height="24px" circle />
@@ -133,14 +136,18 @@ export default function OrganizationGrid({
             {organizations?.map((org) => (
               <Tooltip
                 key={org?.id}
-                content={org?.isAddNew ? "Create new organization" : org?.name}
+                content={org?.isAddNew ? "" : org?.name}
                 position="top"
                 wrapperClassName="w-full"
               >
                 <div
-                  className={`relative group h-30 w-full ${org?.isAddNew ? "" : "bg-bg-secondary border border-border rounded-xl"
-                    }  ${org?.isAddNew ? "" : "p-3"
-                    } hover:shadow-sm transition-shadow cursor-pointer rounded-xl`}
+                  className={`relative group h-30 w-full ${
+                    org?.isAddNew
+                      ? ""
+                      : "bg-bg-secondary border border-border rounded-xl"
+                  }  ${
+                    org?.isAddNew ? "" : "p-3"
+                  } hover:shadow-sm transition-shadow cursor-pointer rounded-xl`}
                 >
                   {org?.isAddNew ? (
                     <div
@@ -150,9 +157,7 @@ export default function OrganizationGrid({
                       <div className="text-primary">
                         <Plus size={50} />
                       </div>
-                      <span className=" text-primary font-bold">
-                        Add New
-                      </span>
+                      <span className=" text-primary font-bold">Add New</span>
                     </div>
                   ) : (
                     <OrganizationGridComponent

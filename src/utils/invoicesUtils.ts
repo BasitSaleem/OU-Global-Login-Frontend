@@ -36,11 +36,6 @@ export interface InvoiceFinancial {
   midCycleAddons: AddOn[];
 }
 
-/**
- * Returns true when the invoice is a mid-cycle add-on purchase.
- * Detected by: midCycleAddons present AND regular addOns is empty
- * (mid-cycle invoices only carry midCycleAddons — no base plan row).
- */
 export const isMidCycleInvoice = (invoice: Invoice): boolean => {
   let metaObj = invoice.metadata as any;
   if (typeof metaObj === "string" && metaObj !== "") {
@@ -59,15 +54,11 @@ export interface MidCycleAddonFinancial {
   subtotal: number; // sum of (price × qty) for all mid-cycle addons only
   tax: number;
   total: number;
-  discountPercent: 0;
-  hasDiscount: false;
+  discountPercent: number;
+  hasDiscount: boolean;
   midCycleAddons: AddOn[];
 }
 
-/**
- * Financial calculation for mid-cycle add-on invoices.
- * Does NOT include the base package price — no discount logic applied.
- */
 export const calculateMidCycleAddonFinancial = (
   invoice: Invoice,
 ): MidCycleAddonFinancial => {
@@ -82,23 +73,26 @@ export const calculateMidCycleAddonFinancial = (
 
   const midCycleAddons = parseAddOns(metaObj?.midCycleAddons || []);
 
-  const subtotal = midCycleAddons.reduce((sum, addon) => {
-    const price = parseFloat((addon as any).price || "0");
-    const qty = addon.quantity || 1;
-    return sum + price * qty;
-  }, 0);
+  const subtotal = parseFloat(
+    String(invoice?.payment?.subtotal || invoice.amount || 0),
+  );
 
   const tax = parseFloat(invoice.payment?.tax_amount || "0");
   const total = parseFloat(
     invoice.payment?.total || invoice.amount?.toString() || "0",
   );
 
+  const discountPercent =
+    invoice.subscription?.billing_cycle === "YEARLY"
+      ? parseFloat(invoice.subscription?.oiPackage?.yearly_discount || "0")
+      : parseFloat("0");
+
   return {
     subtotal,
     tax,
     total,
-    discountPercent: 0,
-    hasDiscount: false,
+    discountPercent: discountPercent,
+    hasDiscount: discountPercent > 0 ? true : false,
     midCycleAddons,
   };
 };

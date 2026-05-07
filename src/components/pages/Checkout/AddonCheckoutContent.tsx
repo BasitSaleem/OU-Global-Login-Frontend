@@ -10,8 +10,8 @@ import { useOrganizationDetails } from "@/apiHooks.ts/organization/organization.
 import {
   useBuyNewAddons,
   useGetStripeTax,
-  usePreviewAddon,
 } from "@/apiHooks.ts/subscription/subscription.api";
+import { previewAddonDataType } from "@/apiHooks.ts/subscription/subscription.types";
 import { useGetBillingInfo } from "@/apiHooks.ts/billing/billing.api";
 import { useGetAllAddons } from "@/apiHooks.ts/addons/addons.api";
 import { PaymentMethod } from "@/apiHooks.ts/paymentMethod/paymentMethod.types";
@@ -20,6 +20,7 @@ import {
   AddOnsSection,
   PaymentMethodSelector,
   InvoiceCountry,
+  ProrationPreview,
 } from "@/components/pages/Checkout";
 import AddOnsOrderSummary from "@/components/pages/Checkout/AddOnsOrderSummary";
 import { CheckoutFormValues } from "@/components/pages/Checkout/InvoiceCountry";
@@ -58,6 +59,13 @@ const AddonCheckoutContent = () => {
   >(null);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [highlightBilling, setHighlightBilling] = useState(false);
+
+  const [previewData, setPreviewData] = useState<previewAddonDataType | null>(
+    null,
+  );
+  const [isLoadingPreview, setIsLoadingPreview] = useState(false);
+  const [isPreviewError, setIsPreviewError] = useState(false);
 
   // ── Data fetching ──────────────────────────────────────────────────────
   const { data: addonsData, isPending: loadingAddons } = useGetAllAddons();
@@ -73,43 +81,34 @@ const AddonCheckoutContent = () => {
   const subscriptionId = currentSubscription?.id ?? null;
 
   const availableAddOns = useMemo<AddOnType[]>(() => {
-    return addonsData?.addons ?? [];
-  }, [addonsData?.addons]);
+    const addons = addonsData?.addons ?? [];
+    return [...addons].sort((a, b) => {
+      const aSelected = selectedAddOns[a.id] ? 1 : 0;
+      const bSelected = selectedAddOns[b.id] ? 1 : 0;
+
+      if (aSelected !== bSelected) {
+        return bSelected - aSelected;
+      }
+      return a.name.localeCompare(b.name);
+    });
+  }, [addonsData?.addons, selectedAddOns]);
 
   const paymentMethods: PaymentMethod[] =
     paymentMethodsData?.paymentMethods || [];
 
-  // ── Preview add-on proration ───────────────────────────────────────────
-  const {
-    mutate: previewAddon,
-    data: previewData,
-    isPending: isLoadingPreview,
-    isError: isPreviewError,
-    error: previewError,
-    reset: resetPreview,
-  } = usePreviewAddon();
-
-  // Build the addons array for preview payload (use DB ids)
-  const previewPayload = useMemo(
-    () =>
-      Object.entries(selectedAddOns).map(([addonId, quantity]) => ({
-        addonId,
-        quantity,
-      })),
-    [selectedAddOns],
+  // ── Proration Preview Update Handler ──────────────────────────────────
+  const handlePreviewUpdate = useCallback(
+    (
+      data: previewAddonDataType | null,
+      loading: boolean,
+      isError: boolean,
+    ) => {
+      setPreviewData(data);
+      setIsLoadingPreview(loading);
+      setIsPreviewError(isError);
+    },
+    [],
   );
-
-  // Debounced preview call whenever selectedAddOns changes
-  useEffect(() => {
-    if (previewPayload.length === 0) {
-      resetPreview();
-      return;
-    }
-    const timer = setTimeout(() => {
-      previewAddon({ orgId, addons: previewPayload });
-    }, 600);
-    return () => clearTimeout(timer);
-  }, [previewPayload, orgId, previewAddon, resetPreview]);
 
   // ── Tax mutation ───────────────────────────────────────────────────────
   const {
@@ -281,9 +280,12 @@ const AddonCheckoutContent = () => {
   };
 
   const handleScrollToBillingInfo = () => {
-    document
-      .getElementById("billing-info-section")
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const element = document.getElementById("billing-info-section");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+      setHighlightBilling(true);
+      setTimeout(() => setHighlightBilling(false), 2000);
+    }
   };
 
   // ── Loading skeleton ───────────────────────────────────────────────────
@@ -318,93 +320,19 @@ const AddonCheckoutContent = () => {
           />
 
           {/* ── Add-on preview proration panel ───────────────────── */}
-          {Object.keys(selectedAddOns).length > 0 && (
-            <div className="bg-bg-secondary border rounded-xl p-6">
-              <h3 className="text-base font-semibold mb-4 flex items-center gap-2">
-                <Receipt className="w-4 h-4 text-primary" />
-                {/* Proration Preview */}
-                Current & Upcoming Charges
-              </h3>
-
-              {isLoadingPreview && (
-                <div className="flex items-center gap-3 text-sm text-text py-4 justify-center">
-                  <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                  Calculating prorated charges…
-                </div>
-              )}
-
-              {isPreviewError && !isLoadingPreview && (
-                <div className="flex items-start gap-3 text-sm text-red-500 bg-red-50 dark:bg-red-950/20 rounded-lg p-4">
-                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-medium">Preview unavailable</p>
-                    <p className="text-xs mt-0.5 text-red-400">
-                      {(previewError as Error)?.message ||
-                        "Could not calculate proration. You can still proceed to checkout."}
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {!isLoadingPreview && !isPreviewError && previewData && (
-                <div className="space-y-4">
-                  {/* Charge today */}
-                  <div className="flex items-center justify-between p-4 bg-primary/5 rounded-lg border border-primary/10">
-                    <div className="flex items-center gap-2 text-sm">
-                      <Zap className="w-4 h-4 text-primary" />
-                      <span className="font-medium">Charged today</span>
-                      <span className="text-xs text-text">(prorated)</span>
-                    </div>
-                    <span className="text-lg font-bold text-primary">
-                      {/* {previewData.currency?.toUpperCase() ?? "USD"} */}$
-                      {parseFloat(previewData.chargeToday).toFixed(2)}
-                    </span>
-                  </div>
-
-                  {/* Renewal total */}
-                  <div className="flex items-center justify-between p-4 bg-bg-secondary rounded-lg border">
-                    <div className="flex items-center gap-2 text-sm">
-                      <CalendarDays className="w-4 h-4 text-text" />
-                      <span className="font-medium">Next renewal</span>
-                      {previewData.renewalDate && (
-                        <span className="text-xs text-text">
-                          (
-                          {new Date(previewData.renewalDate).toLocaleDateString(
-                            "en-US",
-                            {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                            },
-                          )}
-                          )
-                        </span>
-                      )}
-                    </div>
-                    <span className="text-sm font-semibold">
-                      {/* {previewData.currency?.toUpperCase() ?? "USD"} */}$
-                      {parseFloat(previewData.renewalTotal).toFixed(2)}
-                    </span>
-                  </div>
-
-                  {/* Breakdown rows */}
-                  {/* {previewData.breakdown?.length > 0 && (
-                    <AddonLineItem previewData={previewData} />
-                  )} */}
-                </div>
-              )}
-
-              {/* Placeholder when no data yet (initial / reset) */}
-              {!isLoadingPreview && !isPreviewError && !previewData && (
-                <p className="text-sm text-text text-center py-4">
-                  Select add-ons above to see the prorated charge.
-                </p>
-              )}
-            </div>
-          )}
+          <ProrationPreview
+            orgId={orgId}
+            selectedAddOns={selectedAddOns}
+            onPreviewUpdate={handlePreviewUpdate}
+          />
 
           {/* Billing info */}
-          <div id="billing-info-section" className="scroll-mt-24">
+          <div
+            id="billing-info-section"
+            className={`scroll-mt-24 transition-all duration-500 ${
+              highlightBilling ? "ring-2 ring-red-500 rounded-xl" : ""
+            }`}
+          >
             <InvoiceCountry
               control={control}
               register={register}
@@ -438,7 +366,8 @@ const AddonCheckoutContent = () => {
             isLoadingChargeToday={isLoadingPreview}
             canCheckout={
               !!selectedPaymentMethodId &&
-              Object.keys(selectedAddOns).length > 0
+              Object.keys(selectedAddOns).length > 0 &&
+              !isPreviewError
             }
             onCheckout={handleSubmit(handleCheckout)}
             onManageCards={() => setIsModalOpen(true)}

@@ -86,9 +86,10 @@ const RenewalSection = ({
             <div className="flex flex-col items-center md:items-start text-center md:text-left">
               <h1 className="text-text font-bold mb-1">Next Billing Date</h1>
               <p className="text-body-small">
-                {subscriptions !== undefined &&
-                (subscriptions?.[0]?.status === "TRIAL" ||
-                  subscriptions?.[0]?.status === "CANCELLED")
+                {(subscriptions !== undefined &&
+                  (subscriptions?.[0]?.status === "TRIAL" ||
+                    subscriptions?.[0]?.status === "CANCELLED")) ||
+                subscriptions?.[0]?.cancel_at_period_end === true
                   ? "--"
                   : formatDate(subscriptions?.[0]?.current_period_end!)}
               </p>
@@ -99,7 +100,10 @@ const RenewalSection = ({
                 {subscriptions?.[0]?.status === "TRIAL" ||
                 subscriptions?.[0]?.status === "CANCELLED"
                   ? "--"
-                  : (subscriptions?.[0]?.payments?.[0]?.amount ?? "0") + ".00"}
+                  : `$` +
+                    Number(
+                      subscriptions?.[0]?.payments?.[0]?.amount ?? 0,
+                    ).toFixed(2)}
               </p>
             </div>
           </div>

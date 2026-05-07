@@ -1,7 +1,7 @@
 import { Download, Eye, Loader2 } from "lucide-react";
 import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
 import { PDFDownloadLink } from "@react-pdf/renderer";
-import InvoicePDF from "./InvoicePDF";
+import MidCycleInvoicePDF from "./MidCycleInvoicePDF";
 import { Button } from "@/components/ui";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
@@ -21,7 +21,7 @@ const OrgMidCycleInvoiceItem = ({
   const { user } = useSelector((state: RootState) => state.auth);
 
   const paymentSubtotal = invoice?.payment?.subtotal || invoice.amount || "0";
-  const { subtotal, tax } = calculateMidCycleAddonFinancial(invoice);
+  const { discountPercent, tax } = calculateMidCycleAddonFinancial(invoice);
   return (
     <tr>
       {/* Date */}
@@ -50,7 +50,7 @@ const OrgMidCycleInvoiceItem = ({
         className="px-6 py-4 whitespace-nowrap text-sm cursor-pointer"
         onClick={() => onView(invoice)}
       >
-        0%
+        {discountPercent}%
       </td>
 
       {/* Net Total */}
@@ -95,11 +95,10 @@ const OrgMidCycleInvoiceItem = ({
 
         <PDFDownloadLink
           document={
-            <InvoicePDF
+            <MidCycleInvoicePDF
               invoice={invoice}
               orgName={orgName}
               user={user}
-              billingCycle={invoice?.subscription?.billing_cycle || "MONTHLY"}
             />
           }
           fileName={`invoice-${invoice.invoice_number}.pdf`}

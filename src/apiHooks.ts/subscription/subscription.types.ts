@@ -81,7 +81,7 @@ export interface previewAddonResponse {
   success: boolean;
 }
 
-interface previewAddonDataType {
+export interface previewAddonDataType {
   chargeToday: string;
   renewalTotal: string;
   renewalDate: string;

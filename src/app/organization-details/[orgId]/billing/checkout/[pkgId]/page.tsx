@@ -110,6 +110,7 @@ function CheckoutPage() {
   });
 
   const [hasPrefilled, setHasPrefilled] = useState(false);
+  const [highlightBilling, setHighlightBilling] = useState(false);
 
   useEffect(() => {
     if (billingInfo && !hasPrefilled) {
@@ -245,8 +246,8 @@ function CheckoutPage() {
         } else {
           price = parseFloat(
             entry.addOn.discounted_yearly_price ||
-            entry.addOn.yearly_price ||
-            "0",
+              entry.addOn.yearly_price ||
+              "0",
           );
         }
         total += price * quantity;
@@ -304,7 +305,6 @@ function CheckoutPage() {
 
   const handleCheckout = async (data: CheckoutFormValues) => {
     if (!selectedPaymentMethodId || !stripePriceId) return;
-
     const addOnPayload: { priceId: string; quantity: number }[] = [];
 
     Object.entries(selectedAddOns).forEach(([id, quantity]) => {
@@ -373,6 +373,8 @@ function CheckoutPage() {
     const element = document.getElementById("billing-info-section");
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
+      setHighlightBilling(true);
+      setTimeout(() => setHighlightBilling(false), 2000);
     }
   };
 
@@ -411,7 +413,12 @@ function CheckoutPage() {
             onUpdateQuantity={updateAddOnQuantity}
           />
 
-          <div id="billing-info-section" className="scroll-mt-24">
+          <div
+            id="billing-info-section"
+            className={`scroll-mt-24 transition-all duration-500 ${
+              highlightBilling ? "ring-1 ring-red-400 rounded-xl" : ""
+            }`}
+          >
             <InvoiceCountry
               control={control}
               register={register}
