@@ -52,8 +52,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     const inputType = isPassword ? (showPassword ? "text" : "password") : type;
 
     const baseStyles =
-      "flex h-10 w-full mt-1.5 text-text rounded-lg border bg-input-bg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50";
-
+      "flex h-10 w-full mt-1.5 text-text rounded-lg border bg-input-bg px-3 py-2 text-sm focus:outline-none focus:shadow-[0_0_0_4px_rgba(224,223,228,0.4)] disabled:cursor-not-allowed disabled:opacity-50";
     const errorStyles = error ? "border-red-500 focus:ring-red-500" : "";
 
     const disabledStyles = props.disabled

@@ -133,7 +133,7 @@ export default function CreateOrgModal({
             selectedProduct={selectedProduct}
             setSelectedProduct={setSelectedProduct}
             onNext={() => setCurrentStep(2)}
-            onReset={onClose}
+            onReset={handleReset}
           />
         ) : (
           <SetupStep

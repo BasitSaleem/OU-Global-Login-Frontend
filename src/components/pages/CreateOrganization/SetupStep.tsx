@@ -6,7 +6,7 @@ import { AvailabilityStatus } from "@/components/AvailabilityStatus";
 import { useGetAllPlans } from "@/apiHooks.ts/plans/plans.api";
 import { PRODUCTS } from "@/constants";
 import { SvgIcon } from "@/components/ui/SvgIcon";
-import { ChevronLeft, ChevronRight, Store, Factory, ShoppingCart, Layers } from "lucide-react";
+import { ChevronLeft, ChevronRight, Store, Factory, ShoppingCart, Layers, ArrowLeft } from "lucide-react";
 import PlanSelectionCard from "./PlanSelectionCard";
 import PlanCardSkeleton from "@/components/PlanCardSkeleton";
 import Link from "next/link";
@@ -30,6 +30,7 @@ interface SetupStepProps {
   creatingOrg: boolean;
   canSubmit: boolean;
   isDirectFlow?: boolean;
+  initialBillingCycle?: "monthly" | "yearly";
 }
 
 const typeData = [
@@ -58,11 +59,15 @@ export const SetupStep: React.FC<SetupStepProps> = ({
   creatingOrg,
   canSubmit,
   isDirectFlow = false,
+  initialBillingCycle = "monthly",
 }) => {
   const { data: plansData, isPending: loadingPlans } = useGetAllPlans();
   const [activeType, setActiveType] = useState<string>("RETAIL");
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(initialBillingCycle);
   const [planPage, setPlanPage] = useState(0);
+  const [showFullPlanSelection, setShowFullPlanSelection] = useState(false);
+  
+  const isDirectPlanView = isDirectFlow && !showFullPlanSelection;
 
   useEffect(() => {
     if (isDirectFlow && selectedPlanId && plansData?.plans) {
@@ -91,7 +96,7 @@ export const SetupStep: React.FC<SetupStepProps> = ({
   }, [plansData?.plans, activeType]);
   const nextPlan = () => {
     if (!filteredPlans.length) return;
-    if (isDirectFlow) {
+    if (isDirectPlanView) {
       const currentIndex = filteredPlans.findIndex((p) => p.id === selectedPlanId);
       const nextIndex = (currentIndex + 1) % filteredPlans.length;
       setSelectedPlanId(filteredPlans[nextIndex].id);
@@ -103,7 +108,7 @@ export const SetupStep: React.FC<SetupStepProps> = ({
 
   const prevPlan = () => {
     if (!filteredPlans.length) return;
-    if (isDirectFlow) {
+    if (isDirectPlanView) {
       const currentIndex = filteredPlans.findIndex((p) => p.id === selectedPlanId);
       const prevIndex = (currentIndex - 1 + filteredPlans.length) % filteredPlans.length;
       setSelectedPlanId(filteredPlans[prevIndex].id);
@@ -116,11 +121,11 @@ export const SetupStep: React.FC<SetupStepProps> = ({
     <div className="space-y-4 ">
       <div className="text-center md:text-left">
         <h2 className="text-xl font-bold text-text mb-2">Setup Your Workspace</h2>
-        <p className="text-text">Configure your domain and choose a plan for each product</p>
+        <p className="text-text-secondary">Configure your domain and choose a plan for each product</p>
       </div>
 
       <div className="space-y-2">
-        <label className="block text-sm font-bold text-text tracking-wider">Selected Products</label>
+        <label className="block text-sm font-bold text-text">Selected Products</label>
         <div className="flex flex-wrap gap-3">
           {PRODUCTS.map((product) => {
             const isSelected = selectedProduct === product.name;
@@ -197,29 +202,27 @@ export const SetupStep: React.FC<SetupStepProps> = ({
 
       <div className="space-y-2">
         <div className="space-y-0">
-          <div className="flex justify-between items-center w-full">
-            <div>
-              <p className="text-text pb-1">{isDirectFlow ? "Your Selected Plan" : "Pricing Plan"}</p>
-              <div className="flex items-center gap-4">
-                <h3 className="text-xl font-bold text-text">
-                  Owners Inventory <span className="text-text font-medium text-sm">
-                    {isDirectFlow
-                      ? `· ${activeType.charAt(0) + activeType.slice(1).toLowerCase()}`
-                      : `(${typeData.findIndex(t => t.id === activeType) + 1}/${typeData.length})`}
-                  </span>
-                </h3>
-              </div>
+          <div className="flex flex-col w-full">
+            <p className="text-text pb-1 text-nowrap">{isDirectPlanView ? "Your Selected Plan" : "Pricing"}</p>
+            <div className="flex justify-between w-full items-center gap-2">
+              <span className="text-text font-medium text-sm">
+                {isDirectPlanView
+                  ? `${activeType.charAt(0) + activeType.slice(1).toLowerCase()}`
+                  : `(${typeData.findIndex(t => t.id === activeType) + 1}/${typeData.length})`}
+
+              </span>
+              {isDirectPlanView && (
+                <span className="text-text text-xs font-medium">{billingCycle === 'yearly' ? 'Yearly billing' : 'Monthly billing'}</span>
+              )}
             </div>
-            {!isDirectFlow && (
+            {!isDirectPlanView && (
               <Link href="https://ownersinventory.com/pricing" target="_blank" className="text-primary cursor-pointer text-sm font-bold hover:underline">View all packages</Link>
             )}
-            {isDirectFlow && (
-              <span className="text-text text-xs font-medium">{billingCycle === 'yearly' ? 'Yearly billing' : 'Monthly billing'}</span>
-            )}
+
           </div>
         </div>
 
-        {!isDirectFlow && (
+        {!isDirectPlanView && (
           <div className="flex justify-between items-center py-2">
             <div className="flex flex-wrap gap-2 p-1.5 bg-gray-100/80 rounded-2xl w-fit">
               {typeData.map((type) => {
@@ -257,9 +260,9 @@ export const SetupStep: React.FC<SetupStepProps> = ({
 
         <div className="relative group">
           {loadingPlans ? (
-            <div className={!isDirectFlow ? "grid grid-cols-1 md:grid-cols-3 gap-4" : "w-full"}>
+            <div className={!isDirectPlanView ? "grid grid-cols-1 md:grid-cols-3 gap-4" : "w-full"}>
               <PlanCardSkeleton />
-              {!isDirectFlow && (
+              {!isDirectPlanView && (
                 <>
                   <PlanCardSkeleton />
                   <PlanCardSkeleton />
@@ -268,12 +271,12 @@ export const SetupStep: React.FC<SetupStepProps> = ({
             </div>
           ) : (
             <>
-              {(isDirectFlow ? filteredPlans.length > 3 : filteredPlans.length > 1) && (
+              {(isDirectPlanView ? filteredPlans.length > 3 : filteredPlans.length > 1) && (
                 <>
                   <Button
                     variant="basic"
                     onClick={prevPlan}
-                    disabled={!isDirectFlow && planPage === 0}
+                    disabled={!isDirectPlanView && planPage === 0}
                     className="absolute left-0 top-1/2 -translate-y-1/2 z-10 transition-all opacity-0 group-hover:opacity-100 -ml-12 cursor-pointer bg-primary/40 rounded-full py-8 text-white disabled:opacity-0"
                   >
                     <ChevronLeft size={40} />
@@ -281,17 +284,17 @@ export const SetupStep: React.FC<SetupStepProps> = ({
                   <Button
                     variant="basic"
                     onClick={nextPlan}
-                    disabled={!isDirectFlow && planPage >= Math.ceil(filteredPlans.length / 3) - 1}
+                    disabled={!isDirectPlanView && planPage >= Math.ceil(filteredPlans.length / 3) - 1}
                     className="absolute right-0 top-1/2 -translate-y-1/2 z-10 transition-all opacity-0 group-hover:opacity-100 -mr-12 cursor-pointer bg-primary/40 rounded-full py-8 text-white disabled:opacity-0"
                   >
                     <ChevronRight size={40} />
                   </Button>
                 </>
               )}
-              <div className={!isDirectFlow ? "grid grid-cols-1 md:grid-cols-3 gap-4" : "w-full"}>
+              <div className={!isDirectPlanView ? "grid grid-cols-1 md:grid-cols-3 gap-4" : "w-full"}>
                 {filteredPlans
-                  .filter(plan => isDirectFlow ? plan.id === selectedPlanId : true)
-                  .slice(isDirectFlow ? 0 : planPage * 3, isDirectFlow ? 1 : (planPage + 1) * 3)
+                  .filter(plan => isDirectPlanView ? plan.id === selectedPlanId : true)
+                  .slice(isDirectPlanView ? 0 : planPage * 3, isDirectPlanView ? 1 : (planPage + 1) * 3)
                   .map((plan) => (
                     <PlanSelectionCard
                       key={plan.id}
@@ -299,22 +302,22 @@ export const SetupStep: React.FC<SetupStepProps> = ({
                       isSelected={selectedPlanId === plan.id}
                       onClick={() => setSelectedPlanId(plan.id)}
                       billingCycle={billingCycle}
-                      isDirectFlow={isDirectFlow}
+                      isDirectFlow={isDirectPlanView}
                     />
                   ))}
               </div>
             </>
           )}
         </div>
-        {isDirectFlow && (
+        {isDirectPlanView && (
           <div className="mt-2">
             <span className="text-text text-sm">Not the right plan? </span>
-            <Link href="https://ownersinventory.com/pricing"
-              target="_blank"
+            <span
+              onClick={() => setShowFullPlanSelection(true)}
               className="text-primary text-sm font-bold hover:underline cursor-pointer"
             >
               Change plan
-            </Link>
+            </span>
           </div>
         )}
       </div>
@@ -323,6 +326,7 @@ export const SetupStep: React.FC<SetupStepProps> = ({
           <Button
             variant="secondary"
             onClick={onBack}
+            leftIcon={<ArrowLeft size={16} />}
             className="mr-auto"
           >
             Back

@@ -14,9 +14,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { toast } from "@/hooks/useToast";
 import ProgressModal from "@/components/ui/ProgressModal";
-import { Loader } from "@/components/ui";
+import { Loader, Button } from "@/components/ui";
 import logger from "@/utils/logger";
 import { AnimatePresence, motion } from "framer-motion";
+import { LogOut } from "lucide-react";
+import { useLogout } from "@/apiHooks.ts/auth/auth.api";
+import { clearAuth } from "@/redux/slices/auth.slice";
+import { useAppDispatch } from "@/redux/store";
 import { StepIndicator } from "@/components/pages/CreateOrganization/StepIndicator";
 import { OrganizationStep } from "@/components/pages/CreateOrganization/OrganizationStep";
 import { SetupStep } from "@/components/pages/CreateOrganization/SetupStep";
@@ -27,6 +31,7 @@ export default function CreateOrgPage() {
   const searchParams = useSearchParams();
   const queryPkgId = searchParams.get("pkgId");
   const queryProduct = searchParams.get("product");
+  const queryBillingCycle = searchParams.get("billingCycle");
 
   const pkgId =
     queryPkgId ||
@@ -38,6 +43,11 @@ export default function CreateOrgPage() {
     (typeof window !== "undefined" ? localStorage.getItem("product") : null) ||
     "OI";
 
+  const billingCycle =
+    queryBillingCycle ||
+    (typeof window !== "undefined" ? localStorage.getItem("billingCycle") : null) ||
+    "monthly";
+
   useEffect(() => {
     if (queryPkgId) {
       localStorage.setItem("pkgId", queryPkgId);
@@ -45,13 +55,17 @@ export default function CreateOrgPage() {
     if (queryProduct) {
       localStorage.setItem("product", queryProduct);
     }
-  }, [queryPkgId, queryProduct]);
+    if (queryBillingCycle) {
+      localStorage.setItem("billingCycle", queryBillingCycle);
+    }
+  }, [queryPkgId, queryProduct, queryBillingCycle]);
 
   return (
     <CreateOrgContent
       initialPkgId={pkgId}
       initialProduct={product}
       queryPkgId={queryPkgId}
+      initialBillingCycle={billingCycle as "monthly" | "yearly"}
     />
   );
 }
@@ -60,10 +74,12 @@ function CreateOrgContent({
   initialPkgId,
   initialProduct,
   queryPkgId,
+  initialBillingCycle,
 }: {
   initialPkgId: string | null;
   initialProduct: string;
   queryPkgId: string | null;
+  initialBillingCycle: "monthly" | "yearly";
 }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [direction, setDirection] = useState(0);
@@ -91,7 +107,21 @@ function CreateOrgContent({
     useGenerateSubdomainSuggestions(!isNameDebouncing ? debouncedCompanyName : "");
 
   const { mutate: createOrgMutation, isPending: creatingOrg } = useCreateOrganization();
+  const { mutate: logout, isPending: loggingOut } = useLogout();
+  const dispatch = useAppDispatch();
   const router = useRouter();
+
+  const handleLogout = () => {
+    logout(undefined, {
+      onSuccess: () => {
+        dispatch(clearAuth());
+        router.push("/login");
+      },
+      onError: (error) => {
+        logger.error("Logout failed:", error);
+      },
+    });
+  };
 
   const shouldCheckAvailability =
     selectedProduct === "OI" && debouncedSubDomain && !isSuggestionSubdomain;
@@ -201,8 +231,20 @@ function CreateOrgContent({
   return (
     <AuthGuard>
       <>
-        {creatingOrg && <Loader text="Initializing organization creation" />}
+        <Button
+          onClick={handleLogout}
+          disabled={loggingOut}
+          className="fixed  right-4 top-4 p-5 bg-red-500 rounded-full border border-border text-white"
+          leftIcon={<LogOut size={16}
+
+
+          />}
+        >
+          Log out
+        </Button>
+        {(creatingOrg || loggingOut) && <Loader text={loggingOut ? "Logging out" : "Initializing organization creation"} />}
         <div className="min-h-48 w-full bg-background flex flex-col items-center py-12 px-4 ">
+
           <div className="w-full max-w-4xl bg-bg-secondary rounded-2xl border border-border  relative">
             {!queryPkgId && <StepIndicator steps={steps} currentStep={currentStep > 2 ? 2 : currentStep} />}
             <AnimatePresence mode="wait" custom={direction}>
@@ -245,6 +287,7 @@ function CreateOrgContent({
                     isSubDomainDebouncing={isSubDomainDebouncing}
                     selectedPlanId={selectedPlanId}
                     setSelectedPlanId={setSelectedPlanId}
+                    initialBillingCycle={initialBillingCycle}
                     onBack={() => {
                       if (queryPkgId) {
                         setSelectedPlanId(initialPkgId);

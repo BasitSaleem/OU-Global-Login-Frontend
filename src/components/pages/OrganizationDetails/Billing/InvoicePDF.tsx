@@ -465,6 +465,12 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
               {"$"}
               {originalBasePlan.toFixed(2)}
             </Text>
+            {/* <Text style={styles.colNet}>
+              {"$"}
+              {originalBasePlan.toFixed(2)}
+            </Text> */}
+            {/* <Text style={styles.colTax}>$0.00</Text> */}
+            {/* <Text style={styles.colDiscount}>-</Text> */}
             <Text style={styles.colTotal}>
               {"$"}
               {originalBasePlan.toFixed(2)}
