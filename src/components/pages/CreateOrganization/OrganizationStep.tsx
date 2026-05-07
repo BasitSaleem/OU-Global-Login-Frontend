@@ -44,6 +44,12 @@ export const OrganizationStep: React.FC<OrganizationStepProps> = ({
             type="text"
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && companyName.trim() && selectedProduct) {
+                e.preventDefault();
+                onNext();
+              }
+            }}
             placeholder="Enter organization name"
             className="w-full px-6 bg-background py-5  rounded-xl focus:border-primary focus:ring-0 transition-all font-medium pr-24"
           />

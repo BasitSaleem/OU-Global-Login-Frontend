@@ -27,6 +27,7 @@ export default function CreateOrgPage() {
   const searchParams = useSearchParams();
   const queryPkgId = searchParams.get("pkgId");
   const queryProduct = searchParams.get("product");
+  const queryBillingCycle = searchParams.get("billingCycle");
 
   const pkgId =
     queryPkgId ||
@@ -38,6 +39,11 @@ export default function CreateOrgPage() {
     (typeof window !== "undefined" ? localStorage.getItem("product") : null) ||
     "OI";
 
+  const billingCycle =
+    queryBillingCycle ||
+    (typeof window !== "undefined" ? localStorage.getItem("billingCycle") : null) ||
+    "monthly";
+
   useEffect(() => {
     if (queryPkgId) {
       localStorage.setItem("pkgId", queryPkgId);
@@ -45,13 +51,17 @@ export default function CreateOrgPage() {
     if (queryProduct) {
       localStorage.setItem("product", queryProduct);
     }
-  }, [queryPkgId, queryProduct]);
+    if (queryBillingCycle) {
+      localStorage.setItem("billingCycle", queryBillingCycle);
+    }
+  }, [queryPkgId, queryProduct, queryBillingCycle]);
 
   return (
     <CreateOrgContent
       initialPkgId={pkgId}
       initialProduct={product}
       queryPkgId={queryPkgId}
+      initialBillingCycle={billingCycle as "monthly" | "yearly"}
     />
   );
 }
@@ -60,10 +70,12 @@ function CreateOrgContent({
   initialPkgId,
   initialProduct,
   queryPkgId,
+  initialBillingCycle,
 }: {
   initialPkgId: string | null;
   initialProduct: string;
   queryPkgId: string | null;
+  initialBillingCycle: "monthly" | "yearly";
 }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [direction, setDirection] = useState(0);
@@ -245,6 +257,7 @@ function CreateOrgContent({
                     isSubDomainDebouncing={isSubDomainDebouncing}
                     selectedPlanId={selectedPlanId}
                     setSelectedPlanId={setSelectedPlanId}
+                    initialBillingCycle={initialBillingCycle}
                     onBack={() => {
                       if (queryPkgId) {
                         setSelectedPlanId(initialPkgId);

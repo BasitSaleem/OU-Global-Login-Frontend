@@ -60,14 +60,11 @@ const PlanSection = ({
     React.useState(false);
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [activeType, setActiveType] = React.useState<string>("RETAIL");
-  const [selectedPlanId, setSelectedPlanId] = React.useState<string | null>(
-    null,
-  );
   const [billingCycle, setBillingCycle] = React.useState<"monthly" | "yearly">(
     "monthly",
   );
 
-  const CARD_WIDTH = 440;
+  const CARD_WIDTH = 380;
   const GAP = 16;
   const TOTAL_MOVE = CARD_WIDTH + GAP;
   const [maxIndex, setMaxIndex] = React.useState(0);
@@ -141,7 +138,6 @@ const PlanSection = ({
     const fullPlan = data.plans.find((p: any) => p.id === currentPkgId);
     if (fullPlan) {
       setActiveType(fullPlan.type);
-      setSelectedPlanId(fullPlan.id);
 
       const packageOrder = ["BASIC", "PRO", "PREMIUM"];
       const plansOfType = data.plans
@@ -311,29 +307,33 @@ const PlanSection = ({
           className="mt-9 relative group w-full grid grid-cols-1"
           ref={containerRef}
         >
-          <Button
-            variant="basic"
-            onClick={handlePrev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0 -ml-4 cursor-pointer disabled:cursor-not-allowed bg-primary/40 rounded-full py-8 "
-          >
-            {" "}
-            <ChevronLeft size={40} color="white" />
-          </Button>
+          {planCount > 3 && (
+            <>
+              <Button
+                variant="basic"
+                onClick={handlePrev}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0 -ml-4 cursor-pointer disabled:cursor-not-allowed bg-primary/40 rounded-full py-8 "
+              >
+                {" "}
+                <ChevronLeft size={40} color="white" />
+              </Button>
 
-          <Button
-            variant="basic"
-            onClick={handleNext}
-            disabled={currentIndex >= maxIndex}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-30 -mr-4 cursor-pointer disabled:cursor-not-allowed bg-primary/40 rounded-full py-8 text-white"
-          >
-            {" "}
-            <ChevronRight size={40} color="white" />
-          </Button>
+              <Button
+                variant="basic"
+                onClick={handleNext}
+                disabled={currentIndex >= maxIndex}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-30 -mr-4 cursor-pointer disabled:cursor-not-allowed bg-primary/40 rounded-full py-8 text-white"
+              >
+                {" "}
+                <ChevronRight size={40} color="white" />
+              </Button>
+            </>
+          )}
           <div className=" w-full py-4 -my-4">
             {error && <ErrorMessage message={error.message} />}
             {!isLoading && data && (
               <motion.div
-                className="flex gap-4 touch-pan-y cursor-grab"
+                className={`flex gap-4 touch-pan-y cursor-grab`}
                 style={{ touchAction: "pan-y", overscrollBehaviorX: "none" }}
                 animate={{ x: -currentIndex * TOTAL_MOVE }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
@@ -353,7 +353,7 @@ const PlanSection = ({
                 {" "}
                 <>
                   {filteredPlans?.map((plan) => (
-                    <motion.div key={plan.id} className="shrink-0 w-[440px]">
+                    <motion.div key={plan.id} className="shrink-0 w-[380px]">
                       <PlanCard
                         key={plan.id}
                         plan={plan}
@@ -361,8 +361,6 @@ const PlanSection = ({
                           plan.id ===
                           organization?.subscriptions?.[0]?.oiPackage?.id
                         }
-                        isSelected={selectedPlanId === plan.id}
-                        onClick={() => setSelectedPlanId(plan.id)}
                         subscriptionStatus={
                           organization?.subscriptions?.[0]?.status
                         }

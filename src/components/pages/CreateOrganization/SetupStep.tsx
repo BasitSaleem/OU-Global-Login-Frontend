@@ -30,6 +30,7 @@ interface SetupStepProps {
   creatingOrg: boolean;
   canSubmit: boolean;
   isDirectFlow?: boolean;
+  initialBillingCycle?: "monthly" | "yearly";
 }
 
 const typeData = [
@@ -58,10 +59,11 @@ export const SetupStep: React.FC<SetupStepProps> = ({
   creatingOrg,
   canSubmit,
   isDirectFlow = false,
+  initialBillingCycle = "monthly",
 }) => {
   const { data: plansData, isPending: loadingPlans } = useGetAllPlans();
   const [activeType, setActiveType] = useState<string>("RETAIL");
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(initialBillingCycle);
   const [planPage, setPlanPage] = useState(0);
 
   useEffect(() => {
@@ -197,25 +199,23 @@ export const SetupStep: React.FC<SetupStepProps> = ({
 
       <div className="space-y-2">
         <div className="space-y-0">
-          <div className="flex justify-between items-center w-full">
-            <div>
-              <p className="text-text pb-1">{isDirectFlow ? "Your Selected Plan" : "Pricing Plan"}</p>
-              <div className="flex items-center gap-4">
-                <h3 className="text-xl font-bold text-text">
-                  Owners Inventory <span className="text-text font-medium text-sm">
-                    {isDirectFlow
-                      ? `· ${activeType.charAt(0) + activeType.slice(1).toLowerCase()}`
-                      : `(${typeData.findIndex(t => t.id === activeType) + 1}/${typeData.length})`}
-                  </span>
-                </h3>
-              </div>
+          <div className="flex flex-col w-full">
+            <p className="text-text pb-1 text-nowrap">{isDirectFlow ? "Your Selected Plan" : "Pricing Plan"}</p>
+            <div className="flex justify-between w-full items-center gap-2">
+              <span className="text-text font-medium text-sm">
+                {isDirectFlow
+                  ? `${activeType.charAt(0) + activeType.slice(1).toLowerCase()}`
+                  : `(${typeData.findIndex(t => t.id === activeType) + 1}/${typeData.length})`}
+
+              </span>
+              {isDirectFlow && (
+                <span className="text-text text-xs font-medium">{billingCycle === 'yearly' ? 'Yearly billing' : 'Monthly billing'}</span>
+              )}
             </div>
             {!isDirectFlow && (
               <Link href="https://ownersinventory.com/pricing" target="_blank" className="text-primary cursor-pointer text-sm font-bold hover:underline">View all packages</Link>
             )}
-            {isDirectFlow && (
-              <span className="text-text text-xs font-medium">{billingCycle === 'yearly' ? 'Yearly billing' : 'Monthly billing'}</span>
-            )}
+
           </div>
         </div>
 

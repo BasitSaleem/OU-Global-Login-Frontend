@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import { OiPlanType } from "@/apiHooks.ts/plans/plans.types";
-import { Check } from "lucide-react";
 import { SvgIcon } from "@/components/ui/SvgIcon";
 
 interface PlanSelectionCardProps {
@@ -21,7 +20,7 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
 }) => {
   const isBasic = plan.package_name.toUpperCase().includes("BASIC");
   const isPro = plan.package_name.toUpperCase().includes("PRO");
-  const isEnterprise = plan.package_name.toUpperCase().includes("ENTERPRISE");
+  const isEnterprise = plan.package_name.toUpperCase().includes("PREMIUM") || plan.package_name.toUpperCase().includes("ENTERPRISE");
 
   if (!isDirectFlow) {
     return (
@@ -52,7 +51,7 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
 
         <div className="mb-2">
           <h3 className="text-xl font-bold text-text flex items-center justify-between">
-            {plan.package_name}
+            {plan.package_name?.split(' ')[1]}
             {isSelected && (
               <SvgIcon name="check2" width={20} height={20} className="text-primary" />
             )}
@@ -70,14 +69,14 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
         <div className="mt-auto space-y-6">
           <div className="flex items-baseline gap-1">
             <span
-              className={`text-4xl font-bold ${isEnterprise ? "text-[#5588DF]" : "text-[#1AD1B9]"
+              className={`text-4xl font-bold ${isBasic ? "text-[#1AD1B9]" : isPro ? "text-[#38ACCC]" : isEnterprise ? "text-[#5588DF]" : "text-[#1AD1B9]"
                 }`}
             >
               $
               {billingCycle === "monthly"
-                ? plan.monthly_price
+                ? Number(plan.monthly_price).toFixed(0)
                 : (Number(plan.discounted_yearly_price) / 12).toFixed(0) ||
-                plan.yearly_price}
+                Number(plan.yearly_price).toFixed(0)}
             </span>
             <span className="text-gray-400 text-lg font-medium">/month</span>
           </div>
@@ -120,21 +119,21 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
       <div className="flex justify-between items-start mb-2">
         <div className="flex items-center gap-2">
           <h3 className="text-xl font-bold text-text">
-            {plan.package_name}
+            {plan.package_name?.split(' ')[1]}
           </h3>
           <SvgIcon name="check2" width={20} height={20} className="text-[#7C3AED]" />
         </div>
 
         <div className="flex items-baseline gap-1">
           <span
-            className={`text-3xl font-bold ${isEnterprise ? "text-[#5588DF]" : "text-[#1AD1B9]"
+            className={`text-4xl font-bold ${isBasic ? "text-[#1AD1B9]" : isPro ? "text-[#38ACCC]" : isEnterprise ? "text-[#5588DF]" : "text-[#1AD1B9]"
               }`}
           >
             $
             {billingCycle === "monthly"
-              ? plan.monthly_price
+              ? Number(plan.monthly_price).toFixed(0)
               : (Number(plan.discounted_yearly_price) / 12).toFixed(0) ||
-              plan.yearly_price}
+              Number(plan.yearly_price).toFixed(0)}
           </span>
           <span className="text-gray-400 text-sm font-medium">/month</span>
         </div>

@@ -3,8 +3,6 @@
 import { useEffect } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Icons } from "@/components/utils/icons";
-import Image from "next/image";
 import { useSignUp } from "@/apiHooks.ts/auth/auth.api";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

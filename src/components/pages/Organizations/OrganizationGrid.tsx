@@ -133,7 +133,7 @@ export default function OrganizationGrid({
             {organizations?.map((org) => (
               <Tooltip
                 key={org?.id}
-                content={org?.isAddNew ? "Coming soon" : org?.name}
+                content={org?.isAddNew ? "Create new organization" : org?.name}
                 position="top"
                 wrapperClassName="w-full"
               >
