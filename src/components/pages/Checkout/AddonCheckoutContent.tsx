@@ -73,8 +73,17 @@ const AddonCheckoutContent = () => {
   const subscriptionId = currentSubscription?.id ?? null;
 
   const availableAddOns = useMemo<AddOnType[]>(() => {
-    return addonsData?.addons ?? [];
-  }, [addonsData?.addons]);
+    const addons = addonsData?.addons ?? [];
+    return [...addons].sort((a, b) => {
+      const aSelected = selectedAddOns[a.id] ? 1 : 0;
+      const bSelected = selectedAddOns[b.id] ? 1 : 0;
+
+      if (aSelected !== bSelected) {
+        return bSelected - aSelected;
+      }
+      return a.name.localeCompare(b.name);
+    });
+  }, [addonsData?.addons, selectedAddOns]);
 
   const paymentMethods: PaymentMethod[] =
     paymentMethodsData?.paymentMethods || [];

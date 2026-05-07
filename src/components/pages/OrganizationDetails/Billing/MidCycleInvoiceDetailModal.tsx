@@ -3,19 +3,17 @@ import { Modal } from "@/components/modals/GenericModal";
 import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
-import { calculateInvoiceFinancial } from "@/utils/invoicesUtils";
-import logger from "@/utils/logger";
-
+import { calculateMidCycleAddonFinancial } from "@/utils/invoicesUtils";
 import { SvgIcon } from "@/components/ui/SvgIcon";
 
-interface InvoiceDetailModalProps {
+interface MidCycleInvoiceDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   invoice: Invoice | null;
   orgName: string;
 }
 
-const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
+const MidCycleInvoiceDetailModal: React.FC<MidCycleInvoiceDetailModalProps> = ({
   isOpen,
   onClose,
   invoice,
@@ -23,36 +21,16 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
 }) => {
   const { user } = useSelector((state: RootState) => state.auth);
   if (!invoice) return null;
-  logger.info("invoice details--------", invoice);
 
-  let metaObj = invoice.metadata as any;
-  if (typeof metaObj === "string" && metaObj !== "") {
-    try {
-      metaObj = JSON.parse(metaObj);
-    } catch (e) {
-      logger.error("Failed to parse metadata string", e);
-    }
-  }
-
-  const {
-    originalSubtotal,
-    savings,
-    subtotal: effectiveSubtotal,
-    tax,
-    total,
-    discountPercent,
-    hasDiscount,
-    originalBasePlan,
-    addOnsWithPricing,
-    midCycleAddons,
-  } = calculateInvoiceFinancial(invoice, invoice.subscription?.billing_cycle);
+  const { subtotal, tax, total, midCycleAddons } =
+    calculateMidCycleAddonFinancial(invoice);
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
       size="xxl"
-      ariaLabel="Invoice Details"
+      ariaLabel="Mid-Cycle Invoice Details"
       className="h-fit overflow-y-auto text-white"
     >
       <Modal.Body className="p-0">
@@ -110,69 +88,34 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
                   <th className="pb-4 font-semibold text-center">Quantity</th>
                   <th className="pb-4 font-semibold text-center">Unit Price</th>
                   <th className="pb-4 font-semibold text-center">Sub-Total</th>
-                  {/* <th className="pb-4 font-semibold text-center">Net Total</th> */}
-                  {/* <th className="pb-4 font-semibold text-center">Tax</th> */}
-                  {/* <th className="pb-4 font-semibold text-center">Discount</th> */}
                   <th className="pb-4 font-semibold text-center">Amount</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {/* Base Plan Row */}
-                <tr>
-                  <td className="py-4 font-medium text-gray-700">
-                    {invoice.metadata?.packageName ||
-                      invoice.subscription?.oiPackage?.package_name ||
-                      "Retail Pro"}
-                  </td>
-                  <td className="py-4 text-center">
-                    <span className="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full text-[10px] font-bold">
-                      Subscription
-                    </span>
-                  </td>
-                  <td className="py-4 text-center">1</td>
-                  <td className="py-4 text-center">
-                    ${originalBasePlan.toFixed(2)}
-                  </td>
-                  <td className="py-4 text-center">
-                    ${originalBasePlan.toFixed(2)}
-                  </td>
-                  <td className="py-4 text-center font-bold">
-                    ${originalBasePlan.toFixed(2)}
-                  </td>
-                </tr>
-                {/* Add-on Rows */}
-                {addOnsWithPricing.map((addon: any, idx: number) => {
-                  const qty =
-                    addon.quantity ||
-                    addon.no_of_users ||
-                    addon.no_of_stores ||
-                    1;
-                  const price = addon.originalPrice;
+                {midCycleAddons?.map((addon: any, idx: number) => {
+                  const qty = addon.quantity || 1;
+                  const price = parseFloat(addon.price || "0");
                   const itemTotal = price * qty;
-                  const itemSavings = hasDiscount
-                    ? (itemTotal * discountPercent) / 100
-                    : 0;
-                  const finalAmount = itemTotal - itemSavings;
-
                   return (
-                    <tr key={`addon-${idx}`}>
+                    <tr key={`mid-cycle-${idx}`}>
                       <td className="py-4 font-medium text-gray-700">
-                        {addon.name || addon.package_name || "Module"}
+                        {addon.name || "Add-on Module"}
+                        <p className="text-xs text-gray-400 font-normal">
+                          Prorated purchase
+                        </p>
                       </td>
                       <td className="py-4 text-center">
-                        <span className="bg-amber-50 text-amber-600 px-3 py-1 rounded-full text-[10px] font-bold">
-                          Add-on
+                        <span className="bg-purple-50 text-purple-600 px-3 py-1 rounded-full text-[10px] font-bold">
+                          Mid-cycle
                         </span>
                       </td>
                       <td className="py-4 text-center">{qty}</td>
-                      <td className="py-4 text-center">
-                        ${price.toFixed(2)}
-                      </td>
+                      <td className="py-4 text-center">${price.toFixed(2)}</td>
                       <td className="py-4 text-center">
                         ${itemTotal.toFixed(2)}
                       </td>
                       <td className="py-4 text-center font-bold">
-                        ${finalAmount.toFixed(2)}
+                        ${itemTotal.toFixed(2)}
                       </td>
                     </tr>
                   );
@@ -190,10 +133,11 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
                 </p>
                 <div className="flex items-center gap-2">
                   <p className="font-bold text-text text-base">
-                    Credit Card, {invoice?.payment.payment_method?.last4}
+                    {invoice?.payment?.payment_method?.brand} ••••{" "}
+                    {invoice?.payment?.payment_method?.last4}
                   </p>
                   <SvgIcon
-                    name={invoice?.payment.payment_method?.brand?.toLowerCase()}
+                    name={invoice?.payment?.payment_method?.brand?.toLowerCase()}
                     width={25}
                     height={25}
                   />
@@ -201,7 +145,7 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
                 <p className="text-text text-sm mt-1">
                   Billed in{" "}
                   <span className="font-bold text-primary">
-                    {invoice?.payment.currency}
+                    {invoice?.payment?.currency}
                   </span>
                 </p>
               </div>
@@ -211,13 +155,7 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
               <div className="flex justify-between text-sm text-text">
                 <span>Subtotal:</span>
                 <span className="font-bold text-text">
-                  ${originalSubtotal.toFixed(2)}
-                </span>
-              </div>
-              <div className="flex justify-between text-sm text-text">
-                <span>Discounts:</span>
-                <span className="font-bold text-text">
-                  -${savings.toFixed(2)}
+                  ${subtotal.toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between text-sm text-text">
@@ -225,7 +163,7 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
                 <span className="font-bold text-text">${tax.toFixed(2)}</span>
               </div>
               <div className="pt-4 border-t border-border flex justify-between items-end">
-                <span className="text-lg font-bold text-text">Total:</span>
+                <span className="text-lg font-bold text-text">Total Due:</span>
                 <span className="text-3xl font-black text-[#0D9488]">
                   $
                   {total.toLocaleString(undefined, {
@@ -241,4 +179,4 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
   );
 };
 
-export default InvoiceDetailModal;
+export default MidCycleInvoiceDetailModal;

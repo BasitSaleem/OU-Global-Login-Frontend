@@ -10,11 +10,10 @@ import {
   Image,
 } from "@react-pdf/renderer";
 import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
-
 import { User } from "@/types/auth.types";
-import { parseAddOns, calculateInvoiceFinancial } from "@/utils/invoicesUtils";
-import logger from "@/utils/logger";
+import { calculateMidCycleAddonFinancial } from "@/utils/invoicesUtils";
 import { oiLogoBase64 } from "./logoBase64";
+
 const styles = StyleSheet.create({
   page: {
     padding: 20,
@@ -61,11 +60,6 @@ const styles = StyleSheet.create({
     color: "#111827",
     marginBottom: 4,
   },
-  invoiceNumber: {
-    fontSize: 10,
-    color: "#6B7280",
-    marginBottom: 4,
-  },
   invoiceDateRow: {
     flexDirection: "row",
     justifyContent: "flex-end",
@@ -81,7 +75,6 @@ const styles = StyleSheet.create({
     color: "#6B7280",
     width: 80,
     textAlign: "right",
-    whiteSpace: "nowrap",
   },
   invoiceStatusRow: {
     flexDirection: "row",
@@ -112,20 +105,6 @@ const styles = StyleSheet.create({
   detailsCol: {
     width: "35%",
     textAlign: "right",
-  },
-  statusCol: {
-    width: "20%",
-    alignItems: "flex-end",
-    justifyContent: "flex-start",
-    display: "none", // Hide the status column in details section
-  },
-  infoLabel: {
-    fontSize: 8,
-    fontWeight: "bold",
-    color: "#9CA3AF",
-    textTransform: "uppercase",
-    marginBottom: 6,
-    letterSpacing: 1,
   },
   infoText: {
     fontSize: 10,
@@ -175,9 +154,6 @@ const styles = StyleSheet.create({
   colQty: { flex: 1, textAlign: "center" },
   colPrice: { flex: 1.5, textAlign: "center" },
   colSub: { flex: 1.5, textAlign: "center" },
-  colNet: { flex: 1.5, textAlign: "center" },
-  colTax: { flex: 1, textAlign: "center" },
-  colDiscount: { flex: 1.5, textAlign: "center" },
   colTotal: { flex: 1.5, textAlign: "right" },
 
   itemTitle: {
@@ -195,16 +171,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     textAlign: "center",
   },
-  itemSubBase: {
-    fontSize: 7,
-    color: "#4F46E5",
-    backgroundColor: "#EEF2FF",
-    padding: "2 6",
-    borderRadius: 10,
-    alignSelf: "center",
-    textAlign: "center",
-  },
-
   summarySection: {
     marginTop: 20,
     paddingHorizontal: 12,
@@ -250,7 +216,6 @@ const styles = StyleSheet.create({
     color: "#0D9488",
     textAlign: "right",
   },
-
   footer: {
     position: "relative",
     borderTopWidth: 1,
@@ -282,10 +247,9 @@ const styles = StyleSheet.create({
   },
 });
 
-interface InvoicePDFProps {
+interface MidCycleInvoicePDFProps {
   invoice: Invoice;
   orgName?: string;
-  billingCycle: "MONTHLY" | "YEARLY";
   user: User | null;
 }
 
@@ -295,43 +259,18 @@ const getStatusStyle = (status: string) => {
       return { backgroundColor: "#DEF7EC", color: "#03543F" };
     case "PENDING":
       return { backgroundColor: "#FEF3C7", color: "#92400E" };
-    case "DRAFT":
-      return { backgroundColor: "#F3F4F6", color: "#374151" };
     default:
       return { backgroundColor: "#FDE8E8", color: "#9B1C1C" };
   }
 };
 
-const InvoicePDF: React.FC<InvoicePDFProps> = ({
+const MidCycleInvoicePDF: React.FC<MidCycleInvoicePDFProps> = ({
   invoice,
   orgName,
   user,
-  billingCycle,
 }) => {
   const statusStyle = getStatusStyle(invoice.status);
-
-  let metaObj = invoice.metadata as any;
-  if (typeof metaObj === "string" && metaObj !== "") {
-    try {
-      metaObj = JSON.parse(metaObj);
-    } catch (e) {
-      logger.error("Failed to parse metadata string in PDF", e);
-    }
-  }
-
-  const {
-    originalSubtotal,
-    savings,
-    subtotal: effectiveSubtotal,
-    tax,
-    total,
-    discountPercent,
-    hasDiscount,
-    effectiveBasePlan,
-    originalBasePlan,
-    addOnsWithPricing,
-    midCycleAddons,
-  } = calculateInvoiceFinancial(invoice, billingCycle);
+  const { subtotal, tax, total, midCycleAddons } = calculateMidCycleAddonFinancial(invoice);
 
   return (
     <Document title={`Invoice-${invoice.invoice_number}`}>
@@ -350,24 +289,12 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
             <Text style={styles.invoiceTitle}>INVOICE</Text>
             <View style={styles.invoiceDateRow}>
               <Text style={styles.invoiceDateLabel}>Invoice:</Text>
-              <Text style={styles.invoiceDateValue}>
-                {invoice.invoice_number}
-              </Text>
+              <Text style={styles.invoiceDateValue}>{invoice.invoice_number}</Text>
             </View>
             <View style={styles.invoiceDateRow}>
               <Text style={styles.invoiceDateLabel}>Issue Date:</Text>
               <Text style={styles.invoiceDateValue}>
                 {new Date(invoice.created_at).toLocaleDateString()}
-              </Text>
-            </View>
-            <View style={styles.invoiceDateRow}>
-              <Text style={styles.invoiceDateLabel}>Due Date:</Text>
-              <Text style={styles.invoiceDateValue}>
-                {new Date(
-                  invoice.subscription?.current_period_end ||
-                    invoice.billing_period_end ||
-                    Date.now(),
-                ).toLocaleDateString()}
               </Text>
             </View>
             <View style={styles.invoiceStatusRow}>
@@ -382,124 +309,52 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
         {/* Info Grid */}
         <View style={styles.infoGrid}>
           <View style={[styles.infoCol, styles.billToCol]}>
-            <Text style={[styles.infoText, { fontWeight: "bold" }]}>
-              Bill To:
+            <Text style={[styles.infoText, { fontWeight: "bold" }]}>Bill To:</Text>
+            <Text style={[styles.infoText, { fontWeight: "bold", fontSize: 12, marginTop: 4, marginBottom: 4 }]}>
+              {user?.first_name ? `${user.first_name} ${user.last_name || ""}` : orgName}
             </Text>
-            <Text
-              style={[
-                styles.infoText,
-                {
-                  fontWeight: "bold",
-                  fontSize: 12,
-                  marginTop: 4,
-                  marginBottom: 4,
-                },
-              ]}
-            >
-              {invoice.metadata?.customerName || user?.first_name
-                ? `${invoice.metadata?.customerName || user?.first_name} ${user?.last_name || ""}`
-                : orgName}
-            </Text>
-            <Text style={styles.infoText}>
-              {invoice.metadata?.customerEmail || user?.email}
-            </Text>
+            <Text style={styles.infoText}>{user?.email}</Text>
             <Text style={styles.infoText}>{orgName}</Text>
           </View>
 
           <View style={[styles.infoCol, styles.detailsCol]}>
-            <Text style={[styles.infoText, { fontWeight: "bold" }]}>
-              Payment Method
-            </Text>
+            <Text style={[styles.infoText, { fontWeight: "bold" }]}>Payment Method</Text>
             <Text style={styles.infoText}>
-              {invoice?.payment?.payment_method?.brand} ••••{" "}
-              {invoice?.payment?.payment_method?.last4}
+              {invoice?.payment?.payment_method?.brand} •••• {invoice?.payment?.payment_method?.last4}
             </Text>
             <Text style={styles.infoText}>
               Paid on {new Date(invoice.created_at).toLocaleDateString()}
             </Text>
           </View>
         </View>
+
         {/* Table */}
-        <View style={[styles.table]}>
+        <View style={styles.table}>
           <View style={styles.tableHeader}>
-            <Text style={[styles.tableHeaderItem, styles.colDesc]}>
-              Product
-            </Text>
+            <Text style={[styles.tableHeaderItem, styles.colDesc]}>Product</Text>
             <Text style={[styles.tableHeaderItem, styles.colType]}>Type</Text>
-            <Text style={[styles.tableHeaderItem, styles.colQty]}>
-              Quantity
-            </Text>
-            <Text style={[styles.tableHeaderItem, styles.colPrice]}>
-              Unit Price
-            </Text>
-            <Text style={[styles.tableHeaderItem, styles.colSub]}>
-              Sub-Total
-            </Text>
-            {/* <Text style={[styles.tableHeaderItem, styles.colNet]}>Net Total</Text> */}
-            {/* <Text style={[styles.tableHeaderItem, styles.colTax]}>Tax</Text> */}
-            {/* <Text style={[styles.tableHeaderItem, styles.colDiscount]}>Discount</Text> */}
-            <Text style={[styles.tableHeaderItem, styles.colTotal]}>
-              Amount
-            </Text>
+            <Text style={[styles.tableHeaderItem, styles.colQty]}>Quantity</Text>
+            <Text style={[styles.tableHeaderItem, styles.colPrice]}>Unit Price</Text>
+            <Text style={[styles.tableHeaderItem, styles.colSub]}>Sub-Total</Text>
+            <Text style={[styles.tableHeaderItem, styles.colTotal]}>Amount</Text>
           </View>
 
-          {/* Base Plan Row */}
-          <View style={styles.tableRow}>
-            <View style={styles.colDesc}>
-              <Text style={styles.itemTitle}>
-                {invoice.metadata?.packageName ||
-                  invoice.subscription?.oiPackage?.package_name ||
-                  "Retail Basic"}
-              </Text>
-            </View>
-            <View style={styles.colType}>
-              <Text style={styles.itemSubBase}>Subscription</Text>
-            </View>
-            <Text style={styles.colQty}>1</Text>
-            <Text style={styles.colPrice}>
-              {"$"}
-              {originalBasePlan.toFixed(2)}
-            </Text>
-            <Text style={styles.colSub}>
-              {"$"}
-              {originalBasePlan.toFixed(2)}
-            </Text>
-            <Text style={styles.colTotal}>
-              {"$"}
-              {originalBasePlan.toFixed(2)}
-            </Text>
-          </View>
-
-          {/* Add-ons Rows */}
-          {addOnsWithPricing.map((addon: any, index: number) => {
-            const addOnName =
-              addon.name || addon.package_name || "Additional Module";
-            const addOnQty = addon.quantity || 1;
-            const price = addon.originalPrice;
-            const total = price * addOnQty;
+          {midCycleAddons.map((addon, index) => {
+            const qty = addon.quantity || 1;
+            const price = parseFloat(addon.price || "0");
+            const rowTotal = price * qty;
             return (
               <View style={styles.tableRow} key={index}>
                 <View style={styles.colDesc}>
-                  <Text style={styles.itemTitle}>{addOnName}</Text>
+                  <Text style={styles.itemTitle}>{addon.name || "Add-on Module"}</Text>
                 </View>
                 <View style={styles.colType}>
-                  <Text style={styles.itemSub}>Add-ons</Text>
+                  <Text style={styles.itemSub}>Mid-cycle</Text>
                 </View>
-                <Text style={styles.colQty}>{addOnQty}</Text>
-                <Text style={styles.colPrice}>
-                  {"$"}
-                  {price.toFixed(2)}
-                </Text>
-                <Text style={styles.colSub}>
-                  {"$"}
-                  {total.toFixed(2)}
-                </Text>
-                <Text style={styles.colTotal}>
-                  {"$"}
-                  {hasDiscount
-                    ? (total - (price * discountPercent) / 100).toFixed(2)
-                    : total.toFixed(2)}
-                </Text>
+                <Text style={styles.colQty}>{qty}</Text>
+                <Text style={styles.colPrice}>${price.toFixed(2)}</Text>
+                <Text style={styles.colSub}>${rowTotal.toFixed(2)}</Text>
+                <Text style={styles.colTotal}>${rowTotal.toFixed(2)}</Text>
               </View>
             );
           })}
@@ -509,80 +364,32 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
           <View style={styles.summaryGrid}>
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Subtotal:</Text>
-              <Text style={styles.summaryValue}>
-                $
-                {originalSubtotal.toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </Text>
+              <Text style={styles.summaryValue}>${subtotal.toFixed(2)}</Text>
             </View>
             <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Discount</Text>
-              <Text style={styles.summaryValue}>
-                -$
-                {savings.toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </Text>
-            </View>
-            <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>
-                Tax ({discountPercent ?? "0"}%):
-              </Text>
-              <Text style={styles.summaryValue}>
-                $
-                {tax.toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </Text>
+              <Text style={styles.summaryLabel}>Tax:</Text>
+              <Text style={styles.summaryValue}>${tax.toFixed(2)}</Text>
             </View>
             <View style={styles.grandTotalRow}>
-              <Text style={styles.grandTotalLabel}>Total:</Text>
+              <Text style={styles.grandTotalLabel}>Total Paid:</Text>
               <Text style={styles.grandTotalValue}>
-                $
-                {total.toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
+                ${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}
               </Text>
             </View>
           </View>
         </View>
 
-        {/* Notes */}
         <View style={styles.notes}>
           <Text style={styles.notesTitle}>Notes:</Text>
           <Text style={styles.notesText}>
-            Your subscription renews automatically on{" "}
-            <Text style={{ fontWeight: "bold" }}>
-              {new Date(
-                invoice.subscription?.current_period_end ||
-                  invoice.billing_period_end ||
-                  Date.now(),
-              ).toLocaleDateString()}
-            </Text>
-            . Add-ons are billed monthly and can be modified anytime from your
-            account dashboard. This invoice serves as an official receipt.
+            This invoice is for a mid-cycle add-on purchase. Prorated charges have been applied for the remainder of your current billing period. These add-ons will be included in your next regular subscription renewal.
           </Text>
         </View>
 
-        {/* Footer */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            Need help? Contact us at{" "}
-            <Text style={{ color: "#8B5CF6" }}>
-              support@ownersinventory.com
-            </Text>
-            {"\n"}© {new Date().getFullYear()}{" "}
-            <Text style={{ color: "#4B5563", fontWeight: "bold" }}>
-              Owners Inventory
-            </Text>{" "}
-            • <Text style={{ color: "#8B5CF6" }}>Privacy Policy</Text> •{" "}
-            <Text style={{ color: "#8B5CF6" }}>Terms and Conditions</Text>
-            {"\n"}
+            Need help? Contact us at <Text style={{ color: "#8B5CF6" }}>support@ownersinventory.com</Text>{"\n"}
+            © {new Date().getFullYear()} Owners Inventory LLC • Privacy Policy • Terms and Conditions{"\n"}
             4254 Normandy Ct, Fredericksburg, VA 22408, United States
           </Text>
         </View>
@@ -591,4 +398,4 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
   );
 };
 
-export default InvoicePDF;
+export default MidCycleInvoicePDF;

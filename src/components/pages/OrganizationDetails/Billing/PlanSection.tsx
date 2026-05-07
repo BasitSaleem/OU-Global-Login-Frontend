@@ -20,6 +20,8 @@ import { SUBSCRIPTION_STATUS_COLOR } from "@/utils/ColorClasses";
 import CancelSubscriptionModal from "@/components/modals/CancelSubscriptionModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import BillingCycleToggle from "./BillingCycleToggle";
+import SubscriptionCancelAlert from "./SubscriptionCancelAlert";
+import CancelSubscriptionButton from "./CancelSubscriptionButton";
 
 const typeData = [
   {
@@ -56,8 +58,7 @@ const PlanSection = ({
   loading: boolean;
 }) => {
   const { data, isLoading, error } = useGetAllPlans();
-  const [cancelSubscriptionModal, setCancelSubscriptionModal] =
-    React.useState(false);
+
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [activeType, setActiveType] = React.useState<string>("RETAIL");
   const [selectedPlanId, setSelectedPlanId] = React.useState<string | null>(
@@ -129,9 +130,6 @@ const PlanSection = ({
     if (currentIndex > 0) {
       setCurrentIndex((prev) => prev - 1);
     }
-  };
-  const cancelSubscription = () => {
-    setCancelSubscriptionModal(true);
   };
 
   const handleActivePlanClick = () => {
@@ -209,36 +207,20 @@ const PlanSection = ({
             <Skeleton width={80} height={24} circle />
           ) : (
             <span
-              className={`px-3 py-1 rounded-full text-xs text-text font-semibold capitalize ${SUBSCRIPTION_STATUS_COLOR[
-                organization?.subscriptions?.[0]?.status ?? ""
-              ]
-                }`}
+              className={`px-3 py-1 rounded-full text-xs text-text font-semibold capitalize ${
+                SUBSCRIPTION_STATUS_COLOR[
+                  organization?.subscriptions?.[0]?.status ?? ""
+                ]
+              }`}
             >
               {organization?.subscriptions?.[0]?.status ?? "No Subscription"}
             </span>
           )}
         </div>
-        {organization?.subscriptions?.[0]?.status !== "TRIAL" &&
-          organization?.subscriptions?.[0]?.status !== "CANCELLED" && (
-            <div className="w-full md:w-auto">
-              {loading ? (
-                <Skeleton
-                  width="100%"
-                  height={40}
-                  className="md:w-[200px]"
-                  circle
-                />
-              ) : (
-                <Button
-                  variant="destructive"
-                  className="rounded-full md:w-auto md:mt-2 bg-transparent text-text border-none hover:text-white active:bg-red-700"
-                  onClick={cancelSubscription}
-                >
-                  Cancel Subscription
-                </Button>
-              )}
-            </div>
-          )}
+        <CancelSubscriptionButton
+          loading={loading}
+          organization={organization}
+        />
       </div>
       {loading ? (
         <div className="w-full mt-4 bg-primary/10 border-primary/10 border rounded-3xl px-4 md:px-6 mb-6 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
@@ -263,8 +245,11 @@ const PlanSection = ({
             subscription={organization?.subscriptions?.[0]}
             orgId={organization?.id!}
           />
+          <SubscriptionCancelAlert
+            subscription={organization?.subscriptions?.[0]}
+          />
 
-          <div className="mt-8 flex flex-col gap-6">
+          <div className="mt-4 flex flex-col gap-6">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
               <div className="flex flex-wrap items-center gap-2 p-1.5 bg-[#EEEDF0]  rounded-2xl w-fit">
                 {typeData.map((type) => {
@@ -277,10 +262,11 @@ const PlanSection = ({
                         setActiveType(type.id);
                         setCurrentIndex(0);
                       }}
-                      className={`flex items-center gap-2 px-4  cursor-pointer py-2 rounded-xl transition-all duration-200 ${isActive
-                        ? "bg-primary text-white shadow-md"
-                        : "text-black hover:bg-primary/10"
-                        }`}
+                      className={`flex items-center gap-2 px-4  cursor-pointer py-2 rounded-xl transition-all duration-200 ${
+                        isActive
+                          ? "bg-primary text-white shadow-md"
+                          : "text-black hover:bg-primary/10"
+                      }`}
                     >
                       <Icon size={18} />
                       <span className="font-medium">{type.label}</span>
@@ -377,12 +363,6 @@ const PlanSection = ({
           </div>
         </div>
       )}
-      <CancelSubscriptionModal
-        isOpen={cancelSubscriptionModal}
-        onClose={() => setCancelSubscriptionModal(false)}
-        subscriptionId={organization?.subscriptions?.[0]?.id as string}
-        orgId={organization?.id as string}
-      />
     </div>
   );
 };

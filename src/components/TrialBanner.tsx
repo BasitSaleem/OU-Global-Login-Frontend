@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Clock, Crown } from "lucide-react";
 import { Subscription } from "@/apiHooks.ts/organization/organization.types";
 import { Button } from "./ui";
+import { formatDate } from "@/utils/helpers";
 
 const TrialBanner = ({
   subscription,
@@ -50,7 +51,8 @@ const TrialBanner = ({
           <h2 className="text-lg font-bold text-text">
             Your free trial ends in{" "}
             <span className="text-primary">{daysRemaining ?? "0"}</span>{" "}
-            {daysRemaining === 1 ? "day" : "days"}
+            {daysRemaining === 1 ? "day" : "days"} &nbsp;on{" "}
+            {formatDate(subscription?.current_period_end)}
           </h2>
           <p className="text-sm text-text font-medium">
             Upgrade now to keep full access to all features

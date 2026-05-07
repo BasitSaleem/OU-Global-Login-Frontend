@@ -8,6 +8,7 @@ import { useGetOrgInvoices } from "@/apiHooks.ts/invoice/inovice.api";
 import InvoiceHistorySkeleton from "./InvoiceHistorySkeleton";
 
 import InvoiceDetailModal from "./InvoiceDetailModal";
+import MidCycleInvoiceDetailModal from "./MidCycleInvoiceDetailModal";
 import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
 import { Organization } from "@/apiHooks.ts/organization/organization.types";
 import { isMidCycleInvoice } from "@/utils/invoicesUtils";
@@ -125,12 +126,21 @@ const InvoiceHistoryTable = ({ org }: { org: Partial<Organization> }) => {
         </table>
       </div>
 
-      <InvoiceDetailModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        invoice={selectedInvoice}
-        orgName={org.name!}
-      />
+      {selectedInvoice && isMidCycleInvoice(selectedInvoice) ? (
+        <MidCycleInvoiceDetailModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          invoice={selectedInvoice}
+          orgName={org.name!}
+        />
+      ) : (
+        <InvoiceDetailModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          invoice={selectedInvoice}
+          orgName={org.name!}
+        />
+      )}
     </>
   );
 };
