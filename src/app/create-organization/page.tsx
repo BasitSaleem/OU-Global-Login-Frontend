@@ -212,7 +212,7 @@ function CreateOrgContent({
 
   return (
     <AuthGuard>
-      <>
+      <CreateOrganizationGuard>
         {creatingOrg && <Loader text="Initializing organization creation" />}
         <div className="min-h-48 w-full bg-background flex flex-col items-center py-12 px-4 ">
           <div className="w-full max-w-4xl bg-bg-secondary rounded-2xl border border-border  relative">
@@ -292,7 +292,7 @@ function CreateOrgContent({
           }}
           isFromMain={true}
         />
-      </>
+      </CreateOrganizationGuard>
     </AuthGuard>
   );
 }
