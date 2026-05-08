@@ -40,7 +40,7 @@ function BillingPage() {
   }
   return (
     <AuthGuard>
-      <div className="px-2 py-12 w-full mx-auto   md:px-11 overflow-x-hidden ">
+      <div className="px-2 pt-2 pb-12 w-full mx-auto   md:px-11 overflow-x-hidden ">
         <BillingSection loading={isLoading} />
         <PlanSection organization={organization} loading={isLoading} />
         <BillingAddOnsSection organization={organization} />

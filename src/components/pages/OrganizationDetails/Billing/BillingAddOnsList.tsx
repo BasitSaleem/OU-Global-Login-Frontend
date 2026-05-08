@@ -75,7 +75,7 @@ const BillingAddOnsList: React.FC<BillingAddOnsListProps> = ({
 
                 <div className="flex items-baseline gap-1.5 mt-1.5">
                   <span className="text-sm ">
-                    +${unitPrice.toFixed(2)}
+                    +${unitPrice.toFixed(0)}
                     <span className="text-xs font-normal text-text ml-0.5">
                       /{periodLabel}
                     </span>
@@ -83,7 +83,7 @@ const BillingAddOnsList: React.FC<BillingAddOnsListProps> = ({
 
                   {quantity > 1 && (
                     <span className="text-xs text-text">
-                      +${(unitPrice * quantity).toFixed(2)} total
+                      +${(unitPrice * quantity).toFixed(0)} total
                     </span>
                   )}
                 </div>
