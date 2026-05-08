@@ -315,11 +315,7 @@ function CreateOrgContent({
             router.push(ROUTES.DASHBOARD);
           }}
           onComplete={() => logger.log("handleProgressComplete")}
-          onGoHome={() => {
-            setShowProgressModal(false);
-            setOrganizationData(null);
-            router.push(ROUTES.DASHBOARD);
-          }}
+
           isFromMain={true}
         />
       </>
