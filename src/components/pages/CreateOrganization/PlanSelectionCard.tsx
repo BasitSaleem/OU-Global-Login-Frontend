@@ -2,6 +2,7 @@
 import React from "react";
 import { OiPlanType } from "@/apiHooks.ts/plans/plans.types";
 import { SvgIcon } from "@/components/ui/SvgIcon";
+import { getPlanTextColor, returnPackageName } from "@/utils/package-utils";
 
 interface PlanSelectionCardProps {
   plan: OiPlanType;
@@ -10,25 +11,6 @@ interface PlanSelectionCardProps {
   billingCycle: "monthly" | "yearly";
   isDirectFlow?: boolean;
 }
-
-const returnPackageName = (planName: string) => {
-  if (planName.toUpperCase().includes("PRO")) {
-    return "Pro";
-  }
-  if (planName.toUpperCase().includes("BUSINESS")) {
-    return "Business";
-  }
-  if (planName.toUpperCase().includes("BASIC")) {
-    return "Basic";
-  }
-  if (planName.toUpperCase().includes("PREMIUM")) {
-    return "Enterprise";
-  }
-  if (planName.toUpperCase().includes("ENTERPRISE")) {
-    return "Enterprise";
-  }
-  return "Plan";
-};
 
 const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
   plan,
@@ -100,15 +82,12 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
           <div>
             <div className="flex items-baseline gap-1">
               <span
-                className={`text-4xl font-bold ${
-                  isBasic
-                    ? "text-[#1AD1B9]"
-                    : isPro || isBusiness
-                      ? "text-[#38ACCC]"
-                      : isEnterprise
-                        ? "text-[#5588DF]"
-                        : "text-[#1AD1B9]"
-                }`}
+                className={`text-4xl font-bold ${getPlanTextColor({
+                  isBasic,
+                  isPro,
+                  isBusiness,
+                  isEnterprise,
+                })}`}
               >
                 $
                 {billingCycle === "monthly"

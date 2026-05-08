@@ -31,7 +31,7 @@ const InvoiceHistoryTable = ({ org }: { org: Partial<Organization> }) => {
 
   return (
     <>
-      <div className="overflow-x-auto border rounded-lg mt-6">
+      <div className="overflow-x-auto border rounded-lg mt-4">
         <table className="min-w-full divide-y divide-border">
           <thead className="bg-[#8B5CF6]">
             <tr>

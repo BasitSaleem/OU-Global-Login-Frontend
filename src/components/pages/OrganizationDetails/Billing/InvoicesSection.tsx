@@ -10,17 +10,22 @@ interface InvoicesSectionPropsType {
   loading: boolean;
 }
 
-const InvoicesSection = ({ organization, loading }: InvoicesSectionPropsType) => {
+const InvoicesSection = ({
+  organization,
+  loading,
+}: InvoicesSectionPropsType) => {
   // const [emailNotification, setEmailNotification] = useState<boolean>(false);
   // const { user } = useSelector((state: RootState) => state.auth);
 
   return (
     <div className="mb-9">
-      <div className="text-center md:text-left mb-9">
-        <h1 className="text-heading-1 font-bold pt-8 pb-2">{loading ? <Dots text="Loading invoices" /> : "Invoices"}</h1>
-        <p className="text-body-small">
+      <div className="text-center md:text-left">
+        <h1 className="text-heading-1 font-bold pt-8">
+          {loading ? <Dots text="Loading invoices" /> : "Invoices"}
+        </h1>
+        {/* <p className="text-body-small">
           {loading ? <div className="flex flex-col items-start gap-2 ml-2"><Skeleton width={200} height={10} /> <Skeleton width={150} height={10} /> </div> : "Invoices are generated every 24 hours and transactions are rolled into one invoice during this period."}
-        </p>
+        </p> */}
       </div>
       {/* 
       <div className="border rounded-xl mb-9">
@@ -89,7 +94,12 @@ const InvoicesSection = ({ organization, loading }: InvoicesSectionPropsType) =>
         <div className="flex flex-col border border-border h-auto rounded-xl animate-pulse p-4 gap-4">
           <div className="flex gap-4 justify-between w-full">
             {Array.from({ length: 4 }).map((_, index) => (
-              <Skeleton key={index} width="100%" height={24} className={index > 1 ? "hidden sm:block" : ""} />
+              <Skeleton
+                key={index}
+                width="100%"
+                height={24}
+                className={index > 1 ? "hidden sm:block" : ""}
+              />
             ))}
           </div>
           <div className="space-y-3">
@@ -104,7 +114,9 @@ const InvoicesSection = ({ organization, loading }: InvoicesSectionPropsType) =>
           </div>
         </div>
       ) : (
-        <InvoiceHistoryTable org={organization !== undefined ? organization : {}} />
+        <InvoiceHistoryTable
+          org={organization !== undefined ? organization : {}}
+        />
       )}
     </div>
   );

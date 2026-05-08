@@ -327,7 +327,8 @@ function CheckoutPage() {
     if (
       currentSubscription &&
       currentSubscription.status !== "TRIAL" &&
-      currentSubscription.status !== "CANCELLED"
+      currentSubscription.status !== "CANCELLED" &&
+      !currentSubscription.cancel_at_period_end
     ) {
       toast.error(
         "Action Not Allowed",
