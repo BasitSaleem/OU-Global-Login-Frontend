@@ -11,6 +11,8 @@ import { useAppDispatch } from "@/redux/store";
 import { setSelectedAddons } from "@/redux/slices/checkout.slice";
 import { useGetAllAddons } from "@/apiHooks.ts/addons/addons.api";
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
+import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
+import { getAvailableAddons } from "@/utils/addon-utils";
 
 interface BillingAddOnsSectionProps {
   organization: OgOrganization;
@@ -20,13 +22,15 @@ const ignoreStatus = ["TRIAL", "CANCELLED", "OVER_DUE"];
 
 const BillingAddOnsSection = ({ organization }: BillingAddOnsSectionProps) => {
   const subscription = organization?.subscriptions?.[0];
+  const invoices = subscription?.invoices;
 
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { orgId } = useParams<{ orgId: string }>();
 
   const { data, isLoading } = useGetAllAddons();
-  const allAddOns = data?.addons ?? [];
+
+  const availableAddons = getAvailableAddons(data?.addons ?? [], invoices);
 
   const [selectedAddOns, setSelectedAddOns] = useState<Record<string, number>>(
     {},
@@ -88,7 +92,7 @@ const BillingAddOnsSection = ({ organization }: BillingAddOnsSectionProps) => {
         </div>
       ) : (
         <BillingAddOnsList
-          addOns={allAddOns}
+          addOns={availableAddons}
           selectedAddOns={selectedAddOns}
           billingCycle={subscription?.billing_cycle as "MONTHLY" | "YEARLY"}
           onUpdateQuantity={updateAddonQuantity}

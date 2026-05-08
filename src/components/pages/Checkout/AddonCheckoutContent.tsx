@@ -33,6 +33,7 @@ import { toast } from "@/hooks/useToast";
 import logger from "@/utils/logger";
 import { useAppSelector, useAppDispatch } from "@/redux/store";
 import { clearCheckout } from "@/redux/slices/checkout.slice";
+import { getAvailableAddons } from "@/utils/addon-utils";
 // import AddonLineItem from "@/components/pages/Checkout/addonLineItem";
 
 const AddonCheckoutContent = () => {
@@ -80,8 +81,14 @@ const AddonCheckoutContent = () => {
   const billingCycle = currentSubscription?.billing_cycle;
   const subscriptionId = currentSubscription?.id ?? null;
 
+  const invoices = currentSubscription?.invoices ?? [];
+  const availableAddons = getAvailableAddons(
+    addonsData?.addons ?? [],
+    invoices,
+  );
+
   const availableAddOns = useMemo<AddOnType[]>(() => {
-    const addons = addonsData?.addons ?? [];
+    const addons = availableAddons ?? [];
     return [...addons].sort((a, b) => {
       const aSelected = selectedAddOns[a.id] ? 1 : 0;
       const bSelected = selectedAddOns[b.id] ? 1 : 0;
@@ -98,11 +105,7 @@ const AddonCheckoutContent = () => {
 
   // ── Proration Preview Update Handler ──────────────────────────────────
   const handlePreviewUpdate = useCallback(
-    (
-      data: previewAddonDataType | null,
-      loading: boolean,
-      isError: boolean,
-    ) => {
+    (data: previewAddonDataType | null, loading: boolean, isError: boolean) => {
       setPreviewData(data);
       setIsLoadingPreview(loading);
       setIsPreviewError(isError);

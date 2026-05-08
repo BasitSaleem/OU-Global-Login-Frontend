@@ -11,6 +11,25 @@ interface PlanSelectionCardProps {
   isDirectFlow?: boolean;
 }
 
+const returnPackageName = (planName: string) => {
+  if (planName.toUpperCase().includes("PRO")) {
+    return "Pro";
+  }
+  if (planName.toUpperCase().includes("BUSINESS")) {
+    return "Business";
+  }
+  if (planName.toUpperCase().includes("BASIC")) {
+    return "Basic";
+  }
+  if (planName.toUpperCase().includes("PREMIUM")) {
+    return "Enterprise";
+  }
+  if (planName.toUpperCase().includes("ENTERPRISE")) {
+    return "Enterprise";
+  }
+  return "Plan";
+};
+
 const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
   plan,
   isSelected = false,
@@ -20,30 +39,35 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
 }) => {
   const isBasic = plan.package_name.toUpperCase().includes("BASIC");
   const isPro = plan.package_name.toUpperCase().includes("PRO");
-  const isEnterprise = plan.package_name.toUpperCase().includes("PREMIUM") || plan.package_name.toUpperCase().includes("ENTERPRISE");
+  const isBusiness = plan.package_name.toUpperCase().includes("BUSINESS");
+  const isEnterprise =
+    plan.package_name.toUpperCase().includes("PREMIUM") ||
+    plan.package_name.toUpperCase().includes("ENTERPRISE");
 
   if (!isDirectFlow) {
     return (
       <div
         onClick={onClick}
-        className={`relative w-full flex flex-col p-6 rounded-[32px] border-2 transition-all duration-300 cursor-pointer h-full ${isSelected
-          ? "bg-primary/10 border-[#B2A5FF]"
-          : isPro
-            ? "bg-white border-transparent"
-            : "bg-white border-gray-100"
-          }`}
+        className={`relative w-full flex flex-col p-6 rounded-[32px] border-2 transition-all duration-300 cursor-pointer h-full ${
+          isSelected
+            ? "bg-primary/10 border-[#B2A5FF]"
+            : isPro || isBusiness
+              ? "bg-white border-transparent"
+              : "bg-white border-gray-100"
+        }`}
         style={
-          isPro && !isSelected
+          (isPro || isBusiness) && !isSelected
             ? {
-              border: "2px solid transparent",
-              backgroundImage: "linear-gradient(white, white), linear-gradient(to right, #1AD1B9, #7C3AED)",
-              backgroundOrigin: "border-box",
-              backgroundClip: "padding-box, border-box",
-            }
+                border: "2px solid transparent",
+                backgroundImage:
+                  "linear-gradient(white, white), linear-gradient(to right, #1AD1B9, #7C3AED)",
+                backgroundOrigin: "border-box",
+                backgroundClip: "padding-box, border-box",
+              }
             : {}
         }
       >
-        {isPro && (
+        {(isPro || isBusiness) && (
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-linear-to-r from-[#1AD1B9] to-[#7C3AED] text-white text-[10px] font-bold px-4 py-1 rounded-lg shadow-md z-20">
             Most Popular
           </div>
@@ -51,15 +75,21 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
 
         <div className="mb-2">
           <h3 className="text-xl font-bold text-text flex items-center justify-between">
-            {plan.package_name?.split(' ')[1]}
+            {/* {isBusiness ? "Pro" : plan.package_name?.split(" ")[1]} */}
+            {returnPackageName(plan.package_name)}
             {isSelected && (
-              <SvgIcon name="check2" width={20} height={20} className="text-primary" />
+              <SvgIcon
+                name="check2"
+                width={20}
+                height={20}
+                className="text-primary"
+              />
             )}
           </h3>
         </div>
 
         <p className="text-text text-sm mb-10 leading-tight pr-4">
-          {isPro
+          {isPro || isBusiness
             ? "Ideal for growing businesses"
             : isBasic
               ? "Perfect for small businesses getting started"
@@ -70,14 +100,21 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
           <div>
             <div className="flex items-baseline gap-1">
               <span
-                className={`text-4xl font-bold ${isBasic ? "text-[#1AD1B9]" : isPro ? "text-[#38ACCC]" : isEnterprise ? "text-[#5588DF]" : "text-[#1AD1B9]"
-                  }`}
+                className={`text-4xl font-bold ${
+                  isBasic
+                    ? "text-[#1AD1B9]"
+                    : isPro || isBusiness
+                      ? "text-[#38ACCC]"
+                      : isEnterprise
+                        ? "text-[#5588DF]"
+                        : "text-[#1AD1B9]"
+                }`}
               >
                 $
                 {billingCycle === "monthly"
                   ? Number(plan.monthly_price).toFixed(0)
                   : (Number(plan.discounted_yearly_price) / 12).toFixed(0) ||
-                  Number(plan.yearly_price).toFixed(0)}
+                    Number(plan.yearly_price).toFixed(0)}
               </span>
               <span className="text-gray-400 text-lg font-medium">/month</span>
             </div>
@@ -86,9 +123,7 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
             )}
           </div>
 
-          <div className="text-text font-bold">
-            Start 30-Day Free Trial
-          </div>
+          <div className="text-text font-bold">Start 30-Day Free Trial</div>
         </div>
       </div>
     );
@@ -98,24 +133,26 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`relative w-full flex flex-col p-4 rounded-[32px] border-2 transition-all duration-300 cursor-pointer ${isSelected
-        ? "bg-[#F8F7FF] border-[#B2A5FF]"
-        : isPro
-          ? "zbg-white border-transparent"
-          : "bg-white border-gray-100"
-        }`}
+      className={`relative w-full flex flex-col p-4 rounded-[32px] border-2 transition-all duration-300 cursor-pointer ${
+        isSelected
+          ? "bg-[#F8F7FF] border-[#B2A5FF]"
+          : isPro || isBusiness
+            ? "bg-white border-transparent"
+            : "bg-white border-gray-100"
+      }`}
       style={
-        isPro && !isSelected
+        (isPro || isBusiness) && !isSelected
           ? {
-            border: "2px solid transparent",
-            backgroundImage: "linear-gradient(white, white), linear-gradient(to right, #1AD1B9, #7C3AED)",
-            backgroundOrigin: "border-box",
-            backgroundClip: "padding-box, border-box",
-          }
+              border: "2px solid transparent",
+              backgroundImage:
+                "linear-gradient(white, white), linear-gradient(to right, #1AD1B9, #7C3AED)",
+              backgroundOrigin: "border-box",
+              backgroundClip: "padding-box, border-box",
+            }
           : {}
       }
     >
-      {isPro && (
+      {(isPro || isBusiness) && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-linear-to-r from-[#1AD1B9] to-[#7C3AED] text-white text-[10px] font-bold px-4 py-1 rounded-lg shadow-md z-20">
           Most Popular
         </div>
@@ -124,22 +161,35 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
       <div className="flex justify-between items-start">
         <div className="flex items-center gap-2">
           <h3 className="text-xl font-bold text-text">
-            {plan.package_name?.split(' ')[1]}
+            {/* {plan.package_name?.split(" ")[1]} */}
+            {returnPackageName(plan.package_name)}
           </h3>
-          <SvgIcon name="check2" width={20} height={20} className="text-[#7C3AED]" />
+          <SvgIcon
+            name="check2"
+            width={20}
+            height={20}
+            className="text-[#7C3AED]"
+          />
         </div>
 
         <div className="flex flex-col items-end">
           <div className="flex items-baseline gap-1">
             <span
-              className={`text-4xl font-bold ${isBasic ? "text-[#1AD1B9]" : isPro ? "text-[#38ACCC]" : isEnterprise ? "text-[#5588DF]" : "text-[#1AD1B9]"
-                }`}
+              className={`text-4xl font-bold ${
+                isBasic
+                  ? "text-[#1AD1B9]"
+                  : isPro || isBusiness
+                    ? "text-[#38ACCC]"
+                    : isEnterprise
+                      ? "text-[#5588DF]"
+                      : "text-[#1AD1B9]"
+              }`}
             >
               $
               {billingCycle === "monthly"
                 ? Number(plan.monthly_price).toFixed(0)
                 : (Number(plan.discounted_yearly_price) / 12).toFixed(0) ||
-                Number(plan.yearly_price).toFixed(0)}
+                  Number(plan.yearly_price).toFixed(0)}
             </span>
             <span className="text-gray-400 text-sm font-medium">/month</span>
           </div>
@@ -150,7 +200,7 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
       </div>
 
       <p className="text-text text-sm mb-3 leading-tight max-w-[80%]">
-        {isPro
+        {isPro || isBusiness
           ? "Ideal for growing businesses"
           : isBasic
             ? "Perfect for small businesses getting started"

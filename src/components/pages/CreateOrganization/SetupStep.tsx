@@ -95,7 +95,7 @@ export const SetupStep: React.FC<SetupStepProps> = ({
 
   const filteredPlans = useMemo(() => {
     if (!plansData?.plans) return [];
-    const packageOrder = ["BASIC", "PRO", "PREMIUM"];
+    const packageOrder = ["BASIC", "PRO", "PREMIUM", "BUSINESS", "ENTERPRISE"];
     return [...plansData.plans]
       .filter((plan) => plan.type === activeType)
       .sort((a, b) => {
