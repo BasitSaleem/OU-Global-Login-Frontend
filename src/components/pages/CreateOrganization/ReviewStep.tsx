@@ -1,3 +1,15 @@
+
+
+
+
+
+
+
+
+
+
+
+
 "use client";
 import React from "react";
 import { Button, LoadingSpinner, Dots } from "@/components/ui";
@@ -64,7 +76,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
         </div>
 
         <div className="space-y-3">
-          <label className="text-text">Your Selected Plan</label>
+          <label className="text-text font-bold">Your Selected Plan</label>
           <div className="flex items-center justify-between">
             <span className="text-gray-600 font-medium">
               {productInfo?.fullname} • <span className="text-text font-bold">{selectedPlan?.type}</span>
