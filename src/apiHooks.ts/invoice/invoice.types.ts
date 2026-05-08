@@ -53,6 +53,7 @@ export interface InvoiceMetadata {
 }
 
 export interface AddOn {
+  id: string;
   name: string;
   quantity: number;
   price: string;

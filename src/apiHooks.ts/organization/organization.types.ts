@@ -1,6 +1,7 @@
 import { Permission } from "@/types/common";
 import { OgOrgMembership } from "../membership/membership.types";
 import { PaymentType } from "../subscription/subscription.types";
+import { Invoice } from "../invoice/invoice.types";
 
 export type products = "OI" | "OG" | "OA" | "OJ";
 export interface Organization {
@@ -29,6 +30,7 @@ export type Subscription = {
   payment_method: string | null;
   oiPackage: Package;
   payments: PaymentType[];
+  invoices: Invoice[];
 };
 
 export type Package = {
