@@ -88,8 +88,8 @@ const PlanCard: React.FC<PlanCardProps> = ({
         >
           $
           {billingCycle === "monthly"
-            ? plan.monthly_price
-            : (Number(plan.discounted_yearly_price) / 12).toFixed(2) ||
+            ? Number(plan.monthly_price).toFixed(0)
+            : (Number(plan.discounted_yearly_price) / 12).toFixed(0) ||
               plan.yearly_price}
         </span>
         <span className="text-text font-medium text-sm">/month</span>

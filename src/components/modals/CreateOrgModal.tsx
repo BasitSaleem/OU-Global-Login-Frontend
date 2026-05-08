@@ -27,7 +27,7 @@ export default function CreateOrgModal({
 }: CreateOrgModalProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [companyName, setCompanyName] = useState("");
-  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>("d755fe7d-4372-426c-af33-e63b71a6521f");
   const [subDomain, setSubDomain] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("OI");
   const [isSuggestionSubdomain, setIsSuggestionSubdomain] = useState(false);
@@ -79,7 +79,7 @@ export default function CreateOrgModal({
     setCompanyName("");
     setSubDomain("");
     setSelectedProduct("OI");
-    setSelectedPlanId(null);
+    setSelectedPlanId("d755fe7d-4372-426c-af33-e63b71a6521f");
     setCurrentStep(1);
   };
 
