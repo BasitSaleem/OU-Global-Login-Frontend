@@ -18,11 +18,11 @@ const BillingCycleToggle: React.FC<BillingCycleToggleProps> = ({
 }) => {
   return (
     <div
-      className={` flex items-center gap-2 p-1.5 bg-[#EEEDF0] rounded-2xl w-fit ${className}`}
+      className={` flex items-center gap-2 p-1 bg-[#EEEDF0] rounded-2xl w-fit ${className}`}
     >
       <button
         onClick={() => onChange("monthly")}
-        className={`px-6 py-2 rounded-xl font-medium transition-all duration-200 cursor-pointer ${
+        className={`px-4 py-2 rounded-xl font-medium transition-all duration-200 cursor-pointer ${
           value === "monthly"
             ? "bg-primary text-white shadow-md"
             : "text-black hover:bg-primary/10"
@@ -32,7 +32,7 @@ const BillingCycleToggle: React.FC<BillingCycleToggleProps> = ({
       </button>
       <button
         onClick={() => onChange("yearly")}
-        className={`px-6 py-2 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 cursor-pointer ${
+        className={`px-4 py-2 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 cursor-pointer ${
           value === "yearly"
             ? "bg-primary text-white shadow-md"
             : "text-black hover:bg-primary/10"

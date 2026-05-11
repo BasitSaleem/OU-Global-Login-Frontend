@@ -326,6 +326,7 @@ export const SetupStep: React.FC<SetupStepProps> = ({
           <Button
             variant="secondary"
             onClick={onBack}
+            disabled={creatingOrg}
             leftIcon={<ArrowLeft size={16} />}
             className="mr-auto"
           >

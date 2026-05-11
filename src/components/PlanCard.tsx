@@ -6,6 +6,7 @@ import {
   getPlanFeatures,
   formatFeature,
 } from "./pages/Checkout/RenderPackageFeature";
+import { getPlanTextColor, returnPackageName } from "@/utils/package-utils";
 
 interface PlanCardProps {
   plan: OiPlanType;
@@ -27,7 +28,12 @@ const PlanCard: React.FC<PlanCardProps> = ({
   const router = useRouter();
   const [isHovered, setIsHovered] = React.useState(false);
 
+  const isBasic = plan.package_name.toUpperCase().includes("BASIC");
   const isPro = plan.package_name.toUpperCase().includes("PRO");
+  const isBusiness = plan.package_name.toUpperCase().includes("BUSINESS");
+  const isEnterprise =
+    plan.package_name.toUpperCase().includes("PREMIUM") ||
+    plan.package_name.toUpperCase().includes("ENTERPRISE");
 
   const features = getPlanFeatures(plan).map((f) => ({
     text: f,
@@ -66,7 +72,9 @@ const PlanCard: React.FC<PlanCardProps> = ({
 
       {/* Header */}
       <div className="flex justify-between items-start mb-3">
-        <h3 className="text-lg font-bold text-text">{plan.package_name}</h3>
+        <h3 className="text-lg font-bold text-text">
+          {returnPackageName(plan.package_name)}
+        </h3>
         {isCurrentPlan && subscriptionStatus !== "CANCELLED" && (
           <span className="flex items-center gap-1.5 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold text-nowrap">
             Current Plan
@@ -84,7 +92,12 @@ const PlanCard: React.FC<PlanCardProps> = ({
 
       <div className="flex items-baseline gap-1 mb-5">
         <span
-          className={`text-3xl font-bold ${plan.package_name.toUpperCase().includes("ENTERPRISE") ? "text-[#5588DF]" : "text-[#1AD1B9]"}`}
+          className={`text-3xl font-bold ${getPlanTextColor({
+            isBasic,
+            isPro,
+            isBusiness,
+            isEnterprise,
+          })}`}
         >
           $
           {billingCycle === "monthly"

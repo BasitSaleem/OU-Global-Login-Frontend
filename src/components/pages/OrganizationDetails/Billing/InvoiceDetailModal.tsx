@@ -24,7 +24,6 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
 }) => {
   const { user } = useSelector((state: RootState) => state.auth);
   if (!invoice) return null;
-  logger.info("invoice details--------", invoice);
 
   let metaObj = invoice.metadata as any;
   if (typeof metaObj === "string" && metaObj !== "") {
@@ -45,7 +44,6 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
     hasDiscount,
     originalBasePlan,
     addOnsWithPricing,
-    midCycleAddons,
   } = calculateInvoiceFinancial(invoice, invoice.subscription?.billing_cycle);
 
   return (
@@ -91,10 +89,10 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
           </div>
 
           {/* Line Items Table */}
-          <div className="max-h-fit overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
+          <div className="max-h-[320px]  overflow-y-auto ">
             <table className="w-full text-sm">
-              <thead className="sticky top-0 z-10 p-2 rounded-2xl">
-                <tr className="text-text font-medium border-b border-border text-left">
+              <thead className="sticky top-0 bg-bg-secondary p-2 rounded-2xl">
+                <tr className="text-text z-20 bg-bg-secondary font-medium border-b border-border text-left">
                   <th className="pb-4 font-semibold">Product</th>
                   <th className="pb-4 font-semibold text-center">Type</th>
                   <th className="pb-4 font-semibold text-center">Quantity</th>
