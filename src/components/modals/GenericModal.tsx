@@ -61,7 +61,7 @@ function ModalRoot({
       aria-label={ariaLabel}
     >
       <div
-        className={`bg-bg-secondary rounded-xl shadow-lg border relative ${sizeClasses[size]} max-w-[95vw] p-6 ${className}`}
+        className={`bg-bg-secondary rounded-xl shadow-lg border relative ${sizeClasses[size]} max-w-[95vw] max-h-[90vh] overflow-y-auto p-6 ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
         {showCloseButton && (

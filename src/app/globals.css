@@ -21,7 +21,7 @@
   --color-bg-secondary: #fff;
   --color-skeleton: #d1d5db;
   --color-black: #131313;
-  --color-text: #16151C;
+  --color-text: #16151c;
   --color-text-secondary: #686379;
   --color-red: #e53935;
   --color-text-btn: #ffffff;
@@ -63,17 +63,17 @@
   --color-primary-100: #ede9fe;
   --color-primary-500: #985cff;
   --color-primary: #985cff;
-  --gradient-primary-start: #9333EA;
+  --gradient-primary-start: #9333ea;
   --color-google-button: #131314;
-  --gradient-primary-end: #2563EB;
-  --color-skeleton: #4B5563;
+  --gradient-primary-end: #2563eb;
+  --color-skeleton: #4b5563;
   --color-input-bg: #1a222e;
   --color-black: #000000;
   --color-muted: #9ca3af;
   --color-text: #ffffff;
   --color-invert: #ffffff;
   --color-text-btn: #ffffff;
-  --color-text-secondary: #9CA3AF;
+  --color-text-secondary: #9ca3af;
   --color-red: #e53935;
   --color-icon: #ffffff;
   --color-gray: #1f2937;
@@ -107,9 +107,11 @@
 }
 
 @utility bg-card {
-  background: linear-gradient(90deg,
-      var(--gradient-primary-start),
-      var(--gradient-primary-end));
+  background: linear-gradient(
+    90deg,
+    var(--gradient-primary-start),
+    var(--gradient-primary-end)
+  );
 }
 
 /* Register colors with Tailwind 4 */
@@ -166,7 +168,6 @@
 
 /* Autofill styles layer - higher specificity */
 @layer components {
-
   /* Light mode autofill styling to match bg-gray-100 */
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
@@ -305,7 +306,6 @@
 
 /* Professional typography utility classes */
 @layer utilities {
-
   /* Heading Typography Classes - Compact professional sizes */
   .text-heading-1 {
     font-family:
@@ -475,7 +475,6 @@
   }
 
   @keyframes crown-vibrate {
-
     0%,
     14%,
     100% {

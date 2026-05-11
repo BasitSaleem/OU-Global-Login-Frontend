@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui";
@@ -17,7 +17,6 @@ import PricingSkeleton from "@/components/PricingSkeleton";
 import ErrorMessage from "@/components/ErrorMessage";
 import PlanCard from "@/components/PlanCard";
 import { SUBSCRIPTION_STATUS_COLOR } from "@/utils/ColorClasses";
-import CancelSubscriptionModal from "@/components/modals/CancelSubscriptionModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import BillingCycleToggle from "./BillingCycleToggle";
 import SubscriptionCancelAlert from "./SubscriptionCancelAlert";
@@ -50,6 +49,10 @@ const typeData = [
   },
 ];
 
+const CARD_WIDTH = 380;
+const GAP = 16;
+const TOTAL_MOVE = CARD_WIDTH + GAP;
+
 const PlanSection = ({
   organization,
   loading,
@@ -59,19 +62,16 @@ const PlanSection = ({
 }) => {
   const { data, isLoading, error } = useGetAllPlans();
 
-  const [currentIndex, setCurrentIndex] = React.useState(0);
-  const [activeType, setActiveType] = React.useState<string>("RETAIL");
-  const [billingCycle, setBillingCycle] = React.useState<"monthly" | "yearly">(
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [activeType, setActiveType] = useState<string>("RETAIL");
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
     "monthly",
   );
 
-  const CARD_WIDTH = 380;
-  const GAP = 16;
-  const TOTAL_MOVE = CARD_WIDTH + GAP;
-  const [maxIndex, setMaxIndex] = React.useState(0);
-  const containerRef = React.useRef<HTMLDivElement>(null);
+  const [maxIndex, setMaxIndex] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const filteredPlans = React.useMemo(() => {
+  const filteredPlans = useMemo(() => {
     if (!data?.plans) return [];
 
     const packageOrder = ["BASIC", "PRO", "PREMIUM"];
@@ -100,7 +100,7 @@ const PlanSection = ({
   }, [data?.plans, activeType]);
   const planCount = filteredPlans.length;
 
-  React.useEffect(() => {
+  useEffect(() => {
     const updateMaxIndex = () => {
       if (containerRef.current) {
         const containerWidth = containerRef.current.offsetWidth;
@@ -203,7 +203,7 @@ const PlanSection = ({
             <Skeleton width={80} height={24} circle />
           ) : (
             <span
-              className={`px-3 py-1 rounded-full text-xs text-text font-semibold capitalize ${
+              className={`px-3 py-1 rounded-full text-xs  font-semibold capitalize ${
                 SUBSCRIPTION_STATUS_COLOR[
                   organization?.subscriptions?.[0]?.status ?? ""
                 ]
@@ -245,9 +245,9 @@ const PlanSection = ({
             subscription={organization?.subscriptions?.[0]}
           />
 
-          <div className="mt-4 flex flex-col gap-6">
+          <div className="mt-4 flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-              <div className="flex flex-wrap items-center gap-2 p-1.5 bg-[#EEEDF0]  rounded-2xl w-fit">
+              <div className="flex flex-wrap items-center gap-2 p-1 bg-[#EEEDF0]  rounded-2xl w-fit">
                 {typeData.map((type) => {
                   const Icon = type.icon;
                   const isActive = activeType === type.id;
@@ -258,7 +258,7 @@ const PlanSection = ({
                         setActiveType(type.id);
                         setCurrentIndex(0);
                       }}
-                      className={`flex items-center gap-2 px-4  cursor-pointer py-2 rounded-xl transition-all duration-200 ${
+                      className={`flex items-center gap-1 px-4  cursor-pointer py-2 rounded-xl transition-all duration-200 ${
                         isActive
                           ? "bg-primary text-white shadow-md"
                           : "text-black hover:bg-primary/10"
