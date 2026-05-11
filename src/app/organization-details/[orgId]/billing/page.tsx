@@ -12,6 +12,8 @@ import NotFound from "@/components/NotFound";
 import { useAppSelector } from "@/redux/store";
 import { AuthGuard } from "@/components/HOCs/auth-guard";
 import BillingAddOnsSection from "@/components/pages/OrganizationDetails/Billing/AddOnsSection";
+import CancelSubscriptionButton from "@/components/pages/OrganizationDetails/Billing/CancelSubscriptionButton";
+import CancelSubscriptionSection from "@/components/pages/OrganizationDetails/Billing/CancelSubscriptionSection";
 
 function BillingPage() {
   const { orgId } = useParams();
@@ -43,6 +45,10 @@ function BillingPage() {
       <div className="px-2 pt-2 pb-12 w-full mx-auto   md:px-11 overflow-x-hidden ">
         <BillingSection loading={isLoading} />
         <PlanSection organization={organization} loading={isLoading} />
+        <CancelSubscriptionSection
+          loading={isLoading}
+          organization={organization}
+        />
         <BillingAddOnsSection organization={organization} />
         <RenewalSection organization={organization} loading={isLoading} />
         <PaymentMethodSection loading={isLoading} />

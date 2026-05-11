@@ -1,6 +1,5 @@
 import { useState } from "react";
 import OwnersProductItem, { OwnerKey } from "./OwnersProductItem";
-import { Icons } from "@/components/utils/icons";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const owners: {

@@ -1,6 +1,6 @@
 import { Subscription } from "@/apiHooks.ts/organization/organization.types";
 import { formatDate } from "@/utils/helpers";
-import { AlertCircle, AlertTriangle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import React from "react";
 
 interface SubscriptionCancelAlertProps {
