@@ -213,10 +213,6 @@ const PlanSection = ({
             </span>
           )}
         </div>
-        <CancelSubscriptionButton
-          loading={loading}
-          organization={organization}
-        />
       </div>
       {loading ? (
         <div className="w-full mt-4 bg-primary/10 border-primary/10 border rounded-3xl px-4 md:px-6 mb-6 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">

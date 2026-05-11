@@ -397,8 +397,8 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
                 },
               ]}
             >
-              {invoice.metadata?.customerName || user?.first_name
-                ? `${invoice.metadata?.customerName || user?.first_name} ${user?.last_name || ""}`
+              {user?.first_name
+                ? `${user.first_name} ${user.last_name || ""}`
                 : orgName}
             </Text>
             <Text style={styles.infoText}>

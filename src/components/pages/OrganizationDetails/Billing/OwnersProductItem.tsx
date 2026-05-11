@@ -26,15 +26,17 @@ const OwnersProductItem = ({
     >
       <Tooltip content={toolTipText} position="bottom">
         <div
-          className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all border ${selectedOwner === value
-            ? "border-primary bg-primary/5 shadow-sm scale-110"
-            : "border-transparent hover:bg-bg-secondary"
-            }`}
+          className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all border ${
+            selectedOwner === value
+              ? "border-primary bg-primary/5 shadow-sm scale-110"
+              : "border-transparent hover:bg-bg-secondary"
+          }`}
         >
           <SvgIcon
             name={iconUrl}
-            className={`transition-all duration-300 ${selectedOwner === value ? "scale-110" : ""
-              }`}
+            className={`transition-all duration-300 ${
+              selectedOwner === value ? "scale-110" : ""
+            }`}
             width={28}
             height={28}
           />

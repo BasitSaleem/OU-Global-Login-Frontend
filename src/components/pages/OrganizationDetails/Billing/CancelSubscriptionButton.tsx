@@ -37,7 +37,7 @@ const CancelSubscriptionButton = ({
             ) : (
               <Button
                 variant="destructive"
-                className="rounded-full md:w-auto md:mt-2 bg-transparent text-text border-none hover:text-white active:bg-red-700"
+                className="rounded-lg py-2 md:w-auto bg-background border-1 border-red-500  text-text  hover:text-white active:bg-red-700"
                 onClick={cancelSubscription}
               >
                 Cancel Subscription
