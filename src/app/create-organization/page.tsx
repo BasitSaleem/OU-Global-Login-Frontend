@@ -60,12 +60,16 @@ export default function CreateOrgPage() {
     }
   }, [queryPkgId, queryProduct, queryBillingCycle]);
 
+  const redirectTo =
+    queryProduct === "OI" && queryPkgId ? ROUTES.REGISTER : ROUTES.LOGIN;
+
   return (
     <CreateOrgContent
       initialPkgId={pkgId}
       initialProduct={product}
       queryPkgId={queryPkgId}
       initialBillingCycle={billingCycle as "monthly" | "yearly"}
+      redirectTo={redirectTo}
     />
   );
 }
@@ -75,11 +79,13 @@ function CreateOrgContent({
   initialProduct,
   queryPkgId,
   initialBillingCycle,
+  redirectTo,
 }: {
   initialPkgId: string | null;
   initialProduct: string;
   queryPkgId: string | null;
   initialBillingCycle: "monthly" | "yearly";
+  redirectTo: string;
 }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [direction, setDirection] = useState(0);
@@ -229,7 +235,7 @@ function CreateOrgContent({
   };
 
   return (
-    <AuthGuard>
+    <AuthGuard redirectTo={redirectTo}>
       <>
         <Button
           onClick={handleLogout}

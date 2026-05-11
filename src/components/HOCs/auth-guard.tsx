@@ -11,9 +11,10 @@ import { useQueryClient } from "@tanstack/react-query";
 interface AuthGuardProps {
   children: React.ReactNode;
   fallback?: React.ReactNode;
+  redirectTo?: string;
 }
 
-export function AuthGuard({ children, fallback }: AuthGuardProps) {
+export function AuthGuard({ children, fallback, redirectTo }: AuthGuardProps) {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -45,9 +46,9 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
         localStorage.setItem("pkgId", savedPkgId);
       }
       sessionStorage.clear();
-      router.replace(ROUTES.LOGIN);
+      router.replace(redirectTo || ROUTES.LOGIN);
     }
-  }, [isLoading, isError, router, dispatch, queryClient]);
+  }, [isLoading, isError, router, dispatch, queryClient, redirectTo]);
 
   if (isLoading) {
     return fallback || null;
