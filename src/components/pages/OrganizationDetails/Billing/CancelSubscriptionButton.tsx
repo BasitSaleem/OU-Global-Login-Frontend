@@ -19,32 +19,28 @@ const CancelSubscriptionButton = ({
     setCancelSubscriptionModal(true);
   };
 
-  const subscription = organization?.subscriptions?.[0];
-
   return (
     <>
-      {subscription?.status !== "TRIAL" &&
-        subscription?.status !== "CANCELLED" &&
-        !subscription?.cancel_at_period_end && (
-          <div className="w-full md:w-auto">
-            {loading ? (
-              <Skeleton
-                width="100%"
-                height={40}
-                className="md:w-[200px]"
-                circle
-              />
-            ) : (
-              <Button
-                variant="destructive"
-                className="rounded-lg py-2 md:w-auto bg-background border-1 border-red-500  text-text  hover:text-white active:bg-red-700"
-                onClick={cancelSubscription}
-              >
-                Cancel Subscription
-              </Button>
-            )}
-          </div>
-        )}
+      {
+        <div className="w-full md:w-auto">
+          {loading ? (
+            <Skeleton
+              width="100%"
+              height={40}
+              className="md:w-[200px]"
+              circle
+            />
+          ) : (
+            <Button
+              variant="destructive"
+              className="rounded-lg py-2 md:w-auto bg-background border-1 border-red-500  text-text  hover:text-white active:bg-red-700"
+              onClick={cancelSubscription}
+            >
+              Cancel Subscription
+            </Button>
+          )}
+        </div>
+      }
       <CancelSubscriptionModal
         isOpen={cancelSubscriptionModal}
         onClose={() => setCancelSubscriptionModal(false)}
