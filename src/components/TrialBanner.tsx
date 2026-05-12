@@ -41,7 +41,7 @@ const TrialBanner = ({
   };
 
   return (
-    <div className="w-full mt-4 bg-primary/10 border-border/50 border rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+    <div className="w-full mt-4 bg-primary/10 border-border/50 border rounded-xl p-2 flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
       {/* Left section: Icon and Text */}
       <div className="flex items-center gap-4">
         <div className="w-16 h-16 bg-[#F3E8FF] rounded-2xl flex items-center justify-center shrink-0">

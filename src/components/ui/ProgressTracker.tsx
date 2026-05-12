@@ -70,6 +70,7 @@ export const ProgressTracker: React.FC<ProgressTrackerProps> = ({
             strokeWidth="6"
             strokeLinecap="round"
             strokeDasharray={circumference}
+            initial={{ strokeDashoffset: circumference }}
             animate={{
               strokeDashoffset: strokeDashoffset
             }}

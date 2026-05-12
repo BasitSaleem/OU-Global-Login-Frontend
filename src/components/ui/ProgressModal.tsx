@@ -96,6 +96,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
           />
           <div className="p-6 max-h-[calc(90vh-80px)] overflow-y-auto">
             <ProgressTracker
+              key={organizationData?.data?.organization.id}
               progress={progress}
               isConnected={isConnected}
               isConnecting={isConnecting}
