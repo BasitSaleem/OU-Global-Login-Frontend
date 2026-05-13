@@ -86,7 +86,9 @@ const PlanSection = ({
           const getHybridOrder = (name: string) => {
             if (name.includes("BUSINESS")) return 0;
             if (name.includes("ENTERPRISE")) return 1;
-            return 2;
+            if (name.includes("PRO CATEGORY")) return 2;
+            if (name.includes("PRO")) return 3;
+            return 4;
           };
 
           return getHybridOrder(aName) - getHybridOrder(bName);
@@ -143,6 +145,17 @@ const PlanSection = ({
         .sort((a: any, b: any) => {
           const aName = a.package_name.toUpperCase();
           const bName = b.package_name.toUpperCase();
+
+          if (fullPlan.type === "HYBRID") {
+            const getHybridOrder = (name: string) => {
+              if (name.includes("BUSINESS")) return 0;
+              if (name.includes("ENTERPRISE")) return 1;
+              if (name.includes("PRO CATEGORY")) return 2;
+              if (name.includes("PRO")) return 3;
+              return 4;
+            };
+            return getHybridOrder(aName) - getHybridOrder(bName);
+          }
 
           const aLevel = packageOrder.findIndex((p) => aName.includes(p));
           const bLevel = packageOrder.findIndex((p) => bName.includes(p));
