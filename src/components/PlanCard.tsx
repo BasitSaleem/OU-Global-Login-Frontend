@@ -48,18 +48,17 @@ const PlanCard: React.FC<PlanCardProps> = ({
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`relative flex flex-col p-6 bg-background rounded-[32px] border-2 transition-all duration-300 h-full ${
-        isHovered ? "scale-[1.02] border-transparent" : "border-border"
-      } ${className}`}
+      className={`relative flex flex-col p-6 bg-background rounded-[32px] border-2 transition-all duration-300 h-full ${isHovered ? "scale-[1.02] border-transparent" : "border-border"
+        } ${className}`}
       style={
         isHovered
           ? {
-              border: "2px solid transparent",
-              backgroundImage:
-                "linear-gradient(var(--color-bg-secondary, #fff), var(--color-bg-secondary, #fff)), linear-gradient(to right, #1AD1B9, #716AE2, #5588DF)",
-              backgroundOrigin: "border-box",
-              backgroundClip: "padding-box, border-box",
-            }
+            border: "2px solid transparent",
+            backgroundImage:
+              "linear-gradient(var(--color-bg-secondary, #fff), var(--color-bg-secondary, #fff)), linear-gradient(to right, #1AD1B9, #716AE2, #5588DF)",
+            backgroundOrigin: "border-box",
+            backgroundClip: "padding-box, border-box",
+          }
           : {}
       }
     >
@@ -103,7 +102,7 @@ const PlanCard: React.FC<PlanCardProps> = ({
           {billingCycle === "monthly"
             ? Number(plan.monthly_price).toFixed(0)
             : (Number(plan.discounted_yearly_price) / 12).toFixed(0) ||
-              plan.yearly_price}
+            plan.yearly_price}
         </span>
         <span className="text-text font-medium text-sm">/month</span>
       </div>

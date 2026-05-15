@@ -25,6 +25,7 @@
   --color-text-secondary: #686379;
   --color-red: #e53935;
   --color-text-btn: #ffffff;
+  --color-disable: #4b5563;
   /* --color-hover: #795CF5; */
   /* Gray scale */
   /* Gray scale */
@@ -77,6 +78,7 @@
   --color-red: #e53935;
   --color-icon: #ffffff;
   --color-gray: #1f2937;
+  --color-disable: #4b5563;
   /* --color-hover: #795CF5; */
 }
 
@@ -107,11 +109,9 @@
 }
 
 @utility bg-card {
-  background: linear-gradient(
-    90deg,
-    var(--gradient-primary-start),
-    var(--gradient-primary-end)
-  );
+  background: linear-gradient(90deg,
+      var(--gradient-primary-start),
+      var(--gradient-primary-end));
 }
 
 /* Register colors with Tailwind 4 */
@@ -168,6 +168,7 @@
 
 /* Autofill styles layer - higher specificity */
 @layer components {
+
   /* Light mode autofill styling to match bg-gray-100 */
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
@@ -306,6 +307,7 @@
 
 /* Professional typography utility classes */
 @layer utilities {
+
   /* Heading Typography Classes - Compact professional sizes */
   .text-heading-1 {
     font-family:
@@ -475,6 +477,7 @@
   }
 
   @keyframes crown-vibrate {
+
     0%,
     14%,
     100% {
