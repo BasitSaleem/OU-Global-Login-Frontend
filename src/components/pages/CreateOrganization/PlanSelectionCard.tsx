@@ -56,7 +56,6 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
 
         <div className="mb-2">
           <h3 className="text-xl font-bold text-text flex items-center justify-between">
-            {/* {isBusiness ? "Pro" : plan.package_name?.split(" ")[1]} */}
             {returnPackageName(plan.package_name)}
             {isSelected && (
               <SvgIcon
@@ -107,7 +106,6 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
     );
   }
 
-  // Horizontal Layout for direct flow
   return (
     <div
       onClick={onClick}

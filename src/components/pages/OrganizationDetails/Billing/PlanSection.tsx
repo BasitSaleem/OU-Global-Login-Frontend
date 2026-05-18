@@ -216,11 +216,10 @@ const PlanSection = ({
             <Skeleton width={80} height={24} circle />
           ) : (
             <span
-              className={`px-3 py-1 rounded-full text-xs  font-semibold capitalize ${
-                SUBSCRIPTION_STATUS_COLOR[
-                  organization?.subscriptions?.[0]?.status ?? ""
-                ]
-              }`}
+              className={`px-3 py-1 rounded-full text-xs  font-semibold capitalize ${SUBSCRIPTION_STATUS_COLOR[
+                organization?.subscriptions?.[0]?.status ?? ""
+              ]
+                }`}
             >
               {organization?.subscriptions?.[0]?.status ?? "No Subscription"}
             </span>
@@ -256,7 +255,7 @@ const PlanSection = ({
 
           <div className="mt-4 flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-              <div className="flex flex-wrap items-center gap-2 p-1 bg-[#EEEDF0]  rounded-2xl w-fit">
+              <div className="flex flex-wrap items-center gap-2 p-1 bg-ribbon  rounded-2xl w-fit">
                 {typeData.map((type) => {
                   const Icon = type.icon;
                   const isActive = activeType === type.id;
@@ -267,11 +266,10 @@ const PlanSection = ({
                         setActiveType(type.id);
                         setCurrentIndex(0);
                       }}
-                      className={`flex items-center gap-1 px-4  cursor-pointer py-2 rounded-xl transition-all duration-200 ${
-                        isActive
-                          ? "bg-primary text-white shadow-md"
-                          : "text-black hover:bg-primary/10"
-                      }`}
+                      className={`flex items-center gap-1 px-4  cursor-pointer py-2 rounded-xl transition-all duration-200 ${isActive
+                        ? "bg-primary text-white shadow-md"
+                        : "text-black hover:bg-primary/10 dark:text-white"
+                        }`}
                     >
                       <Icon size={18} />
                       <span className="font-medium">{type.label}</span>

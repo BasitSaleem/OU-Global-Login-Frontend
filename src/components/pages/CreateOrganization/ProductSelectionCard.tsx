@@ -27,13 +27,13 @@ export const ProductSelectionCard: React.FC<ProductSelectionCardProps> = ({
     <div
       onClick={() => !isDisabled && onClick()}
       className={`relative flex items-center gap-4 p-4 rounded-xl transition-all duration-300 cursor-pointer ${isDisabled
-        ? "opacity-50 cursor-not-allowed bg-gray-50 border-border border"
+        ? "opacity-50 cursor-not-allowed bg-bg-secondary border-border border"
         : isSelected
           ? "border-primary bg-primary/5 ring-1 ring-primary"
           : "border-border hover:border-primary/50 bg-background"
         }`}
     >
-      <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
+      <div className={`w-12 h-12 rounded-lg flex items-center ${isDisabled ? "bg-disable" : "bg-white"} justify-center shrink-0`}>
         <SvgIcon name={icon as IconName} className="w-8 h-8" />
       </div>
       <div className="flex-1">

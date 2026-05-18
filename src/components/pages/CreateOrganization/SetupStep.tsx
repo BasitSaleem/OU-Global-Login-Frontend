@@ -237,7 +237,7 @@ export const SetupStep: React.FC<SetupStepProps> = ({
 
         {!isDirectPlanView && (
           <div className="flex justify-between items-center py-2">
-            <div className="flex flex-wrap gap-2 p-1.5 bg-gray-100/80 rounded-2xl w-fit">
+            <div className="flex flex-wrap gap-2 p-1.5 bg-ribbon rounded-2xl w-fit">
               {typeData.map((type) => {
                 const Icon = type.icon;
                 const isActive = activeType === type.id;

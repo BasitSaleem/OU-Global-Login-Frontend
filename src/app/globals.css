@@ -1,6 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark-ocean, .dark-crimson, .dark *, .dark-ocean *, .dark-crimson *));
+
 /* Define your color palette in CSS variables */
 :root {
   /* Light theme colors */
@@ -52,6 +54,8 @@
   --color-invert: #131313;
   --color-google-button: #ffff;
   --color-gray: #bfc6c4;
+  --color-disable: #E5E7EB;
+  --color-ribbon: #EEEDF0;
 }
 
 /* Dark theme colors */
@@ -78,7 +82,8 @@
   --color-red: #e53935;
   --color-icon: #ffffff;
   --color-gray: #1f2937;
-  --color-disable: #4b5563;
+  --color-disable: #000000;
+  --color-ribbon: #11171f;
   /* --color-hover: #795CF5; */
 }
 
@@ -151,10 +156,11 @@
   --color-border: var(--color-border);
   --color-invert: var(--color-invert);
   --color-red: var(--color-red);
-
-  /* Gray colors */
-  /* Gray colors */
-  --color-gray-50: var(--color-gray-50);
+  --color-disable: var(--color-disable);
+  --color-ribbon: var(--var-ribbon)
+    /* Gray colors */
+    /* Gray colors */
+    --color-gray-50: var(--color-gray-50);
   --color-gray-100: var(--color-gray-100);
   --color-gray-200: var(--color-gray-200);
   --color-gray-300: var(--color-gray-300);

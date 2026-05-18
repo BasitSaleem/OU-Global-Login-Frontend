@@ -62,14 +62,12 @@ const PlanCard: React.FC<PlanCardProps> = ({
           : {}
       }
     >
-      {/* Most Popular Badge */}
       {isPro && (
         <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-linear-to-r from-[#1AD1B9] to-[#716AE2] text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">
           Most Popular
         </div>
       )}
 
-      {/* Header */}
       <div className="flex justify-between items-start mb-3">
         <h3 className="text-lg font-bold text-text">
           {returnPackageName(plan.package_name)}
