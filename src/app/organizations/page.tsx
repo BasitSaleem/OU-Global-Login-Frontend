@@ -44,7 +44,7 @@ function OrganizationsContent() {
     status: orgStatus,
     isPending: isOrgPending,
     error: orgError,
-  } = useGetOrganizations(page, 11);
+  } = useGetOrganizations(page, 10);
   const { data, isPending: isInvitationPending } = useGetInvitations();
   const invitations: inviteData[] = useMemo(() => data!, [data]);
 
