@@ -135,14 +135,60 @@ export const useIsFavorite = () => {
         message: string;
       }>(ENDPOINTS.TOGGLE_FAVORITE, "POST", {}, payload),
 
+    onMutate: async (variables) => {
+      // Cancel any outgoing refetches so they don't overwrite our optimistic update
+      await queryClient.cancelQueries({ queryKey: ["organizations"] });
+
+      // Snapshot the previous values
+      const previousOrgsQueries = queryClient.getQueriesData({
+        queryKey: ["organizations"],
+      });
+
+      // Optimistically update all organizations queries
+      queryClient.setQueriesData(
+        { queryKey: ["organizations"] },
+        (old: any) => {
+          if (!old) return old;
+          return {
+            ...old,
+            organizations: old.organizations?.map((org: any) => {
+              if (org.id === variables.orgId) {
+                const isFavorite = org.favorites?.some(
+                  (fav: any) => fav.userId === variables.userId
+                );
+                const newFavorites = isFavorite
+                  ? org.favorites.filter((fav: any) => fav.userId !== variables.userId)
+                  : [...(org.favorites || []), { userId: variables.userId, organizationId: variables.orgId }];
+                return {
+                  ...org,
+                  favorites: newFavorites,
+                };
+              }
+              return org;
+            }) || [],
+          };
+        }
+      );
+
+      return { previousOrgsQueries };
+    },
+
     onSuccess: (data) => {
       toast.info(
         `${data?.data?.favorite_d ? "Favorited" : "Unfavorited"}`,
         data?.message,
       );
     },
+    onError: (err, variables, context) => {
+      // Rollback to previous state on failure
+      if (context?.previousOrgsQueries) {
+        context.previousOrgsQueries.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
+    },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["organizations"] });
+      queryClient.invalidateQueries({ queryKey: ["organizations"], refetchType: "all" });
     },
   });
 };

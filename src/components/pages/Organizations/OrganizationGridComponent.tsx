@@ -26,9 +26,9 @@ export function OrganizationGridComponent({
   user,
   handleDeleteClick,
 }: OrganizationGridComponentProps) {
-  const [isUpdate, setIsUpdate] = useState<boolean>(
-    org?.favorites?.some((fUser) => fUser.userId === user?.id) ?? false,
-  );
+  const isFavorite = useMemo(() => {
+    return org?.favorites?.some((fUser) => fUser.userId === user?.id) ?? false;
+  }, [org?.favorites, user?.id]);
   const bgColor = useMemo(() => getColorFromId(org.id), [org.id]);
   const router = useRouter();
   const onClick = (e: React.MouseEvent) => {
@@ -76,10 +76,9 @@ export function OrganizationGridComponent({
             disabled={isPending}
             onClick={(e) => {
               handleFavoriteClick(e, org.id);
-              setIsUpdate(!isUpdate);
             }}
             aria-label={
-              org?.favorites?.some((fUser) => fUser.userId === user?.id)
+              isFavorite
                 ? "Remove from favorites"
                 : "Add to favorites"
             }
@@ -88,7 +87,7 @@ export function OrganizationGridComponent({
               width="20"
               height="20"
               viewBox="0 0 20 20"
-              fill={isUpdate ? "#795CF5" : "none"}
+              fill={isFavorite ? "#795CF5" : "none"}
               stroke="#795CF5"
               strokeWidth="1.5"
               xmlns="http://www.w3.org/2000/svg"
