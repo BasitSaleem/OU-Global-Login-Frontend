@@ -99,7 +99,6 @@ export const useImpersonateLogin = () => {
         }),
       );
 
-      console.log("response.data?.user =========> ", response.data?.user);
       toast.success(
         "Impersonation Login successful!",
         `You are now impersonating ${response?.data?.user?.first_name}`,
