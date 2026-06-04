@@ -53,9 +53,11 @@ function OrganizationsContent() {
       setOrganizations((prev: any) => {
         const base = page === 1 ? [{ id: "add-new", isAddNew: true }] : prev;
         const merged = [...base, ...userOrgs.organization];
-        const unique = merged.filter(
-          (org, i, arr) => i === arr.findIndex((o) => o.id === org.id),
-        );
+        const map = new Map();
+        merged.forEach((org) => {
+          map.set(org.id, org);
+        });
+        const unique = Array.from(map.values());
         const addNewCard = unique.filter((org) => org.isAddNew);
         let regularOrgs = unique.filter((org) => !org.isAddNew);
 

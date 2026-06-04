@@ -1,7 +1,8 @@
 "use client";
 
 import { X } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Button } from "../ui";
 import { useScrollLock } from "@/hooks/useScrollLock";
 
@@ -39,7 +40,14 @@ function ModalRoot({
   ariaLabel,
   closeButtonClassName,
 }: ModalRootProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useScrollLock(isOpen);
+
   useEffect(() => {
     if (!isOpen) return;
     const onKeyDown = (e: KeyboardEvent) => {
@@ -50,9 +58,9 @@ function ModalRoot({
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [isOpen, onClose]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  return (
+  return createPortal(
     <div
       className="fixed h-full bg-background/80 inset-0 text-text z-50 flex items-center justify-center p-3"
       onClick={closeOnOverlay ? onClose : undefined}
@@ -78,7 +86,8 @@ function ModalRoot({
         )}
         {children}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
