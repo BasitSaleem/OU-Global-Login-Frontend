@@ -17,6 +17,9 @@ import {
 } from "@/types/auth.types";
 import { PermissionTypeGenerator } from "@/utils/permissionTypeGenerator";
 import { CreatePasswordSchemaType } from "@/schemas/auth.schemas";
+import { useRouter } from "next/navigation";
+import { useAppDispatch } from "@/redux/store";
+import { setAuth } from "@/redux/slices/auth.slice";
 
 const ENDPOINTS = {
   SIGN_IN: "/og/auth/sign-in",
@@ -45,6 +48,7 @@ const ENDPOINTS = {
   CREATE_PASSWORD: "/og/auth/create-password",
   GET_ALL_IDENTITIES: "/og/auth/identities",
   REMOVE_IDENTITY: "/og/auth/identity",
+  IMPERSONATE_LOGIN: "/og/auth/impersonate-login",
 };
 //=================API HOOKS==================
 //1.LOGIN
@@ -58,9 +62,7 @@ export const useLogin = () => {
         ["user", response?.data?.user.id],
         response?.data?.user,
       );
-      // if (process.env.NODE_ENV === 'development') {
-      //   await PermissionTypeGenerator.processSignInResponse(response?.data?.user!);
-      // }
+
       toast.success(
         "Login successful!",
         `Welcome back ${response?.data?.user?.first_name} to Owners Inventory`,
@@ -72,13 +74,51 @@ export const useLogin = () => {
     },
   });
 };
+
+export const useImpersonateLogin = () => {
+  const queryClient = useQueryClient();
+  const navigate = useRouter();
+  //set the user data in the redux store
+  const dispatch = useAppDispatch();
+  return useMutation({
+    mutationFn: (data: { token: string }) =>
+      request<signInResponse>(ENDPOINTS.IMPERSONATE_LOGIN, "POST", {}, data),
+
+    onSuccess: async (response) => {
+      queryClient.setQueryData(
+        ["user", response?.data?.user.id],
+        response?.data?.user,
+      );
+
+      dispatch(
+        setAuth({
+          user: response.data?.user!,
+          isAuthenticated: true,
+          isLoading: false,
+          error: null,
+        }),
+      );
+
+      console.log("response.data?.user =========> ", response.data?.user);
+      toast.success(
+        "Impersonation Login successful!",
+        `You are now impersonating ${response?.data?.user?.first_name}`,
+      );
+      navigate.replace("/");
+    },
+    onError: (error: any) => {
+      const message = (error as Error)?.message || "Impersonation login failed";
+      toast.error("Impersonation failed", message);
+    },
+  });
+};
 //2.SIGN UP
 export const useSignUp = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (data: signUpData) =>
-      request<{ id: string;[key: string]: any }>(
+      request<{ id: string; [key: string]: any }>(
         ENDPOINTS.SIGN_UP,
         "POST",
         {},
@@ -356,8 +396,9 @@ export const useDeclineChangeEmail = () => {
 };
 export const useLoginWithGoogle = () => {
   return useMutation({
-    mutationFn: (data: { code: string }) => request(ENDPOINTS.LOGIN_WITH_GOOGLE, "POST", {}, data),
-    mutationKey: ['login-with-google'],
+    mutationFn: (data: { code: string }) =>
+      request(ENDPOINTS.LOGIN_WITH_GOOGLE, "POST", {}, data),
+    mutationKey: ["login-with-google"],
     onSuccess: () => {
       toast.success("Login successful");
     },
@@ -366,20 +407,21 @@ export const useLoginWithGoogle = () => {
       toast.error("Login failed", message);
     },
   });
-}
+};
 export const useCheckPassword = () => {
   return useQuery({
-    queryKey: ['check-password'],
+    queryKey: ["check-password"],
     queryFn: () => request(ENDPOINTS.CHECK_PASSWORD, "GET"),
     retry: false,
     select: (data: any) => data?.data,
     refetchOnWindowFocus: false,
   });
-}
+};
 export const useCreatePassword = () => {
   return useMutation({
-    mutationFn: (data: { password: string }) => request(ENDPOINTS.CREATE_PASSWORD, "POST", {}, data),
-    mutationKey: ['create-password'],
+    mutationFn: (data: { password: string }) =>
+      request(ENDPOINTS.CREATE_PASSWORD, "POST", {}, data),
+    mutationKey: ["create-password"],
     onSuccess: () => {
       toast.success("Password created successfully");
     },
@@ -388,22 +430,27 @@ export const useCreatePassword = () => {
       toast.error("Password creation failed", message);
     },
   });
-}
+};
 export const getAllIdentities = () => {
   return useQuery({
-    queryKey: ['all-identities'],
+    queryKey: ["all-identities"],
     queryFn: () => request(ENDPOINTS.GET_ALL_IDENTITIES, "GET"),
     retry: false,
     select: (data: any) => data?.data,
     refetchOnWindowFocus: false,
   });
-}
+};
 
 export const useRemoveIdentity = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (identityId: string) =>
-      request(`${ENDPOINTS.REMOVE_IDENTITY}`, "DELETE", {}, { token: identityId }),
+      request(
+        `${ENDPOINTS.REMOVE_IDENTITY}`,
+        "DELETE",
+        {},
+        { token: identityId },
+      ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["all-identities"] });
       toast.success("Account removed successfully");
@@ -414,6 +461,3 @@ export const useRemoveIdentity = () => {
     },
   });
 };
-
-
-
