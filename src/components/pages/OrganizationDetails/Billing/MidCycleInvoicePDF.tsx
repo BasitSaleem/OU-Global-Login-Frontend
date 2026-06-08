@@ -271,8 +271,15 @@ const MidCycleInvoicePDF: React.FC<MidCycleInvoicePDFProps> = ({
   user,
 }) => {
   const statusStyle = getStatusStyle(invoice.status);
-  const { subtotal, tax, total, midCycleAddons } =
+  const { subtotal, tax, total, midCycleAddons, discountPercent } =
     calculateMidCycleAddonFinancial(invoice);
+
+  const addonsDiscountedYearlyTotal =
+    midCycleAddons?.reduce((acc: number, addon: any) => {
+      console.log("Here is mid cycle add on ", addon);
+      return acc + Number(addon.price || 0) * (addon.quantity || 1);
+    }, 0) *
+      ((100 - discountPercent) / 100) || 0;
 
   return (
     <Document title={`Invoice-${invoice.invoice_number}`}>
@@ -395,6 +402,15 @@ const MidCycleInvoicePDF: React.FC<MidCycleInvoicePDFProps> = ({
 
         <View style={styles.summarySection}>
           <View style={styles.summaryGrid}>
+            {invoice?.subscription?.billing_cycle === "YEARLY" && (
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Discounted Price:</Text>
+                <Text style={styles.summaryValue}>
+                  ${addonsDiscountedYearlyTotal.toFixed(2)} (
+                  {discountPercent || 0}%)
+                </Text>
+              </View>
+            )}
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Subtotal:</Text>
               <Text style={styles.summaryValue}>${subtotal.toFixed(2)}</Text>

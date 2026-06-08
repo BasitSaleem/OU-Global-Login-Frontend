@@ -16,8 +16,10 @@ interface OrgInvoiceItemProps {
 const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
   const { user } = useSelector((state: RootState) => state.auth);
 
-  const { originalSubtotal, discountPercent, subtotal, tax } =
-    calculateInvoiceFinancial(invoice, invoice.subscription?.billing_cycle);
+  const { originalSubtotal, discountPercent } = calculateInvoiceFinancial(
+    invoice,
+    invoice.subscription?.billing_cycle,
+  );
 
   return (
     <tr>
@@ -52,7 +54,10 @@ const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
 
       {/* Net Total */}
       <td className="px-6 py-4 whitespace-nowrap text-sm">
-        ${Number(invoice.payment?.subtotal ?? invoice.payment?.amount ?? 0).toFixed(2)}
+        $
+        {Number(
+          invoice.payment?.subtotal ?? invoice.payment?.amount ?? 0,
+        ).toFixed(2)}
       </td>
 
       {/* Tax */}

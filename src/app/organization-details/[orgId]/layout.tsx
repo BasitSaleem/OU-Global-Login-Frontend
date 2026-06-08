@@ -43,7 +43,7 @@ export default function OrganizationDetailsLayout({
       const isPaymentPage = pathname.includes("/payment-cards");
 
       if ((isBillingPage || isPaymentPage) && userRole !== "OWNER") {
-        router.push(`/organization-details/${orgId}/notifications`);
+        router.replace(`/organization-details/${orgId}/notifications`);
       }
     }
   }, [

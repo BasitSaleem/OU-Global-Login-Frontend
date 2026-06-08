@@ -30,21 +30,22 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
     return (
       <div
         onClick={onClick}
-        className={`relative w-full flex flex-col p-6 rounded-[32px] border-2 transition-all duration-300 cursor-pointer h-full ${isSelected
-          ? "bg-primary/10 border-[#B2A5FF]"
-          : isPro || isBusiness
-            ? "bg-bg-secondary border-transparent"
-            : "bg-bg-secondary border-gray-100"
-          }`}
+        className={`relative w-full flex flex-col p-6 rounded-[32px] border-2 transition-all duration-300 cursor-pointer h-full ${
+          isSelected
+            ? "bg-primary/10 border-[#B2A5FF]"
+            : isPro || isBusiness
+              ? "bg-bg-secondary border-transparent"
+              : "bg-bg-secondary border-gray-100"
+        }`}
         style={
           (isPro || isBusiness) && !isSelected
             ? {
-              border: "2px solid #f3f4f6",
-              backgroundImage:
-                "linear-gradient(bg-secondary, bg-secondary), linear-gradient(to right, #1AD1B9, #7C3AED)",
-              backgroundOrigin: "border-box",
-              backgroundClip: "padding-box, border-box",
-            }
+                border: "2px solid #f3f4f6",
+                backgroundImage:
+                  "linear-gradient(bg-secondary, bg-secondary), linear-gradient(to right, #1AD1B9, #7C3AED)",
+                backgroundOrigin: "border-box",
+                backgroundClip: "padding-box, border-box",
+              }
             : {}
         }
       >
@@ -91,7 +92,7 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
                 {billingCycle === "monthly"
                   ? Number(plan.monthly_price).toFixed(0)
                   : (Number(plan.discounted_yearly_price) / 12).toFixed(0) ||
-                  Number(plan.yearly_price).toFixed(0)}
+                    Number(plan.yearly_price).toFixed(0)}
               </span>
               <span className="text-gray-400 text-lg font-medium">/month</span>
             </div>
@@ -100,7 +101,9 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
             )}
           </div>
 
-          <div className="text-text font-bold">Start 30-Day Free Trial</div>
+          <div className="text-text font-bold">
+            Start {plan?.free_trial_days}-Day Free Trial
+          </div>
         </div>
       </div>
     );
@@ -109,21 +112,22 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`relative w-full flex flex-col p-4 rounded-[32px] border-2 transition-all duration-300 cursor-pointer ${isSelected
-        ? "bg-[#F8F7FF] border-[#B2A5FF]"
-        : isPro || isBusiness
-          ? "bg-white border-transparent"
-          : "bg-white border-gray-100"
-        }`}
+      className={`relative w-full flex flex-col p-4 rounded-[32px] border-2 transition-all duration-300 cursor-pointer ${
+        isSelected
+          ? "bg-[#F8F7FF] border-[#B2A5FF]"
+          : isPro || isBusiness
+            ? "bg-white border-transparent"
+            : "bg-white border-gray-100"
+      }`}
       style={
         (isPro || isBusiness) && !isSelected
           ? {
-            border: "2px solid transparent",
-            backgroundImage:
-              "linear-gradient(white, white), linear-gradient(to right, #1AD1B9, #7C3AED)",
-            backgroundOrigin: "border-box",
-            backgroundClip: "padding-box, border-box",
-          }
+              border: "2px solid transparent",
+              backgroundImage:
+                "linear-gradient(white, white), linear-gradient(to right, #1AD1B9, #7C3AED)",
+              backgroundOrigin: "border-box",
+              backgroundClip: "padding-box, border-box",
+            }
           : {}
       }
     >
@@ -150,20 +154,21 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
         <div className="flex flex-col items-end">
           <div className="flex items-baseline gap-1">
             <span
-              className={`text-4xl font-bold ${isBasic
-                ? "text-[#1AD1B9]"
-                : isPro || isBusiness
-                  ? "text-[#38ACCC]"
-                  : isEnterprise
-                    ? "text-[#5588DF]"
-                    : "text-[#1AD1B9]"
-                }`}
+              className={`text-4xl font-bold ${
+                isBasic
+                  ? "text-[#1AD1B9]"
+                  : isPro || isBusiness
+                    ? "text-[#38ACCC]"
+                    : isEnterprise
+                      ? "text-[#5588DF]"
+                      : "text-[#1AD1B9]"
+              }`}
             >
               $
               {billingCycle === "monthly"
                 ? Number(plan.monthly_price).toFixed(0)
                 : (Number(plan.discounted_yearly_price) / 12).toFixed(0) ||
-                Number(plan.yearly_price).toFixed(0)}
+                  Number(plan.yearly_price).toFixed(0)}
             </span>
             <span className="text-gray-400 text-sm font-medium">/month</span>
           </div>

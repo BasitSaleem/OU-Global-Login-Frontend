@@ -21,7 +21,9 @@ const OrgMidCycleInvoiceItem = ({
   const { user } = useSelector((state: RootState) => state.auth);
 
   const paymentSubtotal = invoice?.payment?.subtotal || invoice.amount || "0";
-  const { discountPercent, tax } = calculateMidCycleAddonFinancial(invoice);
+  const { discountPercent, tax, actuallAddonsTotal } =
+    calculateMidCycleAddonFinancial(invoice);
+
   return (
     <tr>
       {/* Date */}
@@ -42,7 +44,7 @@ const OrgMidCycleInvoiceItem = ({
         className="px-6 py-4 whitespace-nowrap text-sm cursor-pointer"
         onClick={() => onView(invoice)}
       >
-        ${Number(paymentSubtotal).toFixed(2)}
+        ${Number(actuallAddonsTotal).toFixed(2)}
       </td>
 
       {/* Discount — always 0% for mid-cycle purchases */}

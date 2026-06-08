@@ -23,8 +23,15 @@ const MidCycleInvoiceDetailModal: React.FC<MidCycleInvoiceDetailModalProps> = ({
   const { user } = useSelector((state: RootState) => state.auth);
   if (!invoice) return null;
 
-  const { subtotal, tax, total, midCycleAddons } =
+  const { subtotal, tax, total, midCycleAddons, discountPercent } =
     calculateMidCycleAddonFinancial(invoice);
+
+  const addonsDiscountedYearlyTotal =
+    midCycleAddons?.reduce((acc: number, addon: any) => {
+      console.log("Here is mid cycle add on ", addon);
+      return acc + Number(addon.price || 0) * (addon.quantity || 1);
+    }, 0) *
+      ((100 - discountPercent) / 100) || 0;
 
   return (
     <Modal
@@ -86,6 +93,7 @@ const MidCycleInvoiceDetailModal: React.FC<MidCycleInvoiceDetailModalProps> = ({
                   const qty = addon.quantity || 1;
                   const price = parseFloat(addon.price || "0");
                   const itemTotal = price * qty;
+
                   return (
                     <tr key={`mid-cycle-${idx}`}>
                       <td className="py-4 font-medium text-gray-700">
@@ -142,6 +150,15 @@ const MidCycleInvoiceDetailModal: React.FC<MidCycleInvoiceDetailModalProps> = ({
             </div>
 
             <div className="w-full max-w-xs space-y-3">
+              {invoice?.subscription?.billing_cycle === "YEARLY" && (
+                <div className="flex justify-between text-sm text-text">
+                  <span>Discounted Price:</span>
+                  <span className="font-bold text-text">
+                    ${addonsDiscountedYearlyTotal.toFixed(2)} ({discountPercent}
+                    %)
+                  </span>
+                </div>
+              )}
               <div className="flex justify-between text-sm text-text">
                 <span>Subtotal:</span>
                 <span className="font-bold text-text">

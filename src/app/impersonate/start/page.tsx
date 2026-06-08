@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useImpersonateLogin } from "@/apiHooks.ts/auth/auth.api";
 import { useAppDispatch } from "@/redux/store";
-import { setAuth } from "@/redux/slices/auth.slice";
 import { Loader } from "@/components/ui";
 
 export default function ImpersonateStart() {

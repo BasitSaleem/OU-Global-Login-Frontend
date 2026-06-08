@@ -57,6 +57,7 @@ export interface MidCycleAddonFinancial {
   discountPercent: number;
   hasDiscount: boolean;
   midCycleAddons: AddOn[];
+  actuallAddonsTotal: number;
 }
 
 export const calculateMidCycleAddonFinancial = (
@@ -72,6 +73,13 @@ export const calculateMidCycleAddonFinancial = (
   }
 
   const midCycleAddons = parseAddOns(metaObj?.midCycleAddons || []);
+
+  // Totla without discount.
+  const actuallAddonsTotal =
+    midCycleAddons?.reduce((acc: number, addon: any) => {
+      console.log("Here is mid cycle add on ", addon);
+      return acc + Number(addon.price || 0) * (addon.quantity || 1);
+    }, 0) || 0;
 
   const subtotal = parseFloat(
     String(invoice?.payment?.subtotal || invoice.amount || 0),
@@ -94,6 +102,7 @@ export const calculateMidCycleAddonFinancial = (
     discountPercent: discountPercent,
     hasDiscount: discountPercent > 0 ? true : false,
     midCycleAddons,
+    actuallAddonsTotal,
   };
 };
 
