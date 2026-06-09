@@ -30,7 +30,7 @@ const sidebarItems: SidebarItem[] = [
     label: "Payment Cards",
     href: (orgId) => `/organization-details/${orgId}/payment-cards`,
     icon: "payment-methods",
-    showForRoles: ["OWNER"],
+    showForRoles: ["OWNER", "ADMIN"],
   },
 
   {

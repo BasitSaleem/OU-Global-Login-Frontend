@@ -42,7 +42,11 @@ export default function OrganizationDetailsLayout({
       const isBillingPage = pathname.includes("/billing");
       const isPaymentPage = pathname.includes("/payment-cards");
 
-      if ((isBillingPage || isPaymentPage) && userRole !== "OWNER") {
+      if (
+        (isBillingPage || isPaymentPage) &&
+        userRole !== "OWNER" &&
+        userRole !== "ADMIN"
+      ) {
         router.replace(`/organization-details/${orgId}/notifications`);
       }
     }

@@ -276,7 +276,6 @@ const MidCycleInvoicePDF: React.FC<MidCycleInvoicePDFProps> = ({
 
   const addonsDiscountedYearlyTotal =
     midCycleAddons?.reduce((acc: number, addon: any) => {
-      console.log("Here is mid cycle add on ", addon);
       return acc + Number(addon.price || 0) * (addon.quantity || 1);
     }, 0) *
       ((100 - discountPercent) / 100) || 0;
@@ -412,7 +411,7 @@ const MidCycleInvoicePDF: React.FC<MidCycleInvoicePDFProps> = ({
               </View>
             )}
             <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Subtotal:</Text>
+              <Text style={styles.summaryLabel}>Subtotal (prorated):</Text>
               <Text style={styles.summaryValue}>${subtotal.toFixed(2)}</Text>
             </View>
             <View style={styles.summaryRow}>

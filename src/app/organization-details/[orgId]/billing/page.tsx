@@ -1,10 +1,10 @@
 "use client";
+import { useParams } from "next/navigation";
 
 import PlanSection from "@/components/pages/OrganizationDetails/Billing/PlanSection";
 import RenewalSection from "@/components/pages/OrganizationDetails/Billing/RenewalSection";
 import PaymentMethodSection from "@/components/pages/OrganizationDetails/Billing/PaymentMethodSection";
 import InvoicesSection from "@/components/pages/OrganizationDetails/Billing/InvoicesSection";
-import { useParams, useRouter } from "next/navigation";
 import BillingSection from "@/components/pages/OrganizationDetails/Billing/BillingSection";
 import { useOrganizationDetails } from "@/apiHooks.ts/organization/organization.api";
 
@@ -12,7 +12,6 @@ import NotFound from "@/components/NotFound";
 import { useAppSelector } from "@/redux/store";
 import { AuthGuard } from "@/components/HOCs/auth-guard";
 import BillingAddOnsSection from "@/components/pages/OrganizationDetails/Billing/AddOnsSection";
-import CancelSubscriptionButton from "@/components/pages/OrganizationDetails/Billing/CancelSubscriptionButton";
 import CancelSubscriptionSection from "@/components/pages/OrganizationDetails/Billing/CancelSubscriptionSection";
 
 function BillingPage() {
@@ -33,7 +32,7 @@ function BillingPage() {
     (m) => m.user_id === user?.id,
   )?.role;
 
-  if (userRole !== "OWNER") {
+  if (userRole !== "OWNER" && userRole !== "ADMIN") {
     return null;
   }
 

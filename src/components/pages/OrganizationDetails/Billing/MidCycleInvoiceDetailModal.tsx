@@ -1,8 +1,9 @@
 import React from "react";
+import { useSelector } from "react-redux";
+
 import { Modal } from "@/components/modals/GenericModal";
 import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
 import { RootState } from "@/redux/store";
-import { useSelector } from "react-redux";
 import { calculateMidCycleAddonFinancial } from "@/utils/invoicesUtils";
 import { SvgIcon } from "@/components/ui/SvgIcon";
 import InvoiceModalHeader from "./InvoiceModalHeader";
@@ -28,7 +29,6 @@ const MidCycleInvoiceDetailModal: React.FC<MidCycleInvoiceDetailModalProps> = ({
 
   const addonsDiscountedYearlyTotal =
     midCycleAddons?.reduce((acc: number, addon: any) => {
-      console.log("Here is mid cycle add on ", addon);
       return acc + Number(addon.price || 0) * (addon.quantity || 1);
     }, 0) *
       ((100 - discountPercent) / 100) || 0;
@@ -160,7 +160,7 @@ const MidCycleInvoiceDetailModal: React.FC<MidCycleInvoiceDetailModalProps> = ({
                 </div>
               )}
               <div className="flex justify-between text-sm text-text">
-                <span>Subtotal:</span>
+                <span>Subtotal (prorated):</span>
                 <span className="font-bold text-text">
                   ${subtotal.toFixed(2)}
                 </span>
