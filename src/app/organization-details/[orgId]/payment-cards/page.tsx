@@ -69,7 +69,7 @@ const PaymentCardsPage = () => {
 
   return (
     <AuthGuard>
-      <div className="px-4 py-12 w-full mx-auto md:px-11">
+      <div className="px-4 py-12 w-full max-w-7xl mx-auto md:px-11">
         <div className="flex items-center gap-2 mb-6">
           <h1 className="font-bold text-2xl">Payment Cards</h1>
           <div className="w-6 h-6 rounded-full flex items-center justify-center text-white font-medium bg-primary">

@@ -15,7 +15,7 @@ const PaymentMethodSection = ({ loading }: { loading: boolean }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   if (isLoading || loading) {
     return (
-      <div className="flex flex-col space-y-4 mt-6">
+      <div className="flex w-full flex-col space-y-4 mt-6">
         {Array.from({ length: 3 }).map((_, index) => (
           <div key={index} className="flex flex-col gap-y-6 animate-pulse">
             <div className="flex flex-col sm:flex-row justify-between items-center w-full h-full bg-bg-secondary rounded-lg border px-4 py-3 gap-3 sm:gap-0">
@@ -47,10 +47,10 @@ const PaymentMethodSection = ({ loading }: { loading: boolean }) => {
 
   return (
     <>
-      <div className="text-center md:text-left mb-6">
+      <div className="text-center w-full md:text-left mb-6">
         <h1 className="text-heading-1 font-bold pt-8 pb-4">Payment method</h1>
       </div>
-      <div className="flex flex-col  gap-y-4">
+      <div className="flex w-full flex-col  gap-y-4">
         {data?.paymentMethods?.map((card) => (
           <div
             key={card.id}

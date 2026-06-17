@@ -65,7 +65,7 @@ const BillingAddOnsSection = ({ organization }: BillingAddOnsSectionProps) => {
     return null;
   }
   return (
-    <div className="mt-10 bg-primary/10 rounded-xl p-6">
+    <div className="mt-10 w-full bg-primary/10 rounded-xl p-6">
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="flex items-center">

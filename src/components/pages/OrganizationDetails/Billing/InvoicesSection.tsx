@@ -18,7 +18,7 @@ const InvoicesSection = ({
   // const { user } = useSelector((state: RootState) => state.auth);
 
   return (
-    <div className="mb-9">
+    <div className="mb-9 w-full">
       <div className="text-center md:text-left">
         <h1 className="text-heading-1 font-bold pt-8">
           {loading ? <Dots text="Loading invoices" /> : "Invoices"}

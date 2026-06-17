@@ -16,6 +16,7 @@ import { User } from "@/types/auth.types";
 import { parseAddOns, calculateInvoiceFinancial } from "@/utils/invoicesUtils";
 import logger from "@/utils/logger";
 import { oiLogoBase64 } from "./logoBase64";
+import { formatDate } from "@/utils/helpers";
 const styles = StyleSheet.create({
   page: {
     padding: 20,
@@ -75,7 +76,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: "#6B7280",
     width: 80,
-    textAlign: "right",
+    textAlign: "left",
   },
   invoiceDateValue: {
     fontSize: 10,
@@ -94,7 +95,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: "#6B7280",
     width: 80,
-    textAlign: "right",
+    textAlign: "left",
   },
   infoGrid: {
     flexDirection: "row",
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
   },
   tableHeader: {
     flexDirection: "row",
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "#795cf5",
     borderBottomWidth: 1,
     borderBottomColor: "#3B82F6",
     padding: "10 12",
@@ -155,7 +156,7 @@ const styles = StyleSheet.create({
   tableHeaderItem: {
     fontSize: 7,
     fontWeight: "bold",
-    color: "#6B7280",
+    color: "#FFFFFF",
     textTransform: "uppercase",
   },
   tableRow: {
@@ -358,17 +359,16 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
             <View style={styles.invoiceDateRow}>
               <Text style={styles.invoiceDateLabel}>Issue Date:</Text>
               <Text style={styles.invoiceDateValue}>
-                {new Date(invoice.created_at).toLocaleDateString()}
+                {formatDate(invoice.subscription?.current_period_start)}
               </Text>
             </View>
             <View style={styles.invoiceDateRow}>
               <Text style={styles.invoiceDateLabel}>Due Date:</Text>
               <Text style={styles.invoiceDateValue}>
-                {new Date(
+                {formatDate(
                   invoice.subscription?.current_period_end ||
-                    invoice.billing_period_end ||
-                    Date.now(),
-                ).toLocaleDateString()}
+                    invoice.billing_period_end,
+                )}
               </Text>
             </View>
             <View style={styles.invoiceStatusRow}>
@@ -501,12 +501,14 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
                   {"$"}
                   {total.toFixed(2)}
                 </Text>
-                <Text style={styles.colTotal}>
-                  {"$"}
-                  {hasDiscount
-                    ? (total - (price * discountPercent) / 100).toFixed(2)
-                    : total.toFixed(2)}
-                </Text>
+                {invoice?.subscription?.billing_cycle === "YEARLY" && (
+                  <Text style={styles.colTotal}>
+                    {"$"}
+                    {hasDiscount
+                      ? (total - (price * discountPercent) / 100).toFixed(2)
+                      : total.toFixed(2)}
+                  </Text>
+                )}
               </View>
             );
           })}
@@ -524,16 +526,18 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
                 })}
               </Text>
             </View>
-            <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Discount</Text>
-              <Text style={styles.summaryValue}>
-                -$
-                {savings.toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </Text>
-            </View>
+            {invoice?.subscription?.billing_cycle === "YEARLY" && (
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Discount</Text>
+                <Text style={styles.summaryValue}>
+                  -$
+                  {savings.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </Text>
+              </View>
+            )}
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>
                 Tax ({discountPercent ?? "0"}%):

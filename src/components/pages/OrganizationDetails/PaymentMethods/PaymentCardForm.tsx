@@ -6,8 +6,8 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
-import { Asterisk, Calendar, CardSim, IdCard } from "lucide-react";
-import { Button, Input } from "@/components/ui";
+import { Asterisk } from "lucide-react";
+import { Button } from "@/components/ui";
 import { toast } from "@/hooks/useToast";
 import { useQueryClient } from "@tanstack/react-query";
 import { Modal } from "@/components/modals/GenericModal";
@@ -90,18 +90,20 @@ const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
       );
 
       if (setupError) {
-        toast.error(setupError.message || "Failed to confirm card setup.");
+        toast.error(
+          "Failed to add card",
+          setupError.message || "Failed to confirm card setup.",
+        );
         setError(setupError.message || "Failed to confirm card setup.");
       } else if (setupIntent?.status === "succeeded") {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         await queryClient.invalidateQueries({ queryKey: ["payment-methods"] });
-        // toast.success("Card added successfully!");
         onClose();
       }
     } catch (err: any) {
       logger.error("AddPaymentCardForm: Unexpected error:", err);
       setError(err.message || "Something went wrong");
-      toast.error(err.message || "Something went wrong");
+      toast.error("Failed to add card", err.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -135,15 +137,42 @@ const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
       <form onSubmit={handleSubmit}>
         <Modal.Body>
           <div className="flex flex-col gap-4">
-            <Input
+            <div
+              className={`space-y-2 ${isFetchingSecret ? "opacity-50 pointer-events-none" : ""}`}
+            >
+              <label className="text-sm text-text ml-1">
+                Card Holder Name
+                <Asterisk
+                  className="inline mb-2"
+                  width={10}
+                  height={10}
+                  color="red"
+                />
+              </label>
+              <input
+                placeholder="John Doe"
+                value={cardHolderName}
+                // required
+                onChange={(e) => setCardHolderName(e.target.value)}
+                disabled={isFetchingSecret || loading}
+                className={`flex h-10 w-full mt-1.5 text-text rounded-lg border border-border bg-input-bg px-3 py-2 text-sm focus:outline-none focus:border-border  disabled:cursor-not-allowed disabled:opacity-50 ${errors.cardHolderName ? "!border-red-500 !focus:ring-red-500 !focus:border-red-500 !focus:shadow-none" : ""}`}
+              />
+              {errors.cardHolderName && (
+                <p className="text-sm text-red-600 dark:text-red-400">
+                  {errors.cardHolderName}
+                </p>
+              )}
+            </div>
+            {/* <input
               label="Card Holder Name"
               placeholder="John Doe"
               value={cardHolderName}
+              required
               onChange={(e) => setCardHolderName(e.target.value)}
               error={errors.cardHolderName}
               isRequired
               disabled={isFetchingSecret || loading}
-            />
+            /> */}
 
             <div
               className={`space-y-2 ${isFetchingSecret ? "opacity-50 pointer-events-none" : ""}`}
@@ -157,7 +186,7 @@ const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
                   color="red"
                 />
               </label>
-              <div className="flex items-center h-10 w-full mt-1.5 text-text rounded-lg border bg-input-bg px-3 py-2 text-sm focus-within:ring-1 focus-within:ring-primary">
+              <div className="flex items-center h-10 w-full mt-1.5 text-text rounded-lg border bg-input-bg px-3 py-2 text-sm focus-within:outline-none ">
                 <CardNumberElement
                   className="w-full"
                   options={cardNumberOptions}
@@ -178,13 +207,13 @@ const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
                     color="red"
                   />
                 </label>
-                <div className="flex h-10 w-full mt-1.5 text-text rounded-lg border bg-input-bg px-3 pt-2.5 text-sm">
+                <div className="flex h-10 w-full mt-1.5 text-text rounded-lg border bg-input-bg px-3 pt-2.5 text-sm focus-within:outline-none ">
                   <CardExpiryElement className="w-full" options={baseStyle} />
                 </div>
               </div>
               <div className="space-y-2">
                 <label className="text-sm text-text ml-1">
-                  CVC/CVV{" "}
+                  CVC
                   <Asterisk
                     className="inline mb-2"
                     width={10}
@@ -192,7 +221,7 @@ const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
                     color="red"
                   />
                 </label>
-                <div className="flex h-10 w-full mt-1.5 text-text rounded-lg border bg-input-bg px-3 pt-2.5 text-sm">
+                <div className="flex h-10 w-full mt-1.5 text-text rounded-lg border bg-input-bg px-3 pt-2.5 text-sm focus-within:outline-none focus-within:shadow-[0_0_0_4px_rgba(224,223,228,0.4)]">
                   <CardCvcElement className="w-full" options={baseStyle} />
                 </div>
               </div>
@@ -202,11 +231,21 @@ const AddPaymentCardForm: React.FC<AddPaymentCardFormProps> = ({
         </Modal.Body>
         <Modal.Footer>
           <div className="flex justify-end gap-4 mt-4">
-            <Button variant="secondary" type="button" onClick={onClose}>
+            <Button
+              variant="secondary"
+              type="button"
+              onClick={onClose}
+              disabled={isFetchingSecret || loading}
+            >
               Cancel
             </Button>
-            <Button type="submit" variant="primary" disabled={isFetchingSecret}>
-              {loading ? "Saving" : "Save Card"}
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={isFetchingSecret || loading}
+              isLoading={loading}
+            >
+              {loading ? "Saving..." : "Save Card"}
             </Button>
           </div>
         </Modal.Footer>

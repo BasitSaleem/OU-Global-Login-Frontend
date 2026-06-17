@@ -79,6 +79,9 @@ const PlanCard: React.FC<PlanCardProps> = ({
   yearlyDiscount,
   selectedPlan,
 }) => {
+  const planCat = packageName?.split(" ")[0];
+  const planTitle = packageName?.split(" ")[1];
+
   return (
     <div className="bg-bg-secondary border rounded-xl p-6">
       <div className="flex items-center justify-between mb-6">
@@ -87,13 +90,13 @@ const PlanCard: React.FC<PlanCardProps> = ({
             <Zap className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold">{packageName}</h2>
+            <h2 className="text-lg font-semibold">{`${planCat} - ${planTitle}`}</h2>
             <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full">
               {planType}
             </span>
           </div>
         </div>
-        <div className="text-right">
+        <div className="text-right flex items-center ">
           <span className="text-xl font-bold text-primary">
             {/* {currency} */}$ {basePrice.toFixed(2)}
           </span>

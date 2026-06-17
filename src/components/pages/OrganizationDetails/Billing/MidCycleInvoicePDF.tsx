@@ -14,6 +14,7 @@ import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
 import { User } from "@/types/auth.types";
 import { calculateMidCycleAddonFinancial } from "@/utils/invoicesUtils";
 import { oiLogoBase64 } from "./logoBase64";
+import { formatDate } from "@/utils/helpers";
 
 const styles = StyleSheet.create({
   page: {
@@ -69,7 +70,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: "#6B7280",
     width: 80,
-    textAlign: "right",
+    textAlign: "left",
   },
   invoiceDateValue: {
     fontSize: 10,
@@ -126,7 +127,8 @@ const styles = StyleSheet.create({
   },
   tableHeader: {
     flexDirection: "row",
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "#795cf5",
+    color: "#FFFFFF",
     borderBottomWidth: 1,
     borderBottomColor: "#3B82F6",
     padding: "10 12",
@@ -134,7 +136,7 @@ const styles = StyleSheet.create({
   tableHeaderItem: {
     fontSize: 7,
     fontWeight: "bold",
-    color: "#6B7280",
+    color: "#FFFFFF",
     textTransform: "uppercase",
   },
   tableRow: {
@@ -304,7 +306,13 @@ const MidCycleInvoicePDF: React.FC<MidCycleInvoicePDFProps> = ({
             <View style={styles.invoiceDateRow}>
               <Text style={styles.invoiceDateLabel}>Issue Date:</Text>
               <Text style={styles.invoiceDateValue}>
-                {new Date(invoice.created_at).toLocaleDateString()}
+                {formatDate(invoice.subscription.current_period_start)}
+              </Text>
+            </View>
+            <View style={styles.invoiceDateRow}>
+              <Text style={styles.invoiceDateLabel}>Due Date:</Text>
+              <Text style={styles.invoiceDateValue}>
+                {formatDate(invoice.subscription?.current_period_end)}
               </Text>
             </View>
             <View style={styles.invoiceStatusRow}>

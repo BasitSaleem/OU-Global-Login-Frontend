@@ -17,8 +17,8 @@ const SubscriptionCancelAlert = ({
         <AlertTriangle height={16} width={16} />
         <p>
           Your subscription has been cancelled. You will continue to have full
-          access to all features within your plan until {endDate}. After this
-          date, your organization will be become inactive.
+          access to all features included in your plan until {endDate}. After
+          this date, your organization will become inactive.
         </p>
       </div>
     );

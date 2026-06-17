@@ -1,7 +1,7 @@
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
 import { User } from "@/types/auth.types";
 import { getColorFromId } from "@/utils/getRandomColors";
-import { Trash } from "lucide-react";
+import { Trash, Trash2 } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import { Button } from "@/components/ui";
 import { useRouter } from "next/navigation";
@@ -78,9 +78,7 @@ export function OrganizationGridComponent({
               handleFavoriteClick(e, org.id);
             }}
             aria-label={
-              isFavorite
-                ? "Remove from favorites"
-                : "Add to favorites"
+              isFavorite ? "Remove from favorites" : "Add to favorites"
             }
           >
             <svg
@@ -113,7 +111,7 @@ export function OrganizationGridComponent({
                   handleDeleteClick(org);
                 }}
               >
-                <Trash color="red" fill="red" size={20} />
+                <Trash2 color="red" size={20} />
               </Button>
             )}
         </div>

@@ -39,9 +39,10 @@ function BillingPage() {
   if (!organization) {
     return <NotFound title={"Organization Not Found"} />;
   }
+
   return (
     <AuthGuard>
-      <div className="px-2 pt-2 pb-12 w-full mx-auto   md:px-11 overflow-x-hidden ">
+      <div className="px-2 pt-2 pb-12 max-w-7xl w-full flex flex-col items-center mx-auto   md:px-11 overflow-x-hidden ">
         <BillingSection loading={isLoading} />
         <PlanSection organization={organization} loading={isLoading} />
         <CancelSubscriptionSection

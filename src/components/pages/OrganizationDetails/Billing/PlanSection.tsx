@@ -20,7 +20,6 @@ import { SUBSCRIPTION_STATUS_COLOR } from "@/utils/ColorClasses";
 import { Skeleton } from "@/components/ui/skeleton";
 import BillingCycleToggle from "./BillingCycleToggle";
 import SubscriptionCancelAlert from "./SubscriptionCancelAlert";
-import CancelSubscriptionButton from "./CancelSubscriptionButton";
 
 const typeData = [
   {
@@ -171,7 +170,7 @@ const PlanSection = ({
   };
 
   return (
-    <div className="text-center md:text-left">
+    <div className="text-center w-full md:text-left">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
         <div className="flex flex-col sm:flex-row items-center gap-2 ">
           <h1 className="text-text font-bold text-lg md:text-xl">
@@ -216,10 +215,11 @@ const PlanSection = ({
             <Skeleton width={80} height={24} circle />
           ) : (
             <span
-              className={`px-3 py-1 rounded-full text-xs  font-semibold capitalize ${SUBSCRIPTION_STATUS_COLOR[
-                organization?.subscriptions?.[0]?.status ?? ""
-              ]
-                }`}
+              className={`px-3 py-1 rounded-full text-xs  font-semibold capitalize ${
+                SUBSCRIPTION_STATUS_COLOR[
+                  organization?.subscriptions?.[0]?.status ?? ""
+                ]
+              }`}
             >
               {organization?.subscriptions?.[0]?.status ?? "No Subscription"}
             </span>
@@ -266,10 +266,11 @@ const PlanSection = ({
                         setActiveType(type.id);
                         setCurrentIndex(0);
                       }}
-                      className={`flex items-center gap-1 px-4  cursor-pointer py-2 rounded-xl transition-all duration-200 ${isActive
-                        ? "bg-primary text-white shadow-md"
-                        : "text-black hover:bg-primary/10 dark:text-white"
-                        }`}
+                      className={`flex items-center gap-1 px-4  cursor-pointer py-2 rounded-xl transition-all duration-200 ${
+                        isActive
+                          ? "bg-primary text-white shadow-md"
+                          : "text-black hover:bg-primary/10 dark:text-white"
+                      }`}
                     >
                       <Icon size={18} />
                       <span className="font-medium">{type.label}</span>

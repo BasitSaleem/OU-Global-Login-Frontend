@@ -1,4 +1,4 @@
-import { Download, Eye, Loader2 } from "lucide-react";
+import { Download, Eye, Loader2, CreditCard } from "lucide-react";
 import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import InvoicePDF from "./InvoicePDF";
@@ -6,6 +6,8 @@ import { Button } from "@/components/ui";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { calculateInvoiceFinancial } from "@/utils/invoicesUtils";
+import { useRetryInvoicePayment } from "@/apiHooks.ts/invoice/inovice.api";
+import { toast } from "react-toastify";
 
 interface OrgInvoiceItemProps {
   invoice: Invoice;
@@ -15,11 +17,36 @@ interface OrgInvoiceItemProps {
 
 const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
   const { user } = useSelector((state: RootState) => state.auth);
+  const { mutateAsync: retryPayment, isPending: isRetrying } =
+    useRetryInvoicePayment();
 
   const { originalSubtotal, discountPercent } = calculateInvoiceFinancial(
     invoice,
     invoice.subscription?.billing_cycle,
   );
+
+  const handleRepay = async () => {
+    if (invoice.status === "PAID") {
+      toast.error("Invoice is already paid");
+      return;
+    }
+    try {
+      const result = await retryPayment(invoice.id);
+
+      if (result.data?.requiresAction) {
+        toast.info(
+          "Payment requires further action (e.g. 3D Secure). Please update your payment method or contact support.",
+        );
+      } else {
+        toast.success("Payment successful!");
+      }
+    } catch (error: any) {
+      console.log("Error in handleRepay", error);
+      const errorMessage =
+        error?.response?.message || error?.message || "Payment retry failed.";
+      toast.error(errorMessage);
+    }
+  };
 
   return (
     <tr>
@@ -87,35 +114,54 @@ const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
 
       {/* Actions */}
       <td className="px-6 py-4 whitespace-nowrap text-sm text-center flex justify-center gap-3">
-        <button
-          onClick={() => onView(invoice)}
-          className="hover:text-primary transition-colors cursor-pointer"
-          title="View Details"
-        >
-          <Eye size={18} />
-        </button>
-
-        <PDFDownloadLink
-          document={
-            <InvoicePDF
-              invoice={invoice}
-              orgName={orgName}
-              user={user}
-              billingCycle={invoice?.subscription?.billing_cycle || "MONTHLY"}
-            />
-          }
-          fileName={`invoice-${invoice.invoice_number}.pdf`}
-        >
-          {({ loading }) => (
-            <Button
-              variant="basic"
-              disabled={loading}
-              className="gap-2 cursor-pointer hover:text-primary"
+        {invoice.status === "PAID" ? (
+          <>
+            <button
+              onClick={() => onView(invoice)}
+              className="hover:text-primary transition-colors cursor-pointer"
+              title="View Details"
             >
-              {loading ? <Loader2 size={16} /> : <Download size={16} />}
-            </Button>
-          )}
-        </PDFDownloadLink>
+              <Eye size={18} />
+            </button>
+
+            <PDFDownloadLink
+              document={
+                <InvoicePDF
+                  invoice={invoice}
+                  orgName={orgName}
+                  user={user}
+                  billingCycle={
+                    invoice?.subscription?.billing_cycle || "MONTHLY"
+                  }
+                />
+              }
+              fileName={`invoice-${invoice.invoice_number}.pdf`}
+            >
+              {({ loading }) => (
+                <Button
+                  variant="basic"
+                  disabled={loading}
+                  className="gap-2 cursor-pointer hover:text-primary p-0"
+                >
+                  {loading ? <Loader2 size={16} /> : <Download size={16} />}
+                </Button>
+              )}
+            </PDFDownloadLink>
+          </>
+        ) : (
+          <button
+            onClick={handleRepay}
+            disabled={isRetrying}
+            className="hover:text-primary transition-colors cursor-pointer text-blue-600 disabled:opacity-50 flex items-center gap-1"
+            title="Repay Invoice"
+          >
+            {isRetrying ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <CreditCard size={18} />
+            )}
+          </button>
+        )}
       </td>
     </tr>
   );

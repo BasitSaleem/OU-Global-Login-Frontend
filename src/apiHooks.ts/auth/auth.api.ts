@@ -182,7 +182,8 @@ export const useResendOtp = () => {
     mutationFn: (data: ResendOtpData) =>
       request(ENDPOINTS.RESENT_OTP, "POST", {}, data),
     onSuccess: (data) => {
-      toast.success("OTP resent  ", data.message || "OTP resent successfully");
+      // toast.success("OTP resent  ", data.message || "OTP resent successfully");
+      toast.success("OTP resend successfully.", "Check your email for the OTP");
     },
     onError: (error) => {
       const message = (error as Error)?.message || "Resent otp failed";

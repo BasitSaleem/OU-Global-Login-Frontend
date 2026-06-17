@@ -63,7 +63,10 @@ export const useMakePrimaryPaymentMethod = () => {
       return res.data;
     },
     onSuccess: (result, data) => {
-      toast.success("Payment method made primary successfully!");
+      toast.success(
+        "Default payment method updated",
+        "Your payment method has been set as default successfully",
+      );
       queryClient.invalidateQueries({ queryKey: ["payment-methods"] });
     },
     retry: false,
@@ -117,30 +120,17 @@ export const useDeletePaymentMethod = (onSuccess?: () => void) => {
 
       // Snapshot the previous value
       const previousData = queryClient.getQueryData(["payment-methods"]);
-      logger.log("=== DELETE OPTIMISTIC UPDATE ===");
-      logger.log("pmId to delete:", pmId);
-      logger.log(
-        "Cache data BEFORE update:",
-        JSON.stringify(previousData, null, 2),
-      );
 
       // Optimistically remove the deleted payment method from the cache
       queryClient.setQueryData(["payment-methods"], (old: any) => {
         if (!old) {
-          logger.log("Cache is empty/null, skipping optimistic update");
           return old;
         }
 
         // Handle both possible data shapes
         const methods = old.paymentMethods || old.data?.paymentMethods || [];
-        logger.log("Found methods in cache:", methods.length);
-        logger.log(
-          "Method IDs in cache:",
-          methods.map((m: any) => m.id),
-        );
 
         const filtered = methods.filter((method: any) => method.id !== pmId);
-        logger.log("Methods after filter:", filtered.length);
 
         // Preserve the original shape
         if (old.paymentMethods) {
@@ -152,22 +142,19 @@ export const useDeletePaymentMethod = (onSuccess?: () => void) => {
         return old;
       });
 
-      const afterData = queryClient.getQueryData(["payment-methods"]);
-      logger.log(
-        "Cache data AFTER update:",
-        JSON.stringify(afterData, null, 2),
-      );
+      queryClient.getQueryData(["payment-methods"]);
 
       // Return the snapshot so we can roll back on error
       return { previousData };
     },
     onSuccess: () => {
-      logger.log("=== DELETE SUCCESS ===");
-      toast.success("Payment method deleted successfully!");
+      toast.success(
+        "Payment method deleted successfully!",
+        "Your payment method has been deleted successfully!",
+      );
       onSuccess?.();
     },
     onError: (error: any, _pmId, context) => {
-      logger.log("=== DELETE ERROR ===", error);
       // Roll back to the previous data if the mutation fails
       if (context?.previousData) {
         queryClient.setQueryData(["payment-methods"], context.previousData);

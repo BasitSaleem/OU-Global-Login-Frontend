@@ -113,13 +113,16 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       ? displayTotal.toFixed(2)
       : subtotal.toFixed(2);
 
+  const planCat = packageName?.split(" ")[0];
+  const planTitle = packageName?.split(" ")[1];
+
   return (
     <div className="bg-bg-secondary border rounded-xl p-6">
       <h2 className="text-lg font-semibold mb-6">Order Summary</h2>
       <div className="space-y-4 mb-6">
         <div className="flex justify-between text-sm">
           <span className="text-text">Plan</span>
-          <span className="font-medium">{packageName}</span>
+          <span className="font-medium">{`${planCat} - ${planTitle}`}</span>
         </div>
         <div className="flex justify-between text-sm">
           <span className="text-text">Billing</span>
@@ -188,7 +191,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           </div>
 
           {totalDiscountAmount > 0 && (
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-sm ">
               <span className="text-text flex items-center gap-1">
                 <Tag className="w-3.5 h-3.5" />
                 Discount {discount && `(${discount}%)`}
@@ -255,7 +258,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                 </span>
               )}
             </div>
-            <div className="text-right">
+            <div className="text-right flex items-center ">
               <span className="text-2xl font-bold text-primary">
                 ${finalTotal}
               </span>

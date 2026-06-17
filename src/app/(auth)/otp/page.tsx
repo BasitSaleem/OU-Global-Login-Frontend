@@ -11,16 +11,18 @@ import { OTPInput } from "@/components/ui/otp-input";
 import { useDispatch } from "react-redux";
 import { setAuth } from "@/redux/slices/auth.slice";
 import logger from "@/utils/logger";
-export default function OTPPage() {
-  const { mutate: verifyOtp, isPending, error } = useVerifyOtp();
+
+function OTPPage() {
+  const { mutate: verifyOtp, isPending } = useVerifyOtp();
   const { mutate: resendOtp, isPending: isResending } = useResendOtp();
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";
-  const token = searchParams.get("token") || undefined
+  const token = searchParams.get("token") || undefined;
   const router = useRouter();
-  const [countdown, setCountdown] = useState(60);
+  const [countdown, setCountdown] = useState(120);
   const [canResend, setCanResend] = useState(false);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+
   useEffect(() => {
     if (countdown > 0) {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
@@ -44,7 +46,7 @@ export default function OTPPage() {
       { email, otp: data.otp, token },
       {
         onSuccess: (response) => {
-          const { user, refreshToken } = response.data
+          const { user, refreshToken } = response.data;
           dispatch(
             setAuth({
               user,
@@ -52,15 +54,14 @@ export default function OTPPage() {
               refreshToken,
               isLoading: false,
               error: null,
-            })
-
+            }),
           );
-          router.push("/create-organization")
+          router.push("/create-organization");
         },
         onError: (error) => {
           logger.error("OTP verification failed:", error);
         },
-      }
+      },
     );
   };
 
@@ -70,12 +71,10 @@ export default function OTPPage() {
         { email },
         {
           onSuccess: (response) => {
-
-            setCountdown(60);
+            setCountdown(120);
             setCanResend(false);
-
           },
-        }
+        },
       );
     }
   };
@@ -85,8 +84,7 @@ export default function OTPPage() {
   };
 
   return (
-
-    <div className="flex items-center justify-center px-6 h-[450px] pb-4 ">
+    <div className="flex items-center justify-center px-6 h-[450px] -mb-12 ">
       <div className="relative z-10 w-full max-w-sm sm:max-w-md xl:max-w-md">
         <div className="bg-bg-secondary rounded-2xl sm:rounded-[16px] px-4 sm:px-14 py-3 sm:py-4">
           <div className="text-center mb-3 mt-2 sm:mb-4">
@@ -137,9 +135,7 @@ export default function OTPPage() {
                   {isResending ? "Sending..." : "Resend OTP"}
                 </button>
               ) : (
-                <span className="text-gray-500">
-                  Resend in {countdown}s
-                </span>
+                <span className="text-gray-500">Resend in {countdown}s</span>
               )}
             </p>
           </div>
@@ -155,6 +151,7 @@ export default function OTPPage() {
         </div>
       </div>
     </div>
-
   );
 }
+
+export default OTPPage;

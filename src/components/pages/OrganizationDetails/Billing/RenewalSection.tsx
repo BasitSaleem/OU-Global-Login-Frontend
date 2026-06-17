@@ -15,7 +15,7 @@ const RenewalSection = ({
 
   return (
     <>
-      <div className="text-center md:text-left mb-6">
+      <div className="text-center md:text-left w-full mb-6">
         <h1 className="text-heading-1 font-bold pt-8 pb-2">
           {loading ? (
             <Dots text="Loading Billing" position="left" />

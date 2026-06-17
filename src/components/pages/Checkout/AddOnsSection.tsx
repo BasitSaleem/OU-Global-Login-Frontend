@@ -123,7 +123,7 @@ const AddOnsSection: React.FC<AddOnsSectionProps> = ({
                 )}
 
                 {/* Price */}
-                <div className="text-right shrink-0">
+                <div className="text-right shrink-0 flex items-center ">
                   <span className="text-sm font-semibold text-primary">
                     {/* {addOn.currency} */}$
                     {(addOnPrice * (quantity || 1)).toFixed(2)}

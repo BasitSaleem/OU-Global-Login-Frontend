@@ -200,12 +200,14 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
                   ${originalSubtotal.toFixed(2)}
                 </span>
               </div>
-              <div className="flex justify-between text-sm text-text">
-                <span>Discounts:</span>
-                <span className="font-bold text-text">
-                  -${savings.toFixed(2)}
-                </span>
-              </div>
+              {invoice?.subscription?.billing_cycle === "YEARLY" && (
+                <div className="flex justify-between text-sm text-text">
+                  <span>Discounts:</span>
+                  <span className="font-bold text-text">
+                    -${savings.toFixed(2)}
+                  </span>
+                </div>
+              )}
               <div className="flex justify-between text-sm text-text">
                 <span>Tax:</span>
                 <span className="font-bold text-text">${tax.toFixed(2)}</span>

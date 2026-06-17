@@ -16,13 +16,13 @@ export const brandMap: Record<string, any> = {
 interface PaymentMethodCardProps {
   variant: "display" | "add";
   cardType?:
-  | "visa"
-  | "mastercard"
-  | "amex"
-  | "discover"
-  | "jcb"
-  | "diners"
-  | "unionpay";
+    | "visa"
+    | "mastercard"
+    | "amex"
+    | "discover"
+    | "jcb"
+    | "diners"
+    | "unionpay";
   last4?: string;
   expiry?: string;
   isPrimary?: boolean;
@@ -107,6 +107,7 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
           <Button
             variant="basic"
             className="hover:scale-110 transition-all duration-300"
+            disabled={isMakePrimaryLoading}
             onClick={onDelete}
           >
             <Trash2 size={18} color="red" />

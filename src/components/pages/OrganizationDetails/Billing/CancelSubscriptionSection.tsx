@@ -20,7 +20,7 @@ const CancelSubscriptionSection = ({
   }
 
   return (
-    <section className="flex flex-row items-center justify-between bg-[#FEF1F0] py-1 px-2 rounded-lg mt-5 -mb-2">
+    <section className="flex w-full flex-row items-center justify-between bg-[#FEF1F0] py-1 px-2 rounded-lg mt-5 -mb-2">
       <div className="flex items-center gap-2">
         <AlertTriangle className="text-red-500" size={24} />
         <p className="text-text text-sm font-normal">
