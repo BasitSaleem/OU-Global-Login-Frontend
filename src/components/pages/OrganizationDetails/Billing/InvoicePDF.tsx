@@ -13,7 +13,7 @@ import {
 import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
 
 import { User } from "@/types/auth.types";
-import { parseAddOns, calculateInvoiceFinancial } from "@/utils/invoicesUtils";
+import { calculateInvoiceFinancial } from "@/utils/invoicesUtils";
 import logger from "@/utils/logger";
 import { oiLogoBase64 } from "./logoBase64";
 import { formatDate } from "@/utils/helpers";
@@ -324,15 +324,12 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
   const {
     originalSubtotal,
     savings,
-    subtotal: effectiveSubtotal,
     tax,
     total,
     discountPercent,
     hasDiscount,
-    effectiveBasePlan,
     originalBasePlan,
     addOnsWithPricing,
-    midCycleAddons,
   } = calculateInvoiceFinancial(invoice, billingCycle);
 
   return (
@@ -501,14 +498,14 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
                   {"$"}
                   {total.toFixed(2)}
                 </Text>
-                {invoice?.subscription?.billing_cycle === "YEARLY" && (
+                {
                   <Text style={styles.colTotal}>
                     {"$"}
                     {hasDiscount
                       ? (total - (price * discountPercent) / 100).toFixed(2)
                       : total.toFixed(2)}
                   </Text>
-                )}
+                }
               </View>
             );
           })}

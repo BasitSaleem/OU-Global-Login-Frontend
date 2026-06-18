@@ -9,7 +9,7 @@ import {
   UpgradePlanResponse,
   previewAddonResponse,
 } from "./subscription.types";
-import { useStripe } from "@stripe/react-stripe-js";
+import { confirm3DSIfNeeded } from "@/utils/stripeClient";
 
 //ENDPOINTS
 const ENDPOINTS = {
@@ -45,6 +45,9 @@ export const useUpgradePlan = () => {
         {},
         data,
       );
+      // Handle 3DS/SCA before resolving so callers only proceed once the
+      // payment is actually authenticated.
+      await confirm3DSIfNeeded(res.data);
       return res.data;
     },
     onSuccess: (_data, variables) => {
@@ -52,13 +55,6 @@ export const useUpgradePlan = () => {
       queryClient.invalidateQueries({
         queryKey: ["organization", variables.orgId],
       });
-      //   queryClient.invalidateQueries({ queryKey: ["organizations"] });
-      //   queryClient.invalidateQueries({ queryKey: ["plans"] });
-
-      // toast.success(
-      //   "Plan upgraded",
-      //   "Your subscription has been updated successfully.",
-      // );
     },
     onError: (error: any) => {
       const message = (error as Error)?.message || "Failed to upgrade plan";
@@ -79,6 +75,9 @@ export const useBuyNewPlan = () => {
         {},
         data,
       );
+      // Handle 3DS/SCA before resolving so callers only proceed once the
+      // payment is actually authenticated.
+      await confirm3DSIfNeeded(res.data);
       return res.data;
     },
     onSuccess: (_data, variables) => {
@@ -86,10 +85,6 @@ export const useBuyNewPlan = () => {
       queryClient.invalidateQueries({
         queryKey: ["organization", variables.orgId],
       });
-      //   queryClient.invalidateQueries({ queryKey: ["organizations"] });
-      //   queryClient.invalidateQueries({ queryKey: ["plans"] });
-
-      // toast.success("Plan bought", "Plan bought successfully");
     },
     onError: (error: any) => {
       const message = (error as Error)?.message || "Failed to buy plan";
@@ -172,7 +167,6 @@ export const usePreviewAddon = () => {
 
 export const useBuyNewAddons = () => {
   const queryClient = useQueryClient();
-  const stripe = useStripe();
 
   return useMutation({
     mutationFn: async (data: BuyAddonPayloadType) => {
@@ -183,34 +177,19 @@ export const useBuyNewAddons = () => {
         data,
       );
 
+      // Handle 3DS/SCA before resolving so the success modal only shows
+      // once the payment is actually authenticated.
+      await confirm3DSIfNeeded(res.data);
+
       return res.data;
     },
 
-    onSuccess: async (data, variables) => {
-      try {
-        // 🔥 HANDLE SCA HERE
-        if (data.requiresAction && data.clientSecret) {
-          if (!stripe) {
-            throw new Error("Stripe not initialized");
-          }
-
-          const { error } = await stripe.confirmCardPayment(data.clientSecret);
-
-          if (error) {
-            toast.error("Payment failed", error.message);
-            return;
-          }
-        }
-
-        // ✅ Only invalidate AFTER payment success
-        queryClient.invalidateQueries({
-          queryKey: ["organization", variables.orgId],
-        });
-
-        queryClient.invalidateQueries({ queryKey: ["addons"] });
-      } catch (err: any) {
-        toast.error("Payment error", err.message);
-      }
+    onSuccess: (_data, variables) => {
+      // ✅ Only invalidate AFTER payment success
+      queryClient.invalidateQueries({
+        queryKey: ["organization", variables.orgId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["addons"] });
     },
 
     onError: (error: any) => {

@@ -31,15 +31,8 @@ const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
       return;
     }
     try {
-      const result = await retryPayment(invoice.id);
-
-      if (result.data?.requiresAction) {
-        toast.info(
-          "Payment requires further action (e.g. 3D Secure). Please update your payment method or contact support.",
-        );
-      } else {
-        toast.success("Payment successful!");
-      }
+      await retryPayment(invoice.id);
+      toast.success("Payment successful!");
     } catch (error: any) {
       console.log("Error in handleRepay", error);
       const errorMessage =

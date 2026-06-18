@@ -30,12 +30,12 @@ export interface BuyAddonPayloadType {
 
 export interface UpgradePlanResponse {
   data: {
-    subscription: {
-      id: string;
-      status: string;
-      payments: PaymentType[];
-      [key: string]: any;
-    };
+    subscription?: string;
+    subscriptionId?: string;
+    requiresAction?: boolean;
+    clientSecret?: string | null;
+    paymentStatus?: string | null;
+    [key: string]: any;
   };
   message?: string;
   success: boolean;

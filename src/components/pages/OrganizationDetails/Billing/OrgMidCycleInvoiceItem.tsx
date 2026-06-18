@@ -6,8 +6,7 @@ import { Button } from "@/components/ui";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { calculateMidCycleAddonFinancial } from "@/utils/invoicesUtils";
-import { useState } from "react";
-import { retryInvoicePayment } from "@/apiHooks.ts/invoice/inovice.api";
+import { useRetryInvoicePayment } from "@/apiHooks.ts/invoice/inovice.api";
 import { toast } from "react-toastify";
 
 interface OrgMidCycleInvoiceItemProps {
@@ -22,7 +21,8 @@ const OrgMidCycleInvoiceItem = ({
   orgName,
 }: OrgMidCycleInvoiceItemProps) => {
   const { user } = useSelector((state: RootState) => state.auth);
-  const [isRetrying, setIsRetrying] = useState(false);
+  const { mutateAsync: retryPayment, isPending: isRetrying } =
+    useRetryInvoicePayment();
 
   const paymentSubtotal = invoice?.payment?.subtotal || invoice.amount || "0";
   const { discountPercent, tax, actuallAddonsTotal } =
@@ -33,20 +33,18 @@ const OrgMidCycleInvoiceItem = ({
       toast.error("Invoice is already paid");
       return;
     }
-    setIsRetrying(true);
     try {
-      const result = await retryInvoicePayment(invoice.id);
-      if (result.data?.requiresAction) {
-        toast.info(
-          "Payment requires further action (e.g. 3D Secure). Please update your payment method or contact support.",
-        );
-      } else {
-        toast.success("Payment successful!");
-      }
+      // retryPayment resolves only after any required 3D Secure challenge has
+      // been completed; it throws if authentication fails. The hook invalidates
+      // the invoice list on success so the row refreshes.
+      await retryPayment(invoice.id);
+      toast.success("Payment successful!");
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Payment retry failed.");
-    } finally {
-      setIsRetrying(false);
+      toast.error(
+        error.response?.data?.message ||
+          error?.message ||
+          "Payment retry failed.",
+      );
     }
   };
 

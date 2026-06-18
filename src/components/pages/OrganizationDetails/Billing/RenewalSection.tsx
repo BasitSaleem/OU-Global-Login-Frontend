@@ -1,3 +1,4 @@
+import { useGetUpcomingInvoice } from "@/apiHooks.ts/invoice/inovice.api";
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
 import { Dots } from "@/components/ui";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,6 +13,8 @@ const RenewalSection = ({
   loading: boolean;
 }) => {
   const { subscriptions } = organization || {};
+  const subs = subscriptions?.[0];
+  const { data, isLoading } = useGetUpcomingInvoice(subs?.id, subs?.status);
 
   return (
     <>
@@ -100,10 +103,9 @@ const RenewalSection = ({
                 {subscriptions?.[0]?.status === "TRIAL" ||
                 subscriptions?.[0]?.status === "CANCELLED"
                   ? "--"
-                  : `$` +
-                    Number(
-                      subscriptions?.[0]?.payments?.[0]?.amount ?? 0,
-                    ).toFixed(2)}
+                  : isLoading
+                    ? `$${Number(subscriptions?.[0]?.payments?.[0]?.amount ?? 0).toFixed(2)}`
+                    : `$${Number(data?.total ?? 0).toFixed(2)}`}
               </p>
             </div>
           </div>

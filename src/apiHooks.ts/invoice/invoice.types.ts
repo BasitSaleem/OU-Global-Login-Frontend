@@ -68,3 +68,20 @@ export interface PaginationMeta {
   page: number;
   limit: number;
 }
+
+export interface UpcomingInoviceType {
+  amount_due: string;
+  subtotal: string;
+  tax: string;
+  total: string;
+  currency: string;
+  period_end: string;
+  next_payment_attempt: string;
+}
+
+export interface GetUpcomingInvoiceResponse {
+  statusCode: number;
+  data: UpcomingInoviceType;
+  message: string;
+  success: boolean;
+}
