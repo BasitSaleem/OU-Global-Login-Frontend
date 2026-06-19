@@ -1,4 +1,7 @@
 "use client";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+
 import { useGetInvitations } from "@/apiHooks.ts/invitation/invitation.api";
 import { inviteData } from "@/apiHooks.ts/invitation/invitation.type";
 import {
@@ -16,23 +19,22 @@ import PendingInvitations from "@/components/pages/Organizations/PendingInvitati
 import ProgressModal from "@/components/ui/ProgressModal";
 import { toast } from "@/hooks/useToast";
 import { useAppSelector } from "@/redux/store";
-import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+
+const organizationsList = [
+  {
+    id: "add-new",
+    isAddNew: true,
+  },
+];
 
 function OrganizationsContent() {
-  const organizationsList = [
-    {
-      id: "add-new",
-      isAddNew: true,
-    },
-  ];
-
   const { user } = useAppSelector((s) => s.auth);
   const searchParams = useSearchParams();
   const filter = searchParams.get("filter");
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [organizations, setOrganizations] = useState<any>(organizationsList);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [organizationData, setOrganizationData] =
@@ -44,7 +46,12 @@ function OrganizationsContent() {
     status: orgStatus,
     isPending: isOrgPending,
     error: orgError,
-  } = useGetOrganizations(page, 10);
+  } = useGetOrganizations(page, 10, searchQuery);
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchQuery]);
+
   const { data, isPending: isInvitationPending } = useGetInvitations();
   const invitations: inviteData[] = useMemo(() => data!, [data]);
 
@@ -71,6 +78,12 @@ function OrganizationsContent() {
           );
         }
 
+        if (searchQuery) {
+          regularOrgs = regularOrgs.filter((org) =>
+            org.name?.toLowerCase().includes(searchQuery.toLowerCase()),
+          );
+        }
+
         const sorted = regularOrgs.sort((a, b) => {
           const aIsFavorite =
             a.favorites?.some((fav: any) => fav.userId === user?.id) || false;
@@ -84,7 +97,7 @@ function OrganizationsContent() {
         return [...addNewCard, ...sorted];
       });
     }
-  }, [orgStatus, userOrgs, page, user?.id, filter]);
+  }, [orgStatus, userOrgs, page, user?.id, filter, searchQuery]);
 
   const handleCreateOrg = (data: CreateOrganizationData) => {
     createOrg(data, {
@@ -125,6 +138,7 @@ function OrganizationsContent() {
           onOrganizationDeleted={handleOrganizationDeleted}
           loading={isOrgPending}
           metaData={userOrgs?.meta}
+          onSearchChange={setSearchQuery}
         />
         {userOrgs?.meta?.totalCount! > 10 && (
           <div className="mt-4 flex justify-end">

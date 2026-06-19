@@ -1,13 +1,14 @@
-import { Download, Eye, Loader2, CreditCard } from "lucide-react";
-import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import InvoicePDF from "./InvoicePDF";
-import { Button } from "@/components/ui";
+import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import { Download, Eye, Loader2, RefreshCcw } from "lucide-react";
+
+import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
+import InvoicePDF from "./InvoicePDF";
+import { Button } from "@/components/ui";
 import { calculateInvoiceFinancial } from "@/utils/invoicesUtils";
 import { useRetryInvoicePayment } from "@/apiHooks.ts/invoice/inovice.api";
-import { toast } from "react-toastify";
 
 interface OrgInvoiceItemProps {
   invoice: Invoice;
@@ -145,13 +146,13 @@ const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
           <button
             onClick={handleRepay}
             disabled={isRetrying}
-            className="hover:text-primary transition-colors cursor-pointer text-blue-600 disabled:opacity-50 flex items-center gap-1"
+            className="hover:text-primary transition-colors cursor-pointer disabled:opacity-50 flex items-center gap-1"
             title="Repay Invoice"
           >
             {isRetrying ? (
               <Loader2 size={16} className="animate-spin" />
             ) : (
-              <CreditCard size={18} />
+              <RefreshCcw className="" size={18} />
             )}
           </button>
         )}

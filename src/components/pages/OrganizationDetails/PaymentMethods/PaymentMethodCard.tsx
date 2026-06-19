@@ -104,14 +104,16 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
           >
             <Edit2 size={18} />
           </Button> */}
-          <Button
-            variant="basic"
-            className="hover:scale-110 transition-all duration-300"
-            disabled={isMakePrimaryLoading}
-            onClick={onDelete}
-          >
-            <Trash2 size={18} color="red" />
-          </Button>
+          {!isPrimary && (
+            <Button
+              variant="basic"
+              className="hover:scale-110 transition-all duration-300"
+              disabled={isMakePrimaryLoading}
+              onClick={onDelete}
+            >
+              <Trash2 size={18} color="red" />
+            </Button>
+          )}
         </div>
       </div>
     </div>

@@ -54,11 +54,14 @@ export const useCreateOrganization = () => {
   });
 };
 // 2. GET ALL ORGANIZATIONS
-export const useGetOrganizations = (page: number, limit: number) => {
+export const useGetOrganizations = (page: number, limit: number, search?: string) => {
   return useQuery({
-    queryKey: ["organizations", page],
+    queryKey: ["organizations", page, search],
     queryFn: async () => {
-      const url = `${ENDPOINTS.ORGANIZATIONS}?page=${page}&limit=${limit}`;
+      let url = `${ENDPOINTS.ORGANIZATIONS}?page=${page}&limit=${limit}`;
+      if (search) {
+        url += `&search=${encodeURIComponent(search)}`;
+      }
       const res = await request<OgOrgResponse>(url, "GET");
       return res.data;
     },

@@ -1,4 +1,4 @@
-import { Download, Eye, Loader2, CreditCard } from "lucide-react";
+import { Download, Eye, Loader2, CreditCard, RefreshCcw } from "lucide-react";
 import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import MidCycleInvoicePDF from "./MidCycleInvoicePDF";
@@ -146,13 +146,13 @@ const OrgMidCycleInvoiceItem = ({
           <button
             onClick={handleRepay}
             disabled={isRetrying}
-            className="hover:text-primary transition-colors cursor-pointer text-blue-600 disabled:opacity-50 flex items-center gap-1"
+            className="hover:text-primary transition-colors cursor-pointer disabled:opacity-50 flex items-center gap-1"
             title="Repay Invoice"
           >
             {isRetrying ? (
               <Loader2 size={16} className="animate-spin" />
             ) : (
-              <CreditCard size={18} />
+              <RefreshCcw size={18} />
             )}
           </button>
         )}

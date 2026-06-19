@@ -1,5 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Plus, Search } from "lucide-react";
+
+import { Input } from "@/components/ui/input";
+import { useDebounce } from "@/hooks/useDebounce";
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
 import {
   useDeleteOrganization,
@@ -9,8 +13,7 @@ import { useAppSelector } from "@/redux/store";
 import { DeleteOrganizationModal } from "@/components/modals/DeleteOrganizationModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizationGridComponent } from "./OrganizationGridComponent";
-import { LoadingSpinner, Tooltip } from "@/components/ui";
-import { Plus } from "lucide-react";
+import { Tooltip } from "@/components/ui";
 import { PermissionGuard } from "@/components/HOCs/permission-guard";
 
 export interface OrganizationGridProps {
@@ -19,6 +22,7 @@ export interface OrganizationGridProps {
   onOrganizationDeleted?: (organizationId: string) => void;
   loading?: boolean;
   metaData?: any;
+  onSearchChange?: (value: string) => void;
 }
 
 export default function OrganizationGrid({
@@ -27,43 +31,20 @@ export default function OrganizationGrid({
   onOrganizationDeleted,
   loading,
   metaData,
+  onSearchChange,
 }: OrganizationGridProps) {
-  const OrganizationSkeleton = ({
-    isAddNew = false,
-  }: {
-    isAddNew?: boolean;
-  }) => (
-    <div
-      className={`bg-bg-secondary p-3 py-6 rounded-xl border border-border ${isAddNew ? "border-dashed" : ""}`}
-    >
-      {isAddNew ? (
-        <div className="flex items-center justify-center w-full h-full">
-          <div className="flex flex-col items-center justify-center ">
-            <Plus size={50} className="text-skeleton" />
-            <h1 className="text-skeleton">Add new</h1>
-          </div>
-        </div>
-      ) : (
-        <>
-          <div className="flex items-start gap-3 mb-2">
-            <Skeleton width="40px" height="40px" circle />
-            <div className="flex-1 min-w-0 space-y-2">
-              <Skeleton width="60%" height="16px" />
-              <Skeleton width="40%" height="12px" />
-            </div>
-            <Skeleton width="24px" height="24px" circle />
-          </div>
-          <div className="mt-5 -mb-3">
-            <Skeleton width="100%" height="26px" />
-          </div>
-        </>
-      )}
-    </div>
-  );
   const { user } = useAppSelector((s) => s.auth);
   const { mutate: toggleFavorite, isPending } = useIsFavorite();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrg, setSelectedOrg] = useState<any | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  useEffect(() => {
+    if (onSearchChange) {
+      onSearchChange(debouncedSearchTerm);
+    }
+  }, [debouncedSearchTerm, onSearchChange]);
 
   // DELETE API HOOK
   const { mutate: deleteOrg, isPending: deleteLoading } =
@@ -98,8 +79,8 @@ export default function OrganizationGrid({
   return (
     <div>
       {/* Header with count */}
-      <div className="flex items-center justify-between mb-3 ">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between  mb-3 b">
+        <div className="flex items-center gap-2 ">
           <h1 className="text-heading-1 font-bold text-black">
             {loading ? (
               <Skeleton width="200px" height="24px" circle />
@@ -114,6 +95,17 @@ export default function OrganizationGrid({
               {metaData?.totalCount!}
             </div>
           )}
+        </div>
+
+        {/* Search Component here */}
+        <div className="hidden lg:flex  items-center gap-2  justify-center">
+          <Input
+            placeholder="Search organizations..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full md:w-64 mb-1"
+            leftIcon={<Search className="w-4 h-4 text-gray-500" />}
+          />
         </div>
       </div>
 
@@ -195,3 +187,32 @@ export default function OrganizationGrid({
     </div>
   );
 }
+
+const OrganizationSkeleton = ({ isAddNew = false }: { isAddNew?: boolean }) => (
+  <div
+    className={`bg-bg-secondary p-3 py-6 rounded-xl border border-border ${isAddNew ? "border-dashed" : ""}`}
+  >
+    {isAddNew ? (
+      <div className="flex items-center justify-center w-full h-full">
+        <div className="flex flex-col items-center justify-center ">
+          <Plus size={50} className="text-skeleton" />
+          <h1 className="text-skeleton">Add new</h1>
+        </div>
+      </div>
+    ) : (
+      <>
+        <div className="flex items-start gap-3 mb-2">
+          <Skeleton width="40px" height="40px" circle />
+          <div className="flex-1 min-w-0 space-y-2">
+            <Skeleton width="60%" height="16px" />
+            <Skeleton width="40%" height="12px" />
+          </div>
+          <Skeleton width="24px" height="24px" circle />
+        </div>
+        <div className="mt-5 -mb-3">
+          <Skeleton width="100%" height="26px" />
+        </div>
+      </>
+    )}
+  </div>
+);

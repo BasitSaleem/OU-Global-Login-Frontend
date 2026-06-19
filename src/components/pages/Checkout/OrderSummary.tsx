@@ -213,14 +213,13 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               Tax
               {(taxDetails?.breakdown?.[0]?.tax_rate_details?.country ||
                 country) && (
-                <div className="flex justify-between text-sm">
-                  (
-                  <span className="text-text">
-                    Tax Rate -{" "}
+                <div className="flex justify-between items-center text-sm ">
+                  <p className="text-text text-xs">
+                    ( Tax Rate -{" "}
                     {taxDetails?.breakdown?.[0]?.tax_rate_details?.country ||
-                      country}
-                  </span>
-                  )
+                      country}{" "}
+                    )
+                  </p>
                 </div>
               )}
             </span>

@@ -74,7 +74,6 @@ export const useGetUpcomingInvoice = (
   id: string | undefined,
   status: string | undefined,
 ) => {
-  console.log("Id is here ", id, status);
   return useQuery({
     queryKey: ["upcoming-invoice", id, status],
     queryFn: async () => {

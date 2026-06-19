@@ -5,13 +5,11 @@ import { useRouter, useParams } from "next/navigation";
 import { Loader2, ArrowRight } from "lucide-react";
 
 import BillingAddOnsList from "@/components/pages/OrganizationDetails/Billing/BillingAddOnsList";
-import { BillingCycle } from "@/components/pages/OrganizationDetails/Billing/BillingCycleToggle";
 import { Button } from "@/components/ui";
 import { useAppDispatch } from "@/redux/store";
 import { setSelectedAddons } from "@/redux/slices/checkout.slice";
 import { useGetAllAddons } from "@/apiHooks.ts/addons/addons.api";
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
-import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
 import { getAvailableAddons } from "@/utils/addon-utils";
 
 interface BillingAddOnsSectionProps {
@@ -22,6 +20,9 @@ const ignoreStatus = ["TRIAL", "CANCELLED", "OVER_DUE"];
 
 const BillingAddOnsSection = ({ organization }: BillingAddOnsSectionProps) => {
   const subscription = organization?.subscriptions?.[0];
+  const currentPackage =
+    organization?.subscriptions?.[0]?.oiPackage.package_name ||
+    organization.packageName;
   const invoices = subscription?.invoices;
 
   const dispatch = useAppDispatch();
@@ -64,6 +65,7 @@ const BillingAddOnsSection = ({ organization }: BillingAddOnsSectionProps) => {
   if (ignoreStatus.includes(subscription?.status)) {
     return null;
   }
+  if (currentPackage === "Hybrid Enterprise") return null;
   return (
     <div className="mt-10 w-full bg-primary/10 rounded-xl p-6">
       {/* Section Header */}

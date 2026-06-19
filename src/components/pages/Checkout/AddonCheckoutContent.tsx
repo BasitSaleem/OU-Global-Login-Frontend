@@ -3,8 +3,8 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
+
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle, Loader2, CalendarDays, Receipt, Zap } from "lucide-react";
 import { useGetPaymentMethods } from "@/apiHooks.ts/paymentMethod/paymentMethod.api";
 import { useOrganizationDetails } from "@/apiHooks.ts/organization/organization.api";
 import {
@@ -303,7 +303,7 @@ const AddonCheckoutContent = () => {
 
   // ── Render ─────────────────────────────────────────────────────────────
   return (
-    <div className="w-full max-w-full mx-auto md:px-8 pb-60">
+    <div className="w-full max-w-7xl mx-auto md:px-8 pb-60">
       <CheckoutHeader description="Review your add-ons and complete your subscription" />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">

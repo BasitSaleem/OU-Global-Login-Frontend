@@ -170,7 +170,7 @@ const MidCycleInvoiceDetailModal: React.FC<MidCycleInvoiceDetailModalProps> = ({
                 <span className="font-bold text-text">${tax.toFixed(2)}</span>
               </div>
               <div className="pt-4 border-t border-border flex justify-between items-end">
-                <span className="text-lg font-bold text-text">Total Due:</span>
+                <span className="text-lg font-bold text-text">Total :</span>
                 <span className="text-3xl font-black text-[#0D9488]">
                   $
                   {total.toLocaleString(undefined, {
