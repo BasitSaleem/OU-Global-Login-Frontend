@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useCallback, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { Loader2, ArrowRight } from "lucide-react";
@@ -8,7 +7,7 @@ import BillingAddOnsList from "@/components/pages/OrganizationDetails/Billing/Bi
 import { Button } from "@/components/ui";
 import { useAppDispatch } from "@/redux/store";
 import { setSelectedAddons } from "@/redux/slices/checkout.slice";
-import { useGetAllAddons } from "@/apiHooks.ts/addons/addons.api";
+import { useGetPackageAddOns } from "@/apiHooks.ts/addons/addons.api";
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
 import { getAvailableAddons } from "@/utils/addon-utils";
 
@@ -20,19 +19,17 @@ const ignoreStatus = ["TRIAL", "CANCELLED", "OVER_DUE"];
 
 const BillingAddOnsSection = ({ organization }: BillingAddOnsSectionProps) => {
   const subscription = organization?.subscriptions?.[0];
+
   const currentPackage =
-    organization?.subscriptions?.[0]?.oiPackage.package_name ||
-    organization.packageName;
+    subscription?.oiPackage.package_name || organization.packageName;
   const invoices = subscription?.invoices;
 
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { orgId } = useParams<{ orgId: string }>();
 
-  const { data, isLoading } = useGetAllAddons();
-
+  const { data, isLoading } = useGetPackageAddOns(subscription?.oiPackage.id);
   const availableAddons = getAvailableAddons(data?.addons ?? [], invoices);
-
   const [selectedAddOns, setSelectedAddOns] = useState<Record<string, number>>(
     {},
   );

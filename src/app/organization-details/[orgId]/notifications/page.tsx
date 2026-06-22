@@ -1,10 +1,17 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui';
-import { Bell, ChartColumnIncreasing, ClipboardCheck, Mail, ShoppingCart, Truck } from 'lucide-react';
-import OwnersProductItem from '@/components/pages/OrganizationDetails/Billing/OwnersProductItem';
-import { NotificationSection } from '@/components/pages/OrganizationDetails/Notifications/NotificationSection';
+import { useState } from "react";
+import { Button } from "@/components/ui";
+import {
+  Bell,
+  ChartColumnIncreasing,
+  ClipboardCheck,
+  Mail,
+  ShoppingCart,
+  Truck,
+} from "lucide-react";
+import OwnersProductItem from "@/components/pages/OrganizationDetails/Billing/OwnersProductItem";
+import { NotificationSection } from "@/components/pages/OrganizationDetails/Notifications/NotificationSection";
 // Types
 export type NotificationSettings = {
   inAppNotifications: boolean;
@@ -27,41 +34,40 @@ export type NotificationSettings = {
   productionCancelled: { inApp: boolean; email: boolean };
 };
 
-export type OwnerKey = 'inventory' | 'jungle' | 'marketplace' | 'analytics';
+export type OwnerKey = "inventory" | "jungle" | "marketplace" | "analytics";
 const owners: {
   value: OwnerKey;
   toolTipText: string;
   iconUrl: string;
   isDisabled: boolean;
 }[] = [
-    {
-      value: "inventory",
-      toolTipText: "Owners Inventory",
-      iconUrl: "OI",
-      isDisabled: false,
-    },
-    {
-      value: "jungle",
-      toolTipText: "Owners Jungle",
-      iconUrl: "OJ",
-      isDisabled: false,
-    },
-    {
-      value: "marketplace",
-      toolTipText: "Owner Marketplace",
-      iconUrl: "OM",
-      isDisabled: false,
-    },
-    {
-      value: "analytics",
-      toolTipText: "Analytics",
-      iconUrl: "OA",
-      isDisabled: false,
-    },
-  ];
+  {
+    value: "inventory",
+    toolTipText: "Owners Inventory",
+    iconUrl: "OI",
+    isDisabled: false,
+  },
+  {
+    value: "jungle",
+    toolTipText: "Owners Jungle",
+    iconUrl: "OJ",
+    isDisabled: false,
+  },
+  {
+    value: "marketplace",
+    toolTipText: "Owner Marketplace",
+    iconUrl: "OM",
+    isDisabled: false,
+  },
+  {
+    value: "analytics",
+    toolTipText: "Analytics",
+    iconUrl: "OA",
+    isDisabled: false,
+  },
+];
 // reusable section component
 // NotificationSection is imported from a separate component file.
-
 
 // helper for default settings
 const defaultSettings: NotificationSettings = {
@@ -82,44 +88,56 @@ const defaultSettings: NotificationSettings = {
 
   productionStarted: { inApp: false, email: false },
   productionCompleted: { inApp: false, email: false },
-  productionCancelled: { inApp: false, email: false }
+  productionCancelled: { inApp: false, email: false },
 };
 
 export default function NotificationPreferencesPage() {
   // Store settings per owner
-  const [notificationSettings, setNotificationSettings] = useState<Record<OwnerKey, NotificationSettings>>({
+  const [notificationSettings, setNotificationSettings] = useState<
+    Record<OwnerKey, NotificationSettings>
+  >({
     inventory: { ...defaultSettings },
     jungle: { ...defaultSettings },
     marketplace: { ...defaultSettings },
-    analytics: { ...defaultSettings }
+    analytics: { ...defaultSettings },
   });
 
   // Which owner is active
-  const [selectedOwner, setSelectedOwner] = useState<OwnerKey>('inventory');
+  const [selectedOwner, setSelectedOwner] = useState<OwnerKey>("inventory");
 
   // update methods (scoped to selectedOwner)
-  const updateNotificationSetting = (setting: keyof NotificationSettings, value: boolean) => {
+  const updateNotificationSetting = (
+    setting: keyof NotificationSettings,
+    value: boolean,
+  ) => {
     setNotificationSettings((prev) => ({
       ...prev,
       [selectedOwner]: {
         ...prev[selectedOwner],
-        [setting]: value as any
-      }
+        [setting]: value as any,
+      },
     }));
   };
 
-  const updateNestedSetting: any = (category: keyof NotificationSettings, type: 'inApp' | 'email', value: boolean) => {
+  const updateNestedSetting: any = (
+    category: keyof NotificationSettings,
+    type: "inApp" | "email",
+    value: boolean,
+  ) => {
     setNotificationSettings((prev) => {
-      const current = prev[selectedOwner][category] as { inApp: boolean; email: boolean };
+      const current = prev[selectedOwner][category] as {
+        inApp: boolean;
+        email: boolean;
+      };
       return {
         ...prev,
         [selectedOwner]: {
           ...prev[selectedOwner],
           [category]: {
             ...current,
-            [type]: value
-          }
-        }
+            [type]: value,
+          },
+        },
       };
     });
   };
@@ -128,51 +146,89 @@ export default function NotificationPreferencesPage() {
   type Section = {
     icon: any;
     title: string;
-    items: { key: keyof NotificationSettings; label: string; highlighted?: boolean }[];
+    items: {
+      key: keyof NotificationSettings;
+      label: string;
+      highlighted?: boolean;
+    }[];
   };
 
   const sections: Section[] = [
     {
       icon: ShoppingCart,
-      title: 'Sale',
+      title: "Sale",
       items: [
-        { key: 'saleComplete', label: 'When a sale is done', highlighted: true },
-        { key: 'saleReturned', label: 'When a sale is returned' },
-        { key: 'saleEdited', label: 'When a sale is completely edited', highlighted: true },
-        { key: 'saleDeleted', label: 'When a sale is deleted' }
-      ]
+        {
+          key: "saleComplete",
+          label: "When a sale is done",
+          highlighted: true,
+        },
+        { key: "saleReturned", label: "When a sale is returned" },
+        {
+          key: "saleEdited",
+          label: "When a sale is completely edited",
+          highlighted: true,
+        },
+        { key: "saleDeleted", label: "When a sale is deleted" },
+      ],
     },
     {
       icon: ClipboardCheck,
-      title: 'Purchase',
+      title: "Purchase",
       items: [
-        { key: 'stockPurchased', label: 'When new stock is purchased', highlighted: true },
-        { key: 'stockAddedToInventory', label: 'When purchased stock is added to inventory' },
-        { key: 'purchaseDeleted', label: 'When a purchase is deleted', highlighted: true }
-      ]
+        {
+          key: "stockPurchased",
+          label: "When new stock is purchased",
+          highlighted: true,
+        },
+        {
+          key: "stockAddedToInventory",
+          label: "When purchased stock is added to inventory",
+        },
+        {
+          key: "purchaseDeleted",
+          label: "When a purchase is deleted",
+          highlighted: true,
+        },
+      ],
     },
     {
       icon: Truck,
-      title: 'Transfer Stock',
+      title: "Transfer Stock",
       items: [
-        { key: 'stockIssued', label: 'When stock is issued', highlighted: true },
-        { key: 'stockTransferCompleted', label: 'When stock transfer is completed' }
-      ]
+        {
+          key: "stockIssued",
+          label: "When stock is issued",
+          highlighted: true,
+        },
+        {
+          key: "stockTransferCompleted",
+          label: "When stock transfer is completed",
+        },
+      ],
     },
     {
       icon: ChartColumnIncreasing,
-      title: 'Production',
+      title: "Production",
       items: [
-        { key: 'productionStarted', label: 'When production is started', highlighted: true },
-        { key: 'productionCompleted', label: 'When production is completed' },
-        { key: 'productionCancelled', label: 'When production is cancelled', highlighted: true }
-      ]
-    }
+        {
+          key: "productionStarted",
+          label: "When production is started",
+          highlighted: true,
+        },
+        { key: "productionCompleted", label: "When production is completed" },
+        {
+          key: "productionCancelled",
+          label: "When production is cancelled",
+          highlighted: true,
+        },
+      ],
+    },
   ];
 
   return (
-    <main className="p-3">
-      <div className="w-full px-8">
+    <main className="p-2">
+      <div className="w-full max-w-7xl mx-auto px-8">
         <div className="mb-3 gap-2">
           <div>
             <h1 className="text-heading-1 font-bold text-black mb-1 pt-8">
@@ -207,25 +263,43 @@ export default function NotificationPreferencesPage() {
           </h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             <div className="flex items-center justify-between gap-2 p-3 border rounded-lg">
-              <Bell strokeWidth={2} color='#795CF5' size={22} />
-              <span className="text-body-small text-black">In-App Notifications</span>
+              <Bell strokeWidth={2} color="#795CF5" size={22} />
+              <span className="text-body-small text-black">
+                In-App Notifications
+              </span>
               <div className="ml-auto">
                 <input
                   type="checkbox"
-                  checked={notificationSettings[selectedOwner].inAppNotifications}
-                  onChange={(e) => updateNotificationSetting('inAppNotifications', e.target.checked)}
+                  checked={
+                    notificationSettings[selectedOwner].inAppNotifications
+                  }
+                  onChange={(e) =>
+                    updateNotificationSetting(
+                      "inAppNotifications",
+                      e.target.checked,
+                    )
+                  }
                   className="w-4 h-4 rounded-lg cursor-pointer"
                 />
               </div>
             </div>
             <div className="flex items-center justify-between gap-2 p-3 border rounded-lg">
-              <Mail color='#795CF5' strokeWidth={2} size={22} />
-              <span className="text-body-small text-black">Email Notifications</span>
+              <Mail color="#795CF5" strokeWidth={2} size={22} />
+              <span className="text-body-small text-black">
+                Email Notifications
+              </span>
               <div className="ml-auto">
                 <input
                   type="checkbox"
-                  checked={notificationSettings[selectedOwner].emailNotifications}
-                  onChange={(e) => updateNotificationSetting('emailNotifications', e.target.checked)}
+                  checked={
+                    notificationSettings[selectedOwner].emailNotifications
+                  }
+                  onChange={(e) =>
+                    updateNotificationSetting(
+                      "emailNotifications",
+                      e.target.checked,
+                    )
+                  }
                   className="w-4 h-4 rounded-lg cursor-pointer"
                 />
               </div>
@@ -250,7 +324,7 @@ export default function NotificationPreferencesPage() {
         <div className="flex justify-end">
           <Button
             variant="primary"
-            className='text-[#ffff] bg-[#795CF5] hover:bg-[#795CF5]/90'
+            className="text-[#ffff] bg-[#795CF5] hover:bg-[#795CF5]/90"
           >
             Save Preferences
           </Button>
