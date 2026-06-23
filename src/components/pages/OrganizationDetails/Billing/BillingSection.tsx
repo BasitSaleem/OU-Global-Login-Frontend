@@ -28,7 +28,7 @@ const owners: {
   },
   {
     value: "analytics",
-    toolTipText: "Analytics",
+    toolTipText: "Owners Analytics",
     iconUrl: "OA",
     isDisabled: true,
   },

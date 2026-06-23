@@ -353,7 +353,9 @@ const PlanSection = ({
                         plan={plan}
                         isCurrentPlan={
                           plan.id ===
-                          organization?.subscriptions?.[0]?.oiPackage?.id
+                            organization?.subscriptions?.[0]?.oiPackage?.id &&
+                          billingCycle ===
+                            organization?.subscriptions?.[0]?.billing_cycle?.toLowerCase()
                         }
                         subscriptionStatus={
                           organization?.subscriptions?.[0]?.status
