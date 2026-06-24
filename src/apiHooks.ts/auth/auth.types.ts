@@ -16,6 +16,7 @@ export interface signUpData {
   last_name: string;
   email: string;
   password: string;
+  acceptTerms: boolean;
 }
 export interface VerifyOtpData {
   email: string;
