@@ -10,13 +10,14 @@ import { useRouter } from 'next/navigation';
 import { toast } from '@/hooks/useToast';
 import { useScrollLock } from '@/hooks/useScrollLock';
 import { ROUTES } from '@/constants';
+import logger from '@/utils/logger';
+import { useSSE } from '@/hooks/useSSE';
 
 interface ProgressModalProps {
   isOpen: boolean;
   organizationData: CreateOrganizationResponse | null;
   onClose: () => void;
   onComplete?: () => void;
-  onGoHome?: () => void;
   isFromMain: boolean;
 }
 
@@ -25,14 +26,12 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
   organizationData,
   onClose,
   onComplete,
-  onGoHome,
   isFromMain
 }) => {
   const dispatch = useAppDispatch()
   useScrollLock(isOpen)
   const router = useRouter()
   const handleProgress = useCallback((progress: any) => {
-    console.log("Progress update:", progress);
   }, []);
 
   const handleComplete = useCallback(
@@ -64,6 +63,8 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
       onProgress: handleProgress,
       onComplete: handleComplete,
       onError: handleError,
+      autoReconnect: true,
+      maxReconnectAttempts: 10,
     }
   );
   const isCompleted = progress?.status === 'completed';
@@ -75,10 +76,10 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
       onClose();
     }
   };
-
+  useSSE(organizationData?.data?.organization.id);
   useEffect(() => {
     if (isCompleted) {
-      console.log("Organization creation completed successfully");
+      logger.log("Organization creation completed successfully");
     }
   }, [isCompleted]);
 
@@ -95,6 +96,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
           />
           <div className="p-6 max-h-[calc(90vh-80px)] overflow-y-auto">
             <ProgressTracker
+              key={organizationData?.data?.organization.id}
               progress={progress}
               isConnected={isConnected}
               isConnecting={isConnecting}

@@ -1,16 +1,50 @@
 import { Permission } from "@/types/common";
 import { OgOrgMembership } from "../membership/membership.types";
+import { PaymentType } from "../subscription/subscription.types";
+import { Invoice } from "../invoice/invoice.types";
 
 export type products = "OI" | "OG" | "OA" | "OJ";
 export interface Organization {
   name: string;
   product: products;
   subDomainName: string;
+  subscriptions: Subscription[];
   [key: string]: any;
 }
 
+export type Subscription = {
+  id: string;
+  billing_cycle: "MONTHLY" | "YEARLY";
+  cancel_at_period_end: boolean;
+  cancelled_at: string | null;
+  current_period_start: string;
+  current_period_end: string;
+  trial_ends_at: string | null;
+  status:
+    | "TRIAL"
+    | "ACTIVE"
+    | "CANCELLED"
+    | "PAST_DUE"
+    | "EXPIRED"
+    | "INCOMPLETE";
+  payment_method: string | null;
+  oiPackage: Package;
+  payments: PaymentType[];
+  invoices: Invoice[];
+};
+
+export type Package = {
+  id: string;
+  package_name: string;
+  currency: string;
+  free_trial_days: number;
+  monthly_price: string;
+  yearly_price: string;
+  discounted_yearly_price: string;
+};
 export interface CreateOrganizationData {
   name: string;
+  packageId: string | null;
   address?: string;
   city?: string;
   province?: string;
@@ -52,9 +86,10 @@ export interface OgOrganization {
   memberships?: OgOrgMembership[];
   updated_at?: string; // Made optional to support "Add New" items
   is_blocked?: boolean; // Made optional to support "Add New" items
+
   favorites?: {
-    userId: string,
-    organizationId: string
+    userId: string;
+    organizationId: string;
   }[];
   _count?: {
     memberships: any;
@@ -64,7 +99,7 @@ export interface OgOrganization {
   membersCount?: number;
   permissionNames?: Permission[];
   packageName?: string;
-
+  subscriptions: Subscription[];
 }
 
 export interface OgProduct {
@@ -85,22 +120,22 @@ export interface OgOrgResponse {
     meta: {
       totalCount: number;
       hasMore: boolean;
-    }
+    };
   };
-  message?: string
-  success: boolean
+  message?: string;
+  success: boolean;
 }
 export interface OgOrgDetailResponse {
   data: {
     organization: OgOrganization;
   };
-  message?: string
-  success: boolean
+  message?: string;
+  success: boolean;
 }
 
 export interface LeadRegistrationResponse {
   jobId: string;
-  status: 'queued' | 'in-progress' | 'completed' | 'failed';
+  status: "queued" | "in-progress" | "completed" | "failed";
   message: string;
   subDomainName: string;
   progressUrl?: string;
@@ -113,7 +148,7 @@ export interface CreateOrganizationResponse {
     organization: OgOrganization;
     product?: OgProduct;
     leadRegistration?: LeadRegistrationResponse | null;
-  }
-  message?: string
-  success?: boolean
+  };
+  message?: string;
+  success?: boolean;
 }

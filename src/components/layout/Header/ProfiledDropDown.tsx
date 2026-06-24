@@ -4,6 +4,7 @@ import { Button, Loader } from "@/components/ui";
 import { SvgIcon } from "@/components/ui/SvgIcon";
 import { clearAuth } from "@/redux/slices/auth.slice";
 import { useAppSelector, useAppDispatch } from "@/redux/store";
+import logger from "@/utils/logger";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -27,7 +28,7 @@ export default function ProfileMenu({ onClose, open }: ProfileMenuProps) {
                 router.push("/login");
             },
             onError: (error) => {
-                console.error("Logout failed:", error);
+                logger.error("Logout failed:", error);
             },
         });
     };

@@ -1,5 +1,7 @@
 'use client';
 
+import { Logo } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import Link from 'next/link';
 
 export default function NotFound() {
@@ -16,12 +18,8 @@ export default function NotFound() {
 
       {/* Header with logo and home button */}
       <div className="relative z-10 flex items-center justify-between p-4 sm:p-6">
-        <Link href="/">
-          <img
-            src="https://api.builder.io/api/v1/image/assets/TEMP/b6883933800beaaed00fccc27c64d8d36242d8ba?width=278"
-            alt="Owners Universe Logo"
-            className="h-6 sm:h-8 cursor-pointer"
-          />
+        <Link href="https://ownersinventory.com" target='_blank'>
+          <Logo Icon="ownersInventory" className="cursor-pointer" />
         </Link>
         <div className="flex items-center gap-2 sm:gap-3">
           <Link href="/" className="bg-[#795CF5] hover:bg-[#7C3AED] text-white text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition-colors">

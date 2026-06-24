@@ -80,7 +80,7 @@ export const Loader: React.FC<LoaderProps> = ({
                     className="flex items-center font-medium text-sm text-primary"
                 >
                     {text}
-                    <Dots dotSize="3px" className="text-primary gap-1 mt-1" />
+                    <Dots dotSize="3px" className="text-primary mt-1" />
                 </motion.p>
             </div>
         </div>

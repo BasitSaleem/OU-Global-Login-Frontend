@@ -11,6 +11,7 @@ import { ROUTES } from "@/constants";
 import { signInResponse } from "@/types/auth.types";
 import { signinData } from "@/apiHooks.ts/auth/auth.types";
 import { AuthContext } from "@/contexts/auth-context";
+import logger from "@/utils/logger";
 
 // interface AuthContextType {
 //     onSubmit: (data: signinData) => void;
@@ -78,14 +79,14 @@ const AuthLayout = ({ children }: AuthLayoutProp) => {
           }),
         );
         if (response_redirect_url) {
-          console.log(response_redirect_url, "response_redirect_url");
+          logger.log(response_redirect_url, "response_redirect_url");
           router.replace(response_redirect_url);
         } else if (search_redirect_uri) {
-          console.log(search_redirect_uri, "search_redirect_uri");
+          logger.log(search_redirect_uri, "search_redirect_uri");
 
           router.push(search_redirect_uri);
         } else {
-          console.log("ROUTES.DASHBOARD");
+          logger.log("ROUTES.DASHBOARD");
 
           router.push(ROUTES.DASHBOARD);
         }
@@ -111,7 +112,7 @@ const AuthLayout = ({ children }: AuthLayoutProp) => {
         </a>
         <div className="flex items-center gap-2 sm:gap-3">
           {pathname === "/login" ? (
-            <span className="text-xs sm:text-sm hidden sm:block">
+            <span className="text-xs sm:text-sm hidden sm:block text-text">
               Don't have an account?
             </span>
           ) : (

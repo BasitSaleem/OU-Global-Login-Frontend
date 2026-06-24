@@ -4,6 +4,7 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Button } from '@/components/ui';
 import { RefreshCw, Home } from 'lucide-react';
 import { SvgIcon } from '@/components/ui/SvgIcon';
+import logger from '@/utils/logger';
 
 interface Props {
   children: ReactNode;
@@ -33,7 +34,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Error caught by boundary:', error, errorInfo);
+    logger.error('Error caught by boundary:', error, errorInfo);
 
     this.setState({
       error,
@@ -198,7 +199,7 @@ export class ErrorBoundary extends Component<Props, State> {
 // Hook for functional components to handle errors
 export function useErrorHandler() {
   return (error: Error, errorInfo?: ErrorInfo) => {
-    console.error('Error caught by hook:', error, errorInfo);
+    logger.error('Error caught by hook:', error, errorInfo);
 
     if (process.env.NODE_ENV === 'production') {
       // logErrorToService(error, errorInfo);

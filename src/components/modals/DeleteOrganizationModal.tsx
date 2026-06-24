@@ -28,90 +28,90 @@ export const DeleteOrganizationModal: React.FC<
   extraDetails,
   isDeleting = false,
 }) => {
-  const [confirm1, setConfirm1] = useState("");
-  const [error1, setError1] = useState("");
+    const [confirm1, setConfirm1] = useState("");
+    const [error1, setError1] = useState("");
 
-  const { progress, isConnected, isConnecting, disconnect, error, reconnect } =
-    useDeleteOrganizationProgress(
-      isDeleting || !!organizationData.id ? organizationData.id : null,
-    );
-  const toastShown = useRef(false);
-
-  const isJobStarted = !!progress;
-  const isCompleted = progress?.status === "completed";
-  const isFailed = progress?.status === "failed";
-
-  const expectedText = `delete ${organizationData.name}`;
-
-  const handleConfirm = () => {
-    if (confirm1 !== expectedText) {
-      setError1("Input doesn't match");
-      return;
-    }
-    setError1("");
-    onConfirm();
-  };
-
-  const isFormValid = confirm1 === expectedText;
-
-  const handleClose = () => {
-    if (!isDeleting && !isJobStarted) {
-      disconnect();
-      onClose();
-    }
-  };
-
-  useEffect(() => {
-    if (!isOpen) {
-      toastShown.current = false;
-      return;
-    }
-
-    if (isCompleted && !toastShown.current) {
-      toast.success(
-        "Organization deleted",
-        "The organization is deleted successfully",
+    const { progress, isConnected, isConnecting, disconnect, error, reconnect } =
+      useDeleteOrganizationProgress(
+        isDeleting || !!organizationData.id ? organizationData.id : null,
       );
-      toastShown.current = true;
-      disconnect();
-      onClose();
-    } else if (isFailed && !toastShown.current) {
-      toast.error(
-        "Organization deletion failed",
-        "The organization is not deleted successfully",
-      );
-      toastShown.current = true;
-      disconnect();
-      onClose();
-    }
-  }, [isCompleted, isFailed, disconnect, onClose, isOpen]);
+    const toastShown = useRef(false);
 
-  useScrollLock(isOpen);
+    const isJobStarted = !!progress;
+    const isCompleted = progress?.status === "completed";
+    const isFailed = progress?.status === "failed";
 
-  if (isOpen && isJobStarted) {
-    return (
-      <AnimatePresence>
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-background/70 backdrop-blur-sm"
-            onClick={handleClose}
-          />
+    const expectedText = `delete ${organizationData.name}`;
 
-          <div className="p-6 max-h-[calc(90vh-80px)] overflow-y-auto">
-            <ProgressTracker
-              progress={progress}
-              isConnected={isConnected}
-              isConnecting={isConnecting}
-              error={error}
-              onRetry={reconnect}
-              title="Deleting Organization"
-              iconName="OI"
+    const handleConfirm = () => {
+      if (confirm1 !== expectedText) {
+        setError1("Input doesn't match");
+        return;
+      }
+      setError1("");
+      onConfirm();
+    };
+
+    const isFormValid = confirm1 === expectedText;
+
+    const handleClose = () => {
+      if (!isDeleting && !isJobStarted) {
+        disconnect();
+        onClose();
+      }
+    };
+
+    useEffect(() => {
+      if (!isOpen) {
+        toastShown.current = false;
+        return;
+      }
+
+      if (isCompleted && !toastShown.current) {
+        toast.success(
+          "Organization deleted",
+          "The organization is deleted successfully",
+        );
+        toastShown.current = true;
+        disconnect();
+        onClose();
+      } else if (isFailed && !toastShown.current) {
+        toast.error(
+          "Organization deletion failed",
+          "The organization is not deleted successfully",
+        );
+        toastShown.current = true;
+        disconnect();
+        onClose();
+      }
+    }, [isCompleted, isFailed, disconnect, onClose, isOpen]);
+
+    useScrollLock(isOpen);
+
+    if (isOpen && isJobStarted) {
+      return (
+        <AnimatePresence>
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-background/70 backdrop-blur-sm"
+              onClick={handleClose}
             />
 
-            {/* {(isCompleted || isFailed) && (
+            <div className="p-6 max-h-[calc(90vh-80px)] overflow-y-auto">
+              <ProgressTracker
+                progress={progress}
+                isConnected={isConnected}
+                isConnecting={isConnecting}
+                error={error}
+                onRetry={reconnect}
+                title="Deleting Organization"
+                iconName="OI"
+              />
+
+              {/* {(isCompleted || isFailed) && (
                         <div className="mt-8 flex justify-center">
                             <Button
                                 onClick={handleClose}
@@ -121,80 +121,80 @@ export const DeleteOrganizationModal: React.FC<
                             </Button>
                         </div>
                     )} */}
+            </div>
           </div>
-        </div>
-      </AnimatePresence>
+        </AnimatePresence>
+      );
+    }
+
+    return (
+      <Modal
+        isOpen={isOpen}
+        onClose={handleClose}
+        size="md"
+        ariaLabel="Delete Organization Modal"
+      >
+        {isDeleting && <Loader text="Initializing deletion" />}
+        <>
+          <Modal.Header>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red/10">
+              <AlertTriangle className="h-6 w-6 text-red" />
+            </div>
+            <Modal.Title className="text-red">Delete Organization</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body className="space-y-4">
+            <p className="text-body-medium">
+              Are you sure you want to delete{" "}
+              <span className="font-semibold">"{organizationData.name}"</span>?
+              This action is <span className="font-bold">permanent</span> and
+              cannot be undone. All organization data will be cleared from our
+              servers.
+            </p>
+
+            {extraDetails && (
+              <p className="text-sm text-primary">
+                {extraDetails}
+              </p>
+            )}
+
+            <div className="bg-bg-secondary p-3 rounded-lg border border-red/20 border-dashed">
+              <p className="text-body-small text-gray-500">
+                To confirm, please type{" "}
+                <span className="font-mono font-bold text-red">
+                  delete {organizationData.name}
+                </span>{" "}
+                in the field below.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <Input
+                label="Confirmation Field"
+                placeholder={`delete ${organizationData.name}`}
+                value={confirm1}
+                onChange={(e) => setConfirm1(e.target.value)}
+                error={error1}
+                disabled={isDeleting}
+              />
+            </div>
+          </Modal.Body>
+
+          <Modal.Footer>
+            <Button variant="ghost" onClick={onClose} disabled={isDeleting}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleConfirm}
+              className="text-white"
+              isLoading={isDeleting}
+              disabled={!isFormValid || isDeleting}
+            >
+              Delete Organization
+            </Button>
+          </Modal.Footer>
+        </>
+      </Modal>
     );
-  }
-
-  return (
-    <Modal
-      isOpen={isOpen}
-      onClose={handleClose}
-      size="md"
-      ariaLabel="Delete Organization Modal"
-    >
-      {isDeleting && <Loader text="Initializing deletion" />}
-      <>
-        <Modal.Header>
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red/10">
-            <AlertTriangle className="h-6 w-6 text-red" />
-          </div>
-          <Modal.Title className="text-red">Delete Organization</Modal.Title>
-        </Modal.Header>
-
-        <Modal.Body className="space-y-4">
-          <p className="text-body-medium">
-            Are you sure you want to delete{" "}
-            <span className="font-semibold">"{organizationData.name}"</span>?
-            This action is <span className="font-bold">permanent</span> and
-            cannot be undone. All organization data will be cleared from our
-            servers.
-          </p>
-
-          {extraDetails && (
-            <p className="text-sm text-[var(--color-primary-900)]">
-              {extraDetails}
-            </p>
-          )}
-
-          <div className="bg-bg-secondary p-3 rounded-lg border border-red/20 border-dashed">
-            <p className="text-body-small text-gray-500">
-              To confirm, please type{" "}
-              <span className="font-mono font-bold text-red">
-                delete {organizationData.name}
-              </span>{" "}
-              in the field below.
-            </p>
-          </div>
-
-          <div className="space-y-3">
-            <Input
-              label="Confirmation Field"
-              placeholder={`delete ${organizationData.name}`}
-              value={confirm1}
-              onChange={(e) => setConfirm1(e.target.value)}
-              error={error1}
-              disabled={isDeleting}
-            />
-          </div>
-        </Modal.Body>
-
-        <Modal.Footer>
-          <Button variant="ghost" onClick={onClose} disabled={isDeleting}>
-            Cancel
-          </Button>
-          <Button
-            variant="destructive"
-            onClick={handleConfirm}
-            className="text-[#ffff]"
-            isLoading={isDeleting}
-            disabled={!isFormValid || isDeleting}
-          >
-            Delete Organization
-          </Button>
-        </Modal.Footer>
-      </>
-    </Modal>
-  );
-};
+  };

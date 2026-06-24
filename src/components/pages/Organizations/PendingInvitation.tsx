@@ -3,6 +3,7 @@ import { useAcceptInvitation, useDeclineInvitation } from '@/apiHooks.ts/invitat
 import { inviteData } from '@/apiHooks.ts/invitation/invitation.type';
 import InviteConfirmationModal from '@/components/modals/InviteConfirmationModal';
 import { Button } from '@/components/ui';
+import { Skeleton } from '@/components/ui/skeleton';
 import { getColorFromId } from '@/utils/getRandomColors';
 import { Check, X, Clock, Calendar } from 'lucide-react';
 import { useState } from 'react';
@@ -69,15 +70,15 @@ const formatExpiration = (expiresAt: string) => {
 const InvitationSkeleton = () => (
   <div className="bg-bg-secondary border rounded-lg p-2 sm:p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 animate-pulse">
     <div className="flex items-center gap-3">
-      <div className="w-8 h-8 rounded bg-skeleton flex-shrink-0" />
+      <Skeleton width={40} height={40} className="rounded-full" />
       <div className="min-w-0 flex-1">
-        <div className="h-5 bg-skeleton rounded w-40 mb-2" />
-        <div className="h-4 bg-skeleton rounded w-64" />
+        <Skeleton width={160} height={16} className="rounded-xl mb-2" />
+        <Skeleton width={256} height={16} className="rounded-xl" />
       </div>
     </div>
     <div className="flex items-center gap-1.5">
-      <div className="h-9 bg-skeleton rounded w-20" />
-      <div className="h-9 bg-skeleton rounded w-20" />
+      <Skeleton width={80} height={36} className="rounded-xl" />
+      <Skeleton width={96} height={36} className="rounded-xl" />
     </div>
   </div>
 );
@@ -128,7 +129,7 @@ export default function PendingInvitations({
                 {/* Left */}
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center font-semibold text-white flex-shrink-0 shadow-sm"
+                    className="w-10 h-10 rounded-lg flex items-center justify-center font-semibold text-white shrink-0 shadow-sm"
                     style={{ backgroundColor: getColorFromId(invitation?.organization?.id) }}
                   >
                     {invitation?.organization?.name?.charAt(0).toUpperCase()}
@@ -143,19 +144,19 @@ export default function PendingInvitations({
                       </span>
                       <span className="text-gray-400">•</span>
                       <span className=" flex items-center gap-1">
-                        <Calendar size={14} className="flex-shrink-0" />
+                        <Calendar size={14} className="shrink-0" />
                         {formatTimeElapsed(invitation.createdAt)}
                       </span>
                       <span className="text-gray-400">•</span>
                       <span className={`flex items-center gap-1 ${expirationInfo.className}`}>
-                        <Clock size={14} className="flex-shrink-0" />
+                        <Clock size={14} className="shrink-0" />
                         {expirationInfo.text}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 sm:flex-shrink-0">
+                <div className="flex items-center gap-2 sm:shrink-0">
                   <Button
                     isLoading={isAcceptPending}
                     onClick={() => {

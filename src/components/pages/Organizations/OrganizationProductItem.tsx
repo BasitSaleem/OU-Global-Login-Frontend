@@ -19,7 +19,12 @@ const OrganizationProductItem = ({
   bgColor,
   org,
 }: OrganizationProductItemProps) => {
-  const [isDisabled, setIsDisabled] = useState<boolean>(() => {
+  const subscriptionStatus = org?.subscriptions?.[0]?.status?.toUpperCase();
+  const isSubscriptionDisabled =
+    !!subscriptionStatus &&
+    ["CANCELLED", "EXPIRED", "PAST_DUE"].includes(subscriptionStatus);
+
+  const [isProcessing, setIsProcessing] = useState<boolean>(() => {
     if (!org?.created_at) return false;
 
     const createdAt = new Date(org.created_at);
@@ -42,9 +47,9 @@ const OrganizationProductItem = ({
     const updateDisabledState = () => {
       const diffMs = Date.now() - createdAt.getTime();
       if (diffMs >= THIRTY_SECONDS_MS) {
-        setIsDisabled(false);
+        setIsProcessing(false);
       } else {
-        setIsDisabled(true);
+        setIsProcessing(true);
       }
     };
 
@@ -55,13 +60,16 @@ const OrganizationProductItem = ({
     return () => clearInterval(intervalId);
   }, [org?.created_at]);
 
+  const isDisabled = isProcessing || isSubscriptionDisabled;
+
   return (
     <Link
       key={product.oi_sub_domain}
       href={generateProductLink(product.oi_sub_domain ?? "")}
       target="_blank"
-      className={`relative group/product duration-300 transition-all ${isDisabled ? "cursor-not-allowed" : ""
-        }`}
+      className={`relative group/product duration-300 transition-all ${
+        isDisabled ? "cursor-not-allowed" : ""
+      }`}
       onClick={(e) => {
         if (isDisabled) {
           e.preventDefault();
@@ -69,12 +77,13 @@ const OrganizationProductItem = ({
       }}
     >
       <div
-        className={`w-7 h-7 rounded-lg flex items-center justify-center text-white font-semibold text-sm transition-transform duration-300 ${isDisabled
-          ? "opacity-50 cursor-not-allowed hover:scale-100"
-          : "cursor-pointer hover:scale-110"
-          }`}
+        className={`w-7 h-7 rounded-lg flex items-center justify-center text-white font-semibold text-sm transition-transform duration-300 ${
+          isDisabled
+            ? "opacity-50 cursor-not-allowed hover:scale-100"
+            : "cursor-pointer hover:scale-110"
+        }`}
         style={{ backgroundColor: bgColor }}
-        title={org.name}
+        title={isDisabled ? "" : org.name}
       >
         {organizationName(org.name ?? "")}
       </div>
@@ -82,7 +91,7 @@ const OrganizationProductItem = ({
       {isDisabled && (
         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover/product:block">
           <div className="rounded-md px-2 py-1 text-[11px] font-medium text-white bg-primary shadow-lg whitespace-nowrap">
-            Processing...
+            {isSubscriptionDisabled ? "Upgrade Package" : "Processing..."}
           </div>
         </div>
       )}

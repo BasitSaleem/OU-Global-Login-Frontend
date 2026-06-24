@@ -13,17 +13,18 @@ import { toast } from "@/hooks/useToast";
 
 //ENDPOINTS
 const ENDPOINTS = {
-  ORGANIZATIONS: `/organization`,
-  ORGANIZATION_ID: (id: string) => `/organization/${id}`,
+  ORGANIZATIONS: `/og/organization`,
+  ORGANIZATION_ID: (id: string) => `/og/organization/${id}`,
   CHECK_NAME: (name: string) =>
-    `/organization/check-name/availability?name=${encodeURIComponent(name)}`,
+    `/og/organization/check-name/availability?name=${encodeURIComponent(name)}`,
   CHECK_SUBDOMAIN: (subDomain: string) =>
-    `/organization/check-subdomain/availability?subDomain=${encodeURIComponent(
-      subDomain
+    `/og/organization/check-subdomain/availability?subDomain=${encodeURIComponent(
+      subDomain,
     )}`,
-  TOGGLE_FAVORITE: "/organization/favorite",
-  ORGANIZATION_PRODUCTS: (id: string) => `/organization/products/${id}`,
-  GENERATE_SUBDOMAIN: (companyName: string) => `/organization/generate-subdomain-suggestions?companyName=${companyName}`,
+  TOGGLE_FAVORITE: "/og/organization/favorite",
+  ORGANIZATION_PRODUCTS: (id: string) => `/og/organization/products/${id}`,
+  GENERATE_SUBDOMAIN: (companyName: string) =>
+    `/og/organization/generate-subdomain-suggestions?companyName=${companyName}`,
 };
 
 // 1. CREATE ORGANIZATION
@@ -35,9 +36,9 @@ export const useCreateOrganization = () => {
         ENDPOINTS.ORGANIZATIONS,
         "POST",
         {},
-        data
-      )
-      return res.data
+        data,
+      );
+      return res.data;
     },
     onSuccess: (result, data) => {
       queryClient.invalidateQueries({ queryKey: ["organizations"] });
@@ -53,17 +54,20 @@ export const useCreateOrganization = () => {
   });
 };
 // 2. GET ALL ORGANIZATIONS
-export const useGetOrganizations = (page: number, limit: number) => {
+export const useGetOrganizations = (page: number, limit: number, search?: string) => {
   return useQuery({
-    queryKey: ["organizations", page],
+    queryKey: ["organizations", page, search],
     queryFn: async () => {
-      const url = `${ENDPOINTS.ORGANIZATIONS}?page=${page}&limit=${limit}`;
+      let url = `${ENDPOINTS.ORGANIZATIONS}?page=${page}&limit=${limit}`;
+      if (search) {
+        url += `&search=${encodeURIComponent(search)}`;
+      }
       const res = await request<OgOrgResponse>(url, "GET");
-      return res.data
+      return res.data;
     },
     select: (data) => ({
       meta: data.meta,
-      organization: data.organizations
+      organization: data.organizations,
     }),
   });
 };
@@ -73,14 +77,18 @@ export const useOrganizationDetails = (id: string) => {
   return useQuery({
     queryKey: ["organization", id],
     queryFn: async () => {
-      const res = await request<OgOrgDetailResponse>(ENDPOINTS.ORGANIZATION_ID(id), "GET")
-      return res.data
+      const res = await request<OgOrgDetailResponse>(
+        ENDPOINTS.ORGANIZATION_ID(id),
+        "GET",
+      );
+      return res.data;
     },
     select: (data) => data.organization,
     enabled: !!id,
+    retry: 1,
+    refetchOnWindowFocus: false,
   });
 };
-
 
 // 4. UPDATE ORGANIZATION
 export const useUpdateOrganization = (id: string) => {
@@ -91,14 +99,14 @@ export const useUpdateOrganization = (id: string) => {
         ENDPOINTS.ORGANIZATION_ID(id),
         "PUT",
         {},
-        { organizationData: data }
+        { organizationData: data },
       ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["organization", id] });
       queryClient.invalidateQueries({ queryKey: ["organizations"] });
       toast.success(
         "Organization updated",
-        "The organization was updated successfully"
+        "The organization was updated successfully",
       );
     },
     onError: (error: any) => {
@@ -125,20 +133,66 @@ export const useIsFavorite = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: { userId: string; orgId: string }) =>
-      request<{ data: { favorite_d: boolean; favoriteCount: number }, message: string }>(
-        ENDPOINTS.TOGGLE_FAVORITE,
-        "POST",
-        {},
-        payload
-      ),
+      request<{
+        data: { favorite_d: boolean; favoriteCount: number };
+        message: string;
+      }>(ENDPOINTS.TOGGLE_FAVORITE, "POST", {}, payload),
+
+    onMutate: async (variables) => {
+      // Cancel any outgoing refetches so they don't overwrite our optimistic update
+      await queryClient.cancelQueries({ queryKey: ["organizations"] });
+
+      // Snapshot the previous values
+      const previousOrgsQueries = queryClient.getQueriesData({
+        queryKey: ["organizations"],
+      });
+
+      // Optimistically update all organizations queries
+      queryClient.setQueriesData(
+        { queryKey: ["organizations"] },
+        (old: any) => {
+          if (!old) return old;
+          return {
+            ...old,
+            organizations: old.organizations?.map((org: any) => {
+              if (org.id === variables.orgId) {
+                const isFavorite = org.favorites?.some(
+                  (fav: any) => fav.userId === variables.userId
+                );
+                const newFavorites = isFavorite
+                  ? org.favorites.filter((fav: any) => fav.userId !== variables.userId)
+                  : [...(org.favorites || []), { userId: variables.userId, organizationId: variables.orgId }];
+                return {
+                  ...org,
+                  favorites: newFavorites,
+                };
+              }
+              return org;
+            }) || [],
+          };
+        }
+      );
+
+      return { previousOrgsQueries };
+    },
 
     onSuccess: (data) => {
-      toast.info(`${data?.data?.favorite_d ? "Favorited" : "Unfavorited"}`, data?.message)
+      toast.info(
+        `${data?.data?.favorite_d ? "Favorited" : "Unfavorited"}`,
+        data?.message,
+      );
+    },
+    onError: (err, variables, context) => {
+      // Rollback to previous state on failure
+      if (context?.previousOrgsQueries) {
+        context.previousOrgsQueries.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["organizations"] });
+      queryClient.invalidateQueries({ queryKey: ["organizations"], refetchType: "all" });
     },
-
   });
 };
 
@@ -146,10 +200,13 @@ export const useIsFavorite = () => {
 export const useDeleteOrganization = (onFinish?: () => void) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => request(ENDPOINTS.ORGANIZATION_ID(id), "DELETE"),
+    mutationFn: (id: string) =>
+      request(ENDPOINTS.ORGANIZATION_ID(id), "DELETE"),
     onMutate: async (deletedId: string) => {
       await queryClient.cancelQueries({ queryKey: ["organizations"] });
-      const previousOrganizations = queryClient.getQueriesData({ queryKey: ["organizations"] });
+      const previousOrganizations = queryClient.getQueriesData({
+        queryKey: ["organizations"],
+      });
       queryClient.setQueriesData(
         { queryKey: ["organizations"] },
         (old: any) => {
@@ -157,9 +214,11 @@ export const useDeleteOrganization = (onFinish?: () => void) => {
           return {
             ...old,
             totalCounts: Math.max((old.totalCounts || 1) - 1, 0),
-            organizations: old.organizations?.filter((org: any) => org.id !== deletedId) || []
+            organizations:
+              old.organizations?.filter((org: any) => org.id !== deletedId) ||
+              [],
           };
-        }
+        },
       );
 
       return { previousOrganizations, deletedId };
@@ -181,7 +240,6 @@ export const useDeleteOrganization = (onFinish?: () => void) => {
     },
   });
 };
-
 
 // 8. CHECK SUBDOMAIN AVAILABILITY
 export const useCheckSubDomainAvailability = (subDomain: string) => {

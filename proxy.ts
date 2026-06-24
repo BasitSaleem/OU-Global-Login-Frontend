@@ -1,3 +1,4 @@
+import logger from '@/utils/logger';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
@@ -6,19 +7,14 @@ const PUBLIC_ROUTES = ['/login', '/sign-up', '/forgot-password', '/reset-passwor
 export function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
-    // Get the auth token from cookies
-    // Note: 'auth_token' should match AUTH_CONFIG.tokenKey
     const token = request.cookies.get('auth_token')?.value;
-    console.log(token);
+    logger.log(token);
 
     const isPublicRoute = PUBLIC_ROUTES.some(route => pathname.startsWith(route));
-
-    // 1. If user is authenticated and tries to access a public route (like /login)
     if (token && isPublicRoute) {
         return NextResponse.redirect(new URL('/', request.url));
     }
 
-    // 2. If user is NOT authenticated and tries to access a protected route
     if (!token && !isPublicRoute && pathname !== '/') {
         const loginUrl = new URL('/login', request.url);
         loginUrl.searchParams.set('app', 'OG');
