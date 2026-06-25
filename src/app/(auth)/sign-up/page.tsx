@@ -1,17 +1,15 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Icons } from "@/components/utils/icons";
-import Image from "next/image";
 import { useSignUp } from "@/apiHooks.ts/auth/auth.api";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema } from "@/schemas/auth.schemas";
-import { Button, Input, Checkbox, Tooltip } from "@/components/ui";
+import { Button, Input, } from "@/components/ui";
 import { signUpData } from "@/apiHooks.ts/auth/auth.types";
-import { Info } from "lucide-react";
+import GoogleButton from "@/components/ui/GoogleButton";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -38,7 +36,7 @@ export default function SignUpPage() {
   }, [email, methods]);
   const onSubmit = async (data: signUpData) => {
     signUp(
-      { first_name: data.first_name, last_name: data.last_name, email: data.email, password: data.password, acceptTerms: data.acceptTerms } as signUpData,
+      { first_name: data.first_name, last_name: data.last_name, email: data.email, password: data.password } as signUpData,
       {
         onSuccess: (response) => {
           router.push(`/otp?email=${encodeURIComponent(response.data.email)}${token ? `&token=${token}` : ""}`);
@@ -51,24 +49,19 @@ export default function SignUpPage() {
 
     <>    {/* Main content container */}
       < div className="flex items-center justify-center px-6 sm:px-6 pb-4 sm:pb-6 pt-0 sm:pt-2" >
-        {/* Main sign up card */}
         <div className="relative z-10 w-full max-w-sm sm:max-w-md xl:max-w-md">
           <div className="bg-bg-secondary rounded-2xl sm:rounded-[16px] px-4 sm:px-14 py-3 sm:py-4">
-            {/* Welcome heading */}
             <div className="text-center mb-3 mt-2 sm:mb-4">
               <h1 className="text-base sm:text-lg font-bold text-text">
                 Sign up to get started
               </h1>
             </div>
             <FormProvider {...methods}>
-              {/* Sign up form */}
               <form
                 onSubmit={handleSubmit(onSubmit)}
                 className="space-y-2 sm:space-y-3"
               >
-                {/* Name fields row */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
-                  {/* First Name field */}
                   <Input
                     type="text"
                     label="First Name"
@@ -133,36 +126,14 @@ export default function SignUpPage() {
                   }
                 />
 
-                <div className="pt-2">
-                  <Checkbox
-                    id="acceptTerms"
-                    {...methods.register("acceptTerms")}
-                    label={
-                      <div className="flex flex-wrap gap-1 leading-tight text-sm">
-                        <span>I agree to the</span>
-                        <Link href="https://ownersinventory.com/terms-and-conditions" target="_blank" className="text-primary  hover:underline">
-                          Terms & Conditions
-                        </Link>
-                        <span>and</span>
-                        <Link href="https://ownersinventory.com/privacy-policy" className="text-primary  hover:underline">
-                          Privacy Policy
-                        </Link>
-                        <Tooltip position="right" content={<div className="text-xs">By signing up, you agree to receive occasional<br /> product updates.Unsubscribe anytime.</div>} children={<Info size={16} className="mt-[3px] text-text" />
-                        } />
-                      </div>
-                    }
-                    error={methods.formState.errors.acceptTerms?.message as string}
-                  />
-                </div>
-
-                {/* Sign Up button */}
                 <div className="pt-2 sm:pt-3 sm:mt-5">
                   <Button
                     type="submit"
                     isLoading={isPending}
                     disabled={isPending || Object.keys(methods.formState.errors).length > 0}
                     variant="primary"
-                    className="w-full h-8 sm:h-9 text-white text-xs bg-primary hover:bg-primary/80 sm:text-sm font-bold rounded-full cursor-pointer"
+                    className="w-full h-8 sm:h-9 text-white text-xs bg-primary hover:bg-primary/80 sm:text-sm font-bold rounded-full  cursor-pointer"
+
                   >
                     {isPending ? "Signing up .." : "Sign up"}
                   </Button>
@@ -170,7 +141,7 @@ export default function SignUpPage() {
               </form>
             </FormProvider>
             {/* Divider */}
-            <div className="my-3 sm:my-7 flex items-center">
+            <div className="my-2 sm:my-7 flex items-center">
               <div className="flex-1 border-t "></div>
               <span className="px-2 sm:px-3 text-xs sm:text-sm">
                 Or
@@ -179,41 +150,17 @@ export default function SignUpPage() {
             </div>
 
             {/* Social login buttons */}
-            <div className="space-y-2 sm:space-y-5">
-              <Button
-                variant="primary"
-                className="w-full border-primary/10 rounded-2xl bg-primary/0 hover:bg-primary/10 text-text hover:text-primary"
-              >
-                <Image src={Icons.google} alt="Google" width={20} height={20} />
-                <span className="text-xs sm:text-sm">
-                  Continue with Google
-                </span>
-              </Button>
-              <Button
-                variant="primary"
-                className="w-full border-primary/10 rounded-2xl bg-primary/0 hover:bg-primary/10 text-text hover:text-primary"
-
-              >
-                <Image
-                  src={Icons.microsoft}
-                  alt="Microsoft"
-                  width={20}
-                  height={20}
-                />
-                <span className="text-xs sm:text-sm">
-                  Continue with Microsoft
-                </span>
-              </Button>
-            </div>
-
-            {/* Sign in link */}
+            <GoogleButton
+              text="Continue with Google"
+              className="w-full"
+            />
             <div className="mt-3 sm:mt-4 text-center">
               <span className="text-xs sm:text-sm text-text">
                 Already have an account{" "}
               </span>
               <Link
                 href={`/login?app=${app}`}
-                className="text-xs sm:text-sm font-bold text-primary hover:underline underline"
+                className="text-xs sm:text-sm font-bold text-primary hover:underline underline "
               >
                 Sign In
               </Link>

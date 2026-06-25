@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import userProfileSchema from "@/schemas/user-profile.schema";
 import { MapPin } from "lucide-react";
 import { toast } from "react-toastify";
+import logger from "@/utils/logger";
 
 export default function UserProfilePage() {
   const { mutate: updateUser, isPending } = useUpdateProfile();
@@ -110,14 +111,14 @@ export default function UserProfilePage() {
             toast.error("Could not retrieve address details.");
           }
         } catch (error) {
-          console.error("Error fetching location data:", error);
+          logger.error("Error fetching location data:", error);
           toast.error("Failed to fetch location data.");
         } finally {
           setIsLocating(false);
         }
       },
       (error) => {
-        console.error("Geolocation error:", error);
+        logger.error("Geolocation error:", error);
         toast.error("Permission denied or location not found.");
         setIsLocating(false);
       },

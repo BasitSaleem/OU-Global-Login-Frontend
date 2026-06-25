@@ -1,6 +1,7 @@
 
 import { User } from "@/types/auth.types";
 import { syncPermissionsToFile } from "@/actions/sync-permissions.action";
+import logger from "./logger";
 
 export class PermissionTypeGenerator {
     private static readonly STORAGE_KEY = 'user_permissions';
@@ -10,7 +11,7 @@ export class PermissionTypeGenerator {
         try {
             return user.role?.permissions || [];
         } catch (error) {
-            console.error('Error extracting permissions from response:', error);
+            logger.error('Error extracting permissions from response:', error);
             return [];
         }
     }
@@ -20,7 +21,7 @@ export class PermissionTypeGenerator {
         try {
             localStorage.setItem(this.STORAGE_KEY, JSON.stringify(permissions));
         } catch (error) {
-            console.error('Error storing permissions:', error);
+            logger.error('Error storing permissions:', error);
         }
     }
 
@@ -31,7 +32,7 @@ export class PermissionTypeGenerator {
             const stored = localStorage.getItem(this.STORAGE_KEY);
             return stored ? JSON.parse(stored) : [];
         } catch (error) {
-            console.error('Error reading stored permissions:', error);
+            logger.error('Error reading stored permissions:', error);
             return [];
         }
     }
@@ -69,7 +70,7 @@ ${permissionTypes};
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        console.log(' Permission types file downloaded');
+        logger.log(' Permission types file downloaded');
     }
 
 
@@ -77,7 +78,7 @@ ${permissionTypes};
         const permissions = this.extractPermissionsFromResponse(user);
 
         if (permissions.length === 0) {
-            console.warn('No permissions found in sign-in response');
+            logger.warn('No permissions found in sign-in response');
             return [];
         }
         this.storePermissions(permissions);
@@ -86,10 +87,10 @@ ${permissionTypes};
                 const result = await syncPermissionsToFile(permissions);
                 if (result.success) {
                 } else {
-                    console.error(` Failed to sync permissions: ${result.message}`);
+                    logger.error(` Failed to sync permissions: ${result.message}`);
                 }
             } catch (error) {
-                console.error(' Error calling server action:', error);
+                logger.error(' Error calling server action:', error);
             }
 
         }
@@ -102,7 +103,7 @@ ${permissionTypes};
         if (typeof window === 'undefined') return;
 
         localStorage.removeItem(this.STORAGE_KEY);
-        console.log('Cleared stored permissions');
+        logger.log('Cleared stored permissions');
     }
 
 }

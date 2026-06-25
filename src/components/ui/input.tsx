@@ -10,7 +10,15 @@ import { Permission } from "@/types/common";
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
-  type?: "text" | "email" | "password" | "number" | "search" | "tel" | "url" | "checkbox";
+  type?:
+  | "text"
+  | "email"
+  | "password"
+  | "number"
+  | "search"
+  | "tel"
+  | "url"
+  | "checkbox";
   helperText?: string;
   isRequired?: boolean;
   leftIcon?: React.ReactNode;
@@ -38,17 +46,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       permissionFallback,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [showPassword, setShowPassword] = useState(false);
     const inputType = isPassword ? (showPassword ? "text" : "password") : type;
 
     const baseStyles =
-      "flex h-10 w-full mt-1.5 text-text rounded-lg border bg-input-bg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50";
-
-    const errorStyles = error
-      ? "border-red-500 focus:ring-red-500"
-      : "";
+      "flex h-10 w-full mt-1.5 text-text rounded-lg border bg-input-bg px-3 py-2 text-sm focus:outline-none focus:shadow-[0_0_0_4px_rgba(224,223,228,0.4)] disabled:cursor-not-allowed disabled:opacity-50";
+    const errorStyles = error ? "border-red-500 focus:ring-red-500" : "";
 
     const disabledStyles = props.disabled
       ? "bg-primary/20 text-gray-500 border-gray-300"
@@ -81,7 +86,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       <PermissionGuard
         requiredPermissions={permission}
         checkAll={checkAllPermissions}
-        fallback={permissionFallback || <LockedInput {...props} label={label} isRequired={isRequired} />}
+        fallback={
+          permissionFallback || (
+            <LockedInput {...props} label={label} isRequired={isRequired} />
+          )
+        }
       >
         <BaseInput
           label={label}
@@ -103,10 +112,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         />
       </PermissionGuard>
     );
-  }
+  },
 );
 
-interface BaseInputProps extends Omit<InputProps, 'permission' | 'checkAllPermissions' | 'permissionFallback'> {
+interface BaseInputProps extends Omit<
+  InputProps,
+  "permission" | "checkAllPermissions" | "permissionFallback"
+> {
   showPassword: boolean;
   setShowPassword: (show: boolean) => void;
   inputType: string;
@@ -134,20 +146,13 @@ const BaseInput = forwardRef<HTMLInputElement, BaseInputProps>(
       disabledStyles,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <div className="space-y-2">
         {label && (
           <label className="text-sm text-text ml-1">
-            {isRequired ? (
-              <>
-                {label}
-                <Asterisk className="inline mb-2" width={14} height={14} color="red" />
-              </>
-            ) : (
-              label
-            )}
+            {label}
           </label>
         )}
         <div className="relative">
@@ -165,11 +170,16 @@ const BaseInput = forwardRef<HTMLInputElement, BaseInputProps>(
               disabledStyles,
               leftIcon && "pl-10",
               (rightIcon || isPassword) && "pr-10",
-              className
+              className,
             )}
             ref={ref}
             {...props}
           />
+          {isRequired && (
+            <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted text-[12px]">
+              REQUIRED
+            </span>
+          )}
           {isPassword && (
             <button
               type="button"
@@ -193,49 +203,56 @@ const BaseInput = forwardRef<HTMLInputElement, BaseInputProps>(
           <p className="text-[10px] sm:text-xs text-red-600">{error}</p>
         )}
         {helperText && !error && (
-          <p className="text-sm text-gray-500">
-            {helperText}
-          </p>
+          <p className="text-sm text-gray-500">{helperText}</p>
         )}
       </div>
     );
-  }
+  },
 );
 
 BaseInput.displayName = "BaseInput";
-const LockedInput = forwardRef<HTMLInputElement, { label?: string; isRequired?: boolean } & InputHTMLAttributes<HTMLInputElement>>(
-  ({ label, isRequired, ...props }, ref) => {
-    return (
-      <div className="space-y-2">
-        {label && (
-          <label className="text-sm text-text ml-1">
-            {isRequired ? (
-              <>
-                {label}
-                <Asterisk className="inline mb-2" width={14} height={14} color="red" />
-              </>
-            ) : (
-              label
-            )}
-            {/* <Lock className="inline ml-2 mb-1" width={14} height={14} color="#6B7280" /> */}
-          </label>
-        )}
-        <div className="relative">
-          <input
-            {...props}
-            ref={ref}
-            disabled
-            className="flex h-10 w-full mt-1.5 text-gray-500 rounded-lg border bg-gray-100 px-3 py-2 text-sm cursor-not-allowed opacity-50"
-          />
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-            {/* <Lock className="h-4 w-4 text-gray-500" /> */}
-          </div>
+const LockedInput = forwardRef<
+  HTMLInputElement,
+  {
+    label?: string;
+    isRequired?: boolean;
+  } & InputHTMLAttributes<HTMLInputElement>
+>(({ label, isRequired, ...props }, ref) => {
+  return (
+    <div className="space-y-2">
+      {label && (
+        <label className="text-sm text-text ml-1">
+          {isRequired ? (
+            <>
+              {label}
+              <Asterisk
+                className="inline mb-2"
+                width={10}
+                height={10}
+                color="red"
+              />
+            </>
+          ) : (
+            label
+          )}
+          {/* <Lock className="inline ml-2 mb-1" width={14} height={14} color="#6B7280" /> */}
+        </label>
+      )}
+      <div className="relative">
+        <input
+          {...props}
+          ref={ref}
+          disabled
+          className="flex h-10 w-full mt-1.5 text-gray-500 rounded-lg border bg-gray-100 px-3 py-2 text-sm cursor-not-allowed opacity-50"
+        />
+        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+          {/* <Lock className="h-4 w-4 text-gray-500" /> */}
         </div>
-        <p className="text-sm text-gray-500">No permission to edit this field</p>
       </div>
-    );
-  }
-);
+      <p className="text-sm text-gray-500">No permission to edit this field</p>
+    </div>
+  );
+});
 
 LockedInput.displayName = "LockedInput";
 

@@ -1,20 +1,25 @@
 "use client";
-
-import { useSendChangeEmailVerification } from "@/apiHooks.ts/auth/auth.api";
+import { getAllIdentities, useRemoveIdentity, useSendChangeEmailVerification } from "@/apiHooks.ts/auth/auth.api";
 import { Button, Input } from "@/components/ui";
 import { SvgIcon } from "@/components/ui/SvgIcon";
-import { toast } from "@/hooks/useToast";
 import { useAppSelector } from "@/redux/store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { changeEmailSchema } from "@/schemas/auth.schemas";
+import RemoveIdentityModal from "@/components/modals/RemoveIdentityModal";
 
 export default function EmailSettingsPage() {
   const { mutate: sendChangeEmailVerification, isPending } =
     useSendChangeEmailVerification();
+  const { mutate: removeIdentity, isPending: isRemoving } = useRemoveIdentity();
   const { user } = useAppSelector((state) => state.auth);
+
+  const { data: identityData } = getAllIdentities();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [identityToDelete, setIdentityToDelete] = useState<any>(null);
+
   const methods = useForm<z.infer<typeof changeEmailSchema>>({
     resolver: zodResolver(changeEmailSchema),
     defaultValues: {
@@ -24,7 +29,6 @@ export default function EmailSettingsPage() {
     },
   });
 
-  // Keep oldEmail in sync with the currently logged-in user's email
   useEffect(() => {
     if (user?.email) {
       methods.reset({
@@ -35,32 +39,43 @@ export default function EmailSettingsPage() {
     }
   }, [user?.email, methods]);
 
-  const [showModal, setShowModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const { handleSubmit } = methods;
+
   const onSubmit = (data: z.infer<typeof changeEmailSchema>) => {
     sendChangeEmailVerification(
       { newEmail: data.newEmail },
       {
         onSuccess: () => {
           methods.reset();
-          setShowModal(true);
+          setShowSuccessModal(true);
         },
       },
     );
   };
 
+  const handleRemoveIdentity = () => {
+    if (identityToDelete) {
+      removeIdentity(identityToDelete.id, {
+        onSuccess: () => {
+          setShowDeleteModal(false);
+          setIdentityToDelete(null);
+        }
+      });
+    }
+  };
+
   return (
     <main className="p-3">
-      <div className="flex items-center justify-center">
-        <div className="flex flex-col lg:flex-row w-full max-w-6xl lg:m-10 border rounded-lg">
-          {/* Left Panel */}
-          <div className="w-full lg:w-[420px] flex flex-col bg-[#795CF512] justify-center border-r items-center p-6 rounded-t lg:rounded-l lg:rounded-tr-none lg:h-[550px] bg-bg-se">
-            <div className="flex flex-col items-center  text-center space-y-4">
+      <div className="flex justify-center items-center">
+        <div className="flex lg:flex-row flex-col lg:m-10 border rounded-lg w-full max-w-6xl overflow-hidden">
+          <div className="flex flex-col justify-center items-center bg-primary/10 p-6 lg:p-10 border-r w-full lg:w-[420px]">
+            <div className="flex flex-col items-center space-y-4 text-center">
               <SvgIcon name="email" className="w-20 h-20 text-primary" />
-              <h2 className="text-heading-1 mt-10 font-bold ">
+              <h2 className="mt-10 font-bold text-heading-1">
                 Email Security
               </h2>
-              <ul className="mt-5 space-y-3 text-body-small ">
+              <ul className="space-y-3 mt-5 w-full text-body-small text-left">
                 <li>• Use a valid email address</li>
                 <li>
                   • Once you send the request you will receive an email to
@@ -74,19 +89,18 @@ export default function EmailSettingsPage() {
             </div>
           </div>
 
-          {/* Right Panel */}
-          <div className="flex-1 bg-bg-secondary p-9 rounded-b lg:rounded-r lg:rounded-bl-none flex items-center justify-center">
-            <div className="w-full max-w-md space-y-5">
-              {showModal ? (
-                <div className="space-y-6 text-center py-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="bg-green-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="flex flex-col flex-1 bg-bg-secondary p-6 lg:p-12">
+            <div className="space-y-8 mx-auto w-full max-w-lg">
+              {showSuccessModal ? (
+                <div className="slide-in-from-bottom-4 space-y-6 py-8 text-center animate-in duration-500 fade-in">
+                  <div className="flex justify-center items-center bg-green-50 mx-auto mb-6 rounded-full w-20 h-20">
                     <SvgIcon
                       name="email"
                       className="w-10 h-10 text-green-500"
                     />
                   </div>
                   <div className="space-y-2">
-                    <h2 className="text-2xl font-bold text-text">
+                    <h2 className="font-bold text-text text-2xl">
                       Verification Sent!
                     </h2>
                     <p className="leading-relaxed">
@@ -97,27 +111,27 @@ export default function EmailSettingsPage() {
                       . Please confirm it to change your email.
                     </p>
                   </div>
+                  <Button onClick={() => setShowSuccessModal(false)}>Go Back</Button>
                 </div>
               ) : (
                 <>
-                  <div className="space-y-2">
-                    <h1 className="text-heading-1 font-bold ">Change Email</h1>
-                    <p className="leading-snug">
-                      Ensure your account stays secure with a strong email that
-                      you don’t use elsewhere.
-                    </p>
-                  </div>
+                  <section className="space-y-6">
+                    <div className="space-y-2">
+                      <h1 className="font-bold text-2xl lg:text-3xl">Change Email</h1>
+                      <p className="text-text-secondary leading-snug">
+                        Ensure your account stays secure with a strong email that
+                        you don’t use elsewhere.
+                      </p>
+                    </div>
 
-                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                    <Input
-                      label="Current Email"
-                      name="email"
-                      value={user?.email}
-                      disabled
-                    />
-                    {/* New Email */}
-                    <div className="space-y-1">
-                      <div className="relative">
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                      <Input
+                        label="Current Email"
+                        name="oldEmail"
+                        value={user?.email}
+                        disabled
+                      />
+                      <div className="space-y-1">
                         <Input
                           label="New Email"
                           {...methods.register("newEmail")}
@@ -126,39 +140,63 @@ export default function EmailSettingsPage() {
                           required
                         />
                       </div>
-                    </div>
 
-                    {/* New Password */}
-                    <div className="space-y-1">
-                      <div className="relative">
+                      <div className="space-y-1">
                         <Input
                           label="Confirm New Email"
                           {...methods.register("confirmEmail")}
-                          error={
-                            methods.formState.errors?.confirmEmail?.message
-                          }
-                          placeholder="Enter your new email"
+                          error={methods.formState.errors?.confirmEmail?.message}
+                          placeholder="Confirm your new email"
                           required
                         />
                       </div>
-                    </div>
+                      {/* {identityData?.identities?.length > 0 &&
+                        <div className="space-y-1">
+                          {identityData.identities.map((identity: any) => <Input
+                            leftIcon={<SvgIcon name={identity.provider} className="w-4 h-4" />}
+                            label="Connected Accounts"
+                            value={identity.provider}
+                            disabled
+                            rightIcon={<Button
+                              className="px-2 py-3 w-fit h-1 text-sm"
+                              variant="primary"
+                              type="button"
+                              onClick={() => {
+                                setShowDeleteModal(true);
+                                setIdentityToDelete(identity);
+                              }}
+                            >
+                              Manage
+                            </Button>}
+                          />)}
 
-                    {/* Update Button */}
-                    <Button
-                      className="w-full bg-primary text-white hover:bg-primary/70 py-5"
-                      variant="primary"
-                      type="submit"
-                      disabled={isPending}
-                    >
-                      {isPending ? "Sending..." : "Update Email"}
-                    </Button>
-                  </form>
+                        </div>} */}
+
+                      <Button
+                        className="w-full h-12"
+                        variant="primary"
+                        type="submit"
+                        disabled={isPending}
+                        isLoading={isPending}
+                      >
+                        Update Email
+                      </Button>
+                    </form>
+                  </section>
                 </>
               )}
             </div>
           </div>
         </div>
       </div>
+      <RemoveIdentityModal
+        showDeleteModal={showDeleteModal}
+        setShowDeleteModal={setShowDeleteModal}
+        identityToDelete={identityToDelete}
+        handleRemoveIdentity={handleRemoveIdentity}
+        isRemoving={isRemoving}
+      />
     </main>
   );
 }
+

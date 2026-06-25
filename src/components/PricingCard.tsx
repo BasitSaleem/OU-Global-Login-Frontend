@@ -57,7 +57,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
             return (features as string[]).map((feature, index) => (
                 <div
                     key={index}
-                    className="text-center flex justify-center flex-col  text-base font-normal leading-9 break-words font-inter"
+                    className="text-center flex justify-center flex-col  text-base font-normal leading-9 wrap-break-word font-inter"
                 >
                     {feature}
                 </div>
@@ -66,7 +66,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
             return (features as PricingFeature[]).map((feature, index) => (
                 <div
                     key={index}
-                    className={`text-center flex justify-center flex-col text-base font-normal leading-9 break-words font-inter ${feature.included
+                    className={`text-center flex justify-center flex-col text-base font-normal leading-9 wrap-break-word font-inter ${feature.included
                         ? 'text-[#231F20] opacity-100'
                         : 'text-[#6B7280] opacity-60 line-through'
                         }`}
@@ -92,7 +92,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
                     }}
                 >
                     <div
-                        className="text-center flex justify-center flex-col text-white text-sm font-semibold break-words font-inter"
+                        className="text-center flex justify-center flex-col text-white text-sm font-semibold wrap-break-word font-inter"
                         style={{ color: badge.textColor || 'white' }}
                     >
                         {badge.text}
@@ -104,20 +104,20 @@ const PricingCard: React.FC<PricingCardProps> = ({
                 className={`w-full flex flex-col justify-start items-center gap-2.5 ${badge ? 'mt-2.5' : ''
                     }`}
             >
-                <div className="w-full text-center text-2xl font-semibold break-words font-inter">
+                <div className="w-full text-center text-2xl font-semibold wrap-break-words font-inter">
                     {title}
                 </div>
 
                 <div className="w-full text-center flex justify-center flex-col">
                     <span
-                        className="text-4xl font-semibold break-words font-inter"
+                        className="text-4xl font-semibold wrap-break-word  font-inter"
                         style={{ color: priceColor }}
                     >
                         {price}
                     </span>
                     {pricePeriod && (
                         <span
-                            className="text-sm font-normal break-words font-inter"
+                            className="text-sm font-normal wrap-break-word  font-inter"
                             style={{ color: priceColor }}
                         >
                             {pricePeriod}
@@ -131,13 +131,13 @@ const PricingCard: React.FC<PricingCardProps> = ({
                     style={{ backgroundColor: buttonColor }}
                     onClick={onButtonClick}
                 >
-                    <div className="text-center flex justify-center flex-col text-white text-base font-semibold break-words font-inter">
+                    <div className="text-center flex justify-center flex-col text-white text-base font-semibold wrap-break-word font-inter">
                         {buttonText}
                     </div>
                 </div>
 
                 {/* User Count */}
-                <div className="w-full h-5 text-center flex justify-center flex-col text-base font-normal leading-9 break-words font-inter">
+                <div className="w-full h-5 text-center flex justify-center flex-col text-base font-normal leading-9 wrap-break-word  font-inter">
                     {userCount}
                 </div>
 

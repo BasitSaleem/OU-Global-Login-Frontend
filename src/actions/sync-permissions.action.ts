@@ -1,5 +1,6 @@
 'use server';
 
+import logger from '@/utils/logger';
 import fs from 'fs';
 import path from 'path';
 const TYPES_FILE_PATH = path.join(process.cwd(), 'src/types/common.ts');
@@ -60,7 +61,7 @@ export async function syncPermissionsToFile(permissions: string[]): Promise<Sync
       permissionCount: permissions.length
     };
   } catch (error) {
-    console.error('Error syncing permissions:', error);
+    logger.error('Error syncing permissions:', error);
     return {
       success: false,
       message: error instanceof Error ? error.message : 'Unknown error occurred'
