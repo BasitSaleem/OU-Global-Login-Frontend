@@ -34,6 +34,7 @@ export type Subscription = {
 };
 
 export type Package = {
+  tier_level: number;
   id: string;
   package_name: string;
   currency: string;

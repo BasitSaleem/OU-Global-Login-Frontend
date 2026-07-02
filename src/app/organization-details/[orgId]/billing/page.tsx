@@ -13,6 +13,7 @@ import { useAppSelector } from "@/redux/store";
 import { AuthGuard } from "@/components/HOCs/auth-guard";
 import BillingAddOnsSection from "@/components/pages/OrganizationDetails/Billing/AddOnsSection";
 import CancelSubscriptionSection from "@/components/pages/OrganizationDetails/Billing/CancelSubscriptionSection";
+import SubscriptionPolicySection from "@/components/pages/OrganizationDetails/Billing/SubscriptionPolicySection";
 
 function BillingPage() {
   const { orgId } = useParams();
@@ -49,6 +50,7 @@ function BillingPage() {
           loading={isLoading}
           organization={organization}
         />
+        <SubscriptionPolicySection organization={organization} />
         <BillingAddOnsSection organization={organization} />
         <RenewalSection organization={organization} loading={isLoading} />
         <PaymentMethodSection loading={isLoading} />
