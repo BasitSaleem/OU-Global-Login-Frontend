@@ -324,17 +324,33 @@ function CheckoutPage() {
       }
     });
 
-    if (
-      currentSubscription &&
-      currentSubscription.status !== "TRIAL" &&
-      currentSubscription.status !== "CANCELLED" &&
-      !currentSubscription.cancel_at_period_end
-    ) {
-      toast.error(
-        "Action Not Allowed",
-        "You must have to unsubscribe a package before subscribing new package.",
-      );
-      return;
+    const subStatus = currentSubscription?.status;
+    const isActivePaid =
+      !!currentSubscription &&
+      subStatus !== "TRIAL" &&
+      subStatus !== "CANCELLED" &&
+      !currentSubscription.cancel_at_period_end;
+
+    // Immediate downgrades are not allowed for active subscribers — they must be
+    // scheduled to the end of the billing period via "Manage your plan".
+    if (isActivePaid) {
+      const planTier = (name?: string) => {
+        const n = (name || "").toLowerCase();
+        if (n.includes("enterprise")) return 5;
+        if (n.includes("hybrid")) return 4;
+        if (n.includes("premium")) return 3;
+        if (n.includes("pro")) return 2;
+        return 1;
+      };
+      const currentTier = planTier(currentSubscription?.oiPackage?.package_name);
+      const targetTier = planTier(selectedPlan?.package_name);
+      if (targetTier < currentTier) {
+        toast.error(
+          "Downgrades are scheduled",
+          "Use ‘Manage your plan’ on the Billing page to schedule a downgrade.",
+        );
+        return;
+      }
     }
 
     try {
@@ -356,9 +372,11 @@ function CheckoutPage() {
       };
 
       if (
-        currentSubscription?.status === "TRIAL" &&
-        currentSubscription?.oiPackage?.id === pkgId
+        isActivePaid ||
+        (currentSubscription?.status === "TRIAL" &&
+          currentSubscription?.oiPackage?.id === pkgId)
       ) {
+        // Immediate, prorated upgrade / change on the existing subscription.
         await upgradePlan(payload);
       } else {
         await buyNewPlan({ ...payload, subscriptionId: null });

@@ -2,10 +2,11 @@
 
 import React from "react";
 import { Document, Page, Text, View, Image, Link } from "@react-pdf/renderer";
-import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
+import { Invoice, InvoiceBreakdown } from "@/apiHooks.ts/invoice/invoice.types";
 
 import { User } from "@/types/auth.types";
 import { calculateInvoiceFinancial } from "@/utils/invoicesUtils";
+import { breakdownToDisplay } from "@/utils/invoiceBreakdown";
 import logger from "@/utils/logger";
 import { oiLogoBase64 } from "./logoBase64";
 import { formatDate } from "@/utils/helpers";
@@ -16,6 +17,7 @@ interface InvoicePDFProps {
   orgName?: string;
   billingCycle: "MONTHLY" | "YEARLY";
   user: User | null;
+  breakdown?: InvoiceBreakdown | null;
 }
 
 const InvoicePDF: React.FC<InvoicePDFProps> = ({
@@ -23,6 +25,7 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
   orgName,
   user,
   billingCycle,
+  breakdown,
 }) => {
   const statusStyle = getStatusStyle(invoice.status);
 
@@ -35,16 +38,50 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
     }
   }
 
-  const {
-    originalSubtotal,
-    savings,
-    tax,
-    total,
-    discountPercent,
-    hasDiscount,
-    originalBasePlan,
-    addOnsWithPricing,
-  } = calculateInvoiceFinancial(invoice, billingCycle);
+  const authoritative = breakdownToDisplay(breakdown);
+  const legacy = calculateInvoiceFinancial(invoice, billingCycle);
+
+  const rows = authoritative
+    ? authoritative.rows
+    : [
+        {
+          name:
+            invoice.metadata?.packageName ||
+            invoice.subscription?.oiPackage?.package_name ||
+            "Subscription",
+          type: "Subscription",
+          quantity: 1,
+          unitPrice: legacy.originalBasePlan,
+          amount: legacy.originalBasePlan,
+          proration: false,
+        },
+        ...legacy.addOnsWithPricing.map((addon: any) => {
+          const qty = addon.quantity || 1;
+          const itemTotal = addon.originalPrice * qty;
+          const finalAmount = legacy.hasDiscount
+            ? itemTotal - (itemTotal * legacy.discountPercent) / 100
+            : itemTotal;
+          return {
+            name: addon.name || addon.package_name || "Add-on",
+            type: "Add-on",
+            quantity: qty,
+            unitPrice: addon.originalPrice,
+            amount: finalAmount,
+            proration: false,
+          };
+        }),
+      ];
+
+  const summary = authoritative
+    ? authoritative.summary
+    : {
+        subtotal: legacy.originalSubtotal,
+        discount: legacy.savings,
+        tax: legacy.tax,
+        total: legacy.total,
+        currency: invoice.payment?.currency || "USD",
+      };
+  const showDiscount = summary.discount > 0.001;
 
   return (
     <Document title={`Invoice-${invoice.invoice_number}`}>
@@ -157,74 +194,38 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
             </Text>
           </View>
 
-          {/* Base Plan Row */}
-          <View style={styles.tableRow}>
-            <View style={styles.colDesc}>
-              <Text style={styles.itemTitle}>
-                {invoice.metadata?.packageName ||
-                  invoice.subscription?.oiPackage?.package_name ||
-                  "Retail Basic"}
+          {/* Line Items (authoritative Stripe breakdown, or legacy fallback) */}
+          {rows.map((row, index) => (
+            <View style={styles.tableRow} key={index}>
+              <View style={styles.colDesc}>
+                <Text style={styles.itemTitle}>{row.name}</Text>
+              </View>
+              <View style={styles.colType}>
+                <Text
+                  style={
+                    row.type === "Subscription"
+                      ? styles.itemSubBase
+                      : styles.itemSub
+                  }
+                >
+                  {row.type}
+                </Text>
+              </View>
+              <Text style={styles.colQty}>{row.quantity}</Text>
+              <Text style={styles.colPrice}>
+                {"$"}
+                {row.unitPrice.toFixed(2)}
+              </Text>
+              <Text style={styles.colSub}>
+                {"$"}
+                {(row.unitPrice * row.quantity).toFixed(2)}
+              </Text>
+              <Text style={styles.colTotal}>
+                {"$"}
+                {row.amount.toFixed(2)}
               </Text>
             </View>
-            <View style={styles.colType}>
-              <Text style={styles.itemSubBase}>Subscription</Text>
-            </View>
-            <Text style={styles.colQty}>1</Text>
-            <Text style={styles.colPrice}>
-              {"$"}
-              {originalBasePlan.toFixed(2)}
-            </Text>
-            <Text style={styles.colSub}>
-              {"$"}
-              {originalBasePlan.toFixed(2)}
-            </Text>
-            {/* <Text style={styles.colNet}>
-              {"$"}
-              {originalBasePlan.toFixed(2)}
-            </Text> */}
-            {/* <Text style={styles.colTax}>$0.00</Text> */}
-            {/* <Text style={styles.colDiscount}>-</Text> */}
-            <Text style={styles.colTotal}>
-              {"$"}
-              {originalBasePlan.toFixed(2)}
-            </Text>
-          </View>
-
-          {/* Add-ons Rows */}
-          {addOnsWithPricing.map((addon: any, index: number) => {
-            const addOnName =
-              addon.name || addon.package_name || "Additional Module";
-            const addOnQty = addon.quantity || 1;
-            const price = addon.originalPrice;
-            const total = price * addOnQty;
-            return (
-              <View style={styles.tableRow} key={index}>
-                <View style={styles.colDesc}>
-                  <Text style={styles.itemTitle}>{addOnName}</Text>
-                </View>
-                <View style={styles.colType}>
-                  <Text style={styles.itemSub}>Add-ons</Text>
-                </View>
-                <Text style={styles.colQty}>{addOnQty}</Text>
-                <Text style={styles.colPrice}>
-                  {"$"}
-                  {price.toFixed(2)}
-                </Text>
-                <Text style={styles.colSub}>
-                  {"$"}
-                  {total.toFixed(2)}
-                </Text>
-                {
-                  <Text style={styles.colTotal}>
-                    {"$"}
-                    {hasDiscount
-                      ? (total - (price * discountPercent) / 100).toFixed(2)
-                      : total.toFixed(2)}
-                  </Text>
-                }
-              </View>
-            );
-          })}
+          ))}
         </View>
 
         <View style={styles.summarySection}>
@@ -233,18 +234,18 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
               <Text style={styles.summaryLabel}>Subtotal:</Text>
               <Text style={styles.summaryValue}>
                 $
-                {originalSubtotal.toLocaleString(undefined, {
+                {summary.subtotal.toLocaleString(undefined, {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}
               </Text>
             </View>
-            {invoice?.subscription?.billing_cycle === "YEARLY" && (
+            {showDiscount && (
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>Discount</Text>
                 <Text style={styles.summaryValue}>
                   -$
-                  {savings.toLocaleString(undefined, {
+                  {summary.discount.toLocaleString(undefined, {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })}
@@ -255,7 +256,7 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
               <Text style={styles.summaryLabel}>Tax:</Text>
               <Text style={styles.summaryValue}>
                 $
-                {tax.toLocaleString(undefined, {
+                {summary.tax.toLocaleString(undefined, {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}
@@ -265,7 +266,7 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
               <Text style={styles.grandTotalLabel}>Total:</Text>
               <Text style={styles.grandTotalValue}>
                 $
-                {total.toLocaleString(undefined, {
+                {summary.total.toLocaleString(undefined, {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}

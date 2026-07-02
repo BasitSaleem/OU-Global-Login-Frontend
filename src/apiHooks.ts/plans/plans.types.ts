@@ -8,6 +8,7 @@ export type PlanFeatureType = [
 export type PlanType = "RETAIL" | "HYBRID" | "ECOMMERCE" | "MANUFACTURING";
 
 export interface OiPlanType {
+  tier_level: number;
   id: string;
   created_at: string;
   updated_at: string;

@@ -4,6 +4,8 @@ import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 import { calculateInvoiceFinancial } from "@/utils/invoicesUtils";
+import { breakdownToDisplay } from "@/utils/invoiceBreakdown";
+import { useInvoiceBreakdown } from "@/apiHooks.ts/invoice/inovice.api";
 import logger from "@/utils/logger";
 
 import { SvgIcon } from "@/components/ui/SvgIcon";
@@ -23,6 +25,8 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
   orgName,
 }) => {
   const { user } = useSelector((state: RootState) => state.auth);
+  // Authoritative breakdown (Stripe line items); loaded when the modal opens.
+  const { data: breakdown } = useInvoiceBreakdown(invoice?.id, isOpen);
   if (!invoice) return null;
 
   let metaObj = invoice.metadata as any;
@@ -34,17 +38,56 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
     }
   }
 
-  const {
-    originalSubtotal,
-    savings,
-    subtotal: effectiveSubtotal,
-    tax,
-    total,
-    discountPercent,
-    hasDiscount,
-    originalBasePlan,
-    addOnsWithPricing,
-  } = calculateInvoiceFinancial(invoice, invoice.subscription?.billing_cycle);
+  const authoritative = breakdownToDisplay(breakdown);
+
+  // Legacy client-side calc (used only when authoritative data is unavailable).
+  const legacy = calculateInvoiceFinancial(
+    invoice,
+    invoice.subscription?.billing_cycle,
+  );
+
+  // Unified rows + summary — same rendering for both authoritative and legacy.
+  const rows = authoritative
+    ? authoritative.rows
+    : [
+        {
+          name:
+            invoice.metadata?.packageName ||
+            invoice.subscription?.oiPackage?.package_name ||
+            "Subscription",
+          type: "Subscription",
+          quantity: 1,
+          unitPrice: legacy.originalBasePlan,
+          amount: legacy.originalBasePlan,
+          proration: false,
+        },
+        ...legacy.addOnsWithPricing.map((addon: any) => {
+          const qty = addon.quantity || 1;
+          const itemTotal = addon.originalPrice * qty;
+          const finalAmount = legacy.hasDiscount
+            ? itemTotal - (itemTotal * legacy.discountPercent) / 100
+            : itemTotal;
+          return {
+            name: addon.name || addon.package_name || "Add-on",
+            type: "Add-on",
+            quantity: qty,
+            unitPrice: addon.originalPrice,
+            amount: finalAmount,
+            proration: false,
+          };
+        }),
+      ];
+
+  const summary = authoritative
+    ? authoritative.summary
+    : {
+        subtotal: legacy.originalSubtotal,
+        discount: legacy.savings,
+        tax: legacy.tax,
+        total: legacy.total,
+        currency: invoice.payment?.currency || "USD",
+      };
+  const showDiscount = summary.discount > 0.001;
 
   return (
     <Modal
@@ -105,64 +148,36 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {/* Base Plan Row */}
-                <tr>
-                  <td className="py-4 font-medium text-gray-700">
-                    {invoice.metadata?.packageName ||
-                      invoice.subscription?.oiPackage?.package_name ||
-                      "Retail Pro"}
-                  </td>
-                  <td className="py-4 text-center">
-                    <span className="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full text-[10px] font-bold">
-                      Subscription
-                    </span>
-                  </td>
-                  <td className="py-4 text-center">1</td>
-                  <td className="py-4 text-center">
-                    ${originalBasePlan.toFixed(2)}
-                  </td>
-                  <td className="py-4 text-center">
-                    ${originalBasePlan.toFixed(2)}
-                  </td>
-                  <td className="py-4 text-center font-bold">
-                    ${originalBasePlan.toFixed(2)}
-                  </td>
-                </tr>
-                {/* Add-on Rows */}
-                {addOnsWithPricing.map((addon: any, idx: number) => {
-                  const qty =
-                    addon.quantity ||
-                    addon.no_of_users ||
-                    addon.no_of_stores ||
-                    1;
-                  const price = addon.originalPrice;
-                  const itemTotal = price * qty;
-                  const itemSavings = hasDiscount
-                    ? (itemTotal * discountPercent) / 100
-                    : 0;
-                  const finalAmount = itemTotal - itemSavings;
-
-                  return (
-                    <tr key={`addon-${idx}`}>
-                      <td className="py-4 font-medium text-gray-700">
-                        {addon.name || addon.package_name || "Module"}
-                      </td>
-                      <td className="py-4 text-center">
-                        <span className="bg-amber-50 text-amber-600 px-3 py-1 rounded-full text-[10px] font-bold">
-                          Add-on
-                        </span>
-                      </td>
-                      <td className="py-4 text-center">{qty}</td>
-                      <td className="py-4 text-center">${price.toFixed(2)}</td>
-                      <td className="py-4 text-center">
-                        ${itemTotal.toFixed(2)}
-                      </td>
-                      <td className="py-4 text-center font-bold">
-                        ${finalAmount.toFixed(2)}
-                      </td>
-                    </tr>
-                  );
-                })}
+                {rows.map((row, idx) => (
+                  <tr key={idx}>
+                    <td className="py-4 font-medium text-gray-700">
+                      {row.name}
+                    </td>
+                    <td className="py-4 text-center">
+                      <span
+                        className={`px-3 py-1 rounded-full text-[10px] font-bold ${
+                          row.type === "Subscription"
+                            ? "bg-indigo-50 text-indigo-600"
+                            : row.type === "Proration"
+                              ? "bg-sky-50 text-sky-600"
+                              : "bg-amber-50 text-amber-600"
+                        }`}
+                      >
+                        {row.type}
+                      </span>
+                    </td>
+                    <td className="py-4 text-center">{row.quantity}</td>
+                    <td className="py-4 text-center">
+                      ${row.unitPrice.toFixed(2)}
+                    </td>
+                    <td className="py-4 text-center">
+                      ${(row.unitPrice * row.quantity).toFixed(2)}
+                    </td>
+                    <td className="py-4 text-center font-bold">
+                      ${row.amount.toFixed(2)}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -197,26 +212,28 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
               <div className="flex justify-between text-sm text-text">
                 <span>Subtotal:</span>
                 <span className="font-bold text-text">
-                  ${originalSubtotal.toFixed(2)}
+                  ${summary.subtotal.toFixed(2)}
                 </span>
               </div>
-              {invoice?.subscription?.billing_cycle === "YEARLY" && (
+              {showDiscount && (
                 <div className="flex justify-between text-sm text-text">
                   <span>Discounts:</span>
                   <span className="font-bold text-text">
-                    -${savings.toFixed(2)}
+                    -${summary.discount.toFixed(2)}
                   </span>
                 </div>
               )}
               <div className="flex justify-between text-sm text-text">
                 <span>Tax:</span>
-                <span className="font-bold text-text">${tax.toFixed(2)}</span>
+                <span className="font-bold text-text">
+                  ${summary.tax.toFixed(2)}
+                </span>
               </div>
               <div className="pt-4 border-t border-border flex justify-between items-end">
                 <span className="text-lg font-bold text-text">Total:</span>
                 <span className="text-3xl font-black text-[#0D9488]">
                   $
-                  {total.toLocaleString(undefined, {
+                  {summary.total.toLocaleString(undefined, {
                     minimumFractionDigits: 2,
                   })}
                 </span>
