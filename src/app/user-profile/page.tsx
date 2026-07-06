@@ -1,21 +1,24 @@
 "use client";
+import { useRef, useState, RefObject } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { MapPin } from "lucide-react";
+import { toast } from "react-toastify";
+
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { useUpdateProfile } from "@/apiHooks.ts/auth/auth.api";
 import { userProfile } from "@/apiHooks.ts/auth/auth.types";
 import { Button, Input, LoadingSpinner } from "@/components/ui";
 import ImageUpload from "@/components/UploadImage";
 import { setProfile } from "@/redux/slices/auth.slice";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { User } from "@/types/auth.types";
-import { useRef, useState, RefObject } from "react";
 
 import { useClickOutside } from "@/hooks/useClickOutSide";
 import { DeleteAccountModal } from "@/components/modals/DeleteAccountModal";
-import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import userProfileSchema from "@/schemas/user-profile.schema";
-import { MapPin } from "lucide-react";
-import { toast } from "react-toastify";
+
 import logger from "@/utils/logger";
+import { MfaSettings } from "./MfaSettings";
 
 export default function UserProfilePage() {
   const { mutate: updateUser, isPending } = useUpdateProfile();
@@ -50,7 +53,7 @@ export default function UserProfilePage() {
       profileDropdownRef as RefObject<HTMLDivElement>,
       notificationsRef as RefObject<HTMLDivElement>,
     ],
-    () => { },
+    () => {},
   );
 
   const handleGetCurrentLocation = () => {
@@ -87,10 +90,10 @@ export default function UserProfilePage() {
             methods.setValue(
               "city",
               address.city ||
-              address.town ||
-              address.village ||
-              address.suburb ||
-              "",
+                address.town ||
+                address.village ||
+                address.suburb ||
+                "",
               { shouldDirty: true, shouldTouch: true },
             );
             methods.setValue("state", address.state || "", {
@@ -147,10 +150,10 @@ export default function UserProfilePage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-background flex font-inter">
+    <div className="min-h-screen w-full max-w-7xl bg-background mx-auto flex font-inter">
       <main className="flex-1">
         <div className="flex flex-col sm:flex-row items-start gap-5 p-8">
-          <div className="flex flex-col mx-auto w-full md:w-[286px] gap-3 p-3 border rounded-lg bg-bg-secondary shadow-sm py-5">
+          <div className="flex flex-col mx-auto w-full md:w-71.5 gap-3 p-3 border rounded-lg bg-bg-secondary shadow-sm py-5">
             <div className="flex flex-col items-center gap-7">
               <div className="w-full">
                 <ImageUpload
@@ -210,193 +213,197 @@ export default function UserProfilePage() {
             userEmail={user?.email || ""}
           />
 
-          <div className="flex-1 border rounded-lg w-full bg-bg-secondary shadow-sm">
-            <div className="flex items-center justify-between p-5 border-b">
-              <h1 className="text-heading-1 font-bold text-black">
-                Profile Information
-              </h1>
-            </div>
+          <div className="flex-1 flex flex-col gap-5 w-full">
+            <div className="border rounded-lg w-full bg-bg-secondary shadow-sm">
+              <div className="flex items-center justify-between p-5 border-b">
+                <h1 className="text-heading-1 font-bold text-black">
+                  Profile Information
+                </h1>
+              </div>
 
-            {/* Form Content */}
-            <FormProvider {...methods}>
-              <form
-                onSubmit={methods.handleSubmit(handleSaveChanges)}
-                className="p-6 space-y-8"
-              >
-                {/* Basic Information */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                  <Input
-                    label="First Name"
-                    error={methods.formState.errors.first_name?.message}
-                    isRequired
-                    permission="og:edit::profile"
-                    type="text"
-                    {...methods.register("first_name", {
-                      required: "First name is required",
-                    })}
-                  />
+              {/* Form Content */}
+              <FormProvider {...methods}>
+                <form
+                  onSubmit={methods.handleSubmit(handleSaveChanges)}
+                  className="p-6 space-y-8"
+                >
+                  {/* Basic Information */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                    <Input
+                      label="First Name"
+                      error={methods.formState.errors.first_name?.message}
+                      isRequired
+                      permission="og:edit::profile"
+                      type="text"
+                      {...methods.register("first_name", {
+                        required: "First name is required",
+                      })}
+                    />
 
-                  <Input
-                    isRequired
-                    permission="og:edit::profile"
-                    label="Last Name"
-                    error={methods.formState.errors.last_name?.message}
-                    type="text"
-                    {...methods.register("last_name", {
-                      required: "Last name is required",
-                    })}
-                  />
+                    <Input
+                      isRequired
+                      permission="og:edit::profile"
+                      label="Last Name"
+                      error={methods.formState.errors.last_name?.message}
+                      type="text"
+                      {...methods.register("last_name", {
+                        required: "Last name is required",
+                      })}
+                    />
 
-                  <Input
-                    label="Email"
-                    permission="og:edit::profile"
-                    isRequired
-                    type="email"
-                    error={methods.formState.errors.email?.message}
-                    {...methods.register("email", {
-                      required: "Email is required",
-                    })}
-                    disabled
-                  />
+                    <Input
+                      label="Email"
+                      permission="og:edit::profile"
+                      isRequired
+                      type="email"
+                      error={methods.formState.errors.email?.message}
+                      {...methods.register("email", {
+                        required: "Email is required",
+                      })}
+                      disabled
+                    />
 
-                  <Input
-                    label="Contact"
-                    permission="og:edit::profile"
-                    type="tel"
-                    error={methods.formState.errors.contact?.message}
-                    {...methods.register("contact", {
-                      required: "Contact is required",
-                    })}
-                  />
-                </div>
+                    <Input
+                      label="Contact"
+                      permission="og:edit::profile"
+                      type="tel"
+                      error={methods.formState.errors.contact?.message}
+                      {...methods.register("contact", {
+                        required: "Contact is required",
+                      })}
+                    />
+                  </div>
 
-                {/* Address Information */}
-                <div>
-                  <div className="flex items-center  mb-2">
-                    <h2 className="text-heading-2 font-bold text-black">
-                      Address Information
+                  {/* Address Information */}
+                  <div>
+                    <div className="flex items-center  mb-2">
+                      <h2 className="text-heading-2 font-bold text-black">
+                        Address Information
+                      </h2>
+                      <Button
+                        type="button"
+                        tooltip="Click to autofill the location"
+                        tooltipPosition="right"
+                        onClick={handleGetCurrentLocation}
+                        disabled={isLocating}
+                      >
+                        {isLocating ? (
+                          <LoadingSpinner className="w-4 h-4" />
+                        ) : (
+                          <MapPin className="w-5 h-5 text-primary" />
+                        )}
+                      </Button>
+                    </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                      <Input
+                        label="Street Address"
+                        permission="og:edit::profile"
+                        type="text"
+                        {...methods.register("street_address", {
+                          required: "Street address is required",
+                        })}
+                      />
+
+                      <Input
+                        label="City"
+                        permission="og:edit::profile"
+                        type="text"
+                        {...methods.register("city", {
+                          required: "City is required",
+                        })}
+                      />
+
+                      <Input
+                        label="State"
+                        permission="og:edit::profile"
+                        type="text"
+                        {...methods.register("state", {
+                          required: "State is required",
+                        })}
+                      />
+
+                      <Input
+                        label="Zip Code"
+                        permission="og:edit::profile"
+                        type="text"
+                        {...methods.register("zip_code", {
+                          required: "Zip code is required",
+                        })}
+                      />
+
+                      <Input
+                        label="Country"
+                        permission="og:edit::profile"
+                        type="text"
+                        {...methods.register("country", {
+                          required: "Country is required",
+                        })}
+                      />
+
+                      <Input
+                        label="Tax/VAT Number"
+                        permission="og:edit::profile"
+                        type="tel"
+                        {...methods.register("tax_vat_number", {
+                          required: "Tax/VAT number is required",
+                        })}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Emergency Contact */}
+                  <div>
+                    <h2 className="text-heading-2 font-bold text-black mb-2">
+                      Emergency Contact
                     </h2>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                      <Input
+                        label="Emergency Contact Name"
+                        permission="og:edit::profile"
+                        type="text"
+                        {...methods.register("emergency_contact_name", {
+                          required: "Emergency contact name is required",
+                        })}
+                      />
+
+                      <Input
+                        label="Emergency Contact Number"
+                        permission="og:edit::profile"
+                        type="tel"
+                        {...methods.register("emergency_contact_no", {
+                          required: "Emergency contact number is required",
+                        })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end">
                     <Button
-                      type="button"
-                      tooltip="Click to autofill the location"
-                      tooltipPosition="right"
-                      onClick={handleGetCurrentLocation}
-                      disabled={isLocating}
+                      variant="primary"
+                      className=" bg-primary text-white hover:bg-primary/70"
+                      permission="og:edit::profile"
+                      type="submit"
+                      disabled={
+                        methods.formState.isSubmitting ||
+                        !methods.formState.isValid ||
+                        !methods.formState.isDirty
+                      }
                     >
-                      {isLocating ? (
-                        <LoadingSpinner className="w-4 h-4" />
+                      {isPending ? (
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <span>Saving...</span>
+                        </div>
                       ) : (
-                        <MapPin className="w-5 h-5 text-primary" />
+                        "Save Changes"
                       )}
                     </Button>
                   </div>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                    <Input
-                      label="Street Address"
-                      permission="og:edit::profile"
-                      type="text"
-                      {...methods.register("street_address", {
-                        required: "Street address is required",
-                      })}
-                    />
+                </form>
+              </FormProvider>
+            </div>
 
-                    <Input
-                      label="City"
-                      permission="og:edit::profile"
-                      type="text"
-                      {...methods.register("city", {
-                        required: "City is required",
-                      })}
-                    />
-
-                    <Input
-                      label="State"
-                      permission="og:edit::profile"
-                      type="text"
-                      {...methods.register("state", {
-                        required: "State is required",
-                      })}
-                    />
-
-                    <Input
-                      label="Zip Code"
-                      permission="og:edit::profile"
-                      type="text"
-                      {...methods.register("zip_code", {
-                        required: "Zip code is required",
-                      })}
-                    />
-
-                    <Input
-                      label="Country"
-                      permission="og:edit::profile"
-                      type="text"
-                      {...methods.register("country", {
-                        required: "Country is required",
-                      })}
-                    />
-
-                    <Input
-                      label="Tax/VAT Number"
-                      permission="og:edit::profile"
-                      type="tel"
-                      {...methods.register("tax_vat_number", {
-                        required: "Tax/VAT number is required",
-                      })}
-                    />
-                  </div>
-                </div>
-
-                {/* Emergency Contact */}
-                <div>
-                  <h2 className="text-heading-2 font-bold text-black mb-2">
-                    Emergency Contact
-                  </h2>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                    <Input
-                      label="Emergency Contact Name"
-                      permission="og:edit::profile"
-                      type="text"
-                      {...methods.register("emergency_contact_name", {
-                        required: "Emergency contact name is required",
-                      })}
-                    />
-
-                    <Input
-                      label="Emergency Contact Number"
-                      permission="og:edit::profile"
-                      type="tel"
-                      {...methods.register("emergency_contact_no", {
-                        required: "Emergency contact number is required",
-                      })}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex justify-end">
-                  <Button
-                    variant="primary"
-                    className=" bg-primary text-white hover:bg-primary/70"
-                    permission="og:edit::profile"
-                    type="submit"
-                    disabled={
-                      methods.formState.isSubmitting ||
-                      !methods.formState.isValid ||
-                      !methods.formState.isDirty
-                    }
-                  >
-                    {isPending ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        <span>Saving...</span>
-                      </div>
-                    ) : (
-                      "Save Changes"
-                    )}
-                  </Button>
-                </div>
-              </form>
-            </FormProvider>
+            <MfaSettings />
           </div>
         </div>
       </main>

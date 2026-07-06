@@ -1,14 +1,15 @@
 "use client";
 import { PublicRoute } from "@/components/HOCs/publicRoute.guard";
 import { Logo } from "@/components/ui";
+import { Modal } from "@/components/modals/GenericModal";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { useLogin } from "@/apiHooks.ts/auth/auth.api";
+import { useLogin, useVerifyMfaLogin } from "@/apiHooks.ts/auth/auth.api";
 import { useAppDispatch } from "@/redux/store";
 import { setAuth } from "@/redux/slices/auth.slice";
 import { ROUTES } from "@/constants";
-import { signInResponse } from "@/types/auth.types";
+
 import { signinData } from "@/apiHooks.ts/auth/auth.types";
 import { AuthContext } from "@/contexts/auth-context";
 import logger from "@/utils/logger";
@@ -37,6 +38,12 @@ const AuthLayout = ({ children }: AuthLayoutProp) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [oauthParams, setOauthParams] = useState<any>({});
+  const [showMfa, setShowMfa] = useState(false);
+  const [mfaToken, setMfaToken] = useState("");
+  const [mfaCode, setMfaCode] = useState("");
+  const [useRecoveryCode, setUseRecoveryCode] = useState(false);
+  const { mutate: verifyMfaLogin, isPending: isMfaPending } =
+    useVerifyMfaLogin();
 
   const pathname = usePathname();
   const app = searchParams.get("app") || "OG";
@@ -67,7 +74,13 @@ const AuthLayout = ({ children }: AuthLayoutProp) => {
     };
 
     login(fullData, {
-      onSuccess: (response: signInResponse) => {
+      onSuccess: (response: any) => {
+        if (response.data?.requires_mfa) {
+          setMfaToken(response.data.mfa_token);
+          setShowMfa(true);
+          return;
+        }
+
         const response_redirect_url = response.data?.redirect_url;
         const search_redirect_uri = searchParams.get("redirect_uri");
         dispatch(
@@ -94,10 +107,16 @@ const AuthLayout = ({ children }: AuthLayoutProp) => {
     });
   };
 
+  const triggerMfa = (token: string) => {
+    setMfaToken(token);
+    setShowMfa(true);
+  };
+
   const contextValue = {
     onSubmit,
     isPending,
     error,
+    triggerMfa,
   };
   const Content = (
     <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
@@ -107,7 +126,11 @@ const AuthLayout = ({ children }: AuthLayoutProp) => {
       <div className="absolute inset-0 opacity-40"></div>
 
       <div className="relative z-10 flex items-center  justify-between p-4 sm:p-6 lg:p-8">
-        <a href="https://ownersinventory.com/" target="_blank" rel="noopener noreferrer">
+        <a
+          href="https://ownersinventory.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <Logo Icon="ownersInventory" className="cursor-pointer" />
         </a>
         <div className="flex items-center gap-2 sm:gap-3">
@@ -144,6 +167,86 @@ const AuthLayout = ({ children }: AuthLayoutProp) => {
           © {new Date().getFullYear()} Owners Inventory - All rights reserved
         </p>
       </div>
+
+      <Modal
+        isOpen={showMfa}
+        onClose={() => {
+          setShowMfa(false);
+          setMfaCode("");
+        }}
+        size="md"
+      >
+        <Modal.Header>
+          <Modal.Title>Two-Factor Authentication</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p className="text-sm text-center mb-4 text-gray-400">
+            {useRecoveryCode
+              ? "Enter one of your 8-character recovery codes."
+              : "Enter the 6-digit code from your authenticator app."}
+          </p>
+          <input
+            type="text"
+            className="w-full px-3 py-2 border rounded-md mb-2 bg-transparent text-text border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary"
+            placeholder={useRecoveryCode ? "e.g. a1b2c3d4" : "000000"}
+            value={mfaCode}
+            onChange={(e) => setMfaCode(e.target.value)}
+          />
+          <div className="flex justify-end mb-4">
+            <button
+              onClick={() => {
+                setUseRecoveryCode(!useRecoveryCode);
+                setMfaCode("");
+              }}
+              className="text-xs text-primary hover:underline"
+            >
+              {useRecoveryCode
+                ? "Use Authenticator App instead"
+                : "Lost your device? Use a recovery code"}
+            </button>
+          </div>
+          <button
+            onClick={() => {
+              verifyMfaLogin(
+                { mfa_token: mfaToken, code: mfaCode },
+                {
+                  onSuccess: (response: any) => {
+                    const response_redirect_url = response.data?.redirect_url;
+                    const search_redirect_uri =
+                      searchParams.get("redirect_uri");
+                    dispatch(
+                      setAuth({
+                        user: response.data?.user!,
+                        isAuthenticated: true,
+                        isLoading: false,
+                        error: null,
+                      }),
+                    );
+                    setShowMfa(false);
+                    if (response_redirect_url) {
+                      router.replace(response_redirect_url);
+                    } else if (search_redirect_uri) {
+                      router.push(search_redirect_uri);
+                    } else {
+                      router.push(ROUTES.DASHBOARD);
+                    }
+                  },
+                },
+              );
+            }}
+            disabled={isMfaPending || !mfaCode}
+            className="w-full py-2 bg-primary text-white rounded-full font-bold disabled:opacity-50"
+          >
+            {isMfaPending ? "Verifying..." : "Verify Code"}
+          </button>
+          <button
+            onClick={() => setShowMfa(false)}
+            className="w-full mt-2 text-sm text-gray-400 hover:text-white"
+          >
+            Cancel
+          </button>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };

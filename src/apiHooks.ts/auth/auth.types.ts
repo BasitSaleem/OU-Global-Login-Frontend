@@ -18,10 +18,14 @@ export interface signUpData {
   password: string;
   acceptTerms: boolean;
 }
+export type sendChangeEmailVerificationInput = {
+    newEmail: string;
+    code?: string;
+};
 export interface VerifyOtpData {
   email: string;
   otp: string;
-  token?: string
+  token?: string;
 }
 
 export interface ResendOtpData {
@@ -32,7 +36,7 @@ export interface userProfile {
   first_name?: string;
   last_name?: string;
   contact?: string | null;
-  email?: string,
+  email?: string;
   profile_url?: string;
   password?: string | null;
   status?: string;

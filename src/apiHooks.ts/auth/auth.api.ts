@@ -23,6 +23,7 @@ import { setAuth } from "@/redux/slices/auth.slice";
 
 const ENDPOINTS = {
   SIGN_IN: "/og/auth/sign-in",
+  VERIFY_MFA_LOGIN: "/og/auth/verify-mfa-login",
   SIGN_UP: "/og/auth/sign-up",
   LOG_OUT: "/og/auth/logout",
   VERIFY_OTP: "/og/auth/verify-email",
@@ -58,8 +59,12 @@ export const useLogin = () => {
     mutationFn: (data: signinData) =>
       request<signInResponse>(ENDPOINTS.SIGN_IN, "POST", {}, data),
     onSuccess: async (response) => {
+      if (response?.data?.requires_mfa) {
+        return; // Handle in component
+      }
+
       queryClient.setQueryData(
-        ["user", response?.data?.user.id],
+        ["user", response?.data?.user?.id],
         response?.data?.user,
       );
 
@@ -71,6 +76,29 @@ export const useLogin = () => {
     onError: (error: any) => {
       const message = (error as Error)?.message || "Invalid credentials";
       toast.error("Login failed", message);
+    },
+  });
+};
+
+export const useVerifyMfaLogin = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: { mfa_token: string; code: string }) =>
+      request<signInResponse>(ENDPOINTS.VERIFY_MFA_LOGIN, "POST", {}, data),
+    onSuccess: async (response) => {
+      queryClient.setQueryData(
+        ["user", response?.data?.user?.id],
+        response?.data?.user,
+      );
+
+      toast.success(
+        "Login successful!",
+        `Welcome back ${response?.data?.user?.first_name} to Owners Inventory`,
+      );
+    },
+    onError: (error: any) => {
+      const message = (error as Error)?.message || "Invalid MFA code";
+      toast.error("MFA verification failed", message);
     },
   });
 };
@@ -321,7 +349,7 @@ export const useResetPassword = () => {
 //15 SEND EMAIL FOR CHANGE EMAIL
 export const useSendChangeEmailVerification = () => {
   return useMutation({
-    mutationFn: (data: { newEmail: string }) =>
+    mutationFn: (data: { newEmail: string; code?: string }) =>
       request(ENDPOINTS.SEND_CHANGE_EMAIL_VERIFICATION, "POST", {}, data),
     onSuccess: () => {
       toast.success("Email verification sent successfully");
@@ -429,6 +457,44 @@ export const useCreatePassword = () => {
       const message = (error as Error)?.message || "Failed to create password";
       toast.error("Password creation failed", message);
     },
+  });
+};
+
+export const useGenerateMfa = () => {
+  return useMutation({
+    mutationFn: () => request("/og/mfa/generate", "POST", {}),
+  });
+};
+
+export const useVerifyEnableMfa = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { code: string }) =>
+      request("/og/mfa/verify-enable", "POST", {}, data),
+    onSuccess: () => {
+      toast.success("2FA Enabled", "2FA enabled successfully.");
+      queryClient.invalidateQueries({ queryKey: ["me"] });
+    },
+  });
+};
+
+export const useDisableMfa = () => {
+  const queryClient = useQueryClient();
+  const dispatch = useAppDispatch();
+  return useMutation({
+    mutationFn: (data: { code: string }) =>
+      request("/og/mfa/disable", "POST", {}, data),
+    onSuccess: () => {
+      toast.success("2FA Disabled", "2FA disabled successfully");
+      queryClient.invalidateQueries({ queryKey: ["me"] });
+    },
+  });
+};
+
+export const useGetMfaRecoveryCodes = () => {
+  return useMutation({
+    mutationFn: () => request("/og/mfa/recovery-codes", "GET", {}),
   });
 };
 export const getAllIdentities = () => {

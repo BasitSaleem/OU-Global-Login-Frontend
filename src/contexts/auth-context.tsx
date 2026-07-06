@@ -6,6 +6,7 @@ export type AuthContextType = {
     onSubmit: (data: signinData) => void;
     isPending: boolean;
     error: any;
+    triggerMfa?: (token: string) => void;
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
