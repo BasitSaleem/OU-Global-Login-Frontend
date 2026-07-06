@@ -24,6 +24,7 @@ export interface User {
   resetPasswordExpires?: Date | null;
   role_id?: string | null;
   oiDataCenterId?: string | null;
+  mfa_enabled?: boolean;
   role?: {
     id: string;
     name: string;
@@ -81,15 +82,16 @@ export interface AuthResponse {
   expiresIn: number;
 }
 export interface signInResponse {
-  statusCode: number
+  statusCode: number;
   data?: {
-    user: User
-    accessToken: string,
-    refreshToken: string
-    redirect_url: string
-  }
-  message: string,
-  success: boolean
+    user: User;
+    accessToken: string;
+    refreshToken: string;
+    redirect_url: string;
+    requires_mfa?: boolean;
+  };
+  message: string;
+  success: boolean;
 }
 export interface changePasswordData {
   newPassword: string;

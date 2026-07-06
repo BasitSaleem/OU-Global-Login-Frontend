@@ -1,14 +1,19 @@
 "use client";
-import { getAllIdentities, useRemoveIdentity, useSendChangeEmailVerification } from "@/apiHooks.ts/auth/auth.api";
-import { Button, Input } from "@/components/ui";
-import { SvgIcon } from "@/components/ui/SvgIcon";
-import { useAppSelector } from "@/redux/store";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useAppSelector } from "@/redux/store";
+import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
+
+import {
+  useRemoveIdentity,
+  useSendChangeEmailVerification,
+} from "@/apiHooks.ts/auth/auth.api";
+import { Button, Input } from "@/components/ui";
+import { SvgIcon } from "@/components/ui/SvgIcon";
 import { changeEmailSchema } from "@/schemas/auth.schemas";
 import RemoveIdentityModal from "@/components/modals/RemoveIdentityModal";
+import { Modal } from "@/components/modals/GenericModal";
 
 export default function EmailSettingsPage() {
   const { mutate: sendChangeEmailVerification, isPending } =
@@ -16,7 +21,6 @@ export default function EmailSettingsPage() {
   const { mutate: removeIdentity, isPending: isRemoving } = useRemoveIdentity();
   const { user } = useAppSelector((state) => state.auth);
 
-  const { data: identityData } = getAllIdentities();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [identityToDelete, setIdentityToDelete] = useState<any>(null);
 
@@ -40,13 +44,38 @@ export default function EmailSettingsPage() {
   }, [user?.email, methods]);
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showMfaModal, setShowMfaModal] = useState(false);
+  const [mfaCode, setMfaCode] = useState("");
+  const [pendingData, setPendingData] = useState<z.infer<
+    typeof changeEmailSchema
+  > | null>(null);
+
   const { handleSubmit } = methods;
 
   const onSubmit = (data: z.infer<typeof changeEmailSchema>) => {
+    if (user?.mfa_enabled) {
+      setPendingData(data);
+      setShowMfaModal(true);
+      return;
+    }
+    executeChangeEmail(data.newEmail);
+  };
+
+  const handleMfaSubmit = () => {
+    if (!mfaCode || !pendingData) return;
+    executeChangeEmail(pendingData.newEmail, mfaCode);
+  };
+
+  const executeChangeEmail = (newEmail: string, code?: string) => {
     sendChangeEmailVerification(
-      { newEmail: data.newEmail },
+      { newEmail, code },
       {
         onSuccess: () => {
+          if (showMfaModal) {
+            setShowMfaModal(false);
+            setMfaCode("");
+            setPendingData(null);
+          }
           methods.reset();
           setShowSuccessModal(true);
         },
@@ -60,7 +89,7 @@ export default function EmailSettingsPage() {
         onSuccess: () => {
           setShowDeleteModal(false);
           setIdentityToDelete(null);
-        }
+        },
       });
     }
   };
@@ -69,12 +98,10 @@ export default function EmailSettingsPage() {
     <main className="p-3">
       <div className="flex justify-center items-center">
         <div className="flex lg:flex-row flex-col lg:m-10 border rounded-lg w-full max-w-6xl overflow-hidden">
-          <div className="flex flex-col justify-center items-center bg-primary/10 p-6 lg:p-10 border-r w-full lg:w-[420px]">
+          <div className="flex flex-col justify-center items-center bg-primary/10 p-6 lg:p-10 border-r w-full lg:w-105">
             <div className="flex flex-col items-center space-y-4 text-center">
               <SvgIcon name="email" className="w-20 h-20 text-primary" />
-              <h2 className="mt-10 font-bold text-heading-1">
-                Email Security
-              </h2>
+              <h2 className="mt-10 font-bold text-heading-1">Email Security</h2>
               <ul className="space-y-3 mt-5 w-full text-body-small text-left">
                 <li>• Use a valid email address</li>
                 <li>
@@ -111,20 +138,27 @@ export default function EmailSettingsPage() {
                       . Please confirm it to change your email.
                     </p>
                   </div>
-                  <Button onClick={() => setShowSuccessModal(false)}>Go Back</Button>
+                  <Button onClick={() => setShowSuccessModal(false)}>
+                    Go Back
+                  </Button>
                 </div>
               ) : (
                 <>
                   <section className="space-y-6">
                     <div className="space-y-2">
-                      <h1 className="font-bold text-2xl lg:text-3xl">Change Email</h1>
+                      <h1 className="font-bold text-2xl lg:text-3xl">
+                        Change Email
+                      </h1>
                       <p className="text-text-secondary leading-snug">
-                        Ensure your account stays secure with a strong email that
-                        you don’t use elsewhere.
+                        Ensure your account stays secure with a strong email
+                        that you don’t use elsewhere.
                       </p>
                     </div>
 
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                    <form
+                      onSubmit={handleSubmit(onSubmit)}
+                      className="space-y-4"
+                    >
                       <Input
                         label="Current Email"
                         name="oldEmail"
@@ -145,7 +179,9 @@ export default function EmailSettingsPage() {
                         <Input
                           label="Confirm New Email"
                           {...methods.register("confirmEmail")}
-                          error={methods.formState.errors?.confirmEmail?.message}
+                          error={
+                            methods.formState.errors?.confirmEmail?.message
+                          }
                           placeholder="Confirm your new email"
                           required
                         />
@@ -196,7 +232,45 @@ export default function EmailSettingsPage() {
         handleRemoveIdentity={handleRemoveIdentity}
         isRemoving={isRemoving}
       />
+
+      <Modal
+        isOpen={showMfaModal}
+        onClose={() => {
+          setShowMfaModal(false);
+          setMfaCode("");
+          setPendingData(null);
+        }}
+      >
+        <Modal.Header>
+          <h2 className="font-bold text-xl text-text">Verify Email Change</h2>
+        </Modal.Header>
+        <Modal.Body>
+          <p className="mb-2 text-sm text-text">
+            Enter the 6-digit code from your authenticator app (or one of your
+            8-character recovery codes) to confirm you want to change your
+            email.
+          </p>
+          <Input
+            type="text"
+            value={mfaCode}
+            onChange={(e: any) => setMfaCode(e.target.value)}
+            placeholder="000000 or a1b2c3d4"
+            className="mb-4"
+          />
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setShowMfaModal(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleMfaSubmit}
+              disabled={!mfaCode || isPending}
+              isLoading={isPending}
+            >
+              Verify
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
     </main>
   );
 }
-
