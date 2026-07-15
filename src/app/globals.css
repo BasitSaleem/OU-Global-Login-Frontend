@@ -26,6 +26,7 @@
   --color-text: #16151c;
   --color-text-secondary: #686379;
   --color-red: #e53935;
+  --color-danger-bg: #fef1f0;
   --color-text-btn: #ffffff;
   --color-disable: #4b5563;
   /* --color-hover: #795CF5; */
@@ -80,6 +81,7 @@
   --color-text-btn: #ffffff;
   --color-text-secondary: #9ca3af;
   --color-red: #e53935;
+  --color-danger-bg: rgba(69, 10, 10, 0.5);
   --color-icon: #ffffff;
   --color-gray: #1f2937;
   --color-disable: #000000;
@@ -156,6 +158,7 @@
   --color-border: var(--color-border);
   --color-invert: var(--color-invert);
   --color-red: var(--color-red);
+  --color-danger-bg: var(--color-danger-bg);
   --color-disable: var(--color-disable);
   --color-ribbon: var(--var-ribbon)
     /* Gray colors */
