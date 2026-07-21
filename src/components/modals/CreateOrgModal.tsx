@@ -19,6 +19,8 @@ interface CreateOrgModalProps {
   onSubmit: (data: CreateOrganizationData) => void;
 }
 
+const DEFAULT_OI_PLAN_ID = "d755fe7d-4372-426c-af33-e63b71a6521f";
+
 export default function CreateOrgModal({
   isOpen,
   isLoading,
@@ -27,10 +29,18 @@ export default function CreateOrgModal({
 }: CreateOrgModalProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [companyName, setCompanyName] = useState("");
-  const [selectedPlanId, setSelectedPlanId] = useState<string | null>("d755fe7d-4372-426c-af33-e63b71a6521f");
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(
+    DEFAULT_OI_PLAN_ID,
+  );
+  // OP standalone plan id — kept separate from the OI selectedPlanId so both
+  // products can be configured at once without colliding.
+  const [opPackageId, setOpPackageId] = useState<string | null>(null);
   const [subDomain, setSubDomain] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState("OI");
+  const [selectedProducts, setSelectedProducts] = useState<string[]>(["OI"]);
   const [isSuggestionSubdomain, setIsSuggestionSubdomain] = useState(false);
+  const [opMode, setOpMode] = useState<"plan" | "services">("plan");
+  const [opServiceIds, setOpServiceIds] = useState<string[]>([]);
+  const [opDominationUpgrade, setOpDominationUpgrade] = useState(false);
 
   const debouncedCompanyName = useDebounce(companyName.trim(), 800);
   const debouncedSubDomain = useDebounce(subDomain.trim(), 800);
@@ -40,8 +50,12 @@ export default function CreateOrgModal({
     subDomain.trim() !== debouncedSubDomain &&
     subDomain.trim().length > 0;
 
+  const isOiSelected = selectedProducts.includes("OI");
+  const isOpSelected = selectedProducts.includes("OP");
+  const isOpServices = isOpSelected && opMode === "services";
+
   const shouldCheckAvailability =
-    selectedProduct === "OI" && debouncedSubDomain && !isSuggestionSubdomain;
+    isOiSelected && debouncedSubDomain && !isSuggestionSubdomain;
 
   const {
     data: isSubAvailable,
@@ -75,20 +89,38 @@ export default function CreateOrgModal({
     setSubDomain(suggestion);
   };
 
+  const toggleProduct = (name: string) => {
+    setSelectedProducts((prev) =>
+      prev.includes(name) ? prev.filter((p) => p !== name) : [...prev, name],
+    );
+  };
+
   const handleReset = () => {
     setCompanyName("");
     setSubDomain("");
-    setSelectedProduct("OI");
-    setSelectedPlanId("d755fe7d-4372-426c-af33-e63b71a6521f");
+    setSelectedProducts(["OI"]);
+    setSelectedPlanId(DEFAULT_OI_PLAN_ID);
+    setOpPackageId(null);
+    setOpMode("plan");
+    setOpServiceIds([]);
+    setOpDominationUpgrade(false);
     setCurrentStep(1);
   };
 
   const handleCreate = () => {
+    // One combined payload for every selected product. Only include a product's
+    // fields when that product is selected. OP no longer collects any in-app
+    // payment (GHL bills it), so a services order flows through create like any
+    // other product.
     const payload: CreateOrganizationData = {
       name: companyName.trim(),
-      subDomainName: subDomain.trim(),
-      product: [selectedProduct],
-      packageId: selectedPlanId,
+      product: selectedProducts,
+      subDomainName: isOiSelected ? subDomain.trim() : undefined,
+      packageId: isOiSelected ? selectedPlanId : null,
+      opPackageId: isOpSelected && opMode === "plan" ? opPackageId : undefined,
+      serviceIds: isOpServices ? opServiceIds : undefined,
+      dominationUpgrade: isOpServices ? opDominationUpgrade : undefined,
+      billingCycle: "Monthly",
     };
     onSubmit(payload);
   };
@@ -101,11 +133,20 @@ export default function CreateOrgModal({
 
   const canSubmit = () => {
     if (!companyName.trim()) return false;
-    if (selectedProduct === "OI" && !subDomain.trim()) return false;
-    if (selectedProduct === "OI" && (isSubDomainDebouncing || checkingSub))
-      return false;
-    if (selectedProduct === "OI" && finalIsSubAvailable === false) return false;
-    if (!selectedPlanId) return false;
+    if (selectedProducts.length === 0) return false;
+    if (isOiSelected) {
+      if (!subDomain.trim()) return false;
+      if (isSubDomainDebouncing || checkingSub) return false;
+      if (finalIsSubAvailable === false) return false;
+      if (!selectedPlanId) return false;
+    }
+    if (isOpSelected) {
+      if (opMode === "services") {
+        if (opServiceIds.length === 0) return false;
+      } else if (!opPackageId) {
+        return false;
+      }
+    }
     return true;
   };
 
@@ -130,8 +171,8 @@ export default function CreateOrgModal({
           <OrganizationStep
             companyName={companyName}
             setCompanyName={setCompanyName}
-            selectedProduct={selectedProduct}
-            setSelectedProduct={setSelectedProduct}
+            selectedProducts={selectedProducts}
+            toggleProduct={toggleProduct}
             onNext={() => setCurrentStep(2)}
             onReset={handleReset}
           />
@@ -139,7 +180,7 @@ export default function CreateOrgModal({
           <SetupStep
             companyName={companyName}
             setCompanyName={setCompanyName}
-            selectedProduct={selectedProduct}
+            selectedProducts={selectedProducts}
             subDomain={subDomain}
             setSubDomain={setSubDomain}
             suggestions={suggestions}
@@ -150,6 +191,14 @@ export default function CreateOrgModal({
             isSubDomainDebouncing={isSubDomainDebouncing}
             selectedPlanId={selectedPlanId}
             setSelectedPlanId={setSelectedPlanId}
+            opPackageId={opPackageId}
+            setOpPackageId={setOpPackageId}
+            opMode={opMode}
+            setOpMode={setOpMode}
+            opServiceIds={opServiceIds}
+            setOpServiceIds={setOpServiceIds}
+            opDominationUpgrade={opDominationUpgrade}
+            setOpDominationUpgrade={setOpDominationUpgrade}
             onBack={() => setCurrentStep(1)}
             onCreate={handleCreate}
             creatingOrg={isLoading}

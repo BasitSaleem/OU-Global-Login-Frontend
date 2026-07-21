@@ -92,8 +92,14 @@ function CreateOrgContent({
 
   const [companyName, setCompanyName] = useState("");
   const [subDomain, setSubDomain] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState(initialProduct);
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([initialProduct]);
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(initialPkgId);
+  // OP standalone plan id — kept separate from the OI selectedPlanId so both
+  // products can be configured at once without colliding.
+  const [opPackageId, setOpPackageId] = useState<string | null>(null);
+  const [opMode, setOpMode] = useState<"plan" | "services">("plan");
+  const [opServiceIds, setOpServiceIds] = useState<string[]>([]);
+  const [opDominationUpgrade, setOpDominationUpgrade] = useState(false);
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [organizationData, setOrganizationData] = useState<CreateOrganizationResponse | null>(null);
   const [isSuggestionSubdomain, setIsSuggestionSubdomain] = useState(false);
@@ -129,8 +135,14 @@ function CreateOrgContent({
     });
   };
 
+  const toggleProduct = (name: string) => {
+    setSelectedProducts((prev) =>
+      prev.includes(name) ? prev.filter((p) => p !== name) : [...prev, name],
+    );
+  };
+
   const shouldCheckAvailability =
-    selectedProduct === "OI" && debouncedSubDomain && !isSuggestionSubdomain;
+    selectedProducts.includes("OI") && debouncedSubDomain && !isSuggestionSubdomain;
 
   const { data: isSubAvailable, isFetching: checkingSub } =
     useCheckSubDomainAvailability(shouldCheckAvailability ? debouncedSubDomain : "");
@@ -155,12 +167,26 @@ function CreateOrgContent({
     setSubDomain(suggestion);
   };
 
+  const isOiSelected = selectedProducts.includes("OI");
+  const isOpSelected = selectedProducts.includes("OP");
+  const isOpServices = isOpSelected && opMode === "services";
+
   const canSubmit = () => {
     if (!companyName.trim()) return false;
-    if (selectedProduct === "OI" && !subDomain.trim()) return false;
-    if (selectedProduct === "OI" && (isSubDomainDebouncing || checkingSub)) return false;
-    if (selectedProduct === "OI" && finalIsSubAvailable === false) return false;
-    if (!selectedPlanId) return false;
+    if (selectedProducts.length === 0) return false;
+    if (isOiSelected) {
+      if (!subDomain.trim()) return false;
+      if (isSubDomainDebouncing || checkingSub) return false;
+      if (finalIsSubAvailable === false) return false;
+      if (!selectedPlanId) return false;
+    }
+    if (isOpSelected) {
+      if (opMode === "services") {
+        if (opServiceIds.length === 0) return false;
+      } else if (!opPackageId) {
+        return false;
+      }
+    }
     if (creatingOrg) return false;
     return true;
   };
@@ -168,11 +194,20 @@ function CreateOrgContent({
   const handleSubmit = () => {
     const trimmedName = companyName.trim();
     const trimmedSubDomain = subDomain.trim();
+
+    // One combined payload for every selected product. Only include a product's
+    // fields when that product is selected. OP no longer collects any in-app
+    // payment (GHL bills it), so a services order flows through create → progress
+    // just like the OP plan and OI paths.
     const payload: CreateOrganizationData = {
       name: trimmedName,
-      subDomainName: trimmedSubDomain,
-      product: [selectedProduct],
-      packageId: selectedPlanId,
+      product: selectedProducts,
+      subDomainName: isOiSelected ? trimmedSubDomain : undefined,
+      packageId: isOiSelected ? selectedPlanId : null,
+      opPackageId: isOpSelected && opMode === "plan" ? opPackageId : undefined,
+      serviceIds: isOpServices ? opServiceIds : undefined,
+      dominationUpgrade: isOpServices ? opDominationUpgrade : undefined,
+      billingCycle: "Monthly",
     };
 
     createOrgMutation(payload, {
@@ -208,8 +243,12 @@ function CreateOrgContent({
   const handleReset = () => {
     setCompanyName("");
     setSubDomain("");
-    setSelectedProduct("OI");
+    setSelectedProducts(["OI"]);
     setSelectedPlanId(initialPkgId);
+    setOpPackageId(null);
+    setOpMode("plan");
+    setOpServiceIds([]);
+    setOpDominationUpgrade(false);
     setCurrentStep(1);
     setDirection(-1);
   };
@@ -271,8 +310,8 @@ function CreateOrgContent({
                   <OrganizationStep
                     companyName={companyName}
                     setCompanyName={setCompanyName}
-                    selectedProduct={selectedProduct}
-                    setSelectedProduct={setSelectedProduct}
+                    selectedProducts={selectedProducts}
+                    toggleProduct={toggleProduct}
                     onNext={nextStep}
                     onReset={handleReset}
                   />
@@ -282,7 +321,7 @@ function CreateOrgContent({
                   <SetupStep
                     companyName={companyName}
                     setCompanyName={setCompanyName}
-                    selectedProduct={selectedProduct}
+                    selectedProducts={selectedProducts}
                     subDomain={subDomain}
                     setSubDomain={setSubDomain}
                     suggestions={suggestions}
@@ -294,6 +333,14 @@ function CreateOrgContent({
                     selectedPlanId={selectedPlanId}
                     setSelectedPlanId={setSelectedPlanId}
                     initialBillingCycle={initialBillingCycle}
+                    opPackageId={opPackageId}
+                    setOpPackageId={setOpPackageId}
+                    opMode={opMode}
+                    setOpMode={setOpMode}
+                    opServiceIds={opServiceIds}
+                    setOpServiceIds={setOpServiceIds}
+                    opDominationUpgrade={opDominationUpgrade}
+                    setOpDominationUpgrade={setOpDominationUpgrade}
                     onBack={() => {
                       if (queryPkgId) {
                         setSelectedPlanId(initialPkgId);

@@ -30,6 +30,7 @@ export type IconName =
   | "google"
   | "check"
   | "OI-white"
+  | "OP"
   | "check3";
 interface SvgIconProps {
   name: IconName | string;
@@ -1166,6 +1167,19 @@ export function SvgIcon({ name, className = "", width, height }: SvgIconProps) {
               fill="currentColor"
             />
           </svg>
+        );
+      case "OP":
+        // Render the brand logo file (public/Icons/OP_LOGO.svg) so that a single
+        // file is the source of truth for the Owners Pulse logo everywhere it's
+        // shown. The ?v= query busts the browser cache when the file changes.
+        return (
+          <img
+            src="/Icons/OP_LOGO.svg?v=2"
+            alt="Owners Pulse"
+            width={width}
+            height={height}
+            className={className}
+          />
         );
       default:
         return null;

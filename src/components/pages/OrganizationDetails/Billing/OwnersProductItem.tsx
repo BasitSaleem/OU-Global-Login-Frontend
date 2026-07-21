@@ -1,6 +1,24 @@
 import { Tooltip } from "@/components/ui";
 import { SvgIcon } from "@/components/ui/SvgIcon";
-export type OwnerKey = "inventory" | "jungle" | "marketplace" | "analytics";
+export type OwnerKey =
+  | "inventory"
+  | "jungle"
+  | "marketplace"
+  | "analytics"
+  | "pulse";
+
+// Maps an ogProduct.product_name to its billing-switcher metadata. Used to show
+// only the products an organization actually has.
+export const OWNER_META: Record<
+  string,
+  { value: OwnerKey; toolTipText: string; iconUrl: string }
+> = {
+  OI: { value: "inventory", toolTipText: "Owners Inventory", iconUrl: "OI" },
+  OP: { value: "pulse", toolTipText: "Owners Pulse", iconUrl: "OP" },
+  OJ: { value: "jungle", toolTipText: "Owners Jungle", iconUrl: "OJ" },
+  OM: { value: "marketplace", toolTipText: "Owners Marketplace", iconUrl: "OM" },
+  OA: { value: "analytics", toolTipText: "Owners Analytics", iconUrl: "OA" },
+};
 
 interface OwnersProductItemProps {
   selectedOwner: OwnerKey;

@@ -8,14 +8,15 @@ import { ArrowRight, ChevronRight } from "lucide-react";
 interface OrganizationStepProps {
   companyName: string;
   setCompanyName: (val: string) => void;
-  selectedProduct: string;
-  setSelectedProduct: (val: string) => void;
+  selectedProducts: string[];
+  toggleProduct: (val: string) => void;
   onNext: () => void;
   onReset: () => void;
 }
 
 const PRODUCT_DESCRIPTIONS: Record<string, string> = {
   OI: "Track and manage stock",
+  OP: "Marketing & CRM automation",
   OM: "Sell across channels",
   OA: "Deep business insights",
   OJ: "Themes and templates",
@@ -24,8 +25,8 @@ const PRODUCT_DESCRIPTIONS: Record<string, string> = {
 export const OrganizationStep: React.FC<OrganizationStepProps> = ({
   companyName,
   setCompanyName,
-  selectedProduct,
-  setSelectedProduct,
+  selectedProducts,
+  toggleProduct,
   onNext,
   onReset,
 }) => {
@@ -45,7 +46,7 @@ export const OrganizationStep: React.FC<OrganizationStepProps> = ({
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && companyName.trim() && selectedProduct) {
+              if (e.key === "Enter" && companyName.trim() && selectedProducts.length > 0) {
                 e.preventDefault();
                 onNext();
               }
@@ -56,7 +57,9 @@ export const OrganizationStep: React.FC<OrganizationStepProps> = ({
         </div>
 
         <div className="space-y-2">
-          <label className="block text-base font-semibold text-text">Select Products</label>
+          <label className="block text-base font-semibold text-text">
+            Select Products <span className="text-text-secondary font-normal text-sm">(choose one or more)</span>
+          </label>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {PRODUCTS.map((product) => (
               <ProductSelectionCard
@@ -66,9 +69,9 @@ export const OrganizationStep: React.FC<OrganizationStepProps> = ({
                 fullname={product.fullname}
                 description={PRODUCT_DESCRIPTIONS[product.name] || ""}
                 icon={product.icon}
-                isSelected={selectedProduct === product.name}
+                isSelected={selectedProducts.includes(product.name)}
                 isDisabled={product.isDisabled}
-                onClick={() => setSelectedProduct(product.name)}
+                onClick={() => toggleProduct(product.name)}
               />
             ))}
           </div>
@@ -86,7 +89,7 @@ export const OrganizationStep: React.FC<OrganizationStepProps> = ({
           variant="primary"
           rightIcon={<ArrowRight />}
           onClick={onNext}
-          disabled={!companyName.trim() || !selectedProduct}
+          disabled={!companyName.trim() || selectedProducts.length === 0}
         >
           Next
         </Button>

@@ -22,6 +22,9 @@ const ENDPOINTS = {
       subDomain,
     )}`,
   TOGGLE_FAVORITE: "/og/organization/favorite",
+  ADD_PRODUCT: (id: string) => `/og/organization/${id}/add-product`,
+  DELETE_PRODUCT: (orgId: string, productId: string) =>
+    `/og/organization/${orgId}/product/${productId}`,
   ORGANIZATION_PRODUCTS: (id: string) => `/og/organization/products/${id}`,
   GENERATE_SUBDOMAIN: (companyName: string) =>
     `/og/organization/generate-subdomain-suggestions?companyName=${companyName}`,
@@ -53,6 +56,60 @@ export const useCreateOrganization = () => {
     },
   });
 };
+// 1b. ADD PRODUCT(S) TO AN EXISTING ORGANIZATION
+export const useAddProduct = (orgId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: CreateOrganizationData) => {
+      const res = await request<CreateOrganizationResponse>(
+        ENDPOINTS.ADD_PRODUCT(orgId),
+        "POST",
+        {},
+        data,
+      );
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["organizations"] });
+      queryClient.invalidateQueries({ queryKey: ["organization", orgId] });
+      queryClient.invalidateQueries({
+        queryKey: ["organizationProducts", orgId],
+      });
+      queryClient.removeQueries({ queryKey: ["subdomainSuggestions"] });
+      queryClient.removeQueries({ queryKey: ["subDomainAvailability"] });
+    },
+    retry: false,
+    onError: (error: any) => {
+      const message = (error as Error)?.message || "Failed to add product";
+      toast.error("Failed to add product", message);
+    },
+  });
+};
+
+// 1c. DELETE A SINGLE PRODUCT FROM AN ORGANIZATION
+export const useDeleteProduct = (orgId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (productId: string) =>
+      request(ENDPOINTS.DELETE_PRODUCT(orgId, productId), "DELETE"),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["organization", orgId] });
+      queryClient.invalidateQueries({ queryKey: ["organizations"] });
+      queryClient.invalidateQueries({
+        queryKey: ["organizationProducts", orgId],
+      });
+      toast.success(
+        "Product removed",
+        "The product was removed from the organization.",
+      );
+    },
+    onError: (error: any) => {
+      const message = (error as Error)?.message || "Failed to remove product";
+      toast.error("Failed to remove product", message);
+    },
+  });
+};
+
 // 2. GET ALL ORGANIZATIONS
 export const useGetOrganizations = (page: number, limit: number, search?: string) => {
   return useQuery({

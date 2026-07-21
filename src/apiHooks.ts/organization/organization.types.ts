@@ -45,6 +45,14 @@ export type Package = {
 export interface CreateOrganizationData {
   name: string;
   packageId: string | null;
+  // Owners Pulse (OP) uses its own package table + billing; it takes
+  // opPackageId instead of packageId and has no subdomain. A services order
+  // instead passes serviceIds (+ optional Domination upgrade) and is paid via
+  // the buy-services endpoint after creation.
+  opPackageId?: string | null;
+  serviceIds?: string[];
+  dominationUpgrade?: boolean;
+  billingCycle?: "Monthly" | "Yearly";
   address?: string;
   city?: string;
   province?: string;

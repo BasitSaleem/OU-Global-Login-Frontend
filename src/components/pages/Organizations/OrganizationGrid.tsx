@@ -23,6 +23,7 @@ export interface OrganizationGridProps {
   loading?: boolean;
   metaData?: any;
   onSearchChange?: (value: string) => void;
+  onAddProduct?: (org: OgOrganization) => void;
 }
 
 export default function OrganizationGrid({
@@ -32,6 +33,7 @@ export default function OrganizationGrid({
   loading,
   metaData,
   onSearchChange,
+  onAddProduct,
 }: OrganizationGridProps) {
   const { user } = useAppSelector((s) => s.auth);
   const { mutate: toggleFavorite, isPending } = useIsFavorite();
@@ -159,6 +161,7 @@ export default function OrganizationGrid({
                       handleFavoriteClick={handleFavoriteClick}
                       user={user}
                       handleDeleteClick={handleDeleteClick}
+                      onAddProduct={onAddProduct}
                     />
                   )}
                 </div>
