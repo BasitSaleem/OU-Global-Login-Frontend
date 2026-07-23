@@ -27,6 +27,12 @@ const sidebarItems: SidebarItem[] = [
     showForRoles: ["OWNER", "ADMIN"],
   },
   {
+    label: "Products",
+    href: (orgId) => `/organization-details/${orgId}/products`,
+    icon: "AllProducts",
+    showForRoles: ["OWNER", "ADMIN"],
+  },
+  {
     label: "Payment Cards",
     href: (orgId) => `/organization-details/${orgId}/payment-cards`,
     icon: "payment-methods",

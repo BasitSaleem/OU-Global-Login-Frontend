@@ -1,7 +1,7 @@
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
 import { User } from "@/types/auth.types";
 import { getColorFromId } from "@/utils/getRandomColors";
-import { Trash, Trash2 } from "lucide-react";
+import { PackagePlus, Trash, Trash2 } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import { Button } from "@/components/ui";
 import { useRouter } from "next/navigation";
@@ -16,7 +16,10 @@ interface OrganizationGridComponentProps {
   handleFavoriteClick: (e: React.MouseEvent, orgId: string) => void;
   user: User | null;
   handleDeleteClick: (org: any) => void;
+  onAddProduct?: (org: OgOrganization) => void;
 }
+
+const ADDABLE_PRODUCTS = ["OI", "OP"];
 
 export function OrganizationGridComponent({
   id,
@@ -25,11 +28,26 @@ export function OrganizationGridComponent({
   handleFavoriteClick,
   user,
   handleDeleteClick,
+  onAddProduct,
 }: OrganizationGridComponentProps) {
   const isFavorite = useMemo(() => {
     return org?.favorites?.some((fUser) => fUser.userId === user?.id) ?? false;
   }, [org?.favorites, user?.id]);
   const bgColor = useMemo(() => getColorFromId(org.id), [org.id]);
+
+  // Owner-only "add product" affordance, shown when the org is missing an
+  // addable product. Mirrors the backend's creator-or-OWNER check.
+  const canAddProduct = useMemo(() => {
+    if (!onAddProduct) return false;
+    const existing = new Set(
+      (org.products ?? []).map((p) => p.product_name),
+    );
+    const missing = ADDABLE_PRODUCTS.filter((c) => !existing.has(c));
+    const isOwner =
+      org.ogUserId === user?.id ||
+      !!org.memberships?.some((m) => m.role === "OWNER");
+    return missing.length > 0 && isOwner;
+  }, [org, user?.id, onAddProduct]);
   const router = useRouter();
   const onClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -67,6 +85,19 @@ export function OrganizationGridComponent({
         </div>
 
         <div className="shrink-0 flex ">
+          {canAddProduct && (
+            <Button
+              variant="basic"
+              className="z-40 hover:scale-110 duration-300"
+              onClick={(e) => {
+                e.stopPropagation();
+                onAddProduct!(org);
+              }}
+              aria-label="Add a product"
+            >
+              <PackagePlus size={20} className="text-primary" />
+            </Button>
+          )}
           <Button
             variant="basic"
             permission={"og:favorite::organization"}

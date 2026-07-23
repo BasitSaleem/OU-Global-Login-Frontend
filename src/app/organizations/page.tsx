@@ -14,6 +14,7 @@ import {
 } from "@/apiHooks.ts/organization/organization.types";
 import DashboardLayout from "@/components/layout/dashboard-layout";
 import CreateOrgModal from "@/components/modals/CreateOrgModal";
+import AddProductModal from "@/components/modals/AddProductModal";
 import OrganizationGrid from "@/components/pages/Organizations/OrganizationGrid";
 import PendingInvitations from "@/components/pages/Organizations/PendingInvitation";
 import ProgressModal from "@/components/ui/ProgressModal";
@@ -39,6 +40,7 @@ function OrganizationsContent() {
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [organizationData, setOrganizationData] =
     useState<CreateOrganizationResponse | null>(null);
+  const [addProductOrg, setAddProductOrg] = useState<any | null>(null);
   const [page, setPage] = useState(1);
   const { mutate: createOrg, isPending } = useCreateOrganization();
   const {
@@ -102,6 +104,9 @@ function OrganizationsContent() {
   const handleCreateOrg = (data: CreateOrganizationData) => {
     createOrg(data, {
       onSuccess: (res) => {
+        setIsCreateModalOpen(false);
+        // OP no longer collects any in-app payment (GHL bills it), so every
+        // product flows straight to the provisioning progress modal.
         setOrganizationData({
           data: {
             organization: res.organization,
@@ -109,7 +114,6 @@ function OrganizationsContent() {
             leadRegistration: res.leadRegistration || null,
           },
         });
-        setIsCreateModalOpen(false);
         setShowProgressModal(true);
       },
       onError: (err: any) => {
@@ -139,6 +143,7 @@ function OrganizationsContent() {
           loading={isOrgPending}
           metaData={userOrgs?.meta}
           onSearchChange={setSearchQuery}
+          onAddProduct={(org) => setAddProductOrg(org)}
         />
         {userOrgs?.meta?.totalCount! > 10 && (
           <div className="mt-4 flex justify-end">
@@ -171,6 +176,18 @@ function OrganizationsContent() {
         onClose={handleModalClose}
         isFromMain={false}
       />
+
+      {addProductOrg && (
+        <AddProductModal
+          isOpen={!!addProductOrg}
+          orgId={addProductOrg.id}
+          orgName={addProductOrg.name}
+          existingProducts={(addProductOrg.products ?? [])
+            .map((p: any) => p.product_name)
+            .filter(Boolean)}
+          onClose={() => setAddProductOrg(null)}
+        />
+      )}
     </div>
   );
 }

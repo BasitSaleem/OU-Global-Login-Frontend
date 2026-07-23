@@ -19,6 +19,15 @@ function ViewAllProductsPage() {
       href: 'https://ownersinventory.com/'
     },
     {
+      id: '5',
+      title: 'Owners Pulse',
+      description: 'Marketing & CRM automation',
+      icon: 'OP',
+      status: 'Open',
+      available: true,
+      href: 'https://ownerspulse.com/'
+    },
+    {
       id: '2',
       title: 'Owners Analytics',
       description: 'Get insights and analyze your business performance',
@@ -79,9 +88,7 @@ function ViewAllProductsPage() {
                       className="text-body-small font-medium"
                       style={{ color: '#795CF5' }}
                     >
-                      {product.title === "Owners Inventory" ? <a href={product.href!} target='_blank'>
-                        Open
-                      </a> : "Coming Soon"}
+                      {product.status}
                     </span>
                     {product.available && (
                       <ChevronRight

@@ -4,8 +4,9 @@ import { getColorFromId } from "@/utils/getRandomColors";
 import { organizationName } from "@/utils/organizationName";
 import Link from "next/link";
 import OrganizationProductItem from "./OrganizationProductItem";
+import OrganizationOpItem from "./OrganizationOpItem";
 interface CardProps {
-  code: "OI" | "OJ" | "OM" | "OA";
+  code: "OI" | "OJ" | "OM" | "OA" | "OP";
   metaData:
     | {
         totalCount: number;
@@ -36,6 +37,15 @@ const OrganizationProductCard = ({
     OJ: "Owners Jungle",
     OM: "Owners Marketplace",
     OA: "Owners Analytics",
+    OP: "Owners Pulse",
+  };
+
+  const PRODUCT_DESC_MAP: Record<string, string> = {
+    OI: "Manage your inventory",
+    OJ: "Themes and templates",
+    OM: "Sell across channels",
+    OA: "Deep business insights",
+    OP: "Marketing & CRM automation",
   };
 
   const getProductDisplayName = (code: string): string => {
@@ -52,7 +62,7 @@ const OrganizationProductCard = ({
       <div className="flex items-start gap-3">
         <div className="w-8 h-8 rounded flex items-center justify-center flex-shrink-0">
           <img
-            src={`/Icons/${code}_LOGO.svg`}
+            src={`/Icons/${code}_LOGO.svg?v=2`}
             alt={getProductDisplayName(code)}
             className="w-6 h-6"
           />
@@ -61,7 +71,7 @@ const OrganizationProductCard = ({
         <div className="flex-1 min-w-0">
           <h3 className="text-heading-2 mb-2">{getProductDisplayName(code)}</h3>
           <p className="text-body-small text-gray-600 mb-2">
-            Manage your inventory
+            {PRODUCT_DESC_MAP[code] || ""}
           </p>
 
           <div className="flex flex-wrap items-center gap-2 mt-3">
@@ -86,7 +96,14 @@ const OrganizationProductCard = ({
                   {org.products
                     ?.filter((p) => p.product_name === code)
                     .map((product) =>
-                      product.oi_sub_domain ? (
+                      code === "OP" ? (
+                        <OrganizationOpItem
+                          key={product.id}
+                          product={product}
+                          org={org}
+                          bgColor={bgColor}
+                        />
+                      ) : product.oi_sub_domain ? (
                         <OrganizationProductItem
                           key={product.oi_sub_domain}
                           product={product}

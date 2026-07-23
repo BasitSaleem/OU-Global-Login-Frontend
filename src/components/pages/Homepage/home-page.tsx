@@ -13,7 +13,7 @@ export default function HomePage() {
   const { user } = useAppSelector((s) => s.auth);
   const { data, isPending: loadingOrganizations } = useGetOrganizations(1, 10);
   // const dispatch = useAppDispatch();
-  const productCodes = ["OI", "OJ", "OM", "OA"];
+  const productCodes = ["OI", "OP", "OJ", "OM", "OA"];
   // useEffect(() => {
   //   dispatch(setSSOStatus(false));
   // }, [])
