@@ -82,12 +82,23 @@ export const useProgressTracking = (
           switch (data.type) {
             case "progress":
               if (data.data) {
+                // If this hook is tracking a specific operation type, ignore events from other types
+                if (
+                  operationType &&
+                  data.data.operationType &&
+                  data.data.operationType !== operationType
+                ) {
+                  return;
+                }
+
                 setProgress(data.data);
                 callbacksRef.current.onProgress?.(data.data);
                 if (data.data.status === "completed") {
                   callbacksRef.current.onComplete?.(data.data);
                 } else if (data.data.status === "failed") {
-                  callbacksRef.current.onError?.(data.data.errorMessage || "Job failed");
+                  callbacksRef.current.onError?.(
+                    data.data.errorMessage || "Job failed",
+                  );
                 }
               }
               break;
@@ -140,12 +151,7 @@ export const useProgressTracking = (
       setError("Failed to establish connection");
       callbacksRef.current.onError?.("Failed to establish connection");
     }
-  }, [
-    url,
-    autoReconnect,
-    maxReconnectAttempts,
-    cleanup,
-  ]);
+  }, [url, autoReconnect, maxReconnectAttempts, cleanup]);
 
   const disconnect = useCallback(() => {
     cleanup();
