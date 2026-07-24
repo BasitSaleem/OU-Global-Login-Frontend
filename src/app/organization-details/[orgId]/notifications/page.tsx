@@ -10,7 +10,7 @@ import {
   ShoppingCart,
   Truck,
 } from "lucide-react";
-import OwnersProductItem from "@/components/pages/OrganizationDetails/Billing/OwnersProductItem";
+import OwnersProductItem, { OwnerKey } from "@/components/pages/OrganizationDetails/Billing/OwnersProductItem";
 import { NotificationSection } from "@/components/pages/OrganizationDetails/Notifications/NotificationSection";
 // Types
 export type NotificationSettings = {
@@ -34,7 +34,6 @@ export type NotificationSettings = {
   productionCancelled: { inApp: boolean; email: boolean };
 };
 
-export type OwnerKey = "inventory" | "jungle" | "marketplace" | "analytics";
 const owners: {
   value: OwnerKey;
   toolTipText: string;
@@ -63,6 +62,12 @@ const owners: {
     value: "analytics",
     toolTipText: "Analytics",
     iconUrl: "OA",
+    isDisabled: false,
+  },
+  {
+    value: "pulse",
+    toolTipText: "Owners Pulse",
+    iconUrl: "OP",
     isDisabled: false,
   },
 ];
@@ -100,6 +105,7 @@ export default function NotificationPreferencesPage() {
     jungle: { ...defaultSettings },
     marketplace: { ...defaultSettings },
     analytics: { ...defaultSettings },
+    pulse: { ...defaultSettings },
   });
 
   // Which owner is active
@@ -250,7 +256,7 @@ export default function NotificationPreferencesPage() {
                   iconUrl={owner.iconUrl}
                   isDisabled={owner.isDisabled}
                   selectedOwner={selectedOwner}
-                  setSelectedOwner={setSelectedOwner}
+                  setSelectedOwner={(value) => setSelectedOwner(value)}
                 />
               ))}
             </div>
