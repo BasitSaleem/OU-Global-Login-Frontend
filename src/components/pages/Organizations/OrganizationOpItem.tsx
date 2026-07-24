@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+
 import {
   OgOrganization,
   OgProduct,
@@ -36,7 +36,8 @@ const OrganizationOpItem = ({
       { orgId: org.id },
       {
         onSuccess: (data) => {
-          if (data?.redirectUrl) window.location.href = data.redirectUrl;
+          if (data?.redirectUrl)
+            window.open(data.redirectUrl, "_blank", "noopener,noreferrer");
         },
       },
     );
