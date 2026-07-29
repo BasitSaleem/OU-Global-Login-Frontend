@@ -230,6 +230,31 @@
     caret-color: var(--color-foreground);
     outline: none;
   }
+
+  /*
+   * Auth pages (login/sign-up/etc.) form-panel backdrop. Reproduces the Figma
+   * "Vector 16" layer: a pre-blurred gradient PNG (1834.67x1183.6, already
+   * includes the blur's bleed) centered on that layer's center point and
+   * rotated -16.18deg, exactly as Figma renders it. Both the center point and
+   * the image's native size are expressed as a percentage of the 835x900 Form
+   * Panel it was designed in, so it scales with the panel's own size.
+   */
+  .auth-gradient-backdrop {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .auth-gradient-backdrop img {
+    position: absolute;
+    left: 81.977%;
+    top: 12.289%;
+    width: 219.72%;
+    height: 131.511%;
+    max-width: none;
+    transform: translate(-50%, -50%) rotate(-16.18deg);
+  }
 }
 
 /* Base styles with brand colors and typography */
