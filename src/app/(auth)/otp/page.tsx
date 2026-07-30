@@ -97,10 +97,7 @@ function OTPPage() {
       </div>
 
       <FormProvider {...methods}>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-5"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <OTPInput
             length={6}
             value={otpValue}
@@ -114,7 +111,7 @@ function OTPPage() {
               isLoading={isPending}
               disabled={isPending || otpValue.length !== 6}
               variant="primary"
-              className="w-full h-[50px] text-white text-sm bg-gradient-to-r from-primary to-[#F95C5B] hover:opacity-90 border-none font-bold rounded-full cursor-pointer"
+              className="w-full h-12.5 text-white text-sm bg-linear-to-r from-primary to-[#F95C5B] hover:opacity-90 border-none font-bold rounded-full cursor-pointer"
             >
               {!isPending ? "Verify OTP" : "Verifying..."}
             </Button>
