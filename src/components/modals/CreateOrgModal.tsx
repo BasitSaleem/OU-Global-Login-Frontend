@@ -17,6 +17,14 @@ interface CreateOrgModalProps {
   isLoading: boolean;
   onClose: () => void;
   onSubmit: (data: CreateOrganizationData) => void;
+  // Pre-fill from an incoming package link (see useIncomingPackageSelection).
+  // All optional — default to today's behavior when the modal is opened
+  // plainly via "Add Organization" with no link context.
+  initialProduct?: string;
+  initialPkgId?: string | null;
+  initialOpPkgId?: string | null;
+  initialBillingCycle?: "monthly" | "yearly";
+  isDirectFlow?: boolean;
 }
 
 const DEFAULT_OI_PLAN_ID = "d755fe7d-4372-426c-af33-e63b71a6521f";
@@ -26,17 +34,26 @@ export default function CreateOrgModal({
   isLoading,
   onClose,
   onSubmit,
+  initialProduct = "OI",
+  initialPkgId = DEFAULT_OI_PLAN_ID,
+  initialOpPkgId = null,
+  initialBillingCycle = "monthly",
+  isDirectFlow = false,
 }: CreateOrgModalProps) {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(isDirectFlow ? 2 : 1);
   const [companyName, setCompanyName] = useState("");
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(
-    DEFAULT_OI_PLAN_ID,
+    initialProduct === "OI" ? initialPkgId : DEFAULT_OI_PLAN_ID,
   );
   // OP standalone plan id — kept separate from the OI selectedPlanId so both
   // products can be configured at once without colliding.
-  const [opPackageId, setOpPackageId] = useState<string | null>(null);
+  const [opPackageId, setOpPackageId] = useState<string | null>(
+    initialProduct === "OP" ? initialOpPkgId : null,
+  );
   const [subDomain, setSubDomain] = useState("");
-  const [selectedProducts, setSelectedProducts] = useState<string[]>(["OI"]);
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([
+    initialProduct,
+  ]);
   const [isSuggestionSubdomain, setIsSuggestionSubdomain] = useState(false);
   const [opMode, setOpMode] = useState<"plan" | "services">("plan");
   const [opServiceIds, setOpServiceIds] = useState<string[]>([]);
@@ -98,13 +115,13 @@ export default function CreateOrgModal({
   const handleReset = () => {
     setCompanyName("");
     setSubDomain("");
-    setSelectedProducts(["OI"]);
-    setSelectedPlanId(DEFAULT_OI_PLAN_ID);
-    setOpPackageId(null);
+    setSelectedProducts([initialProduct]);
+    setSelectedPlanId(initialProduct === "OI" ? initialPkgId : DEFAULT_OI_PLAN_ID);
+    setOpPackageId(initialProduct === "OP" ? initialOpPkgId : null);
     setOpMode("plan");
     setOpServiceIds([]);
     setOpDominationUpgrade(false);
-    setCurrentStep(1);
+    setCurrentStep(isDirectFlow ? 2 : 1);
   };
 
   const handleCreate = () => {
@@ -163,9 +180,11 @@ export default function CreateOrgModal({
       ariaLabel="Create organization"
       className="overflow-hidden"
     >
-      <div className="-mt-6">
-        <StepIndicator steps={steps} currentStep={currentStep > 2 ? 2 : currentStep} />
-      </div>
+      {!isDirectFlow && (
+        <div className="-mt-6">
+          <StepIndicator steps={steps} currentStep={currentStep > 2 ? 2 : currentStep} />
+        </div>
+      )}
       <Modal.Body className="p-2">
         {currentStep === 1 ? (
           <OrganizationStep
@@ -191,6 +210,7 @@ export default function CreateOrgModal({
             isSubDomainDebouncing={isSubDomainDebouncing}
             selectedPlanId={selectedPlanId}
             setSelectedPlanId={setSelectedPlanId}
+            initialBillingCycle={initialBillingCycle}
             opPackageId={opPackageId}
             setOpPackageId={setOpPackageId}
             opMode={opMode}
@@ -203,7 +223,7 @@ export default function CreateOrgModal({
             onCreate={handleCreate}
             creatingOrg={isLoading}
             canSubmit={canSubmit()}
-            isDirectFlow={false}
+            isDirectFlow={isDirectFlow}
           />
         )}
       </Modal.Body>

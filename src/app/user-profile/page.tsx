@@ -50,7 +50,7 @@ export default function UserProfilePage() {
       profileDropdownRef as RefObject<HTMLDivElement>,
       notificationsRef as RefObject<HTMLDivElement>,
     ],
-    () => { },
+    () => {},
   );
 
   const handleGetCurrentLocation = () => {
@@ -87,10 +87,10 @@ export default function UserProfilePage() {
             methods.setValue(
               "city",
               address.city ||
-              address.town ||
-              address.village ||
-              address.suburb ||
-              "",
+                address.town ||
+                address.village ||
+                address.suburb ||
+                "",
               { shouldDirty: true, shouldTouch: true },
             );
             methods.setValue("state", address.state || "", {
@@ -150,7 +150,7 @@ export default function UserProfilePage() {
     <div className="min-h-screen w-full bg-background flex font-inter">
       <main className="flex-1">
         <div className="flex flex-col sm:flex-row items-start gap-5 p-8">
-          <div className="flex flex-col mx-auto w-full md:w-[286px] gap-3 p-3 border rounded-lg bg-bg-secondary shadow-sm py-5">
+          <div className="flex flex-col mx-auto w-full md:w-71.5 gap-3 p-3 border rounded-lg bg-bg-secondary shadow-sm py-5">
             <div className="flex flex-col items-center gap-7">
               <div className="w-full">
                 <ImageUpload

@@ -20,6 +20,10 @@ import PendingInvitations from "@/components/pages/Organizations/PendingInvitati
 import ProgressModal from "@/components/ui/ProgressModal";
 import { toast } from "@/hooks/useToast";
 import { useAppSelector } from "@/redux/store";
+import {
+  useIncomingPackageSelection,
+  clearIncomingPackageSelection,
+} from "@/hooks/useIncomingPackageSelection";
 
 const organizationsList = [
   {
@@ -32,8 +36,25 @@ function OrganizationsContent() {
   const { user } = useAppSelector((s) => s.auth);
   const searchParams = useSearchParams();
   const filter = searchParams.get("filter");
+  const {
+    pkgId,
+    product,
+    billingCycle,
+    opPkgId,
+    opBillingCycle,
+    hasDirectLink,
+  } = useIncomingPackageSelection();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  // A package link (from the OI/OP landing pages) lands existing-org users
+  // here (see the `existingOrgRedirectTo` redirect in auth-guard.tsx) — open
+  // the "Add Organization" modal pre-filled with their selection.
+  useEffect(() => {
+    if (hasDirectLink) {
+      setIsCreateModalOpen(true);
+    }
+  }, [hasDirectLink]);
   const [organizations, setOrganizations] = useState<any>(organizationsList);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -115,6 +136,7 @@ function OrganizationsContent() {
           },
         });
         setShowProgressModal(true);
+        clearIncomingPackageSelection();
       },
       onError: (err: any) => {
         toast.error(err?.message || "Failed to create organization");
@@ -169,6 +191,11 @@ function OrganizationsContent() {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateOrg}
+        initialProduct={product}
+        initialPkgId={pkgId}
+        initialOpPkgId={opPkgId}
+        initialBillingCycle={product === "OP" ? opBillingCycle : billingCycle}
+        isDirectFlow={hasDirectLink}
       />
       <ProgressModal
         isOpen={showProgressModal}
