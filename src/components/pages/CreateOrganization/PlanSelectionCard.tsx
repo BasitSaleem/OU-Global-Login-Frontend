@@ -30,7 +30,7 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
     return (
       <div
         onClick={onClick}
-        className={`relative w-full flex flex-col p-6 rounded-[32px] border-2 transition-all duration-300 cursor-pointer h-full ${
+        className={`relative w-full flex flex-col p-6 rounded-4xl border-2 transition-all duration-300 cursor-pointer h-full ${
           isSelected
             ? "bg-primary/10 border-[#B2A5FF]"
             : isPro || isBusiness
@@ -112,7 +112,7 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`relative w-full flex flex-col p-4 rounded-[32px] border-2 transition-all duration-300 cursor-pointer ${
+      className={`relative w-full flex flex-col p-4 rounded-4xl border-2 transition-all duration-300 cursor-pointer ${
         isSelected
           ? "bg-[#F8F7FF] border-[#B2A5FF]"
           : isPro || isBusiness

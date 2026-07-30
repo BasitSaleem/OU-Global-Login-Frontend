@@ -10,7 +10,11 @@ import {
 } from "@/apiHooks.ts/organization/organization.types";
 import { ROUTES } from "@/constants";
 import { useDebounce } from "@/hooks/useDebounce";
-import { useRouter, useSearchParams } from "next/navigation";
+import {
+  useIncomingPackageSelection,
+  clearIncomingPackageSelection,
+} from "@/hooks/useIncomingPackageSelection";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { toast } from "@/hooks/useToast";
 import ProgressModal from "@/components/ui/ProgressModal";
@@ -27,50 +31,33 @@ import { SetupStep } from "@/components/pages/CreateOrganization/SetupStep";
 import { AuthGuard } from "@/components/HOCs/auth-guard";
 
 export default function CreateOrgPage() {
-  const searchParams = useSearchParams();
-  const queryPkgId = searchParams.get("pkgId");
-  const queryProduct = searchParams.get("product");
-  const queryBillingCycle = searchParams.get("billingCycle");
-
-  const pkgId =
-    queryPkgId ||
-    (typeof window !== "undefined" ? localStorage.getItem("pkgId") : null) ||
-    "d755fe7d-4372-426c-af33-e63b71a6521f";
-
-  const product =
-    queryProduct ||
-    (typeof window !== "undefined" ? localStorage.getItem("product") : null) ||
-    "OI";
-
-  const billingCycle =
-    queryBillingCycle ||
-    (typeof window !== "undefined"
-      ? localStorage.getItem("billingCycle")
-      : null) ||
-    "monthly";
-
-  useEffect(() => {
-    if (queryPkgId) {
-      localStorage.setItem("pkgId", queryPkgId);
-    }
-    if (queryProduct) {
-      localStorage.setItem("product", queryProduct);
-    }
-    if (queryBillingCycle) {
-      localStorage.setItem("billingCycle", queryBillingCycle);
-    }
-  }, [queryPkgId, queryProduct, queryBillingCycle]);
+  const {
+    pkgId,
+    product,
+    billingCycle,
+    opPkgId,
+    opBillingCycle,
+    queryPkgId,
+    queryOpPkgId,
+    hasDirectLink,
+  } = useIncomingPackageSelection();
 
   const redirectTo =
-    queryProduct === "OI" && queryPkgId ? ROUTES.REGISTER : ROUTES.LOGIN;
+    (product === "OI" && queryPkgId) || (product === "OP" && queryOpPkgId)
+      ? ROUTES.REGISTER
+      : ROUTES.LOGIN;
 
   return (
     <CreateOrgContent
       initialPkgId={pkgId}
       initialProduct={product}
       queryPkgId={queryPkgId}
-      initialBillingCycle={billingCycle as "monthly" | "yearly"}
+      initialBillingCycle={billingCycle}
+      initialOpPkgId={opPkgId}
+      queryOpPkgId={queryOpPkgId}
+      initialOpBillingCycle={opBillingCycle}
       redirectTo={redirectTo}
+      existingOrgRedirectTo={hasDirectLink ? "/organizations" : undefined}
     />
   );
 }
@@ -80,13 +67,21 @@ function CreateOrgContent({
   initialProduct,
   queryPkgId,
   initialBillingCycle,
+  initialOpPkgId,
+  queryOpPkgId,
+  initialOpBillingCycle,
   redirectTo,
+  existingOrgRedirectTo,
 }: {
   initialPkgId: string | null;
   initialProduct: string;
   queryPkgId: string | null;
   initialBillingCycle: "monthly" | "yearly";
+  initialOpPkgId: string | null;
+  queryOpPkgId: string | null;
+  initialOpBillingCycle: "monthly" | "yearly";
   redirectTo: string;
+  existingOrgRedirectTo?: string;
 }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [direction, setDirection] = useState(0);
@@ -101,7 +96,10 @@ function CreateOrgContent({
   );
   // OP standalone plan id — kept separate from the OI selectedPlanId so both
   // products can be configured at once without colliding.
-  const [opPackageId, setOpPackageId] = useState<string | null>(null);
+  const [opPackageId, setOpPackageId] = useState<string | null>(
+    initialOpPkgId,
+  );
+  const hasDirectLink = !!queryPkgId || !!queryOpPkgId;
   const [opMode, setOpMode] = useState<"plan" | "services">("plan");
   const [opServiceIds, setOpServiceIds] = useState<string[]>([]);
   const [opDominationUpgrade, setOpDominationUpgrade] = useState(false);
@@ -234,7 +232,7 @@ function CreateOrgContent({
           },
         });
         setShowProgressModal(true);
-        localStorage.removeItem("pkgId");
+        clearIncomingPackageSelection();
       },
       onError: (error: any) => {
         const message =
@@ -289,7 +287,10 @@ function CreateOrgContent({
   };
 
   return (
-    <AuthGuard redirectTo={redirectTo}>
+    <AuthGuard
+      redirectTo={redirectTo}
+      existingOrgRedirectTo={existingOrgRedirectTo}
+    >
       <>
         <Button
           onClick={handleLogout}
@@ -308,7 +309,7 @@ function CreateOrgContent({
         )}
         <div className="min-h-48 w-full bg-background flex flex-col items-center py-12 px-4 ">
           <div className="w-full max-w-4xl bg-bg-secondary rounded-2xl border border-border  relative">
-            {!queryPkgId && (
+            {!hasDirectLink && (
               <StepIndicator
                 steps={steps}
                 currentStep={currentStep > 2 ? 2 : currentStep}
@@ -328,7 +329,7 @@ function CreateOrgContent({
                 }}
                 className="p-8 md:p-4"
               >
-                {currentStep === 1 && !queryPkgId && (
+                {currentStep === 1 && !hasDirectLink && (
                   <OrganizationStep
                     companyName={companyName}
                     setCompanyName={setCompanyName}
@@ -339,7 +340,7 @@ function CreateOrgContent({
                   />
                 )}
 
-                {(currentStep === 2 || (queryPkgId && currentStep === 1)) && (
+                {(currentStep === 2 || (hasDirectLink && currentStep === 1)) && (
                   <SetupStep
                     companyName={companyName}
                     setCompanyName={setCompanyName}
@@ -354,7 +355,11 @@ function CreateOrgContent({
                     isSubDomainDebouncing={isSubDomainDebouncing}
                     selectedPlanId={selectedPlanId}
                     setSelectedPlanId={setSelectedPlanId}
-                    initialBillingCycle={initialBillingCycle}
+                    initialBillingCycle={
+                      initialProduct === "OP"
+                        ? initialOpBillingCycle
+                        : initialBillingCycle
+                    }
                     opPackageId={opPackageId}
                     setOpPackageId={setOpPackageId}
                     opMode={opMode}
@@ -373,7 +378,7 @@ function CreateOrgContent({
                     onCreate={handleSubmit}
                     canSubmit={canSubmit()}
                     creatingOrg={creatingOrg}
-                    isDirectFlow={!!queryPkgId}
+                    isDirectFlow={hasDirectLink}
                   />
                 )}
               </motion.div>
