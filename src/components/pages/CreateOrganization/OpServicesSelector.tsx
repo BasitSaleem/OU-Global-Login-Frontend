@@ -82,7 +82,7 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
 
   return (
     <div className="space-y-3">
-      <p className="text-text font-semibold">Choose your services</p>
+      <p className="text-text font-semibold">Choose your Services</p>
 
       {/* Individual services */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -93,29 +93,23 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
               type="button"
               key={svc.id}
               onClick={() => toggle(svc.id)}
-              className={`flex items-start justify-between text-left p-4 rounded-xl border transition-all ${
+              className={`relative text-left p-4 rounded-xl border transition-all ${
                 isSelected
-                  ? "border-primary bg-primary/5 ring-1 ring-primary"
+                  ? "border-success bg-success-bg"
                   : "border-border hover:border-primary/50 bg-background"
               }`}
             >
-              <div className="pr-2">
-                <span className="font-bold text-text block">{svc.name}</span>
-                <span className="text-xs text-text-secondary">
-                  {svcPrice(svc)}
-                  {Number(svc.setup_fee) > 0
-                    ? ` · $${svc.setup_fee} setup`
-                    : ""}
+              {isSelected && (
+                <span className="absolute top-3 right-3 w-5 h-5 rounded-full bg-success-bg border border-success text-success flex items-center justify-center">
+                  <Check size={12} />
                 </span>
-              </div>
-              <span
-                className={`shrink-0 w-5 h-5 rounded-md border flex items-center justify-center ${
-                  isSelected
-                    ? "bg-primary border-primary text-white"
-                    : "border-border"
-                }`}
-              >
-                {isSelected && <Check size={14} />}
+              )}
+              <span className="font-bold text-text block pr-6">{svc.name}</span>
+              <span className="text-xs text-text-secondary">
+                {svcPrice(svc)}
+                {Number(svc.setup_fee) > 0
+                  ? ` · $${svc.setup_fee} setup`
+                  : ""}
               </span>
             </button>
           );
@@ -127,41 +121,35 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
         <button
           type="button"
           onClick={() => toggle(bundle.id)}
-          className={`w-full flex items-start justify-between text-left p-4 rounded-xl border-2 transition-all ${
+          className={`relative w-full text-left p-4 rounded-xl border-2 transition-all ${
             bundleSelected
-              ? "border-primary bg-primary/5"
+              ? "border-success bg-success-bg"
               : "border-dashed border-border hover:border-primary/50 bg-background"
           }`}
         >
-          <div className="pr-2">
-            <span className="font-bold text-text block">
-              {bundle.name}{" "}
-              <span className="text-[10px] uppercase font-black text-primary tracking-wide">
-                Best value
-              </span>
+          {bundleSelected && (
+            <span className="absolute top-3 right-3 w-5 h-5 rounded-full bg-success-bg border border-success text-success flex items-center justify-center">
+              <Check size={12} />
             </span>
-            <span className="text-xs text-text-secondary">
-              {svcPrice(bundle)}
-              {Number(bundle.setup_fee) > 0
-                ? ` · $${bundle.setup_fee} setup`
-                : ""}
+          )}
+          <span className="font-bold text-text block pr-6">
+            {bundle.name}{" "}
+            <span className="text-[10px] uppercase font-black text-primary tracking-wide">
+              Best value
             </span>
-          </div>
-          <span
-            className={`shrink-0 w-5 h-5 rounded-md border flex items-center justify-center ${
-              bundleSelected
-                ? "bg-primary border-primary text-white"
-                : "border-border"
-            }`}
-          >
-            {bundleSelected && <Check size={14} />}
+          </span>
+          <span className="text-xs text-text-secondary">
+            {svcPrice(bundle)}
+            {Number(bundle.setup_fee) > 0
+              ? ` · $${bundle.setup_fee} setup`
+              : ""}
           </span>
         </button>
       )}
 
       {/* Domination upsell — bundle only */}
       {bundleSelected && (
-        <label className="flex items-center gap-3 p-3 rounded-xl border border-border bg-background cursor-pointer">
+        <label className="flex items-center gap-3 cursor-pointer">
           <input
             type="checkbox"
             checked={dominationUpgrade}

@@ -19,20 +19,20 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({ steps, currentStep
             <div className="flex items-center gap-3">
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${isCompleted
-                  ? "bg-[#E5FFF9] text-white"
+                  ? "bg-success-bg"
                   : isActive
                     ? "bg-primary text-white"
-                    : "bg-gray-100 text-gray-400"
+                    : "bg-card-secondary text-text-secondary"
                   }`}
               >
-                {isCompleted ? <SvgIcon name="check3" width={15} height={15} className="text-[#1AD1B9]" /> : step.id}
+                {isCompleted ? <SvgIcon name="check3" width={15} height={15} className="text-success" /> : step.id}
               </div>
               <span
                 className={`text-sm font-bold ${isCompleted
-                  ? "text-[#1AD1B9]"
+                  ? "text-success"
                   : isActive
                     ? "text-primary"
-                    : "text-gray-400"
+                    : "text-text-secondary"
                   }`}
               >
                 {step.label}

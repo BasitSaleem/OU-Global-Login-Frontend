@@ -279,7 +279,7 @@ export const SetupStep: React.FC<SetupStepProps> = ({
                 onClick={() => setActiveProduct(product.name)}
                 className={`flex items-center gap-3 px-5 py-2.5 rounded-xl border transition-all ${isActive
                   ? "border-primary bg-primary/5 text-primary shadow-sm"
-                  : "border-border bg-white text-gray-500 hover:text-gray-700"
+                  : "border-border bg-background text-text-secondary hover:text-text"
                   }`}
               >
                 <SvgIcon name={product.icon} className="w-5 h-5" />
@@ -488,7 +488,7 @@ export const SetupStep: React.FC<SetupStepProps> = ({
                 className={`px-5 py-2 rounded-xl text-sm font-bold transition-all ${
                   opMode === "plan"
                     ? "bg-primary text-white shadow-md"
-                    : "text-gray-500 hover:text-gray-700"
+                    : "text-text-secondary hover:text-text"
                 }`}
               >
                 Plans
@@ -499,10 +499,10 @@ export const SetupStep: React.FC<SetupStepProps> = ({
                 className={`px-5 py-2 rounded-xl text-sm font-bold transition-all ${
                   opMode === "services"
                     ? "bg-primary text-white shadow-md"
-                    : "text-gray-500 hover:text-gray-700"
+                    : "text-text-secondary hover:text-text"
                 }`}
               >
-                Done-for-you Services
+                Done-For-Your-Services
               </button>
             </div>
 
@@ -512,11 +512,11 @@ export const SetupStep: React.FC<SetupStepProps> = ({
                 target="_blank"
                 className="text-primary cursor-pointer text-nowrap text-sm font-bold hover:underline"
               >
-                View all Pricings
+                View all services
               </Link>
               <div className="flex items-center gap-3">
                 <span
-                  className={`text-sm font-bold ${billingCycle === "monthly" ? "text-text" : "text-gray-400"}`}
+                  className={`text-sm font-bold ${billingCycle === "monthly" ? "text-text" : "text-text-secondary"}`}
                 >
                   Monthly
                 </span>
@@ -526,14 +526,14 @@ export const SetupStep: React.FC<SetupStepProps> = ({
                       billingCycle === "monthly" ? "yearly" : "monthly",
                     )
                   }
-                  className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-all duration-300 ${billingCycle === "yearly" ? "bg-[#1AD1B9]" : "bg-gray-200"}`}
+                  className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-all duration-300 ${billingCycle === "yearly" ? "bg-success" : "bg-card-secondary"}`}
                 >
                   <div
                     className={`w-4 h-4 bg-bg-secondary rounded-full shadow-sm transition-all duration-300 ${billingCycle === "yearly" ? "translate-x-6" : "translate-x-0"}`}
                   />
                 </div>
                 <span
-                  className={`text-sm font-bold ${billingCycle === "yearly" ? "text-text" : "text-gray-400"}`}
+                  className={`text-sm font-bold ${billingCycle === "yearly" ? "text-text" : "text-text-secondary"}`}
                 >
                   Yearly
                 </span>
