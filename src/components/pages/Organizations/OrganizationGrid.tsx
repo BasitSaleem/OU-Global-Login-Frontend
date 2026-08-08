@@ -13,7 +13,6 @@ import { useAppSelector } from "@/redux/store";
 import { DeleteOrganizationModal } from "@/components/modals/DeleteOrganizationModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizationGridComponent } from "./OrganizationGridComponent";
-import { Tooltip } from "@/components/ui";
 import { PermissionGuard } from "@/components/HOCs/permission-guard";
 
 export interface OrganizationGridProps {
@@ -128,44 +127,38 @@ export default function OrganizationGrid({
         ) : (
           <>
             {organizations?.map((org) => (
-              <Tooltip
+              <div
                 key={org?.id}
-                content={org?.isAddNew ? "" : org?.name}
-                position="top"
-                wrapperClassName="w-full"
+                className={`relative group h-30 w-full ${
+                  org?.isAddNew
+                    ? ""
+                    : "bg-bg-secondary border border-border rounded-xl"
+                }  ${
+                  org?.isAddNew ? "" : "p-3"
+                } hover:shadow-sm transition-shadow cursor-pointer rounded-xl`}
               >
-                <div
-                  className={`relative group h-30 w-full ${
-                    org?.isAddNew
-                      ? ""
-                      : "bg-bg-secondary border border-border rounded-xl"
-                  }  ${
-                    org?.isAddNew ? "" : "p-3"
-                  } hover:shadow-sm transition-shadow cursor-pointer rounded-xl`}
-                >
-                  {org?.isAddNew ? (
-                    <div
-                      className="flex flex-col border border-dashed border-border items-center justify-center text-center h-full rounded-xl bg-primary/5  w-full"
-                      onClick={onAddNew}
-                    >
-                      <div className="text-primary">
-                        <Plus size={50} />
-                      </div>
-                      <span className=" text-primary font-bold">Add New</span>
+                {org?.isAddNew ? (
+                  <div
+                    className="flex flex-col border border-dashed border-border items-center justify-center text-center h-full rounded-xl bg-primary/5  w-full"
+                    onClick={onAddNew}
+                  >
+                    <div className="text-primary">
+                      <Plus size={50} />
                     </div>
-                  ) : (
-                    <OrganizationGridComponent
-                      id={org?.id}
-                      org={org}
-                      isPending={isPending}
-                      handleFavoriteClick={handleFavoriteClick}
-                      user={user}
-                      handleDeleteClick={handleDeleteClick}
-                      onAddProduct={onAddProduct}
-                    />
-                  )}
-                </div>
-              </Tooltip>
+                    <span className=" text-primary font-bold">Add New</span>
+                  </div>
+                ) : (
+                  <OrganizationGridComponent
+                    id={org?.id}
+                    org={org}
+                    isPending={isPending}
+                    handleFavoriteClick={handleFavoriteClick}
+                    user={user}
+                    handleDeleteClick={handleDeleteClick}
+                    onAddProduct={onAddProduct}
+                  />
+                )}
+              </div>
             ))}
           </>
         )}

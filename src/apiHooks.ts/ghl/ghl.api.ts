@@ -16,6 +16,7 @@ export interface GhlLocationInfo {
   ghlLocationId: string | null;
   ghlLocationName: string | null;
   provisioningError: string | null;
+  membersCount: number;
 }
 
 const ENDPOINTS = {

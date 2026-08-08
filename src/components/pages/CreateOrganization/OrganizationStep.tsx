@@ -32,8 +32,10 @@ export const OrganizationStep: React.FC<OrganizationStepProps> = ({
 }) => {
   return (
     <div className="space-y-4">
-      <div className="text-center md:text-left mb-8">
-        <h2 className="text-3xl font-bold text-text mb-2">Create an Organization</h2>
+      <div className="text-center md:text-left my-8">
+        <h2 className="text-3xl font-bold text-text mb-2">
+          Create an Organization
+        </h2>
         <p className="text-gray-500">Set up your workspace in just 2 steps</p>
       </div>
 
@@ -46,19 +48,26 @@ export const OrganizationStep: React.FC<OrganizationStepProps> = ({
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && companyName.trim() && selectedProducts.length > 0) {
+              if (
+                e.key === "Enter" &&
+                companyName.trim() &&
+                selectedProducts.length > 0
+              ) {
                 e.preventDefault();
                 onNext();
               }
             }}
             placeholder="Enter organization name"
-            className="w-full px-6 bg-background py-5  rounded-xl focus:border-primary focus:ring-0 transition-all font-medium pr-24"
+            className="w-full px-4 bg-background py-3 rounded-xl focus:border-primary focus:ring-0 transition-all font-medium pr-24"
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 mt-6">
           <label className="block text-base font-semibold text-text">
-            Select Products <span className="text-text-secondary font-normal text-sm">(choose one or more)</span>
+            Select Products{" "}
+            <span className="text-text-secondary font-normal text-sm">
+              (choose one or more)
+            </span>
           </label>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {PRODUCTS.map((product) => (
@@ -79,10 +88,7 @@ export const OrganizationStep: React.FC<OrganizationStepProps> = ({
       </div>
 
       <div className="flex justify-end gap-4">
-        <Button
-          variant="secondary"
-          onClick={onReset}
-        >
+        <Button variant="secondary" onClick={onReset}>
           Reset
         </Button>
         <Button

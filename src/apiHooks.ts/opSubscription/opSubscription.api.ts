@@ -40,6 +40,9 @@ export interface OpPreview {
   // still be created. missingConfig lists what's not configured.
   ghlPlanConfigured: boolean;
   missingConfig: string[];
+  // One-time setup-fee Stripe Payment Link for this exact selection. Null for
+  // standalone packages and for combinations without a link configured yet.
+  stripePaymentLink: string | null;
 }
 
 export interface OpSelection {
@@ -52,6 +55,7 @@ const ENDPOINTS = {
   OP_SERVICES: `/op/services`,
   PREVIEW: `/og/op/preview`,
   BUY_SERVICES: `/og/op/buy-services`,
+  VERIFY_INVOICE: `/og/op/verify-invoice`,
 };
 
 // Public read of the Owners Pulse services catalog for the selection UI.
@@ -105,6 +109,39 @@ export interface BuyOpServicesResult {
   clientSecret: string | null;
   paymentStatus: string | null;
 }
+
+export interface VerifyOpInvoiceResult {
+  verified: boolean;
+  invoiceId: string;
+  amountPaid: number;
+  currency: string;
+  number: string | null;
+}
+
+export interface VerifyOpInvoicePayload {
+  invoiceId: string;
+  // The EXACT combo currently selected — ties the invoice to this specific
+  // selection (not just its price) so it can't later be reused for a
+  // different, same-priced combo.
+  serviceIds: string[];
+  dominationUpgrade: boolean;
+}
+
+// Verify a Stripe (OP account) invoice id for the manually collected services
+// setup fee. Gates the Create button in the org-creation services flow.
+export const useVerifyOpInvoice = () => {
+  return useMutation({
+    mutationFn: async (payload: VerifyOpInvoicePayload) => {
+      const res = await request<any>(
+        ENDPOINTS.VERIFY_INVOICE,
+        "POST",
+        {},
+        payload,
+      );
+      return res.data as VerifyOpInvoiceResult;
+    },
+  });
+};
 
 // Purchase services for an existing OP org (charged immediately on the OP
 // account). Returns any 3DS action for the frontend to confirm.

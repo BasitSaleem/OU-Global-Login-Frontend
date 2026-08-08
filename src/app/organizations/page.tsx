@@ -138,8 +138,8 @@ function OrganizationsContent() {
         setShowProgressModal(true);
         clearIncomingPackageSelection();
       },
-      onError: (err: any) => {
-        toast.error(err?.message || "Failed to create organization");
+      onError: () => {
+        // Handled centrally in useCreateOrganization hook
       },
     });
   };

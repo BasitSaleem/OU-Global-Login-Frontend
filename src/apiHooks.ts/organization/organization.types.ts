@@ -53,6 +53,9 @@ export interface CreateOrganizationData {
   opPackageId?: string | null;
   serviceIds?: string[];
   dominationUpgrade?: boolean;
+  // The verified Stripe (OP account) invoice id for a services order's setup
+  // fee (see POST /og/op/verify-invoice) — required when serviceIds is set.
+  invoiceId?: string;
   billingCycle?: "Monthly" | "Yearly";
   address?: string;
   city?: string;

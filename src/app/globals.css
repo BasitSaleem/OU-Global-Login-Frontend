@@ -57,6 +57,8 @@
   --color-gray: #bfc6c4;
   --color-disable: #E5E7EB;
   --color-ribbon: #EEEDF0;
+  --color-success: #1AD1B9;
+  --color-success-bg: #E5FFF9;
 }
 
 /* Dark theme colors */
@@ -86,6 +88,8 @@
   --color-gray: #1f2937;
   --color-disable: #000000;
   --color-ribbon: #11171f;
+  --color-success: #1AD1B9;
+  --color-success-bg: rgba(26, 209, 185, 0.15);
   /* --color-hover: #795CF5; */
 }
 
@@ -160,10 +164,11 @@
   --color-red: var(--color-red);
   --color-danger-bg: var(--color-danger-bg);
   --color-disable: var(--color-disable);
-  --color-ribbon: var(--var-ribbon)
-    /* Gray colors */
-    /* Gray colors */
-    --color-gray-50: var(--color-gray-50);
+  --color-ribbon: var(--color-ribbon);
+  --color-success: var(--color-success);
+  --color-success-bg: var(--color-success-bg);
+  /* Gray colors */
+  --color-gray-50: var(--color-gray-50);
   --color-gray-100: var(--color-gray-100);
   --color-gray-200: var(--color-gray-200);
   --color-gray-300: var(--color-gray-300);

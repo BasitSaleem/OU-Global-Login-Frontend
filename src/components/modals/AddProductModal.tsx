@@ -62,6 +62,8 @@ export default function AddProductModal({
   const [opMode, setOpMode] = useState<"plan" | "services">("plan");
   const [opServiceIds, setOpServiceIds] = useState<string[]>([]);
   const [opDominationUpgrade, setOpDominationUpgrade] = useState(false);
+  const [opInvoiceId, setOpInvoiceId] = useState("");
+  const [opInvoiceVerified, setOpInvoiceVerified] = useState(false);
   const [isSuggestionSubdomain, setIsSuggestionSubdomain] = useState(false);
 
   const isOiSelected = selectedProducts.includes("OI");
@@ -109,6 +111,7 @@ export default function AddProductModal({
     if (isOpSelected) {
       if (opMode === "services") {
         if (opServiceIds.length === 0) return false;
+        if (!opInvoiceVerified) return false;
       } else if (!opPackageId) {
         return false;
       }
@@ -127,6 +130,7 @@ export default function AddProductModal({
       opPackageId: isOpSelected && opMode === "plan" ? opPackageId : undefined,
       serviceIds: isOpServices ? opServiceIds : undefined,
       dominationUpgrade: isOpServices ? opDominationUpgrade : undefined,
+      invoiceId: isOpServices ? opInvoiceId.trim() : undefined,
       billingCycle: "Monthly",
     };
 
@@ -234,6 +238,10 @@ export default function AddProductModal({
             setOpServiceIds={setOpServiceIds}
             opDominationUpgrade={opDominationUpgrade}
             setOpDominationUpgrade={setOpDominationUpgrade}
+            opInvoiceId={opInvoiceId}
+            setOpInvoiceId={setOpInvoiceId}
+            opInvoiceVerified={opInvoiceVerified}
+            setOpInvoiceVerified={setOpInvoiceVerified}
             onBack={() => setCurrentStep(1)}
             onCreate={handleAdd}
             creatingOrg={isPending}
