@@ -61,6 +61,13 @@ export default function Sidebar({
       isActive: currentPath === "/ownersinventory.com",
     },
     {
+      href: "https://ownerspulse.com/",
+      hasExternal: true,
+      svgName: "OP",
+      label: "Owners Pulse",
+      isActive: currentPath === "/ownerspulse.com",
+    },
+    {
       href: "/marketplace",
       svgName: "OM",
       label: "Marketplace",
@@ -136,13 +143,21 @@ export default function Sidebar({
         title={collapsed ? item.label : ""}
       >
         {collapsed ? (
-          <SvgIcon name={item.svgName} width={20} height={20} />
+          <SvgIcon
+            name={item.svgName}
+            width={item.svgName === "OP" ? 22 : 20}
+            height={item.svgName === "OP" ? 15 : 20}
+          />
         ) : (
           <>
             <div className="flex items-center gap-3 ">
               {/* {renderIcon(item, false)}
                */}
-              <SvgIcon name={item.svgName} width={20} height={20} />
+              <SvgIcon
+                name={item.svgName}
+                width={item.svgName === "OP" ? 25 : 20}
+                height={20}
+              />
               <span className={cn("", { "font-medium": item.isActive })}>
                 {item.label}
               </span>
@@ -247,13 +262,10 @@ export default function Sidebar({
         >
           {collapsed ? (
             <div className="w-20 h-10 rounded-lg flex items-center justify-center">
-              <SvgIcon name="OI" width={30} height={30} />
+              <SvgIcon name="ownersUniverseColl" width={30} height={30} />
             </div>
           ) : (
-            <SvgIcon
-              name="ownersInventory"
-              width={130}
-            />
+            <SvgIcon name="ownersUniverse" width={130} />
           )}
         </Link>
 

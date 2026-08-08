@@ -1,5 +1,6 @@
 import { SvgIcon } from "@/components/ui/SvgIcon";
 import Image from "next/image";
+import Link from "next/link";
 
 // Cropped from public/Icons/OI.svg (icon-only, wordmark stripped) so it can sit
 // above its own "OWNERS INVENTORY" caption instead of the baked-in lockup text.
@@ -71,19 +72,29 @@ export function AuthBrandPanel() {
       </span>
 
       <div className="mt-4 flex items-center gap-6">
-        <div className="flex flex-col items-center gap-2">
+        <Link
+          href="https://ownerspulse.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex flex-col items-center gap-2 hover:opacity-80 transition-opacity"
+        >
           <SvgIcon name="OP" width={58} height={38} />
           <span className="text-gray-400 text-[11px] font-semibold tracking-wider">
             OWNERS PULSE
           </span>
-        </div>
+        </Link>
         <div className="h-10 w-px bg-gray-600" />
-        <div className="flex flex-col items-center gap-2">
+        <Link
+          href="https://ownersinventory.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex flex-col items-center gap-2 hover:opacity-80 transition-opacity"
+        >
           <OwnersInventoryMark className="w-12.25 h-10" />
           <span className="text-gray-400 text-[11px] font-semibold tracking-wider">
             OWNERS INVENTORY
           </span>
-        </div>
+        </Link>
       </div>
     </div>
   );

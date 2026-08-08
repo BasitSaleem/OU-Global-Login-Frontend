@@ -103,6 +103,8 @@ function CreateOrgContent({
   const [opMode, setOpMode] = useState<"plan" | "services">("plan");
   const [opServiceIds, setOpServiceIds] = useState<string[]>([]);
   const [opDominationUpgrade, setOpDominationUpgrade] = useState(false);
+  const [opInvoiceId, setOpInvoiceId] = useState("");
+  const [opInvoiceVerified, setOpInvoiceVerified] = useState(false);
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [organizationData, setOrganizationData] =
     useState<CreateOrganizationResponse | null>(null);
@@ -195,6 +197,7 @@ function CreateOrgContent({
     if (isOpSelected) {
       if (opMode === "services") {
         if (opServiceIds.length === 0) return false;
+        if (!opInvoiceVerified) return false;
       } else if (!opPackageId) {
         return false;
       }
@@ -219,6 +222,7 @@ function CreateOrgContent({
       opPackageId: isOpSelected && opMode === "plan" ? opPackageId : undefined,
       serviceIds: isOpServices ? opServiceIds : undefined,
       dominationUpgrade: isOpServices ? opDominationUpgrade : undefined,
+      invoiceId: isOpServices ? opInvoiceId.trim() : undefined,
       billingCycle: "Monthly",
     };
 
@@ -235,9 +239,6 @@ function CreateOrgContent({
         clearIncomingPackageSelection();
       },
       onError: (error: any) => {
-        const message =
-          (error as Error)?.message || "Organization creation failed";
-        toast.error("Failed to create organization", message);
         logger.error("Organization creation failed:", error);
       },
     });
@@ -262,6 +263,8 @@ function CreateOrgContent({
     setOpMode("plan");
     setOpServiceIds([]);
     setOpDominationUpgrade(false);
+    setOpInvoiceId("");
+    setOpInvoiceVerified(false);
     setCurrentStep(1);
     setDirection(-1);
   };
@@ -368,6 +371,10 @@ function CreateOrgContent({
                     setOpServiceIds={setOpServiceIds}
                     opDominationUpgrade={opDominationUpgrade}
                     setOpDominationUpgrade={setOpDominationUpgrade}
+                    opInvoiceId={opInvoiceId}
+                    setOpInvoiceId={setOpInvoiceId}
+                    opInvoiceVerified={opInvoiceVerified}
+                    setOpInvoiceVerified={setOpInvoiceVerified}
                     onBack={() => {
                       if (queryPkgId) {
                         setSelectedPlanId(initialPkgId);

@@ -58,6 +58,8 @@ export default function CreateOrgModal({
   const [opMode, setOpMode] = useState<"plan" | "services">("plan");
   const [opServiceIds, setOpServiceIds] = useState<string[]>([]);
   const [opDominationUpgrade, setOpDominationUpgrade] = useState(false);
+  const [opInvoiceId, setOpInvoiceId] = useState("");
+  const [opInvoiceVerified, setOpInvoiceVerified] = useState(false);
 
   const debouncedCompanyName = useDebounce(companyName.trim(), 800);
   const debouncedSubDomain = useDebounce(subDomain.trim(), 800);
@@ -74,12 +76,10 @@ export default function CreateOrgModal({
   const shouldCheckAvailability =
     isOiSelected && debouncedSubDomain && !isSuggestionSubdomain;
 
-  const {
-    data: isSubAvailable,
-    isFetching: checkingSub,
-  } = useCheckSubDomainAvailability(
-    shouldCheckAvailability ? debouncedSubDomain : "",
-  );
+  const { data: isSubAvailable, isFetching: checkingSub } =
+    useCheckSubDomainAvailability(
+      shouldCheckAvailability ? debouncedSubDomain : "",
+    );
 
   const finalIsSubAvailable = isSuggestionSubdomain ? true : isSubAvailable;
 
@@ -116,11 +116,15 @@ export default function CreateOrgModal({
     setCompanyName("");
     setSubDomain("");
     setSelectedProducts([initialProduct]);
-    setSelectedPlanId(initialProduct === "OI" ? initialPkgId : DEFAULT_OI_PLAN_ID);
+    setSelectedPlanId(
+      initialProduct === "OI" ? initialPkgId : DEFAULT_OI_PLAN_ID,
+    );
     setOpPackageId(initialProduct === "OP" ? initialOpPkgId : null);
     setOpMode("plan");
     setOpServiceIds([]);
     setOpDominationUpgrade(false);
+    setOpInvoiceId("");
+    setOpInvoiceVerified(false);
     setCurrentStep(isDirectFlow ? 2 : 1);
   };
 
@@ -137,6 +141,7 @@ export default function CreateOrgModal({
       opPackageId: isOpSelected && opMode === "plan" ? opPackageId : undefined,
       serviceIds: isOpServices ? opServiceIds : undefined,
       dominationUpgrade: isOpServices ? opDominationUpgrade : undefined,
+      invoiceId: isOpServices ? opInvoiceId.trim() : undefined,
       billingCycle: "Monthly",
     };
     onSubmit(payload);
@@ -160,6 +165,7 @@ export default function CreateOrgModal({
     if (isOpSelected) {
       if (opMode === "services") {
         if (opServiceIds.length === 0) return false;
+        if (!opInvoiceVerified) return false;
       } else if (!opPackageId) {
         return false;
       }
@@ -178,14 +184,17 @@ export default function CreateOrgModal({
       onClose={onClose}
       size="xxxl"
       ariaLabel="Create organization"
-      className="overflow-hidden"
+      className="p-4 sm:p-5 overflow-hidden"
     >
       {!isDirectFlow && (
-        <div className="-mt-6">
-          <StepIndicator steps={steps} currentStep={currentStep > 2 ? 2 : currentStep} />
+        <div className="-mt-3">
+          <StepIndicator
+            steps={steps}
+            currentStep={currentStep > 2 ? 2 : currentStep}
+          />
         </div>
       )}
-      <Modal.Body className="p-2">
+      <Modal.Body className="p-0">
         {currentStep === 1 ? (
           <OrganizationStep
             companyName={companyName}
@@ -219,6 +228,10 @@ export default function CreateOrgModal({
             setOpServiceIds={setOpServiceIds}
             opDominationUpgrade={opDominationUpgrade}
             setOpDominationUpgrade={setOpDominationUpgrade}
+            opInvoiceId={opInvoiceId}
+            setOpInvoiceId={setOpInvoiceId}
+            opInvoiceVerified={opInvoiceVerified}
+            setOpInvoiceVerified={setOpInvoiceVerified}
             onBack={() => setCurrentStep(1)}
             onCreate={handleCreate}
             creatingOrg={isLoading}
