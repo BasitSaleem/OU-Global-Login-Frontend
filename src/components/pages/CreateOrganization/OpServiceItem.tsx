@@ -24,12 +24,12 @@ const OpServiceItem: React.FC<OpServiceItemProps> = ({
       onClick={() => onToggle(svc.id)}
       className={` relative text-left p-4 cursor-pointer rounded-xl border transition-all duration-200 ${
         isSelected
-          ? "border-[#1ad1b9] bg-[#e6fcf5]"
+          ? "border-primary bg-primary/5"
           : "border-gray-200 hover:border-primary/40 bg-white"
       }`}
     >
       {isSelected && (
-        <span className="absolute top-3.5 right-3.5 w-5 h-5 rounded-full border border-[#1ad1b9] bg-white text-[#1ad1b9] flex items-center justify-center">
+        <span className="absolute top-3.5 right-3.5 w-5 h-5 rounded-full border border-primary bg-white text-primary flex items-center justify-center">
           <Check size={12} strokeWidth={3} />
         </span>
       )}

@@ -228,11 +228,7 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
           <button
             type="button"
             onClick={() => toggle(bundle.id)}
-            className={`relative text-left p-4 rounded-xl border transition-all duration-200 cursor-pointer ${
-              bundleSelected
-                ? "border-[#1ad1b9] bg-[#e6fcf5]"
-                : "border-gray-200 hover:border-primary/40 bg-white"
-            }`}
+            className="relative text-left p-4 rounded-xl border border-[#1ad1b9] bg-[#e6fcf5] transition-all duration-200 cursor-pointer"
           >
             {bundleSelected && (
               <span className="absolute top-3.5 right-3.5 w-5 h-5 rounded-full border border-[#1ad1b9] bg-white text-[#1ad1b9] flex items-center justify-center">
@@ -252,26 +248,25 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
         )}
       </div>
 
-      {/* Domination Upgrade Checkbox */}
-      <div className="pt-0.5">
-        <label className="flex items-center gap-2.5 cursor-pointer select-none">
-          <input
-            type="checkbox"
-            checked={dominationUpgrade}
-            disabled={!bundleSelected}
-            onChange={(e) => setDominationUpgrade(e.target.checked)}
-            className="w-4 h-4 accent-primary rounded border-gray-300 cursor-pointer disabled:opacity-50"
-          />
-          <span
-            className={`text-xs sm:text-sm text-gray-800 ${!bundleSelected ? "opacity-50" : ""}`}
-          >
-            Upgrade to{" "}
-            <span className="font-bold text-gray-900">Domination</span> for{" "}
-            <span className="font-bold text-gray-900">+$200/mo</span>{" "}
-            <span className="text-gray-500 font-normal">(bundle only)</span>
-          </span>
-        </label>
-      </div>
+      {/* Domination Upgrade Checkbox — only relevant once the full bundle is selected */}
+      {bundleSelected && (
+        <div className="pt-0.5">
+          <label className="flex items-center gap-2.5 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={dominationUpgrade}
+              onChange={(e) => setDominationUpgrade(e.target.checked)}
+              className="w-4 h-4 accent-primary rounded border-gray-300 cursor-pointer"
+            />
+            <span className="text-xs sm:text-sm text-gray-800">
+              Upgrade to{" "}
+              <span className="font-bold text-gray-900">Domination</span> for{" "}
+              <span className="font-bold text-gray-900">+$200/mo</span>{" "}
+              <span className="text-gray-500 font-normal">(bundle only)</span>
+            </span>
+          </label>
+        </div>
+      )}
 
       {/* Order Summary Box */}
       <div className="rounded-xl border border-gray-200/80 bg-white overflow-hidden shadow-2xs">
@@ -409,52 +404,54 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
 
         {isInvoiceOpen && (
           <div className="pt-0.5">
-            <Input
-              type="text"
-              label="Invoice ID"
-              name="op-invoice-id"
-              value={invoiceId ?? ""}
-              onChange={(e) => {
-                const val = e.target.value;
-                setInvoiceId(val);
-                if (invoiceVerified) setInvoiceVerified(false);
-                if (invoiceError) setInvoiceError(null);
-              }}
-              placeholder={
-                hasNoServiceSelected
-                  ? "Select a service first"
-                  : "Enter invoice ID"
-              }
-              disabled={hasNoServiceSelected}
-              className="bg-white pr-24"
-              autoComplete="off"
-              data-lpignore="true"
-              data-1p-ignore=""
-              data-bwignore="true"
-              data-form-type="other"
-              rightIcon={
-                invoiceVerified ? (
-                  <span className="flex items-center gap-1 text-[#1ad1b9] font-semibold text-sm">
-                    <Check size={14} strokeWidth={3} />
-                    Verified
-                  </span>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleVerifyInvoice}
-                    disabled={
-                      hasNoServiceSelected ||
-                      !invoiceId?.trim() ||
-                      isVerifyingInvoice
-                    }
-                    className="flex items-center gap-1.5 text-primary font-semibold text-sm hover:underline cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:no-underline"
-                  >
-                    {isVerifyingInvoice && <LoadingSpinner size={3} />}
-                    {isVerifyingInvoice ? "Verifying…" : "Verify"}
-                  </button>
-                )
-              }
-            />
+            <div className="flex items-end gap-3">
+              <div className="flex-1">
+                <Input
+                  type="text"
+                  label="Invoice ID"
+                  name="op-invoice-id"
+                  value={invoiceId ?? ""}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setInvoiceId(val);
+                    if (invoiceVerified) setInvoiceVerified(false);
+                    if (invoiceError) setInvoiceError(null);
+                  }}
+                  placeholder={
+                    hasNoServiceSelected
+                      ? "Select a service first"
+                      : "Enter invoice ID"
+                  }
+                  disabled={hasNoServiceSelected}
+                  className="bg-white"
+                  autoComplete="off"
+                  data-lpignore="true"
+                  data-1p-ignore=""
+                  data-bwignore="true"
+                  data-form-type="other"
+                />
+              </div>
+              {invoiceVerified ? (
+                <span className="flex items-center gap-1 text-[#1ad1b9] font-semibold text-sm pb-3">
+                  <Check size={14} strokeWidth={3} />
+                  Verified
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleVerifyInvoice}
+                  disabled={
+                    hasNoServiceSelected ||
+                    !invoiceId?.trim() ||
+                    isVerifyingInvoice
+                  }
+                  className="flex items-center gap-1.5 text-primary font-semibold text-sm hover:underline cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:no-underline pb-3"
+                >
+                  {isVerifyingInvoice && <LoadingSpinner size={3} />}
+                  {isVerifyingInvoice ? "Verifying…" : "Verify"}
+                </button>
+              )}
+            </div>
             {invoiceError && (
               <p className="text-xs text-red-500 font-medium pt-1.5">
                 {invoiceError}

@@ -64,7 +64,7 @@ export default function Sidebar({
       href: "https://ownerspulse.com/",
       hasExternal: true,
       svgName: "OP",
-      label: "Owners Pulse",
+      label: "Pulse",
       isActive: currentPath === "/ownerspulse.com",
     },
     {
@@ -143,21 +143,35 @@ export default function Sidebar({
         title={collapsed ? item.label : ""}
       >
         {collapsed ? (
-          <SvgIcon
-            name={item.svgName}
-            width={item.svgName === "OP" ? 22 : 20}
-            height={item.svgName === "OP" ? 15 : 20}
-          />
+          <div className="relative w-5 h-5 shrink-0">
+            <div
+              className={cn(
+                "absolute inset-y-0 flex items-center justify-center",
+                item.svgName === "OP" ? "w-5" : "w-5 ",
+              )}
+            >
+              <SvgIcon
+                name={item.svgName}
+                className="w-full h-full object-contain"
+              />
+            </div>
+          </div>
         ) : (
           <>
             <div className="flex items-center gap-3 ">
-              {/* {renderIcon(item, false)}
-               */}
-              <SvgIcon
-                name={item.svgName}
-                width={item.svgName === "OP" ? 25 : 20}
-                height={20}
-              />
+              <div className="relative w-5 h-5 shrink-0">
+                <div
+                  className={cn(
+                    "absolute inset-y-0 flex items-center justify-center",
+                    item.svgName === "OP" ? "w-6" : "w-5 left-0",
+                  )}
+                >
+                  <SvgIcon
+                    name={item.svgName}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              </div>
               <span className={cn("", { "font-medium": item.isActive })}>
                 {item.label}
               </span>
@@ -243,7 +257,7 @@ export default function Sidebar({
       {/* Sidebar */}
       <aside
         className={cn(
-          "border-r bg-bg-secondary flex-shrink-0 transition-all duration-300 ease-in-out fixed lg:relative inset-y-0 left-0 z-50",
+          "border-r bg-bg-secondary shrink-0 transition-all duration-300 ease-in-out fixed lg:relative inset-y-0 left-0 z-50",
           {
             "w-17": collapsed,
             "w-70": !collapsed, //else use w-64
