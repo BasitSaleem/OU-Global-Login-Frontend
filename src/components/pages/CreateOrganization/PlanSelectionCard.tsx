@@ -1,11 +1,23 @@
 "use client";
 import React from "react";
-import { OiPlanType } from "@/apiHooks.ts/plans/plans.types";
 import { SvgIcon } from "@/components/ui/SvgIcon";
-import { getPlanTextColor, returnPackageName } from "@/utils/package-utils";
+import { getPlanTextColor } from "@/utils/package-utils";
+
+// Normalized shape both Owners Inventory plans and Owners Pulse packages get
+// mapped to, so the same card renders either product's tiers identically.
+export interface PlanCardData {
+  name: string;
+  tagline: string;
+  price: number;
+  trialDays: number;
+  isBasic?: boolean;
+  isPro?: boolean;
+  isBusiness?: boolean;
+  isEnterprise?: boolean;
+}
 
 interface PlanSelectionCardProps {
-  plan: OiPlanType;
+  plan: PlanCardData;
   isSelected?: boolean;
   onClick?: () => void;
   billingCycle: "monthly" | "yearly";
@@ -19,12 +31,8 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
   billingCycle,
   isDirectFlow = false,
 }) => {
-  const isBasic = plan.package_name.toUpperCase().includes("BASIC");
-  const isPro = plan.package_name.toUpperCase().includes("PRO");
-  const isBusiness = plan.package_name.toUpperCase().includes("BUSINESS");
-  const isEnterprise =
-    plan.package_name.toUpperCase().includes("PREMIUM") ||
-    plan.package_name.toUpperCase().includes("ENTERPRISE");
+  const { name, tagline, price, trialDays, isBasic, isPro, isBusiness, isEnterprise } =
+    plan;
 
   if (!isDirectFlow) {
     return (
@@ -57,7 +65,7 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
 
         <div className="mb-2">
           <h3 className="text-xl font-bold text-text flex items-center justify-between">
-            {returnPackageName(plan.package_name)}
+            {name}
             {isSelected && (
               <SvgIcon
                 name="check2"
@@ -69,13 +77,7 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
           </h3>
         </div>
 
-        <p className="text-text text-sm mb-10 leading-tight pr-4">
-          {isPro || isBusiness
-            ? "Ideal for growing businesses"
-            : isBasic
-              ? "Perfect for small businesses getting started"
-              : "For established businesses scaling up"}
-        </p>
+        <p className="text-text text-sm mb-10 leading-tight pr-4">{tagline}</p>
 
         <div className="mt-auto space-y-6">
           <div>
@@ -88,11 +90,7 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
                   isEnterprise,
                 })}`}
               >
-                $
-                {billingCycle === "monthly"
-                  ? Number(plan.monthly_price).toFixed(0)
-                  : (Number(plan.discounted_yearly_price) / 12).toFixed(0) ||
-                    Number(plan.yearly_price).toFixed(0)}
+                ${price.toFixed(0)}
               </span>
               <span className="text-gray-400 text-lg font-medium">/month</span>
             </div>
@@ -102,7 +100,7 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
           </div>
 
           <div className="text-text font-bold">
-            Start {plan?.free_trial_days}-Day Free Trial
+            Start {trialDays}-Day Free Trial
           </div>
         </div>
       </div>
@@ -139,10 +137,7 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
 
       <div className="flex justify-between items-start">
         <div className="flex items-center gap-2">
-          <h3 className="text-xl font-bold text-text">
-            {/* {plan.package_name?.split(" ")[1]} */}
-            {returnPackageName(plan.package_name)}
-          </h3>
+          <h3 className="text-xl font-bold text-text">{name}</h3>
           <SvgIcon
             name="check2"
             width={20}
@@ -154,21 +149,14 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
         <div className="flex flex-col items-end">
           <div className="flex items-baseline gap-1">
             <span
-              className={`text-4xl font-bold ${
-                isBasic
-                  ? "text-[#1AD1B9]"
-                  : isPro || isBusiness
-                    ? "text-[#38ACCC]"
-                    : isEnterprise
-                      ? "text-[#5588DF]"
-                      : "text-[#1AD1B9]"
-              }`}
+              className={`text-4xl font-bold ${getPlanTextColor({
+                isBasic,
+                isPro,
+                isBusiness,
+                isEnterprise,
+              })}`}
             >
-              $
-              {billingCycle === "monthly"
-                ? Number(plan.monthly_price).toFixed(0)
-                : (Number(plan.discounted_yearly_price) / 12).toFixed(0) ||
-                  Number(plan.yearly_price).toFixed(0)}
+              ${price.toFixed(0)}
             </span>
             <span className="text-gray-400 text-sm font-medium">/month</span>
           </div>
@@ -179,15 +167,11 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
       </div>
 
       <p className="text-text text-sm mb-3 leading-tight max-w-[80%]">
-        {isPro || isBusiness
-          ? "Ideal for growing businesses"
-          : isBasic
-            ? "Perfect for small businesses getting started"
-            : "For established businesses scaling up"}
+        {tagline}
       </p>
 
       <div className="mt-auto text-text font-bold text-sm">
-        Start 30-Day Free Trial
+        Start {trialDays}-Day Free Trial
       </div>
     </div>
   );

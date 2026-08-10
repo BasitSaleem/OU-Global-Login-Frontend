@@ -12,6 +12,7 @@ import { forgotPasswordData } from "@/types/auth.types";
 import { ROUTES } from "@/constants";
 import { useRouter } from "next/navigation";
 import { AuthPageShell } from "@/components/auth/AuthPageShell";
+import GoogleButton from "@/components/ui/GoogleButton";
 
 export default function ForgotPasswordPage() {
   const { mutate: changePassword, isPending } = useForgotPassword();
@@ -89,20 +90,24 @@ export default function ForgotPasswordPage() {
       </div>
 
       <div className="space-y-3">
-        <Button
+        <GoogleButton
+          text="Continue with Google"
+          className="flex rounded-xl border-primary/10 bg-primary/0 hover:bg-primary/10 text-text hover:text-primary"
+        />
+        {/* <Button
           variant="primary"
           className="w-full rounded-xl border-primary/10 bg-primary/0 hover:bg-primary/10 text-text hover:text-primary"
         >
           <Image src={Icons.google} alt="Google" width={20} height={20} />
           <span className="text-xs sm:text-sm ">Continue with Google</span>
-        </Button>
-        <Button
+        </Button> */}
+        {/* <Button
           variant="primary"
           className="w-full border-primary/10 rounded-xl bg-primary/0 hover:bg-primary/10 text-text hover:text-primary"
         >
           <Image src={Icons.microsoft} alt="Microsoft" width={20} height={20} />
           <span className="text-xs sm:text-sm ">Continue with Microsoft</span>
-        </Button>
+        </Button> */}
       </div>
 
       <div className="mt-6 text-center">
