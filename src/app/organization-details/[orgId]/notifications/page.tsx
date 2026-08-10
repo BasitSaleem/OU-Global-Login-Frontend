@@ -10,7 +10,9 @@ import {
   ShoppingCart,
   Truck,
 } from "lucide-react";
-import OwnersProductItem, { OwnerKey } from "@/components/pages/OrganizationDetails/Billing/OwnersProductItem";
+import OwnersProductItem, {
+  OwnerKey,
+} from "@/components/pages/OrganizationDetails/Billing/OwnersProductItem";
 import { NotificationSection } from "@/components/pages/OrganizationDetails/Notifications/NotificationSection";
 // Types
 export type NotificationSettings = {
@@ -46,24 +48,24 @@ const owners: {
     iconUrl: "OI",
     isDisabled: false,
   },
-  {
-    value: "jungle",
-    toolTipText: "Owners Jungle",
-    iconUrl: "OJ",
-    isDisabled: false,
-  },
-  {
-    value: "marketplace",
-    toolTipText: "Owner Marketplace",
-    iconUrl: "OM",
-    isDisabled: false,
-  },
-  {
-    value: "analytics",
-    toolTipText: "Analytics",
-    iconUrl: "OA",
-    isDisabled: false,
-  },
+  // {
+  //   value: "jungle",
+  //   toolTipText: "Owners Jungle",
+  //   iconUrl: "OJ",
+  //   isDisabled: false,
+  // },
+  // {
+  //   value: "marketplace",
+  //   toolTipText: "Owner Marketplace",
+  //   iconUrl: "OM",
+  //   isDisabled: false,
+  // },
+  // {
+  //   value: "analytics",
+  //   toolTipText: "Analytics",
+  //   iconUrl: "OA",
+  //   isDisabled: false,
+  // },
   {
     value: "pulse",
     toolTipText: "Owners Pulse",
