@@ -1,8 +1,8 @@
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
 import { User } from "@/types/auth.types";
 import { getColorFromId } from "@/utils/getRandomColors";
-import { PackagePlus, Trash, Trash2 } from "lucide-react";
-import React, { useMemo, useState } from "react";
+import { PackagePlus, Trash2 } from "lucide-react";
+import React, { useMemo } from "react";
 import { Button, Tooltip } from "@/components/ui";
 import { useRouter } from "next/navigation";
 import { organizationName } from "@/utils/organizationName";
@@ -55,6 +55,12 @@ export function OrganizationGridComponent({
     () => (org.products ?? []).some((p) => p.product_name === "OP"),
     [org.products],
   );
+  // Package name + subscription status are Owners Inventory concepts — hide
+  // them for orgs that only have Owners Pulse.
+  const hasOiProduct = useMemo(
+    () => (org.products ?? []).some((p) => p.product_name === "OI"),
+    [org.products],
+  );
   const { data: ghlLocation } = useGhlLocation(org.id, hasOpProduct);
   const totalMembers =
     (org?._count?.memberships ?? 0) + (ghlLocation?.membersCount ?? 0);
@@ -77,29 +83,37 @@ export function OrganizationGridComponent({
           </div>
         </Tooltip>
         <div className="flex-1 min-w-0">
-          <h3 className="truncate text-body-medium-bold text-black leading-tight pt-1">
-            {org?.name}
-          </h3>
-          <div className="flex items-center gap-2 overflow-hidden">
-            <p className="text-body-tiny text-gray-500 truncate">
-              {org?.subscriptions?.[0]?.oiPackage?.package_name || "Basic"}
-            </p>
-            {org?.subscriptions?.[0]?.status && (
-              <span
-                className={`px-1.5 py-0.5 text-[9px] font-bold rounded-full uppercase whitespace-nowrap ${
-                  SUBSCRIPTION_STATUS_COLOR[org.subscriptions[0].status] ||
-                  "bg-gray-100 text-gray-700"
-                }`}
-              >
-                {org.subscriptions[0].status}
-              </span>
-            )}
-          </div>
+          <Tooltip
+            content={org?.name || ""}
+            position="top"
+            wrapperClassName="block w-full min-w-0"
+          >
+            <h3 className="truncate text-body-medium-bold text-black leading-tight pt-1">
+              {org?.name}
+            </h3>
+          </Tooltip>
+          {hasOiProduct && (
+            <div className="flex items-center gap-2 overflow-hidden">
+              <p className="text-body-tiny text-gray-500 truncate">
+                {org?.subscriptions?.[0]?.oiPackage?.package_name || "Basic"}
+              </p>
+              {org?.subscriptions?.[0]?.status && (
+                <span
+                  className={`px-1.5 py-0.5 text-[9px] font-bold rounded-full uppercase whitespace-nowrap ${
+                    SUBSCRIPTION_STATUS_COLOR[org.subscriptions[0].status] ||
+                    "bg-gray-100 text-gray-700"
+                  }`}
+                >
+                  {org.subscriptions[0].status}
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="shrink-0 flex ">
           {canAddProduct && (
-            <Tooltip content="Add owner pulse product" position="top">
+            <Tooltip content="Add product" position="top">
               <Button
                 variant="basic"
                 className="z-40 hover:scale-110 duration-300"

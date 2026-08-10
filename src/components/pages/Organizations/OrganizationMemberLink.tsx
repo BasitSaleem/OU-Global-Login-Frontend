@@ -108,9 +108,9 @@ const ProductLaunchIcon = ({
 const OILink = ({ org, subscription }: OILinkProps) => {
   const isStatusDisabled = Boolean(
     subscription?.status &&
-      ["PAST_DUE", "CANCELLED", "EXPIRED", "INCOMPLETE"].includes(
-        subscription.status,
-      ),
+    ["PAST_DUE", "CANCELLED", "EXPIRED", "INCOMPLETE"].includes(
+      subscription.status,
+    ),
   );
 
   const [isDisabled, setIsDisabled] = useState<boolean>(() => {
@@ -142,7 +142,7 @@ const OILink = ({ org, subscription }: OILinkProps) => {
   const oiDisabled = Boolean(isDisabled || isStatusDisabled);
 
   return (
-    <div className="flex items-center -space-x-0.5">
+    <div className="flex items-center space-x-0.5">
       {org?.products?.map((product, index) => (
         <ProductLaunchIcon
           key={index}

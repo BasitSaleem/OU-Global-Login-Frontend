@@ -1,57 +1,56 @@
 "use client";
 import DashboardLayout from "@/components/layout/dashboard-layout";
 import { ChevronRight } from "lucide-react";
-import Link from "next/link";
+
 import { IconName, SvgIcon } from "@/components/ui/SvgIcon";
 import { getColorFromId } from "@/utils/getRandomColors";
-import { useRouter } from "next/navigation";
+
+const products = [
+  {
+    id: "1",
+    title: "Owners Inventory",
+    description: "Manage your inventory",
+    icon: "OI",
+    status: "Open",
+    available: true,
+    href: "https://ownersinventory.com/",
+  },
+  {
+    id: "5",
+    title: "Owners Pulse",
+    description: "Marketing & CRM automation",
+    icon: "OP",
+    status: "Open",
+    available: true,
+    href: "https://ownerspulse.com/",
+  },
+  {
+    id: "2",
+    title: "Owners Analytics",
+    description: "Get insights and analyze your business performance",
+    icon: "OA",
+    status: "Coming Soon",
+    available: false,
+  },
+  {
+    id: "3",
+    title: "Owners Marketplace",
+    description: "Buy and sell products",
+    icon: "OM",
+    status: "Coming Soon",
+    available: false,
+  },
+  {
+    id: "4",
+    title: "Owners Jungle",
+    description: "Explore opportunities",
+    icon: "OJ",
+    status: "Coming Soon",
+    available: false,
+  },
+];
 
 function ViewAllProductsPage() {
-  const router = useRouter();
-  const products = [
-    {
-      id: "1",
-      title: "Owners Inventory",
-      description: "Manage your inventory",
-      icon: "OI",
-      status: "Open",
-      available: true,
-      href: "https://ownersinventory.com/",
-    },
-    {
-      id: "5",
-      title: "Owners Pulse",
-      description: "Marketing & CRM automation",
-      icon: "OP",
-      status: "Open",
-      available: true,
-      href: "https://ownerspulse.com/",
-    },
-    {
-      id: "2",
-      title: "Owners Analytics",
-      description: "Get insights and analyze your business performance",
-      icon: "OA",
-      status: "Coming Soon",
-      available: false,
-    },
-    {
-      id: "3",
-      title: "Owners Marketplace",
-      description: "Buy and sell products",
-      icon: "OM",
-      status: "Coming Soon",
-      available: false,
-    },
-    {
-      id: "4",
-      title: "Owners Jungle",
-      description: "Explore opportunities",
-      icon: "OJ",
-      status: "Coming Soon",
-      available: false,
-    },
-  ];
   return (
     <div className="p-4">
       <div className="max-w-7xl mx-auto">
@@ -70,12 +69,15 @@ function ViewAllProductsPage() {
               <div className="flex items-start gap-3">
                 <div
                   className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-                  style={{ backgroundColor: getColorFromId(product.id) }}
+                  // style={{ backgroundColor: getColorFromId(product.id) }}
                 >
                   <SvgIcon
                     name={product.icon as IconName}
-                    width={24}
-                    height={24}
+                    className={
+                      product.icon === "OP"
+                        ? "w-7.5 h-5 object-contain"
+                        : "w-6 h-6 object-contain"
+                    }
                   />
                 </div>
 

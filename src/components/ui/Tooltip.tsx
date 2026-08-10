@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState, useLayoutEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/utils/helpers";
 
@@ -16,6 +17,8 @@ interface TooltipProps {
     showArrow?: boolean;
 }
 
+const GAP = 10; // distance between trigger and tooltip, in px
+
 export const Tooltip: React.FC<TooltipProps> = ({
     content,
     position = "top",
@@ -26,12 +29,48 @@ export const Tooltip: React.FC<TooltipProps> = ({
     showArrow = true,
 }) => {
     const [isVisible, setIsVisible] = useState(false);
+    const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
+    const wrapperRef = useRef<HTMLDivElement>(null);
 
-    const positionClasses = {
-        top: "bottom-full left-1/2 -translate-x-1/2 mb-2.5",
-        bottom: "top-full left-1/2 -translate-x-1/2 mt-2.5",
-        left: "right-full top-1/2 -translate-y-1/2 mr-2.5",
-        right: "left-full top-1/2 -translate-y-1/2 ml-2.5",
+    // Portaled to document.body and positioned via getBoundingClientRect so the
+    // tooltip escapes any ancestor's `overflow: hidden` (e.g. a modal) instead
+    // of being clipped when it's wider than the clipping container.
+    useLayoutEffect(() => {
+        if (!isVisible || !wrapperRef.current) return;
+
+        const updatePosition = () => {
+            const rect = wrapperRef.current?.getBoundingClientRect();
+            if (!rect) return;
+            switch (position) {
+                case "top":
+                    setCoords({ top: rect.top - GAP, left: rect.left + rect.width / 2 });
+                    break;
+                case "bottom":
+                    setCoords({ top: rect.bottom + GAP, left: rect.left + rect.width / 2 });
+                    break;
+                case "left":
+                    setCoords({ top: rect.top + rect.height / 2, left: rect.left - GAP });
+                    break;
+                case "right":
+                    setCoords({ top: rect.top + rect.height / 2, left: rect.right + GAP });
+                    break;
+            }
+        };
+
+        updatePosition();
+        window.addEventListener("scroll", updatePosition, true);
+        window.addEventListener("resize", updatePosition);
+        return () => {
+            window.removeEventListener("scroll", updatePosition, true);
+            window.removeEventListener("resize", updatePosition);
+        };
+    }, [isVisible, position]);
+
+    const originClasses = {
+        top: "-translate-x-1/2 -translate-y-full",
+        bottom: "-translate-x-1/2",
+        left: "-translate-x-full -translate-y-1/2",
+        right: "-translate-y-1/2",
     };
 
     const arrowClasses = {
@@ -65,43 +104,48 @@ export const Tooltip: React.FC<TooltipProps> = ({
 
     return (
         <div
+            ref={wrapperRef}
             className={cn("group relative inline-block", wrapperClassName)}
             onMouseEnter={() => setIsVisible(true)}
             onMouseLeave={() => setIsVisible(false)}
         >
             {children}
-            <AnimatePresence>
-                {isVisible && content && (
-                    <motion.div
-                        initial="initial"
-                        animate="animate"
-                        exit="exit"
-                        variants={variants}
-                        transition={{
-                            type: "spring",
-                            stiffness: 400,
-                            damping: 25,
-                            delay: delay,
-                        }}
-                        className={cn(
-                            "pointer-events-none absolute z-9999 whitespace-nowrap rounded-lg border border-border/50 bg-bg-secondary/95 px-3 py-2 text-body-tiny font-medium text-text shadow-xl backdrop-blur-md",
-                            positionClasses[position],
-                            className
-                        )}
-                    >
-                        {content}
-                        {showArrow && (
-                            <div
+            {typeof document !== "undefined" &&
+                createPortal(
+                    <AnimatePresence>
+                        {isVisible && content && coords && (
+                            <motion.div
+                                initial="initial"
+                                animate="animate"
+                                exit="exit"
+                                variants={variants}
+                                transition={{
+                                    type: "spring",
+                                    stiffness: 400,
+                                    damping: 25,
+                                    delay: delay,
+                                }}
+                                style={{ position: "fixed", top: coords.top, left: coords.left }}
                                 className={cn(
-                                    "absolute border-[5px] border-transparent",
-                                    arrowClasses[position]
+                                    "pointer-events-none z-9999 whitespace-nowrap rounded-lg border border-border/50 bg-bg-secondary/95 px-3 py-2 text-body-tiny font-medium text-text shadow-xl backdrop-blur-md",
+                                    originClasses[position],
+                                    className
                                 )}
-                            />
+                            >
+                                {content}
+                                {showArrow && (
+                                    <div
+                                        className={cn(
+                                            "absolute border-[5px] border-transparent",
+                                            arrowClasses[position]
+                                        )}
+                                    />
+                                )}
+                            </motion.div>
                         )}
-                    </motion.div>
+                    </AnimatePresence>,
+                    document.body
                 )}
-            </AnimatePresence>
         </div>
     );
 };
-

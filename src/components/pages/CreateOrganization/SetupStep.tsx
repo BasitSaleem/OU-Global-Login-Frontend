@@ -4,7 +4,12 @@ import { Input, Button, LoadingSpinner, Dots } from "@/components/ui";
 import { SubdomainSuggestion } from "@/components/SubdomainSuggestion";
 import { AvailabilityStatus } from "@/components/AvailabilityStatus";
 import { useGetAllPlans } from "@/apiHooks.ts/plans/plans.api";
-import { useGetOpPackages } from "@/apiHooks.ts/opPackages/opPackages.api";
+import { OiPlanType } from "@/apiHooks.ts/plans/plans.types";
+import {
+  useGetOpPackages,
+  OpPackage,
+  OpTier,
+} from "@/apiHooks.ts/opPackages/opPackages.api";
 import { PRODUCTS } from "@/constants";
 import { SvgIcon } from "@/components/ui/SvgIcon";
 import {
@@ -15,21 +20,88 @@ import {
   ShoppingCart,
   Layers,
   ArrowLeft,
-  Check,
 } from "lucide-react";
-import PlanSelectionCard from "./PlanSelectionCard";
+import PlanSelectionCard, { PlanCardData } from "./PlanSelectionCard";
 import PlanCardSkeleton from "@/components/PlanCardSkeleton";
 import OpServicesSelector from "./OpServicesSelector";
+import { BillingCycleToggle } from "./BillingCycleToggle";
 import Link from "next/link";
+import { returnPackageName } from "@/utils/package-utils";
 
-// Owners Pulse tier picker — shown in the OP configuration block when the "Plans"
-// mode is active. OP has 3 simple tiers, each with a 14-day free trial (GHL
-// bills OP; the setup fee is arranged separately with the team). GHL's own
-// SaaS Mode requires a card on file to keep a sub-account off its paywall —
-// the trial only delays the charge, it doesn't waive card collection — and
-// that card step is handled natively on GHL's side, not by this app.
-// Uses its OWN opPackageId state (distinct from the OI selectedPlanId) so the two
-// products don't collide when both are selected.
+// Maps a raw OI package_name into the tier flags PlanSelectionCard uses for
+// its color/badge treatment (Pro & Business share the "Most Popular" look).
+const getOiTierFlags = (packageName: string) => {
+  const upper = packageName.toUpperCase();
+  return {
+    isBasic: upper.includes("BASIC"),
+    isPro: upper.includes("PRO"),
+    isBusiness: upper.includes("BUSINESS"),
+    isEnterprise: upper.includes("PREMIUM") || upper.includes("ENTERPRISE"),
+  };
+};
+
+const tierTagline = ({
+  isBasic,
+  isPro,
+  isBusiness,
+}: {
+  isBasic?: boolean;
+  isPro?: boolean;
+  isBusiness?: boolean;
+}) =>
+  isPro || isBusiness
+    ? "Ideal for growing businesses"
+    : isBasic
+      ? "Perfect for small businesses getting started"
+      : "For established businesses scaling up";
+
+const toOiPlanCardData = (
+  plan: OiPlanType,
+  billingCycle: "monthly" | "yearly",
+): PlanCardData => {
+  const flags = getOiTierFlags(plan.package_name);
+  const price =
+    billingCycle === "monthly"
+      ? Number(plan.monthly_price)
+      : Number(plan.discounted_yearly_price) / 12 || Number(plan.yearly_price);
+  return {
+    name: returnPackageName(plan.package_name),
+    tagline: tierTagline(flags),
+    price,
+    trialDays: plan.free_trial_days,
+    ...flags,
+  };
+};
+
+// Owners Pulse only has 3 tiers, mirroring OI's Basic/Pro/Premium structure —
+// so Growth (the middle tier) gets the same "Most Popular" treatment Pro does.
+const OP_TIER_FLAGS: Record<
+  OpTier,
+  { isBasic?: boolean; isPro?: boolean; isEnterprise?: boolean }
+> = {
+  STARTER: { isBasic: true },
+  GROWTH: { isPro: true },
+  DOMINATION: { isEnterprise: true },
+};
+
+const toOpPackageCardData = (
+  pkg: OpPackage,
+  billingCycle: "monthly" | "yearly",
+): PlanCardData => {
+  const flags = OP_TIER_FLAGS[pkg.tier] ?? {};
+  const showYearly = billingCycle === "yearly" && !!pkg.yearly_price;
+  const price = showYearly
+    ? Number(pkg.yearly_price) / 12
+    : Number(pkg.monthly_price);
+  return {
+    name: pkg.name,
+    tagline: tierTagline(flags),
+    price,
+    trialDays: pkg.trial_days,
+    ...flags,
+  };
+};
+
 const OpTierSelection: React.FC<{
   opPackageId: string | null;
   setOpPackageId: (val: string | null) => void;
@@ -37,25 +109,22 @@ const OpTierSelection: React.FC<{
 }> = ({ opPackageId, setOpPackageId, billingCycle }) => {
   const { data: packages, isPending } = useGetOpPackages();
 
-  // opPackageId starts null; default to the first tier so a valid OP tier is
-  // always sent once packages load.
-  useEffect(() => {
-    if (packages && packages.length > 0) {
-      const isValidOpSelection = packages.some((p) => p.id === opPackageId);
-      if (!isValidOpSelection) {
-        setOpPackageId(packages[0].id);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [packages]);
-
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <p className="text-text font-semibold">Choose your plan</p>
-        <span className="text-xs font-medium text-text-secondary">
-          14-day free trial
-        </span>
+        <div className="flex items-center gap-3">
+          {/* <span className="text-xs font-medium text-text-secondary">
+            14-day free trial
+          </span> */}
+          <Link
+            href="https://ownerspulse.com/pricing"
+            target="_blank"
+            className="text-primary cursor-pointer text-nowrap text-sm font-bold hover:underline"
+          >
+            View all packages
+          </Link>
+        </div>
       </div>
 
       {isPending ? (
@@ -70,41 +139,15 @@ const OpTierSelection: React.FC<{
         </p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {packages.map((pkg) => {
-            const isSelected = opPackageId === pkg.id;
-            const showYearly = billingCycle === "yearly" && !!pkg.yearly_price;
-            const priceVal = showYearly ? pkg.yearly_price : pkg.monthly_price;
-            return (
-              <button
-                type="button"
-                key={pkg.id}
-                onClick={() => setOpPackageId(pkg.id)}
-                className={`relative text-left p-5 rounded-xl border transition-all ${
-                  isSelected
-                    ? "border-primary bg-primary/5 ring-1 ring-primary"
-                    : "border-border hover:border-primary/50 bg-background"
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-bold text-text capitalize">
-                    {pkg.name}
-                  </span>
-                  {isSelected && <Check size={16} className="text-primary" />}
-                </div>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-bold text-text">
-                    ${priceVal}
-                  </span>
-                  <span className="text-sm text-text-secondary">
-                    {showYearly ? "/yr" : "/mo"}
-                  </span>
-                </div>
-                <p className="text-xs text-text-secondary mt-2">
-                  {pkg.trial_days}-day free trial
-                </p>
-              </button>
-            );
-          })}
+          {packages.map((pkg) => (
+            <PlanSelectionCard
+              key={pkg.id}
+              plan={toOpPackageCardData(pkg, billingCycle)}
+              isSelected={opPackageId === pkg.id}
+              onClick={() => setOpPackageId(pkg.id)}
+              billingCycle={billingCycle}
+            />
+          ))}
         </div>
       )}
     </div>
@@ -365,9 +408,9 @@ export const SetupStep: React.FC<SetupStepProps> = ({
       {/* Owners Inventory configuration: subdomain + OI plan cards */}
       {isOiSelected && activeProduct === "OI" && (
         <div className="space-y-4">
-          {!isDirectFlow && (
+          {/* {!isDirectFlow && (
             <h3 className="text-base font-bold text-text">Owners Inventory</h3>
-          )}
+          )} */}
 
           <div className="space-y-0">
             <div className="relative group">
@@ -406,39 +449,6 @@ export const SetupStep: React.FC<SetupStepProps> = ({
           </div>
 
           <div className="space-y-2">
-            <div className="space-y-0">
-              <div
-                className={`flex w-full ${isDirectPlanView ? "flex-col" : "flex-row"}`}
-              >
-                <p className="text-text pb-1 text-nowrap font-semibold pr-2">
-                  {isDirectPlanView ? "Your Selected Plan" : "Pricing"}
-                </p>
-                <div className="flex justify-between w-full items-center gap-2">
-                  <span className="text-text font-medium text-sm">
-                    {isDirectPlanView
-                      ? `${activeType.charAt(0) + activeType.slice(1).toLowerCase()}`
-                      : `(${typeData.findIndex((t) => t.id === activeType) + 1}/${typeData.length})`}
-                  </span>
-                  {isDirectPlanView && (
-                    <span className="text-text text-xs font-medium">
-                      {billingCycle === "yearly"
-                        ? "Yearly Billing"
-                        : "Monthly Billing"}
-                    </span>
-                  )}
-                </div>
-                {!isDirectPlanView && (
-                  <Link
-                    href="https://ownersinventory.com/pricing"
-                    target="_blank"
-                    className="text-primary cursor-pointer text-nowrap text-sm font-bold hover:underline"
-                  >
-                    View all packages
-                  </Link>
-                )}
-              </div>
-            </div>
-
             {!isDirectPlanView && (
               <div className="flex justify-between items-center py-2">
                 <div className="flex flex-wrap gap-2 p-1.5 bg-ribbon rounded-2xl w-fit">
@@ -464,33 +474,46 @@ export const SetupStep: React.FC<SetupStepProps> = ({
                   })}
                 </div>
                 <div className="flex items-center gap-6 pb-1">
-                  <div className="flex items-center gap-3">
-                    <span
-                      className={`text-sm font-bold ${billingCycle === "monthly" ? "text-text" : "text-gray-400"}`}
-                    >
-                      Monthly
-                    </span>
-                    <div
-                      onClick={() =>
-                        setBillingCycle(
-                          billingCycle === "monthly" ? "yearly" : "monthly",
-                        )
-                      }
-                      className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-all duration-300 ${billingCycle === "yearly" ? "bg-[#1AD1B9]" : "bg-gray-200"}`}
-                    >
-                      <div
-                        className={`w-4 h-4 bg-bg-secondary rounded-full shadow-sm transition-all duration-300 ${billingCycle === "yearly" ? "translate-x-6" : "translate-x-0"}`}
-                      />
-                    </div>
-                    <span
-                      className={`text-sm font-bold ${billingCycle === "yearly" ? "text-text" : "text-gray-400"}`}
-                    >
-                      Yearly
-                    </span>
-                  </div>
+                  <BillingCycleToggle
+                    billingCycle={billingCycle}
+                    setBillingCycle={setBillingCycle}
+                  />
                 </div>
               </div>
             )}
+            <div className="space-y-0">
+              <div
+                className={`flex w-full ${isDirectPlanView ? "flex-col" : "flex-row"}`}
+              >
+                <p className="text-text pb-1 text-nowrap font-semibold pr-2">
+                  {isDirectPlanView ? "Your Selected Plan" : "Pricing"}
+                </p>
+                <div className="flex justify-between w-full items-center gap-2">
+                  {isDirectPlanView && (
+                    <>
+                      <span className="text-text font-medium text-sm">
+                        {activeType.charAt(0) +
+                          activeType.slice(1).toLowerCase()}
+                      </span>
+                      <span className="text-text text-xs font-medium">
+                        {billingCycle === "yearly"
+                          ? "Yearly Billing"
+                          : "Monthly Billing"}
+                      </span>
+                    </>
+                  )}
+                </div>
+                {!isDirectPlanView && (
+                  <Link
+                    href="https://ownersinventory.com/pricing"
+                    target="_blank"
+                    className="text-primary cursor-pointer text-nowrap text-sm font-bold hover:underline"
+                  >
+                    View all packages
+                  </Link>
+                )}
+              </div>
+            </div>
 
             <div className="relative group">
               {loadingPlans ? (
@@ -554,7 +577,7 @@ export const SetupStep: React.FC<SetupStepProps> = ({
                       .map((plan) => (
                         <PlanSelectionCard
                           key={plan.id}
-                          plan={plan}
+                          plan={toOiPlanCardData(plan, billingCycle)}
                           isSelected={selectedPlanId === plan.id}
                           onClick={() => setSelectedPlanId(plan.id)}
                           billingCycle={billingCycle}
@@ -583,7 +606,7 @@ export const SetupStep: React.FC<SetupStepProps> = ({
       {/* Owners Pulse configuration: plan (trial) vs done-for-you services */}
       {isOpSelected && activeProduct === "OP" && (
         <div className="space-y-3">
-          <h3 className="text-base font-bold text-text">Owners Pulse</h3>
+          {/* <h3 className="text-base font-bold text-text">Owners Pulse</h3> */}
 
           {/* Plan (trial) vs Services  +  Monthly / Yearly toggle */}
           <div className="flex items-center justify-between flex-wrap gap-3">
@@ -613,30 +636,10 @@ export const SetupStep: React.FC<SetupStepProps> = ({
             </div>
 
             <div className="flex flex-col items-end gap-2">
-              <div className="flex items-center gap-3">
-                <span
-                  className={`text-sm font-bold ${billingCycle === "monthly" ? "text-text" : "text-text-secondary"}`}
-                >
-                  Monthly
-                </span>
-                <div
-                  onClick={() =>
-                    setBillingCycle(
-                      billingCycle === "monthly" ? "yearly" : "monthly",
-                    )
-                  }
-                  className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-all duration-300 ${billingCycle === "yearly" ? "bg-success" : "bg-card-secondary"}`}
-                >
-                  <div
-                    className={`w-4 h-4 bg-bg-secondary rounded-full shadow-sm transition-all duration-300 ${billingCycle === "yearly" ? "translate-x-6" : "translate-x-0"}`}
-                  />
-                </div>
-                <span
-                  className={`text-sm font-bold ${billingCycle === "yearly" ? "text-text" : "text-text-secondary"}`}
-                >
-                  Yearly
-                </span>
-              </div>
+              <BillingCycleToggle
+                billingCycle={billingCycle}
+                setBillingCycle={setBillingCycle}
+              />
             </div>
           </div>
 
