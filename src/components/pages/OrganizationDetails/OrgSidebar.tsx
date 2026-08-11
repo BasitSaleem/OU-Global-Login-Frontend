@@ -76,17 +76,16 @@ export default function OrgSidebar({
         rightIcon={
           !collapsed ? (
             <SvgIcon
-              name="ownersInventory"
+              name="ownersUniverse"
               className="text-foreground"
               width={130}
-              height={130}
             />
           ) : (
             <SvgIcon
-              name="OI"
+              name="ownersUniverseColl"
               className="text-foreground"
-              width={40}
-              height={40}
+              width={30}
+              height={30}
             />
           )
         }
