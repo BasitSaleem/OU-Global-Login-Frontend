@@ -449,38 +449,6 @@ export const SetupStep: React.FC<SetupStepProps> = ({
           </div>
 
           <div className="space-y-2">
-            {!isDirectPlanView && (
-              <div className="flex justify-between items-center py-2">
-                <div className="flex flex-wrap gap-2 p-1.5 bg-ribbon rounded-2xl w-fit">
-                  {typeData.map((type) => {
-                    const Icon = type.icon;
-                    const isActive = activeType === type.id;
-                    return (
-                      <button
-                        key={type.id}
-                        onClick={() => {
-                          setActiveType(type.id);
-                        }}
-                        className={`flex items-center gap-2 px-6 py-2.5 rounded-xl cursor-pointer transition-all ${
-                          isActive
-                            ? "bg-primary text-white shadow-md"
-                            : "text-gray-500 hover:text-gray-700"
-                        }`}
-                      >
-                        <Icon size={18} />
-                        <span className="font-bold text-sm">{type.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-                <div className="flex items-center gap-6 pb-1">
-                  <BillingCycleToggle
-                    billingCycle={billingCycle}
-                    setBillingCycle={setBillingCycle}
-                  />
-                </div>
-              </div>
-            )}
             <div className="space-y-0">
               <div
                 className={`flex w-full ${isDirectPlanView ? "flex-col" : "flex-row"}`}
@@ -514,6 +482,38 @@ export const SetupStep: React.FC<SetupStepProps> = ({
                 )}
               </div>
             </div>
+            {!isDirectPlanView && (
+              <div className="flex justify-between items-center py-2">
+                <div className="flex flex-wrap gap-2 p-1.5 bg-ribbon rounded-2xl w-fit">
+                  {typeData.map((type) => {
+                    const Icon = type.icon;
+                    const isActive = activeType === type.id;
+                    return (
+                      <button
+                        key={type.id}
+                        onClick={() => {
+                          setActiveType(type.id);
+                        }}
+                        className={`flex items-center gap-2 px-6 py-2.5 rounded-xl cursor-pointer transition-all ${
+                          isActive
+                            ? "bg-primary text-white shadow-md"
+                            : "text-gray-500 hover:text-gray-700"
+                        }`}
+                      >
+                        <Icon size={18} />
+                        <span className="font-bold text-sm">{type.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="flex items-center gap-6 pb-1">
+                  <BillingCycleToggle
+                    billingCycle={billingCycle}
+                    setBillingCycle={setBillingCycle}
+                  />
+                </div>
+              </div>
+            )}
 
             <div className="relative group">
               {loadingPlans ? (
