@@ -363,6 +363,10 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
               {previewLoading ? "…" : `$${firstPayment.toLocaleString()}`}
             </span>
           </div>
+
+          <p className="text-xs text-gray-500 text-right pt-1">
+            (Prices are exclusive of taxes.)
+          </p>
         </div>
       </div>
 
