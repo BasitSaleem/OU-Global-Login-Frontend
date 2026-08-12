@@ -92,7 +92,7 @@ export default function UserProfileLayout({
         >
           {/* Logo */}
           <div
-            className={`h-14 flex items-center justify-start border-b  ${sidebarCollapsed ? "px-4" : "px-3"
+            className={`h-14 flex items-center border-b  ${sidebarCollapsed ? "justify-center px-0" : "justify-start px-3"
               }`}
           >
             <a onClick={() => router.push("/")}>

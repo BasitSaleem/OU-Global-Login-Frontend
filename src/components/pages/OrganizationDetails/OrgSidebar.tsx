@@ -70,8 +70,8 @@ export default function OrgSidebar({
         isShow={true}
         href="/"
         className={cn(
-          "h-14 flex items-center justify-start border-b cursor-pointer",
-          collapsed ? "px-3" : "px-3",
+          "h-14 flex items-center border-b cursor-pointer",
+          collapsed ? "justify-center px-0" : "justify-start px-3",
         )}
         rightIcon={
           !collapsed ? (
