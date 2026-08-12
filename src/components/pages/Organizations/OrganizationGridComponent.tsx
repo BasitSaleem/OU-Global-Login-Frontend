@@ -66,7 +66,7 @@ export function OrganizationGridComponent({
 
   return (
     <div key={id} className="flex flex-col h-25" onClick={onClick}>
-      <div className="flex items-start gap-3 mb-2">
+      <div className="flex items-center gap-3 mb-2">
         <Tooltip content={org?.name || ""} position="top">
           <div
             className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-medium"
@@ -81,7 +81,7 @@ export function OrganizationGridComponent({
             position="top"
             wrapperClassName="block w-full min-w-0"
           >
-            <h3 className="truncate text-body-medium-bold text-black leading-tight pt-1">
+            <h3 className="truncate text-body-medium-bold text-black leading-tight">
               {org?.name}
             </h3>
           </Tooltip>
