@@ -13,6 +13,8 @@ import {
 import OwnersProductItem, {
   OwnerKey,
 } from "@/components/pages/OrganizationDetails/Billing/OwnersProductItem";
+import OpBillingSection from "@/components/pages/OrganizationDetails/Billing/OpBillingSection";
+import { useParams } from "next/navigation";
 import { NotificationSection } from "@/components/pages/OrganizationDetails/Notifications/NotificationSection";
 // Types
 export type NotificationSettings = {
@@ -111,6 +113,7 @@ export default function NotificationPreferencesPage() {
   });
 
   // Which owner is active
+  const { orgId } = useParams<{ orgId: string }>();
   const [selectedOwner, setSelectedOwner] = useState<OwnerKey>("inventory");
 
   // update methods (scoped to selectedOwner)
@@ -265,6 +268,14 @@ export default function NotificationPreferencesPage() {
           </div>
         </div>
 
+        {selectedOwner === "pulse" ? (
+          <OpBillingSection
+            orgId={orgId as string}
+            title="Owners Pulse Notifications"
+            message="To manage your notification preferences, please navigate to your Owners Pulse account."
+          />
+        ) : (
+          <>
         <div className="bg-bg-secondary border rounded-lg p-5 mb-5">
           <h2 className="text-body-medium-bold font-medium text-black mb-2">
             Notification Methods
@@ -337,6 +348,8 @@ export default function NotificationPreferencesPage() {
             Save Preferences
           </Button>
         </div>
+          </>
+        )}
       </div>
     </main>
   );
