@@ -100,15 +100,17 @@ export default function UserProfileLayout({
                 <div
                   className="w-8 h-8 rounded-lg flex items-center  justify-center cursor-pointer"
                 >
-                  <SvgIcon name="OI" className=" w-[30px] h-[30px]" />
+                  <SvgIcon
+                    name="ownersUniverseColl"
+                    className=" w-[30px] h-[30px]"
+                  />
 
                 </div>
               ) : (
                 <SvgIcon
-                  name="ownersInventory"
+                  name="ownersUniverse"
                   className="text-foreground cursor-pointer"
                   width={130}
-                  height={130}
                 />
 
               )}{" "}
