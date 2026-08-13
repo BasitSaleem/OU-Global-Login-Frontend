@@ -134,7 +134,7 @@ const AuthLayout = ({ children }: AuthLayoutProp) => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Logo Icon="ownersInventory" className="cursor-pointer" />
+              <Logo Icon="ownersUniverse" className="cursor-pointer" />
             </a>
             <div className="flex items-center gap-2 sm:gap-3">
               <span className="text-xs sm:text-sm hidden sm:block text-text">

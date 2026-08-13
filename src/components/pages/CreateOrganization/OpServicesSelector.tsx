@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { Check, ChevronDown, ChevronUp } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, Info } from "lucide-react";
 import Link from "next/link";
 import {
   useGetOpServices,
@@ -365,7 +365,7 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
               <div className="min-w-0">
                 <p className="font-medium text-gray-900">Due now — setup fee</p>
                 <p className="mt-0.5 text-[11px] text-gray-500">
-                  One-time charge via this payment link
+                  One-time charge via below payment link
                 </p>
               </div>
               <span className="shrink-0 font-semibold text-gray-900">
@@ -374,9 +374,12 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
             </div>
           </div>
 
-          <p className="text-xs text-gray-500 text-right pt-1">
+          {/* Full-width note, styled like the GHL chip so both read as the
+              same kind of informational callout. */}
+          <div className="mt-2 flex w-full items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-2 text-[11px] font-medium text-primary">
+            <Info size={14} className="shrink-0" />
             Prices are exclusive of taxes.
-          </p>
+          </div>
         </div>
       </div>
 
