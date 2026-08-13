@@ -193,7 +193,6 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
     ? (preview?.yearly ?? 0)
     : (preview?.monthly ?? 0);
   const setupFee = preview?.setup ?? 0;
-  const firstPayment = monthlyTotal + setupFee;
 
   return (
     <div className="space-y-4">
@@ -339,33 +338,44 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
           </div>
 
           {/* Pricing Breakdown */}
-          <div className="space-y-2 pt-0.5">
-            <div className="flex items-center justify-between text-xs sm:text-sm">
-              <span className="text-gray-500 font-normal">Monthly total</span>
-              <span className="font-semibold text-gray-900">
-                {previewLoading ? "…" : `$${monthlyTotal.toLocaleString()}/mo`}
+          {/* The two amounts go to different places at different times, so each
+              line says who charges it and when. */}
+          <div className="space-y-3 pt-0.5">
+            <div className="flex items-start justify-between gap-3 text-xs sm:text-sm">
+              <div className="min-w-0">
+                <p className="font-medium text-gray-900">
+                  {isYearly ? "Yearly subscription" : "Monthly subscription"}
+                </p>
+                <p className="mt-0.5 flex flex-wrap items-center gap-1 text-[11px] text-gray-500">
+                  Not charged today — billed via
+                  <span className="inline-flex items-center rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                    GHL
+                  </span>
+                  after setup
+                </p>
+              </div>
+              <span className="shrink-0 font-semibold text-gray-900">
+                {previewLoading
+                  ? "…"
+                  : `$${monthlyTotal.toLocaleString()}${isYearly ? "/yr" : "/mo"}`}
               </span>
             </div>
 
-            <div className="flex items-center justify-between text-xs sm:text-sm">
-              <span className="text-gray-500 font-normal">Setup fee</span>
-              <span className="font-semibold text-gray-900">
+            <div className="flex items-start justify-between gap-3 text-xs sm:text-sm">
+              <div className="min-w-0">
+                <p className="font-medium text-gray-900">Due now — setup fee</p>
+                <p className="mt-0.5 text-[11px] text-gray-500">
+                  One-time charge via this payment link
+                </p>
+              </div>
+              <span className="shrink-0 font-semibold text-gray-900">
                 {previewLoading ? "…" : `$${setupFee.toLocaleString()}`}
               </span>
             </div>
           </div>
 
-          <div className="border-t border-gray-200/80 pt-3 flex items-center justify-between">
-            <span className="font-semibold text-gray-900 text-sm">
-              First payment
-            </span>
-            <span className="font-semibold text-gray-900 text-base">
-              {previewLoading ? "…" : `$${firstPayment.toLocaleString()}`}
-            </span>
-          </div>
-
           <p className="text-xs text-gray-500 text-right pt-1">
-            (Prices are exclusive of taxes.)
+            Prices are exclusive of taxes.
           </p>
         </div>
       </div>
@@ -374,7 +384,7 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
       <p className="text-xs sm:text-sm text-gray-700 pt-0.5">
         {preview?.stripePaymentLink ? (
           <>
-            To continue,{" "}
+            To pay your ${setupFee.toLocaleString()} setup fee,{" "}
             <a
               href={preview.stripePaymentLink}
               target="_blank"
@@ -383,7 +393,7 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
             >
               Make Payment
             </a>{" "}
-            or Verify with Invoice ID to confirm your setup fee.
+            or verify with an Invoice ID.
           </>
         ) : (
           "Setup-fee payment isn't available online for this selection yet — please verify with an Invoice ID from your Closer."

@@ -1,5 +1,11 @@
 "use client";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
+import OwnersProductItem, {
+  OwnerKey,
+  OWNER_META,
+} from "@/components/pages/OrganizationDetails/Billing/OwnersProductItem";
+import OpBillingSection from "@/components/pages/OrganizationDetails/Billing/OpBillingSection";
+import { useOrganizationDetails } from "@/apiHooks.ts/organization/organization.api";
 
 import PaymentMethodCard from "@/components/pages/OrganizationDetails/PaymentMethods/PaymentMethodCard";
 import DeletePaymentModal from "@/components/pages/OrganizationDetails/PaymentMethods/DeletePaymentModal";
@@ -32,9 +38,33 @@ export interface PaymentCardsType {
   cardHolderName: string;
 }
 
+const OWNER_ORDER = ["OI", "OP", "OJ", "OM", "OA"];
+
 const PaymentCardsPage = () => {
   const { orgId } = useParams<{ orgId: string }>();
   const { data, isLoading, error } = useGetPaymentMethods(orgId as string);
+  const { data: organization } = useOrganizationDetails(orgId as string);
+
+  // Same product-switcher behaviour as the Billing page: only offer the
+  // products this org actually has, and keep the selection valid.
+  const [selectedOwner, setSelectedOwner] = useState<OwnerKey>("inventory");
+  const shownOwners = useMemo(() => {
+    const names = (organization?.products ?? [])
+      .map((p) => p.product_name)
+      .filter(Boolean) as string[];
+    return OWNER_ORDER.filter((n) => names.includes(n))
+      .map((n) => OWNER_META[n])
+      .filter(Boolean);
+  }, [organization]);
+
+  useEffect(() => {
+    if (
+      shownOwners.length &&
+      !shownOwners.some((o) => o.value === selectedOwner)
+    ) {
+      setSelectedOwner(shownOwners[0].value);
+    }
+  }, [shownOwners, selectedOwner]);
 
   const makePrimaryMutation = useMakePrimaryPaymentMethod();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -70,13 +100,38 @@ const PaymentCardsPage = () => {
   return (
     <AuthGuard>
       <div className="px-4 py-12 w-full max-w-7xl mx-auto md:px-11">
-        <div className="flex items-center gap-2 mb-6">
-          <h1 className="font-bold text-2xl">Payment Cards</h1>
-          <div className="w-6 h-6 rounded-full flex items-center justify-center text-white font-medium bg-primary">
-            {visiblePaymentMethods.length}
+        <div className="flex w-full justify-between items-center mb-6">
+          <div className="flex items-center gap-2">
+            <h1 className="font-bold text-2xl">Payment Cards</h1>
+            {selectedOwner !== "pulse" && (
+              <div className="w-6 h-6 rounded-full flex items-center justify-center text-white font-medium bg-primary">
+                {visiblePaymentMethods.length}
+              </div>
+            )}
+          </div>
+          <div className="flex items-center justify-center gap-2">
+            {shownOwners.map((owner) => (
+              <OwnersProductItem
+                key={owner.value}
+                value={owner.value}
+                toolTipText={owner.toolTipText}
+                iconUrl={owner.iconUrl}
+                isDisabled={false}
+                selectedOwner={selectedOwner}
+                setSelectedOwner={setSelectedOwner}
+              />
+            ))}
           </div>
         </div>
 
+        {selectedOwner === "pulse" ? (
+          <OpBillingSection
+            orgId={orgId as string}
+            title="Owners Pulse Payment Cards"
+            message="To manage your payment methods, please navigate to your Owners Pulse account."
+          />
+        ) : (
+          <>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
           <PaymentMethodCard variant="add" onAdd={handleAddClick} />
 
@@ -111,6 +166,8 @@ const PaymentCardsPage = () => {
           onDelete={handleDeleteClick}
           // initialData={selectedMethod}
         />
+          </>
+        )}
       </div>
     </AuthGuard>
   );

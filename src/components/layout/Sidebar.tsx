@@ -270,12 +270,12 @@ export default function Sidebar({
         <Link
           href="/"
           className={cn(
-            "h-14  flex items-center justify-start border-b cursor-pointer",
-            collapsed ? "px-3" : "px-3",
+            "h-14 flex items-center border-b cursor-pointer",
+            collapsed ? "justify-center px-0" : "justify-start px-3",
           )}
         >
           {collapsed ? (
-            <div className="w-20 h-10 rounded-lg flex items-center justify-center">
+            <div className="h-10 rounded-lg flex items-center justify-center">
               <SvgIcon name="ownersUniverseColl" width={30} height={30} />
             </div>
           ) : (

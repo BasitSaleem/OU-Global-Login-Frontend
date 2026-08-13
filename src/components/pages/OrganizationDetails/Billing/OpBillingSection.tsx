@@ -5,7 +5,15 @@ import { useGhlSso } from "@/apiHooks.ts/ghl/ghl.api";
 // billing details. Instead it links the user into their Owners Pulse (GHL)
 // account. The "Visit Owners Pulse" link triggers RP-initiated SSO via
 // /og/ghl/sso and will redirect properly once the white-label SSO is live.
-const OpBillingSection = ({ orgId }: { orgId: string }) => {
+const OpBillingSection = ({
+  orgId,
+  title = "Owners Pulse Billing",
+  message = "To see billing details, please navigate to your Owners Pulse account.",
+}: {
+  orgId: string;
+  title?: string;
+  message?: string;
+}) => {
   const { mutate: openSso, isPending } = useGhlSso();
 
   const handleVisit = () => {
@@ -22,9 +30,9 @@ const OpBillingSection = ({ orgId }: { orgId: string }) => {
 
   return (
     <div className="w-full bg-bg-secondary border border-border rounded-2xl p-6 mt-2">
-      <h2 className="font-bold text-lg text-text mb-2">Owners Pulse Billing</h2>
+      <h2 className="font-bold text-lg text-text mb-2">{title}</h2>
       <p className="text-text-secondary">
-        To see billing details, please navigate to your Owners Pulse account.{" "}
+        {message}{" "}
         <button
           type="button"
           onClick={handleVisit}
