@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { Check, ChevronDown, ChevronUp, Info } from "lucide-react";
+import { Check, Info } from "lucide-react";
 import Link from "next/link";
 import {
   useGetOpServices,
@@ -29,6 +29,16 @@ const tierLabel: Record<string, string> = {
   DOMINATION: "Domination",
 };
 
+// The order the service cards are shown in, per design. Matched on the start of
+// the service name (lowercased) so it survives suffixes like "Management".
+const SERVICE_DISPLAY_ORDER = [
+  "google my business",
+  "seo",
+  "google ads",
+  "social media",
+  "website design",
+];
+
 const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
   selectedServiceIds,
   setSelectedServiceIds,
@@ -41,7 +51,6 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
   setInvoiceVerified,
 }) => {
   const { data: services, isPending } = useGetOpServices();
-  const [isInvoiceOpen, setIsInvoiceOpen] = useState(true);
   const [invoiceError, setInvoiceError] = useState<string | null>(null);
   const {
     mutate: verifyInvoice,
@@ -91,7 +100,20 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
   };
 
   const bundle = services?.find((s) => s.is_bundle);
-  const individual = services?.filter((s) => !s.is_bundle) ?? [];
+  // Display order only — the API returns services alphabetically. Anything not
+  // listed keeps its API position, after the ones that are. Selection, pricing
+  // and the combination signature are unaffected (the signature sorts by id).
+  const individual = [...(services?.filter((s) => !s.is_bundle) ?? [])].sort(
+    (a, b) => {
+      const rank = (n: string) => {
+        const i = SERVICE_DISPLAY_ORDER.findIndex((k) =>
+          n.toLowerCase().startsWith(k),
+        );
+        return i === -1 ? SERVICE_DISPLAY_ORDER.length : i;
+      };
+      return rank(a.name) - rank(b.name);
+    },
+  );
 
   const bundleSelected = bundle
     ? selectedServiceIds.includes(bundle.id)
@@ -227,15 +249,26 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
           <button
             type="button"
             onClick={() => toggle(bundle.id)}
-            className="relative text-left p-4 rounded-xl border border-[#1ad1b9] bg-[#e6fcf5] transition-all duration-200 cursor-pointer"
+            className={`relative text-left p-4 rounded-xl border transition-all duration-200 cursor-pointer ${
+              bundleSelected
+                ? "border-[#1ad1b9] bg-[#e6fcf5]"
+                : "border-gray-200 hover:border-[#1ad1b9]/40 bg-white"
+            }`}
           >
             {bundleSelected && (
               <span className="absolute top-3.5 right-3.5 w-5 h-5 rounded-full border border-[#1ad1b9] bg-white text-[#1ad1b9] flex items-center justify-center">
                 <Check size={12} strokeWidth={3} />
               </span>
             )}
-            <span className="font-bold text-gray-900 text-sm block pr-6 mb-1">
-              {bundle.name}
+            <span className="flex items-center gap-2 pr-6 mb-1">
+              <span className="font-bold text-gray-900 text-sm">
+                {bundle.name}
+              </span>
+              {/* Badge · size sm · color Success — uses the app's success tokens,
+                  which already define a dark-mode value. */}
+              <span className="shrink-0 rounded-md bg-success-bg px-2.5 py-1 text-[11px] font-medium leading-none text-success">
+                Popular
+              </span>
             </span>
             <span className="text-xs font-normal text-gray-500 block">
               {svcPrice(bundle)}
@@ -346,12 +379,8 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
                 <p className="font-medium text-gray-900">
                   {isYearly ? "Yearly subscription" : "Monthly subscription"}
                 </p>
-                <p className="mt-0.5 flex flex-wrap items-center gap-1 text-[11px] text-gray-500">
-                  Not charged today — billed via
-                  <span className="inline-flex items-center rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
-                    GHL
-                  </span>
-                  after setup
+                <p className="mt-0.5 text-[11px] text-gray-500">
+                  Not charged today — billed after setup
                 </p>
               </div>
               <span className="shrink-0 font-semibold text-gray-900">
@@ -387,39 +416,27 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
       <p className="text-xs sm:text-sm text-gray-700 pt-0.5">
         {preview?.stripePaymentLink ? (
           <>
-            To pay your ${setupFee.toLocaleString()} setup fee,{" "}
+            Setup Fee:{" "}
+            <span className="font-bold">${setupFee.toLocaleString()}</span> —{" "}
             <a
               href={preview.stripePaymentLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary font-bold hover:underline"
+              className="text-primary font-medium hover:underline"
             >
               Make Payment
-            </a>{" "}
-            or verify with an Invoice ID.
+            </a>
+            , then verify using your Invoice ID. Already paid? Use your Invoice
+            ID to verify your payment.
           </>
         ) : (
           "Setup-fee payment isn't available online for this selection yet — please verify with an Invoice ID from your Closer."
         )}
       </p>
 
-      {/* Verify with Invoice ID Collapsible Accordion */}
-      <div className="rounded-xl bg-[#F9FAFB] border border-gray-100 p-4 space-y-3">
-        <div
-          onClick={() => setIsInvoiceOpen(!isInvoiceOpen)}
-          className="flex items-center justify-between cursor-pointer select-none"
-        >
-          <span className="font-semibold text-gray-900 text-sm">
-            Verify with Invoice ID
-          </span>
-          {isInvoiceOpen ? (
-            <ChevronUp size={18} className="text-gray-500" />
-          ) : (
-            <ChevronDown size={18} className="text-gray-500" />
-          )}
-        </div>
-
-        {isInvoiceOpen && (
+      {/* Invoice ID verification — always visible, no heading (per design) */}
+      <div className="rounded-xl bg-[#F9FAFB] border border-gray-100 p-4">
+        {(
           <div className="pt-0.5">
             <div className="flex items-end gap-3">
               <div className="flex-1">
@@ -477,6 +494,24 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
           </div>
         )}
       </div>
+
+      <p className="text-xs sm:text-sm text-gray-700">
+        For any questions, contact{" "}
+        <a
+          href="mailto:support@ownerspulse.com"
+          className="text-primary hover:underline"
+        >
+          support@ownerspulse.com
+        </a>{" "}
+        |{" "}
+        <a
+          href="tel:+15405592908"
+          className="text-primary hover:underline"
+        >
+          (540) 559-2908
+        </a>
+        .
+      </p>
     </div>
   );
 };
