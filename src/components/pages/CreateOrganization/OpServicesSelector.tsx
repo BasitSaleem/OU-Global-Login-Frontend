@@ -224,7 +224,7 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
           Choose your Services
         </h3>
         <Link
-          href="https://ownerspulse.com/pricing"
+          href="https://ownerspulse.com/services"
           target="_blank"
           className="text-primary cursor-pointer text-nowrap text-sm font-bold hover:underline"
         >
@@ -279,6 +279,14 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
           </button>
         )}
       </div>
+
+      {/* Bundle Selected Notice */}
+      {bundleSelected && (
+        <div className="mt-1 flex w-full items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-2 text-xs font-medium text-primary">
+          <Info size={16} className="shrink-0" />
+          All services selected! We've automatically applied the All-In-One Bundle to give you our complete package at the best value.
+        </div>
+      )}
 
       {/* Domination Upgrade Checkbox — only relevant once the full bundle is selected */}
       {bundleSelected && (
