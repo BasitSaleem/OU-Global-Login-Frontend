@@ -67,27 +67,6 @@ export default function Sidebar({
       label: "Pulse",
       isActive: currentPath === "/ownerspulse.com",
     },
-    {
-      href: "/marketplace",
-      svgName: "OM",
-      label: "Marketplace",
-      hasTime: true,
-      isActive: currentPath === "/marketplace",
-    },
-    {
-      href: "/jungle",
-      svgName: "OJ",
-      label: "Jungle",
-      hasTime: true,
-      isActive: currentPath === "/jungle",
-    },
-    {
-      href: "/analytics",
-      svgName: "OA",
-      label: "Analytics",
-      hasTime: true,
-      isActive: currentPath === "/analytics",
-    },
   ];
 
   const handleItemClick = (item: NavigationItem, e: React.MouseEvent) => {
