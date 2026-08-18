@@ -52,6 +52,7 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
 }) => {
   const { data: services, isPending } = useGetOpServices();
   const [invoiceError, setInvoiceError] = useState<string | null>(null);
+  const [isAutoBundled, setIsAutoBundled] = useState(false);
   const {
     mutate: verifyInvoice,
     isPending: isVerifyingInvoice,
@@ -158,6 +159,7 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
         // Select bundle + all individual services
         setSelectedServiceIds([bundle.id, ...allIndividualIds]);
       }
+      setIsAutoBundled(false);
       return;
     }
 
@@ -166,6 +168,7 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
       // Selecting an individual service while the bundle is active drops the
       // bundle and starts over with just this one service selected.
       setSelectedServiceIds([id]);
+      setIsAutoBundled(false);
     } else {
       const isCurrentlySelected = selectedServiceIds.includes(id);
       const nextSelected = isCurrentlySelected
@@ -179,8 +182,10 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
 
       if (allSelected && bundle) {
         setSelectedServiceIds([bundle.id, ...nextSelected]);
+        setIsAutoBundled(true);
       } else {
         setSelectedServiceIds(nextSelected);
+        setIsAutoBundled(false);
       }
     }
   };
@@ -281,7 +286,7 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
       </div>
 
       {/* Bundle Selected Notice */}
-      {bundleSelected && (
+      {bundleSelected && isAutoBundled && (
         <div className="mt-1 flex w-full items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-2 text-xs font-medium text-primary">
           <Info size={16} className="shrink-0" />
           All services selected! We've automatically applied the All-In-One Bundle to give you our complete package at the best value.
@@ -421,26 +426,33 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
       </div>
 
       {/* Action Notice */}
-      <p className="text-xs sm:text-sm text-gray-700 pt-0.5">
-        {preview?.stripePaymentLink ? (
-          <>
-            Setup Fee:{" "}
-            <span className="font-bold">${setupFee.toLocaleString()}</span> —{" "}
-            <a
-              href={preview.stripePaymentLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary font-medium hover:underline"
-            >
-              Make Payment
-            </a>
-            , then verify using your Invoice ID. Already paid? Use your Invoice
-            ID to verify your payment.
-          </>
-        ) : (
-          "Setup-fee payment isn't available online for this selection yet — please verify with an Invoice ID from your Closer."
+      <div className="pt-1">
+        <p className="text-xs sm:text-sm text-gray-700">
+          {preview?.stripePaymentLink ? (
+            <>
+              Setup Fee:{" "}
+              <span className="font-bold">${setupFee.toLocaleString()}</span> —{" "}
+              <a
+                href={preview.stripePaymentLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary font-medium hover:underline"
+              >
+                Make Payment
+              </a>
+              , then verify using your Invoice ID. Already paid? Use your Invoice
+              ID to verify your payment.
+            </>
+          ) : (
+            "Setup-fee payment isn't available online for this selection yet — please verify with an Invoice ID from your Closer."
+          )}
+        </p>
+        {preview?.stripePaymentLink && (
+          <p className="text-[11px] font-medium text-amber-600 mt-1 bg-amber-50/50 p-1.5 rounded border border-amber-100 inline-block">
+            ⚠️ Use the email linked to this account on the payment page. A mismatch will cause verification to fail.
+          </p>
         )}
-      </p>
+      </div>
 
       {/* Invoice ID verification — always visible, no heading (per design) */}
       <div className="rounded-xl bg-[#F9FAFB] border border-gray-100 p-4">
