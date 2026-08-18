@@ -21,35 +21,39 @@ export default function HomePage() {
   return (
     <div className="p-4 bg-background min-h-screen">
       <div className="max-w-7xl mx-auto space-y-6">
-        <div className="p-6 relative border rounded-xl py-16 overflow-hidden bg-card h-full">
+        <div className="p-6 relative border rounded-xl py-14 overflow-hidden bg-home-banner h-full">
           <div className="relative z-10 max-w-2xl">
-            <p className="text-body-small text-gray-500 mb-1">
+            <p className="text-body-small mb-1">
               {new Date().toLocaleDateString("en-US", {
                 weekday: "long",
                 month: "long",
                 day: "numeric",
               })}
             </p>
-            <h1 className="text-heading-1 font-bold text-foreground mb-3">
+            <h1 className="text-heading-1 font-semibold text-foreground mb-3">
               Hello, {user?.first_name} {user?.last_name}
             </h1>
 
-            <div className="bg-card-secondary rounded-lg p-4">
-              <p className="text-body-medium text-gray-600  cursor-auto">
+            <div className="border-l-2 border-home-rule pl-3">
+              <p className="text-body-small font-semibold">
                 You don't have to be great to start, but you have to start to be
-                great. <span className="font-bold">Zig Ziglar</span>
+                great.
+              </p>
+              <p className="text-body-small font-semibold">
+                Zig Ziglar
               </p>
             </div>
           </div>
 
-          <div className="absolute right-8 top-1/2 transform -translate-y-1/2 hidden xl:block ">
+          <div className="absolute right-8 top-0 bottom-0 hidden xl:flex items-end">
             <Image
-              width={500}
-              height={500}
-              src={Icons.homepageimage}
+              width={270}
+              height={236}
+              src={Icons.homeBannerBg}
+              unoptimized
               loading="eager"
               alt="Welcome illustration"
-              className="w-72 h-72 object-contain"
+              className="h-full w-auto object-contain object-bottom"
             />
           </div>
         </div>

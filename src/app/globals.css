@@ -5,6 +5,13 @@
 
 /* Define your color palette in CSS variables */
 :root {
+  --home-banner-opacity: 0.45;
+  --home-banner-blur: 40px;
+  /* Home banner (light) - design stops 42% / 77% / 100% */
+  --home-banner-from: #ff9c9c;
+  --home-banner-via: #84ffef;
+  --home-banner-to: rgba(173, 103, 253, 0.56);
+  --color-home-rule: #e0396b;
   /* Light theme colors */
   --color-primary-50: #f5f3ff;
   --color-card-secondary: #fff;
@@ -63,6 +70,13 @@
 
 /* Dark theme colors */
 .dark {
+  --home-banner-opacity: 0.6;
+  --home-banner-blur: 40px;
+  /* Home banner (dark) - same hue sweep, darkened for white foreground */
+  --home-banner-from: #5e2b33;
+  --home-banner-via: #17453f;
+  --home-banner-to: rgba(76, 43, 112, 0.56);
+  --color-home-rule: #f2568a;
   --color-background: #000000;
   --color-foreground: var(--color-white);
   --color-border: #4b5563;
@@ -94,6 +108,10 @@
 }
 
 .dark-ocean {
+  --home-banner-from: #14476b;
+  --home-banner-via: #0f5563;
+  --home-banner-to: rgba(20, 60, 110, 0.56);
+  --color-home-rule: #38bdf8;
   --color-background: #0a1128;
   --color-foreground: #e0f2fe;
   --color-border: #1e3a5f;
@@ -107,6 +125,10 @@
 }
 
 .dark-crimson {
+  --home-banner-from: #6b2338;
+  --home-banner-via: #3d2340;
+  --home-banner-to: rgba(90, 28, 66, 0.56);
+  --color-home-rule: #fb7185;
   --color-background: #1a0b0e;
   --color-foreground: #fce7f3;
   --color-border: #5c1a2e;
@@ -125,6 +147,28 @@
       var(--gradient-primary-end));
 }
 
+/* Home banner sweep. 270deg so the design stops read right-to-left:
+   salmon on the right, mint through the middle, violet on the left. */
+@utility bg-home-banner {
+  position: relative;
+  isolation: isolate;
+
+  /* Blurred colour wash: inset past the edges so the blur falloff is
+     clipped by overflow-hidden rather than fading in at the corners. */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -15%;
+    z-index: -1;
+    opacity: var(--home-banner-opacity);
+    filter: blur(var(--home-banner-blur));
+    background: linear-gradient(270deg,
+        var(--home-banner-from) 42%,
+        var(--home-banner-via) 77%,
+        var(--home-banner-to) 100%);
+  }
+}
+
 /* Register colors with Tailwind 4 */
 @theme {
   /* Primary colors */
@@ -140,6 +184,7 @@
   --color-primary-900: var(--color-primary-900);
   --color-muted: var(--color-muted);
   --color-text: var(--color-text);
+  --color-home-rule: var(--color-home-rule);
   --color-btn-text: var(--color-text-btn);
   --color-icon: var(--color-icon);
   --color-gray: var(--color-gray);
