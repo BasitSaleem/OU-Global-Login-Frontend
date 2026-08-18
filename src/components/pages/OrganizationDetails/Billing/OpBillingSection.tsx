@@ -22,7 +22,7 @@ const OpBillingSection = ({
       { orgId },
       {
         onSuccess: (data) => {
-          if (data?.redirectUrl) window.location.href = data.redirectUrl;
+          if (data?.redirectUrl) window.open(data.redirectUrl, "_blank");
         },
       },
     );
