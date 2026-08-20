@@ -14,6 +14,7 @@ import { DeleteOrganizationModal } from "@/components/modals/DeleteOrganizationM
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizationGridComponent } from "./OrganizationGridComponent";
 import { PermissionGuard } from "@/components/HOCs/permission-guard";
+import { toast } from "@/hooks/useToast";
 
 export interface OrganizationGridProps {
   organizations: OgOrganization[];
@@ -74,6 +75,19 @@ export default function OrganizationGrid({
         if (onOrganizationDeleted) {
           onOrganizationDeleted(selectedOrg.id);
         }
+        // Deletion is a plain, instant REST call, not a background job — this
+        // onSuccess IS the real completion signal. The modal's own toast/close
+        // logic is wired to a job-progress stream that deletion never
+        // populates, so nothing ever fired without this.
+        // useDeleteOrganization already shows its own error toast + rolls
+        // back the optimistic update in its onError - only the success side
+        // needs handling here, so this doesn't duplicate that.
+        toast.success(
+          "Organization deleted",
+          "The organization is deleted successfully",
+        );
+        setIsModalOpen(false);
+        setSelectedOrg(null);
       },
     });
   };
