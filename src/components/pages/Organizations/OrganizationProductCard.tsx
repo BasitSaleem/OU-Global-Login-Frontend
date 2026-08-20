@@ -117,7 +117,7 @@ const OrganizationProductCard = ({
             })}
             {metaData?.hasMore && (
               <Link
-                href="/organizations"
+                href={`/organizations?product=${code}`}
                 className="text-primary ml-5 text-sm underline hover:text-primary/80"
               >
                 View all

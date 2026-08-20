@@ -17,6 +17,10 @@ import CreateOrgModal from "@/components/modals/CreateOrgModal";
 import AddProductModal from "@/components/modals/AddProductModal";
 import OrganizationGrid from "@/components/pages/Organizations/OrganizationGrid";
 import PendingInvitations from "@/components/pages/Organizations/PendingInvitation";
+import OwnersProductItem, {
+  OwnerKey,
+  OWNER_META,
+} from "@/components/pages/OrganizationDetails/Billing/OwnersProductItem";
 import ProgressModal from "@/components/ui/ProgressModal";
 import { toast } from "@/hooks/useToast";
 import { useAppSelector } from "@/redux/store";
@@ -36,6 +40,15 @@ function OrganizationsContent() {
   const { user } = useAppSelector((s) => s.auth);
   const searchParams = useSearchParams();
   const filter = searchParams.get("filter");
+  // Only set when arriving via a Home page product card's "View all" link —
+  // the sidebar's plain /organizations link carries no product param, so the
+  // switcher stays hidden for that entry point.
+  const productParam = searchParams.get("product");
+  const [selectedOwner, setSelectedOwner] = useState<OwnerKey | null>(
+    productParam === "OI" || productParam === "OP"
+      ? OWNER_META[productParam].value
+      : null,
+  );
   const {
     pkgId,
     product,
@@ -158,6 +171,20 @@ function OrganizationsContent() {
   return (
     <div className="p-2 sm:p-8 bg-background ">
       <div className="max-w-xs sm:max-w-7xl mx-auto space-y-8">
+        {selectedOwner && (
+          <div className="flex items-center justify-center gap-2 w-full">
+            {(["OI", "OP"] as const).map((code) => (
+              <OwnersProductItem
+                key={code}
+                value={OWNER_META[code].value}
+                toolTipText={OWNER_META[code].toolTipText}
+                iconUrl={OWNER_META[code].iconUrl}
+                selectedOwner={selectedOwner}
+                setSelectedOwner={setSelectedOwner}
+              />
+            ))}
+          </div>
+        )}
         <OrganizationGrid
           organizations={organizations}
           onAddNew={() => setIsCreateModalOpen(true)}
