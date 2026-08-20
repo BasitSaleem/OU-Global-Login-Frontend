@@ -52,7 +52,7 @@ const OrganizationOpItem = ({
         className={`w-7 h-7 rounded-lg flex items-center justify-center text-white font-semibold text-sm transition-transform duration-300 ${
           isDisabled
             ? "opacity-50 cursor-not-allowed hover:scale-100"
-            : "cursor-pointer hover:scale-110"
+            : "cursor-pointer hover:cursor-pointer hover:scale-110"
         }`}
         style={{ backgroundColor: bgColor }}
         title={isReady && !isPending ? (org.name ?? "Open Owners Pulse") : ""}
