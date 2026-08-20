@@ -257,7 +257,7 @@ const OpCheckoutForm: React.FC<OpCheckoutModalProps> = ({
               </div>
             </div>
           </div>
-          {error && <p className="text-red-500 text-sm mt-3">{error}</p>}
+          {error && <p className="text-red text-sm mt-3">{error}</p>}
         </Modal.Body>
         <Modal.Footer>
           <div className="flex justify-end gap-4 mt-4">

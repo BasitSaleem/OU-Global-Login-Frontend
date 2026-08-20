@@ -66,7 +66,7 @@ const ProductLaunchIcon = ({
           );
         }}
         className={`relative z-30 group/member duration-300 transition-all ${
-          disabled ? "cursor-not-allowed" : "hover:scale-110"
+          disabled ? "cursor-not-allowed" : "cursor-pointer hover:scale-110"
         }`}
       >
         <span className={disabled ? "opacity-50" : ""}>{icon}</span>

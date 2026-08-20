@@ -10,6 +10,7 @@ import {
 import PlanCardSkeleton from "@/components/PlanCardSkeleton";
 import { Input, LoadingSpinner } from "@/components/ui";
 import OpServiceItem from "./OpServiceItem";
+import { useAppSelector } from "@/redux/store";
 
 interface OpServicesSelectorProps {
   selectedServiceIds: string[];
@@ -50,6 +51,7 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
   invoiceVerified,
   setInvoiceVerified,
 }) => {
+  const { user } = useAppSelector((s) => s.auth);
   const { data: services, isPending } = useGetOpServices();
   const [invoiceError, setInvoiceError] = useState<string | null>(null);
   const [isAutoBundled, setIsAutoBundled] = useState(false);
@@ -225,7 +227,7 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
     <div className="space-y-4">
       {/* Header Row */}
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-900">
+        <h3 className="text-sm font-semibold text-text">
           Choose your Services
         </h3>
         <Link
@@ -256,17 +258,17 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
             onClick={() => toggle(bundle.id)}
             className={`relative text-left p-4 rounded-xl border transition-all duration-200 cursor-pointer ${
               bundleSelected
-                ? "border-[#1ad1b9] bg-[#e6fcf5]"
-                : "border-gray-200 hover:border-[#1ad1b9]/40 bg-white"
+                ? "border-success bg-success-bg"
+                : "border-border hover:border-success/40 bg-bg-secondary"
             }`}
           >
             {bundleSelected && (
-              <span className="absolute top-3.5 right-3.5 w-5 h-5 rounded-full border border-[#1ad1b9] bg-white text-[#1ad1b9] flex items-center justify-center">
+              <span className="absolute top-3.5 right-3.5 w-5 h-5 rounded-full border border-success bg-bg-secondary text-success flex items-center justify-center">
                 <Check size={12} strokeWidth={3} />
               </span>
             )}
             <span className="flex items-center gap-2 pr-6 mb-1">
-              <span className="font-bold text-gray-900 text-sm">
+              <span className="font-bold text-text text-sm">
                 {bundle.name}
               </span>
               {/* Badge · size sm · color Success — uses the app's success tokens,
@@ -275,7 +277,7 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
                 Popular
               </span>
             </span>
-            <span className="text-xs font-normal text-gray-500 block">
+            <span className="text-xs font-normal text-text-secondary block">
               {svcPrice(bundle)}
               {Number(bundle.setup_fee) > 0
                 ? ` · $${Number(bundle.setup_fee).toLocaleString()} setup`
@@ -301,24 +303,24 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
               type="checkbox"
               checked={dominationUpgrade}
               onChange={(e) => setDominationUpgrade(e.target.checked)}
-              className="w-4 h-4 accent-primary rounded border-gray-300 cursor-pointer"
+              className="w-4 h-4 accent-primary rounded border-border cursor-pointer"
             />
-            <span className="text-xs sm:text-sm text-gray-800">
+            <span className="text-xs sm:text-sm text-text">
               Upgrade to{" "}
-              <span className="font-bold text-gray-900">Domination</span> for{" "}
-              <span className="font-bold text-gray-900">+$200/mo</span>{" "}
-              <span className="text-gray-500 font-normal">(bundle only)</span>
+              <span className="font-bold text-text">Domination</span> for{" "}
+              <span className="font-bold text-text">+$200/mo</span>{" "}
+              <span className="text-text-secondary font-normal">(bundle only)</span>
             </span>
           </label>
         </div>
       )}
 
       {/* Order Summary Box */}
-      <div className="rounded-xl border border-gray-200/80 bg-white overflow-hidden shadow-2xs">
+      <div className="rounded-xl border border-border/80 bg-bg-secondary overflow-hidden shadow-2xs">
         {/* Header with Column Titles */}
-        <div className="px-4 py-3 bg-[#F9FAFB] border-b border-gray-200/60 flex items-center justify-between">
-          <h4 className="text-sm font-semibold text-gray-900">Order Summary</h4>
-          <div className="flex items-center gap-6 sm:gap-10 text-xs font-medium text-gray-500">
+        <div className="px-4 py-3 bg-card-secondary border-b border-border/60 flex items-center justify-between">
+          <h4 className="text-sm font-semibold text-text">Order Summary</h4>
+          <div className="flex items-center gap-6 sm:gap-10 text-xs font-medium text-text-secondary">
             <span className="w-20 text-right">
               {isYearly ? "Per year" : "Per month"}
             </span>
@@ -340,10 +342,10 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
                     key={svc.id}
                     className="flex items-center justify-between text-xs sm:text-sm"
                   >
-                    <span className="font-normal text-gray-900">
+                    <span className="font-normal text-text">
                       {svc.name}
                     </span>
-                    <div className="flex items-center gap-6 sm:gap-10 font-semibold text-gray-900">
+                    <div className="flex items-center gap-6 sm:gap-10 font-semibold text-text">
                       <span className="w-20 text-right">
                         ${Number(price).toLocaleString()}
                       </span>
@@ -356,18 +358,18 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
               })}
             </div>
           ) : (
-            <p className="text-xs text-gray-400 font-normal py-1">
+            <p className="text-xs text-text-secondary font-normal py-1">
               No services selected yet.
             </p>
           )}
 
           {/* Included plan banner */}
-          <div className="bg-[#F4F5F7] rounded-xl px-4 py-2.5 flex items-center justify-between text-xs sm:text-sm">
-            <span className="font-medium text-gray-700">Included plan</span>
+          <div className="bg-card-secondary rounded-xl px-4 py-2.5 flex items-center justify-between text-xs sm:text-sm">
+            <span className="font-medium text-text-secondary">Included plan</span>
             {dominationUpgrade ? (
               <span className="font-semibold text-primary">
                 Domination{" "}
-                <span className="text-gray-500 font-normal text-xs">
+                <span className="text-text-secondary font-normal text-xs">
                   (+$200/month)
                 </span>
               </span>
@@ -376,7 +378,7 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
                 {preview?.resolvedTier
                   ? `${tierLabel[preview.resolvedTier] ?? preview.resolvedTier}`
                   : "Starter"}{" "}
-                <span className="text-gray-500 font-normal text-xs">
+                <span className="text-text-secondary font-normal text-xs">
                   (included free)
                 </span>
               </span>
@@ -389,14 +391,14 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
           <div className="space-y-3 pt-0.5">
             <div className="flex items-start justify-between gap-3 text-xs sm:text-sm">
               <div className="min-w-0">
-                <p className="font-medium text-gray-900">
+                <p className="font-medium text-text">
                   {isYearly ? "Yearly subscription" : "Monthly subscription"}
                 </p>
-                <p className="mt-0.5 text-[11px] text-gray-500">
+                <p className="mt-0.5 text-[11px] text-text-secondary">
                   Not charged today — billed after setup
                 </p>
               </div>
-              <span className="shrink-0 font-semibold text-gray-900">
+              <span className="shrink-0 font-semibold text-text">
                 {previewLoading
                   ? "…"
                   : `$${monthlyTotal.toLocaleString()}${isYearly ? "/yr" : "/mo"}`}
@@ -405,12 +407,12 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
 
             <div className="flex items-start justify-between gap-3 text-xs sm:text-sm">
               <div className="min-w-0">
-                <p className="font-medium text-gray-900">Due now — setup fee</p>
-                <p className="mt-0.5 text-[11px] text-gray-500">
+                <p className="font-medium text-text">Due now — setup fee</p>
+                <p className="mt-0.5 text-[11px] text-text-secondary">
                   One-time charge via below payment link
                 </p>
               </div>
-              <span className="shrink-0 font-semibold text-gray-900">
+              <span className="shrink-0 font-semibold text-text">
                 {previewLoading ? "…" : `$${setupFee.toLocaleString()}`}
               </span>
             </div>
@@ -427,7 +429,7 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
 
       {/* Action Notice */}
       <div className="pt-1">
-        <p className="text-xs sm:text-sm text-gray-700">
+        <p className="text-xs sm:text-sm text-text-secondary">
           {preview?.stripePaymentLink ? (
             <>
               Setup Fee:{" "}
@@ -448,14 +450,21 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
           )}
         </p>
         {preview?.stripePaymentLink && (
-          <p className="text-[11px] font-medium text-amber-600 mt-1 bg-amber-50/50 p-1.5 rounded border border-amber-100 inline-block">
-            ⚠️ Use the email linked to this account on the payment page. A mismatch will cause verification to fail.
+          <p className="text-[11px] font-medium text-warning mt-1 bg-warning-bg p-1.5 rounded border border-warning/20 inline-block">
+            ⚠️ Make sure to use "
+            {user?.email ? (
+              <span className="font-bold">{user.email}</span>
+            ) : (
+              "the email linked to this account"
+            )}
+            " while making the payment, otherwise a mismatch will cause
+            verification to fail.
           </p>
         )}
       </div>
 
       {/* Invoice ID verification — always visible, no heading (per design) */}
-      <div className="rounded-xl bg-[#F9FAFB] border border-gray-100 p-4">
+      <div className="rounded-xl bg-card-secondary border border-border p-4">
         {(
           <div className="pt-0.5">
             <div className="flex items-end gap-3">
@@ -477,7 +486,7 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
                       : "Enter invoice ID"
                   }
                   disabled={hasNoServiceSelected}
-                  className="bg-white"
+                  className="bg-input-bg"
                   autoComplete="off"
                   data-lpignore="true"
                   data-1p-ignore=""
@@ -486,7 +495,7 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
                 />
               </div>
               {invoiceVerified ? (
-                <span className="flex items-center gap-1 text-[#1ad1b9] font-semibold text-sm pb-3">
+                <span className="flex items-center gap-1 text-success font-semibold text-sm pb-3">
                   <Check size={14} strokeWidth={3} />
                   Verified
                 </span>
@@ -507,7 +516,7 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
               )}
             </div>
             {invoiceError && (
-              <p className="text-xs text-red-500 font-medium pt-1.5">
+              <p className="text-xs text-red font-medium pt-1.5">
                 {invoiceError}
               </p>
             )}
@@ -515,7 +524,7 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
         )}
       </div>
 
-      <p className="text-xs sm:text-sm text-gray-700">
+      <p className="text-xs sm:text-sm text-text-secondary">
         For any questions, contact{" "}
         <a
           href="mailto:support@ownerspulse.com"
