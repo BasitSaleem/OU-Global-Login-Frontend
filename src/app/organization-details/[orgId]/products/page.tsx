@@ -17,7 +17,7 @@ import {
 import { useRetryProvisioning } from "@/apiHooks.ts/ghl/ghl.api";
 
 const PRODUCT_DESC: Record<string, string> = {
-  OI: "Track and manage stock",
+  OI: "Manage your inventory",
   OP: "Marketing & CRM automation",
   OJ: "Themes and templates",
   OM: "Sell across channels",
@@ -108,9 +108,7 @@ function ProductsPage() {
                       {labelFor(product)}
                     </h3>
                     <p className="text-sm text-text-secondary truncate">
-                      {product.oi_sub_domain ||
-                        PRODUCT_DESC[product.product_name || ""] ||
-                        ""}
+                      {PRODUCT_DESC[product.product_name || ""] || ""}
                     </p>
                   </div>
 
