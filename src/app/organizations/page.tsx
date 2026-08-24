@@ -114,6 +114,17 @@ function OrganizationsContent() {
           );
         }
 
+        if (selectedOwner) {
+          const productCode = (["OI", "OP"] as const).find(
+            (code) => OWNER_META[code].value === selectedOwner,
+          );
+          if (productCode) {
+            regularOrgs = regularOrgs.filter((org) =>
+              org.products?.some((p: any) => p.product_name === productCode),
+            );
+          }
+        }
+
         if (searchQuery) {
           regularOrgs = regularOrgs.filter((org) =>
             org.name?.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -133,7 +144,7 @@ function OrganizationsContent() {
         return [...addNewCard, ...sorted];
       });
     }
-  }, [orgStatus, userOrgs, page, user?.id, filter, searchQuery]);
+  }, [orgStatus, userOrgs, page, user?.id, filter, searchQuery, selectedOwner]);
 
   const handleCreateOrg = (data: CreateOrganizationData) => {
     createOrg(data, {
