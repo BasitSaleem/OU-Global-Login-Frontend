@@ -14,11 +14,20 @@ import {
 } from "@/apiHooks.ts/organization/organization.types";
 import DashboardLayout from "@/components/layout/dashboard-layout";
 import CreateOrgModal from "@/components/modals/CreateOrgModal";
+import AddProductModal from "@/components/modals/AddProductModal";
 import OrganizationGrid from "@/components/pages/Organizations/OrganizationGrid";
 import PendingInvitations from "@/components/pages/Organizations/PendingInvitation";
+import OwnersProductItem, {
+  OwnerKey,
+  OWNER_META,
+} from "@/components/pages/OrganizationDetails/Billing/OwnersProductItem";
 import ProgressModal from "@/components/ui/ProgressModal";
 import { toast } from "@/hooks/useToast";
 import { useAppSelector } from "@/redux/store";
+import {
+  useIncomingPackageSelection,
+  clearIncomingPackageSelection,
+} from "@/hooks/useIncomingPackageSelection";
 
 const organizationsList = [
   {
@@ -31,14 +40,41 @@ function OrganizationsContent() {
   const { user } = useAppSelector((s) => s.auth);
   const searchParams = useSearchParams();
   const filter = searchParams.get("filter");
+  // Only set when arriving via a Home page product card's "View all" link —
+  // the sidebar's plain /organizations link carries no product param, so the
+  // switcher stays hidden for that entry point.
+  const productParam = searchParams.get("product");
+  const [selectedOwner, setSelectedOwner] = useState<OwnerKey | null>(
+    productParam === "OI" || productParam === "OP"
+      ? OWNER_META[productParam].value
+      : null,
+  );
+  const {
+    pkgId,
+    product,
+    billingCycle,
+    opPkgId,
+    opBillingCycle,
+    hasDirectLink,
+  } = useIncomingPackageSelection();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  // A package link (from the OI/OP landing pages) lands existing-org users
+  // here (see the `existingOrgRedirectTo` redirect in auth-guard.tsx) — open
+  // the "Add Organization" modal pre-filled with their selection.
+  useEffect(() => {
+    if (hasDirectLink) {
+      setIsCreateModalOpen(true);
+    }
+  }, [hasDirectLink]);
   const [organizations, setOrganizations] = useState<any>(organizationsList);
   const [searchQuery, setSearchQuery] = useState("");
 
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [organizationData, setOrganizationData] =
     useState<CreateOrganizationResponse | null>(null);
+  const [addProductOrg, setAddProductOrg] = useState<any | null>(null);
   const [page, setPage] = useState(1);
   const { mutate: createOrg, isPending } = useCreateOrganization();
   const {
@@ -78,6 +114,17 @@ function OrganizationsContent() {
           );
         }
 
+        if (selectedOwner) {
+          const productCode = (["OI", "OP"] as const).find(
+            (code) => OWNER_META[code].value === selectedOwner,
+          );
+          if (productCode) {
+            regularOrgs = regularOrgs.filter((org) =>
+              org.products?.some((p: any) => p.product_name === productCode),
+            );
+          }
+        }
+
         if (searchQuery) {
           regularOrgs = regularOrgs.filter((org) =>
             org.name?.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -97,11 +144,14 @@ function OrganizationsContent() {
         return [...addNewCard, ...sorted];
       });
     }
-  }, [orgStatus, userOrgs, page, user?.id, filter, searchQuery]);
+  }, [orgStatus, userOrgs, page, user?.id, filter, searchQuery, selectedOwner]);
 
   const handleCreateOrg = (data: CreateOrganizationData) => {
     createOrg(data, {
       onSuccess: (res) => {
+        setIsCreateModalOpen(false);
+        // OP no longer collects any in-app payment (GHL bills it), so every
+        // product flows straight to the provisioning progress modal.
         setOrganizationData({
           data: {
             organization: res.organization,
@@ -109,11 +159,11 @@ function OrganizationsContent() {
             leadRegistration: res.leadRegistration || null,
           },
         });
-        setIsCreateModalOpen(false);
         setShowProgressModal(true);
+        clearIncomingPackageSelection();
       },
-      onError: (err: any) => {
-        toast.error(err?.message || "Failed to create organization");
+      onError: () => {
+        // Handled centrally in useCreateOrganization hook
       },
     });
   };
@@ -132,6 +182,20 @@ function OrganizationsContent() {
   return (
     <div className="p-2 sm:p-8 bg-background ">
       <div className="max-w-xs sm:max-w-7xl mx-auto space-y-8">
+        {selectedOwner && (
+          <div className="flex items-center justify-center gap-2 w-full">
+            {(["OI", "OP"] as const).map((code) => (
+              <OwnersProductItem
+                key={code}
+                value={OWNER_META[code].value}
+                toolTipText={OWNER_META[code].toolTipText}
+                iconUrl={OWNER_META[code].iconUrl}
+                selectedOwner={selectedOwner}
+                setSelectedOwner={setSelectedOwner}
+              />
+            ))}
+          </div>
+        )}
         <OrganizationGrid
           organizations={organizations}
           onAddNew={() => setIsCreateModalOpen(true)}
@@ -139,6 +203,7 @@ function OrganizationsContent() {
           loading={isOrgPending}
           metaData={userOrgs?.meta}
           onSearchChange={setSearchQuery}
+          onAddProduct={(org) => setAddProductOrg(org)}
         />
         {userOrgs?.meta?.totalCount! > 10 && (
           <div className="mt-4 flex justify-end">
@@ -164,6 +229,11 @@ function OrganizationsContent() {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateOrg}
+        initialProduct={product}
+        initialPkgId={pkgId}
+        initialOpPkgId={opPkgId}
+        initialBillingCycle={product === "OP" ? opBillingCycle : billingCycle}
+        isDirectFlow={hasDirectLink}
       />
       <ProgressModal
         isOpen={showProgressModal}
@@ -171,6 +241,18 @@ function OrganizationsContent() {
         onClose={handleModalClose}
         isFromMain={false}
       />
+
+      {addProductOrg && (
+        <AddProductModal
+          isOpen={!!addProductOrg}
+          orgId={addProductOrg.id}
+          orgName={addProductOrg.name}
+          existingProducts={(addProductOrg.products ?? [])
+            .map((p: any) => p.product_name)
+            .filter(Boolean)}
+          onClose={() => setAddProductOrg(null)}
+        />
+      )}
     </div>
   );
 }

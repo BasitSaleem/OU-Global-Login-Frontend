@@ -5,9 +5,17 @@
 
 /* Define your color palette in CSS variables */
 :root {
+  --home-banner-opacity: 0.45;
+  --home-banner-blur: 40px;
+  /* Home banner (light) - design stops 42% / 77% / 100% */
+  --home-banner-from: #ff9c9c;
+  --home-banner-via: #84ffef;
+  --home-banner-to: rgba(173, 103, 253, 0.56);
+  --color-home-rule: #e0396b;
   /* Light theme colors */
   --color-primary-50: #f5f3ff;
   --color-card-secondary: #fff;
+  --color-surface-subtle: #f7f8fa;
   --gradient-primary-start: #faf5ff;
   --gradient-primary-end: #fdf2f8;
   --color-primary-100: #ede9fe;
@@ -26,6 +34,7 @@
   --color-text: #16151c;
   --color-text-secondary: #686379;
   --color-red: #e53935;
+  --color-danger-bg: #fef1f0;
   --color-text-btn: #ffffff;
   --color-disable: #4b5563;
   /* --color-hover: #795CF5; */
@@ -56,15 +65,27 @@
   --color-gray: #bfc6c4;
   --color-disable: #E5E7EB;
   --color-ribbon: #EEEDF0;
+  --color-success: #1AD1B9;
+  --color-success-bg: #E5FFF9;
+  --color-warning: #B45309;
+  --color-warning-bg: #FEF3C7;
 }
 
 /* Dark theme colors */
 .dark {
+  --home-banner-opacity: 0.6;
+  --home-banner-blur: 40px;
+  /* Home banner (dark) - same hue sweep, darkened for white foreground */
+  --home-banner-from: #5e2b33;
+  --home-banner-via: #17453f;
+  --home-banner-to: rgba(76, 43, 112, 0.56);
+  --color-home-rule: #f2568a;
   --color-background: #000000;
   --color-foreground: var(--color-white);
   --color-border: #4b5563;
   --color-bg-secondary: #1f2937;
   --color-card-secondary: #4b5563;
+  --color-surface-subtle: #252f3d;
   --color-primary-100: #ede9fe;
   --color-primary-500: #985cff;
   --color-primary: #985cff;
@@ -80,19 +101,29 @@
   --color-text-btn: #ffffff;
   --color-text-secondary: #9ca3af;
   --color-red: #e53935;
+  --color-danger-bg: rgba(69, 10, 10, 0.5);
   --color-icon: #ffffff;
   --color-gray: #1f2937;
   --color-disable: #000000;
   --color-ribbon: #11171f;
+  --color-success: #1AD1B9;
+  --color-success-bg: rgba(26, 209, 185, 0.15);
+  --color-warning: #FBBF24;
+  --color-warning-bg: rgba(120, 53, 15, 0.35);
   /* --color-hover: #795CF5; */
 }
 
 .dark-ocean {
+  --home-banner-from: #14476b;
+  --home-banner-via: #0f5563;
+  --home-banner-to: rgba(20, 60, 110, 0.56);
+  --color-home-rule: #38bdf8;
   --color-background: #0a1128;
   --color-foreground: #e0f2fe;
   --color-border: #1e3a5f;
   --color-bg-secondary: #1e293b;
   --color-card-secondary: #334155;
+  --color-surface-subtle: #243346;
   --color-primary-100: #e0f2fe;
   --color-primary-500: #0ea5e9;
   --gradient-primary-start: #0369a1;
@@ -101,11 +132,16 @@
 }
 
 .dark-crimson {
+  --home-banner-from: #6b2338;
+  --home-banner-via: #3d2340;
+  --home-banner-to: rgba(90, 28, 66, 0.56);
+  --color-home-rule: #fb7185;
   --color-background: #1a0b0e;
   --color-foreground: #fce7f3;
   --color-border: #5c1a2e;
   --color-bg-secondary: #291521;
   --color-card-secondary: #451a32;
+  --color-surface-subtle: #331a2a;
   --color-primary-100: #fce7f3;
   --color-primary-500: #be185d;
   --gradient-primary-start: #831843;
@@ -117,6 +153,28 @@
   background: linear-gradient(90deg,
       var(--gradient-primary-start),
       var(--gradient-primary-end));
+}
+
+/* Home banner sweep. 270deg so the design stops read right-to-left:
+   salmon on the right, mint through the middle, violet on the left. */
+@utility bg-home-banner {
+  position: relative;
+  isolation: isolate;
+
+  /* Blurred colour wash: inset past the edges so the blur falloff is
+     clipped by overflow-hidden rather than fading in at the corners. */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -15%;
+    z-index: -1;
+    opacity: var(--home-banner-opacity);
+    filter: blur(var(--home-banner-blur));
+    background: linear-gradient(270deg,
+        var(--home-banner-from) 42%,
+        var(--home-banner-via) 77%,
+        var(--home-banner-to) 100%);
+  }
 }
 
 /* Register colors with Tailwind 4 */
@@ -134,6 +192,7 @@
   --color-primary-900: var(--color-primary-900);
   --color-muted: var(--color-muted);
   --color-text: var(--color-text);
+  --color-home-rule: var(--color-home-rule);
   --color-btn-text: var(--color-text-btn);
   --color-icon: var(--color-icon);
   --color-gray: var(--color-gray);
@@ -141,6 +200,7 @@
   /* --color-hover: var(--color-primary-900); */
   --color-google-button: var(--color-google-button);
   --color-card-secondary: var(--color-card-secondary);
+  --color-surface-subtle: var(--color-surface-subtle);
   --color-text-secondary: var(--color-card-secondary);
   --color-bg-secondary: var(--color-bg-secondary);
   --color-skeleton: var(--color-skeleton);
@@ -156,11 +216,15 @@
   --color-border: var(--color-border);
   --color-invert: var(--color-invert);
   --color-red: var(--color-red);
+  --color-danger-bg: var(--color-danger-bg);
   --color-disable: var(--color-disable);
-  --color-ribbon: var(--var-ribbon)
-    /* Gray colors */
-    /* Gray colors */
-    --color-gray-50: var(--color-gray-50);
+  --color-ribbon: var(--color-ribbon);
+  --color-success: var(--color-success);
+  --color-success-bg: var(--color-success-bg);
+  --color-warning: var(--color-warning);
+  --color-warning-bg: var(--color-warning-bg);
+  /* Gray colors */
+  --color-gray-50: var(--color-gray-50);
   --color-gray-100: var(--color-gray-100);
   --color-gray-200: var(--color-gray-200);
   --color-gray-300: var(--color-gray-300);
@@ -226,6 +290,31 @@
     -webkit-text-fill-color: var(--color-foreground);
     caret-color: var(--color-foreground);
     outline: none;
+  }
+
+  /*
+   * Auth pages (login/sign-up/etc.) form-panel backdrop. Reproduces the Figma
+   * "Vector 16" layer: a pre-blurred gradient PNG (1834.67x1183.6, already
+   * includes the blur's bleed) centered on that layer's center point and
+   * rotated -16.18deg, exactly as Figma renders it. Both the center point and
+   * the image's native size are expressed as a percentage of the 835x900 Form
+   * Panel it was designed in, so it scales with the panel's own size.
+   */
+  .auth-gradient-backdrop {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .auth-gradient-backdrop img {
+    position: absolute;
+    left: 81.977%;
+    top: 12.289%;
+    width: 219.72%;
+    height: 131.511%;
+    max-width: none;
+    transform: translate(-50%, -50%) rotate(-16.18deg);
   }
 }
 

@@ -104,6 +104,13 @@ export const PRODUCTS = [
     icon: "OI" as IconName,
   },
   {
+    id: "pulse",
+    name: "OP",
+    fullname: "Owners Pulse",
+    isDisabled: false,
+    icon: "OP" as IconName,
+  },
+  {
     id: "marketplace",
     name: "OM",
     fullname: "Owners Marketplace",

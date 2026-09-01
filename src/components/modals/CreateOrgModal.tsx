@@ -17,20 +17,49 @@ interface CreateOrgModalProps {
   isLoading: boolean;
   onClose: () => void;
   onSubmit: (data: CreateOrganizationData) => void;
+  // Pre-fill from an incoming package link (see useIncomingPackageSelection).
+  // All optional — default to today's behavior when the modal is opened
+  // plainly via "Add Organization" with no link context.
+  initialProduct?: string;
+  initialPkgId?: string | null;
+  initialOpPkgId?: string | null;
+  initialBillingCycle?: "monthly" | "yearly";
+  isDirectFlow?: boolean;
 }
+
+const DEFAULT_OI_PLAN_ID = "d755fe7d-4372-426c-af33-e63b71a6521f";
 
 export default function CreateOrgModal({
   isOpen,
   isLoading,
   onClose,
   onSubmit,
+  initialProduct = "OI",
+  initialPkgId = DEFAULT_OI_PLAN_ID,
+  initialOpPkgId = null,
+  initialBillingCycle = "monthly",
+  isDirectFlow = false,
 }: CreateOrgModalProps) {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(isDirectFlow ? 2 : 1);
   const [companyName, setCompanyName] = useState("");
-  const [selectedPlanId, setSelectedPlanId] = useState<string | null>("d755fe7d-4372-426c-af33-e63b71a6521f");
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(
+    initialProduct === "OI" ? initialPkgId : DEFAULT_OI_PLAN_ID,
+  );
+  // OP standalone plan id — kept separate from the OI selectedPlanId so both
+  // products can be configured at once without colliding.
+  const [opPackageId, setOpPackageId] = useState<string | null>(
+    initialProduct === "OP" ? initialOpPkgId : null,
+  );
   const [subDomain, setSubDomain] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState("OI");
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([
+    initialProduct,
+  ]);
   const [isSuggestionSubdomain, setIsSuggestionSubdomain] = useState(false);
+  const [opMode, setOpMode] = useState<"plan" | "services">("plan");
+  const [opServiceIds, setOpServiceIds] = useState<string[]>([]);
+  const [opDominationUpgrade, setOpDominationUpgrade] = useState(false);
+  const [opInvoiceId, setOpInvoiceId] = useState("");
+  const [opInvoiceVerified, setOpInvoiceVerified] = useState(false);
 
   const debouncedCompanyName = useDebounce(companyName.trim(), 800);
   const debouncedSubDomain = useDebounce(subDomain.trim(), 800);
@@ -40,15 +69,17 @@ export default function CreateOrgModal({
     subDomain.trim() !== debouncedSubDomain &&
     subDomain.trim().length > 0;
 
-  const shouldCheckAvailability =
-    selectedProduct === "OI" && debouncedSubDomain && !isSuggestionSubdomain;
+  const isOiSelected = selectedProducts.includes("OI");
+  const isOpSelected = selectedProducts.includes("OP");
+  const isOpServices = isOpSelected && opMode === "services";
 
-  const {
-    data: isSubAvailable,
-    isFetching: checkingSub,
-  } = useCheckSubDomainAvailability(
-    shouldCheckAvailability ? debouncedSubDomain : "",
-  );
+  const shouldCheckAvailability =
+    isOiSelected && debouncedSubDomain && !isSuggestionSubdomain;
+
+  const { data: isSubAvailable, isFetching: checkingSub } =
+    useCheckSubDomainAvailability(
+      shouldCheckAvailability ? debouncedSubDomain : "",
+    );
 
   const finalIsSubAvailable = isSuggestionSubdomain ? true : isSubAvailable;
 
@@ -75,20 +106,43 @@ export default function CreateOrgModal({
     setSubDomain(suggestion);
   };
 
+  const toggleProduct = (name: string) => {
+    setSelectedProducts((prev) =>
+      prev.includes(name) ? prev.filter((p) => p !== name) : [...prev, name],
+    );
+  };
+
   const handleReset = () => {
     setCompanyName("");
     setSubDomain("");
-    setSelectedProduct("OI");
-    setSelectedPlanId("d755fe7d-4372-426c-af33-e63b71a6521f");
-    setCurrentStep(1);
+    setSelectedProducts([initialProduct]);
+    setSelectedPlanId(
+      initialProduct === "OI" ? initialPkgId : DEFAULT_OI_PLAN_ID,
+    );
+    setOpPackageId(initialProduct === "OP" ? initialOpPkgId : null);
+    setOpMode("plan");
+    setOpServiceIds([]);
+    setOpDominationUpgrade(false);
+    setOpInvoiceId("");
+    setOpInvoiceVerified(false);
+    setCurrentStep(isDirectFlow ? 2 : 1);
   };
 
   const handleCreate = () => {
+    // One combined payload for every selected product. Only include a product's
+    // fields when that product is selected. OP no longer collects any in-app
+    // payment (GHL bills it), so a services order flows through create like any
+    // other product.
     const payload: CreateOrganizationData = {
       name: companyName.trim(),
-      subDomainName: subDomain.trim(),
-      product: [selectedProduct],
-      packageId: selectedPlanId,
+      product: selectedProducts,
+      subDomainName: isOiSelected ? subDomain.trim() : undefined,
+      packageId: isOiSelected ? selectedPlanId : null,
+      opPackageId: isOpSelected && opMode === "plan" ? opPackageId : undefined,
+      serviceIds: isOpServices ? opServiceIds : undefined,
+      dominationUpgrade: isOpServices ? opDominationUpgrade : undefined,
+      invoiceId: isOpServices ? opInvoiceId.trim() : undefined,
+      billingCycle: "Monthly",
     };
     onSubmit(payload);
   };
@@ -101,11 +155,21 @@ export default function CreateOrgModal({
 
   const canSubmit = () => {
     if (!companyName.trim()) return false;
-    if (selectedProduct === "OI" && !subDomain.trim()) return false;
-    if (selectedProduct === "OI" && (isSubDomainDebouncing || checkingSub))
-      return false;
-    if (selectedProduct === "OI" && finalIsSubAvailable === false) return false;
-    if (!selectedPlanId) return false;
+    if (selectedProducts.length === 0) return false;
+    if (isOiSelected) {
+      if (!subDomain.trim()) return false;
+      if (isSubDomainDebouncing || checkingSub) return false;
+      if (finalIsSubAvailable === false) return false;
+      if (!selectedPlanId) return false;
+    }
+    if (isOpSelected) {
+      if (opMode === "services") {
+        if (opServiceIds.length === 0) return false;
+        if (!opInvoiceVerified) return false;
+      } else if (!opPackageId) {
+        return false;
+      }
+    }
     return true;
   };
 
@@ -120,18 +184,23 @@ export default function CreateOrgModal({
       onClose={onClose}
       size="xxxl"
       ariaLabel="Create organization"
-      className="overflow-hidden"
+      className="p-4 sm:p-5 overflow-hidden"
     >
-      <div className="-mt-6">
-        <StepIndicator steps={steps} currentStep={currentStep > 2 ? 2 : currentStep} />
-      </div>
-      <Modal.Body className="p-2">
+      {!isDirectFlow && (
+        <div className="-mt-3">
+          <StepIndicator
+            steps={steps}
+            currentStep={currentStep > 2 ? 2 : currentStep}
+          />
+        </div>
+      )}
+      <Modal.Body className="p-0">
         {currentStep === 1 ? (
           <OrganizationStep
             companyName={companyName}
             setCompanyName={setCompanyName}
-            selectedProduct={selectedProduct}
-            setSelectedProduct={setSelectedProduct}
+            selectedProducts={selectedProducts}
+            toggleProduct={toggleProduct}
             onNext={() => setCurrentStep(2)}
             onReset={handleReset}
           />
@@ -139,7 +208,7 @@ export default function CreateOrgModal({
           <SetupStep
             companyName={companyName}
             setCompanyName={setCompanyName}
-            selectedProduct={selectedProduct}
+            selectedProducts={selectedProducts}
             subDomain={subDomain}
             setSubDomain={setSubDomain}
             suggestions={suggestions}
@@ -150,11 +219,24 @@ export default function CreateOrgModal({
             isSubDomainDebouncing={isSubDomainDebouncing}
             selectedPlanId={selectedPlanId}
             setSelectedPlanId={setSelectedPlanId}
+            initialBillingCycle={initialBillingCycle}
+            opPackageId={opPackageId}
+            setOpPackageId={setOpPackageId}
+            opMode={opMode}
+            setOpMode={setOpMode}
+            opServiceIds={opServiceIds}
+            setOpServiceIds={setOpServiceIds}
+            opDominationUpgrade={opDominationUpgrade}
+            setOpDominationUpgrade={setOpDominationUpgrade}
+            opInvoiceId={opInvoiceId}
+            setOpInvoiceId={setOpInvoiceId}
+            opInvoiceVerified={opInvoiceVerified}
+            setOpInvoiceVerified={setOpInvoiceVerified}
             onBack={() => setCurrentStep(1)}
             onCreate={handleCreate}
             creatingOrg={isLoading}
             canSubmit={canSubmit()}
-            isDirectFlow={false}
+            isDirectFlow={isDirectFlow}
           />
         )}
       </Modal.Body>

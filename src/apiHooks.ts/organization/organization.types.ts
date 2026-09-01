@@ -34,6 +34,7 @@ export type Subscription = {
 };
 
 export type Package = {
+  tier_level: number;
   id: string;
   package_name: string;
   currency: string;
@@ -45,6 +46,17 @@ export type Package = {
 export interface CreateOrganizationData {
   name: string;
   packageId: string | null;
+  // Owners Pulse (OP) uses its own package table + billing; it takes
+  // opPackageId instead of packageId and has no subdomain. A services order
+  // instead passes serviceIds (+ optional Domination upgrade) and is paid via
+  // the buy-services endpoint after creation.
+  opPackageId?: string | null;
+  serviceIds?: string[];
+  dominationUpgrade?: boolean;
+  // The verified Stripe (OP account) invoice id for a services order's setup
+  // fee (see POST /og/op/verify-invoice) — required when serviceIds is set.
+  invoiceId?: string;
+  billingCycle?: "Monthly" | "Yearly";
   address?: string;
   city?: string;
   province?: string;

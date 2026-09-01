@@ -1,0 +1,559 @@
+"use client";
+import React, { useEffect, useRef, useState } from "react";
+import { Check, Info } from "lucide-react";
+import Link from "next/link";
+import {
+  useGetOpServices,
+  useOpPreview,
+  useVerifyOpInvoice,
+} from "@/apiHooks.ts/opSubscription/opSubscription.api";
+import PlanCardSkeleton from "@/components/PlanCardSkeleton";
+import { Input, LoadingSpinner } from "@/components/ui";
+import OpServiceItem from "./OpServiceItem";
+import { useAppSelector } from "@/redux/store";
+
+interface OpServicesSelectorProps {
+  selectedServiceIds: string[];
+  setSelectedServiceIds: (ids: string[]) => void;
+  dominationUpgrade: boolean;
+  setDominationUpgrade: (v: boolean) => void;
+  billingCycle?: "monthly" | "yearly";
+  invoiceId: string;
+  setInvoiceId: (v: string) => void;
+  invoiceVerified: boolean;
+  setInvoiceVerified: (v: boolean) => void;
+}
+
+const tierLabel: Record<string, string> = {
+  STARTER: "Starter",
+  GROWTH: "Growth",
+  DOMINATION: "Domination",
+};
+
+// The order the service cards are shown in, per design. Matched on the start of
+// the service name (lowercased) so it survives suffixes like "Management".
+const SERVICE_DISPLAY_ORDER = [
+  "google my business",
+  "seo",
+  "google ads",
+  "social media",
+  "website design",
+];
+
+const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
+  selectedServiceIds,
+  setSelectedServiceIds,
+  dominationUpgrade,
+  setDominationUpgrade,
+  billingCycle = "monthly",
+  invoiceId,
+  setInvoiceId,
+  invoiceVerified,
+  setInvoiceVerified,
+}) => {
+  const { user } = useAppSelector((s) => s.auth);
+  const { data: services, isPending } = useGetOpServices();
+  const [invoiceError, setInvoiceError] = useState<string | null>(null);
+  // What the field SHOWS once verified. The submitted value stays the canonical
+  // Stripe invoice id (see onSuccess below), but customers only ever recognise
+  // the human-readable Invoice Number from their receipt, so showing them
+  // "in_1UAm..." back reads like the field lost their input.
+  const [invoiceDisplay, setInvoiceDisplay] = useState<string | null>(null);
+  const [isAutoBundled, setIsAutoBundled] = useState(false);
+  const {
+    mutate: verifyInvoice,
+    isPending: isVerifyingInvoice,
+  } = useVerifyOpInvoice();
+
+  const handleVerifyInvoice = () => {
+    const trimmed = invoiceId.trim();
+    if (!trimmed) return;
+    setInvoiceError(null);
+    verifyInvoice(
+      {
+        invoiceId: trimmed,
+        serviceIds: selectedServiceIds,
+        dominationUpgrade: bundleSelected && dominationUpgrade,
+      },
+      {
+        onSuccess: (data) => {
+          // The backend resolves whatever was typed (a Stripe Invoice ID, or
+          // the human-readable Invoice Number customers actually have) to the
+          // canonical Stripe invoice id and stores the verification under that
+          // id. Adopt it here so the create-org submission sends the SAME id
+          // the backend looks up at creation time — otherwise submitting the
+          // originally-typed value (e.g. the Invoice Number) wouldn't match.
+          setInvoiceId(data.invoiceId);
+          // Display only — falls back to the id when Stripe assigned no number.
+          setInvoiceDisplay(data.number ?? data.invoiceId);
+          setInvoiceVerified(true);
+        },
+        onError: (error: any) => {
+          setInvoiceVerified(false);
+          setInvoiceError(
+            (error as Error)?.message || "Could not verify this invoice ID",
+          );
+        },
+      },
+    );
+  };
+
+  const isYearly = billingCycle === "yearly";
+
+  const svcPrice = (s: {
+    monthly_price: string;
+    yearly_price: string | null;
+  }) => {
+    const useYearly = isYearly && !!s.yearly_price;
+    const price = useYearly ? s.yearly_price : s.monthly_price;
+    return `$${Number(price).toLocaleString()}${useYearly ? "/yr" : "/mo"}`;
+  };
+
+  const bundle = services?.find((s) => s.is_bundle);
+  // Display order only — the API returns services alphabetically. Anything not
+  // listed keeps its API position, after the ones that are. Selection, pricing
+  // and the combination signature are unaffected (the signature sorts by id).
+  const individual = [...(services?.filter((s) => !s.is_bundle) ?? [])].sort(
+    (a, b) => {
+      const rank = (n: string) => {
+        const i = SERVICE_DISPLAY_ORDER.findIndex((k) =>
+          n.toLowerCase().startsWith(k),
+        );
+        return i === -1 ? SERVICE_DISPLAY_ORDER.length : i;
+      };
+      return rank(a.name) - rank(b.name);
+    },
+  );
+
+  const bundleSelected = bundle
+    ? selectedServiceIds.includes(bundle.id)
+    : false;
+  const hasNoServiceSelected = selectedServiceIds.length === 0;
+
+  const { data: preview, isFetching: previewLoading } = useOpPreview({
+    serviceIds: selectedServiceIds,
+    dominationUpgrade: bundleSelected && dominationUpgrade,
+  });
+
+  // The Domination upsell only applies to the bundle; reset it otherwise.
+  useEffect(() => {
+    if (!bundleSelected && dominationUpgrade) setDominationUpgrade(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bundleSelected]);
+
+  // A verified invoice is tied to one specific combo/price. If the selection
+  // (or the Domination upgrade) changes after verifying, that verification no
+  // longer matches what's being ordered — re-verification is required. Without
+  // this, Create stays enabled for a stale, now-wrong invoice/price pairing.
+  const selectionKey =
+    [...selectedServiceIds].sort().join(",") + "|" + dominationUpgrade;
+  const lastSelectionKeyRef = useRef(selectionKey);
+  useEffect(() => {
+    if (lastSelectionKeyRef.current !== selectionKey) {
+      lastSelectionKeyRef.current = selectionKey;
+      if (invoiceVerified) setInvoiceVerified(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectionKey]);
+
+  const toggle = (id: string) => {
+    const allIndividualIds = individual.map((s) => s.id);
+    const isBundleClick = bundle && id === bundle.id;
+
+    if (isBundleClick) {
+      if (bundleSelected) {
+        // Unselect bundle and all individual services
+        setSelectedServiceIds([]);
+      } else {
+        // Select bundle + all individual services
+        setSelectedServiceIds([bundle.id, ...allIndividualIds]);
+      }
+      setIsAutoBundled(false);
+      return;
+    }
+
+    // Individual service click
+    if (bundleSelected) {
+      // Selecting an individual service while the bundle is active drops the
+      // bundle and starts over with just this one service selected.
+      setSelectedServiceIds([id]);
+      setIsAutoBundled(false);
+    } else {
+      const isCurrentlySelected = selectedServiceIds.includes(id);
+      const nextSelected = isCurrentlySelected
+        ? selectedServiceIds.filter((x) => x !== id && x !== bundle?.id)
+        : [...selectedServiceIds.filter((x) => x !== bundle?.id), id];
+
+      // Auto-select bundle if all individual services become selected
+      const allSelected =
+        allIndividualIds.length > 0 &&
+        allIndividualIds.every((sId) => nextSelected.includes(sId));
+
+      if (allSelected && bundle) {
+        setSelectedServiceIds([bundle.id, ...nextSelected]);
+        setIsAutoBundled(true);
+      } else {
+        setSelectedServiceIds(nextSelected);
+        setIsAutoBundled(false);
+      }
+    }
+  };
+
+  if (isPending) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+        <PlanCardSkeleton />
+        <PlanCardSkeleton />
+        <PlanCardSkeleton />
+      </div>
+    );
+  }
+
+  if (!services || services.length === 0) {
+    return (
+      <p className="text-sm text-text-secondary py-6 text-center">
+        No services are available right now.
+      </p>
+    );
+  }
+
+  // Selected services list for table display in Order Summary
+  const selectedServicesList = bundleSelected
+    ? bundle
+      ? [bundle]
+      : []
+    : services.filter((s) => selectedServiceIds.includes(s.id) && !s.is_bundle);
+
+  // Calculate order totals
+  const monthlyTotal = isYearly
+    ? (preview?.yearly ?? 0)
+    : (preview?.monthly ?? 0);
+  const setupFee = preview?.setup ?? 0;
+
+  return (
+    <div className="space-y-4">
+      {/* Header Row */}
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-text">
+          Choose your Services
+        </h3>
+        <Link
+          href="https://ownerspulse.com/services"
+          target="_blank"
+          className="text-primary cursor-pointer text-nowrap text-sm font-bold hover:underline"
+        >
+          View all services
+        </Link>
+      </div>
+
+      {/* Services 3-Column Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        {individual.map((svc) => (
+          <OpServiceItem
+            key={svc.id}
+            svc={svc}
+            isSelected={!bundleSelected && selectedServiceIds.includes(svc.id)}
+            onToggle={toggle}
+            svcPrice={svcPrice}
+          />
+        ))}
+
+        {/* All-In-One Bundle Card */}
+        {bundle && (
+          <button
+            type="button"
+            onClick={() => toggle(bundle.id)}
+            className={`relative text-left p-4 rounded-xl border transition-all duration-200 cursor-pointer ${
+              bundleSelected
+                ? "border-success bg-success-bg"
+                : "border-border hover:border-success/40 bg-bg-secondary"
+            }`}
+          >
+            {bundleSelected && (
+              <span className="absolute top-3.5 right-3.5 w-5 h-5 rounded-full border border-success bg-bg-secondary text-success flex items-center justify-center">
+                <Check size={12} strokeWidth={3} />
+              </span>
+            )}
+            <span className="flex items-center gap-2 pr-6 mb-1">
+              <span className="font-bold text-text text-sm">
+                {bundle.name}
+              </span>
+              {/* Badge · size sm · color Success — uses the app's success tokens,
+                  which already define a dark-mode value. */}
+              <span className="shrink-0 rounded-md bg-success-bg px-2.5 py-1 text-[11px] font-medium leading-none text-success">
+                Popular
+              </span>
+            </span>
+            <span className="text-xs font-normal text-text-secondary block">
+              {svcPrice(bundle)}
+              {Number(bundle.setup_fee) > 0
+                ? ` · $${Number(bundle.setup_fee).toLocaleString()} setup`
+                : ""}
+            </span>
+          </button>
+        )}
+      </div>
+
+      {/* Bundle Selected Notice */}
+      {bundleSelected && isAutoBundled && (
+        <div className="mt-1 flex w-full items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-2 text-xs font-medium text-primary">
+          <Info size={16} className="shrink-0" />
+          All services selected! We've automatically applied the All-In-One Bundle to give you our complete package at the best value.
+        </div>
+      )}
+
+      {/* Domination Upgrade Checkbox — only relevant once the full bundle is selected */}
+      {bundleSelected && (
+        <div className="pt-0.5">
+          <label className="flex items-center gap-2.5 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={dominationUpgrade}
+              onChange={(e) => setDominationUpgrade(e.target.checked)}
+              className="w-4 h-4 accent-primary rounded border-border cursor-pointer"
+            />
+            <span className="text-xs sm:text-sm text-text">
+              Upgrade to{" "}
+              <span className="font-bold text-text">Domination</span> for{" "}
+              <span className="font-bold text-text">+$200/mo</span>{" "}
+              <span className="text-text-secondary font-normal">(bundle only)</span>
+            </span>
+          </label>
+        </div>
+      )}
+
+      {/* Order Summary Box */}
+      <div className="rounded-xl border border-border/80 bg-bg-secondary overflow-hidden shadow-2xs">
+        {/* Header with Column Titles */}
+        <div className="px-4 py-3 bg-surface-subtle border-b border-border/60 flex items-center justify-between">
+          <h4 className="text-sm font-semibold text-text">Order Summary</h4>
+          <div className="flex items-center gap-6 sm:gap-10 text-xs font-medium text-text-secondary">
+            <span className="w-20 text-right">
+              {isYearly ? "Per year" : "Per month"}
+            </span>
+            <span className="w-24 text-right">1 time setup</span>
+          </div>
+        </div>
+
+        <div className="p-4 space-y-4">
+          {/* Selected Services Itemized List */}
+          {selectedServicesList.length > 0 ? (
+            <div className="space-y-3 pb-1">
+              {selectedServicesList.map((svc) => {
+                const price =
+                  isYearly && svc.yearly_price
+                    ? svc.yearly_price
+                    : svc.monthly_price;
+                return (
+                  <div
+                    key={svc.id}
+                    className="flex items-center justify-between text-xs sm:text-sm"
+                  >
+                    <span className="font-normal text-text">
+                      {svc.name}
+                    </span>
+                    <div className="flex items-center gap-6 sm:gap-10 font-semibold text-text">
+                      <span className="w-20 text-right">
+                        ${Number(price).toLocaleString()}
+                      </span>
+                      <span className="w-24 text-right">
+                        ${Number(svc.setup_fee).toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-xs text-text-secondary font-normal py-1">
+              No services selected yet.
+            </p>
+          )}
+
+          {/* Included plan banner */}
+          <div className="bg-surface-subtle border border-border/60 rounded-xl px-4 py-2.5 flex items-center justify-between text-xs sm:text-sm">
+            <span className="font-medium text-text-secondary">Included plan</span>
+            {dominationUpgrade ? (
+              <span className="font-semibold text-primary">
+                Domination{" "}
+                <span className="text-text-secondary font-normal text-xs">
+                  (+$200/month)
+                </span>
+              </span>
+            ) : (
+              <span className="font-semibold text-primary">
+                {preview?.resolvedTier
+                  ? `${tierLabel[preview.resolvedTier] ?? preview.resolvedTier}`
+                  : "Starter"}{" "}
+                <span className="text-text-secondary font-normal text-xs">
+                  (included free)
+                </span>
+              </span>
+            )}
+          </div>
+
+          {/* Pricing Breakdown */}
+          {/* The two amounts go to different places at different times, so each
+              line says who charges it and when. */}
+          <div className="space-y-3 pt-0.5">
+            <div className="flex items-start justify-between gap-3 text-xs sm:text-sm">
+              <div className="min-w-0">
+                <p className="font-medium text-text">
+                  {isYearly ? "Yearly subscription" : "Monthly subscription"}
+                </p>
+                <p className="mt-0.5 text-[11px] text-text-secondary">
+                  Not charged today — billed after setup
+                </p>
+              </div>
+              <span className="shrink-0 font-semibold text-text">
+                {previewLoading
+                  ? "…"
+                  : `$${monthlyTotal.toLocaleString()}${isYearly ? "/yr" : "/mo"}`}
+              </span>
+            </div>
+
+            <div className="flex items-start justify-between gap-3 text-xs sm:text-sm">
+              <div className="min-w-0">
+                <p className="font-medium text-text">Due now — setup fee</p>
+                <p className="mt-0.5 text-[11px] text-text-secondary">
+                  One-time charge via below payment link
+                </p>
+              </div>
+              <span className="shrink-0 font-semibold text-text">
+                {previewLoading ? "…" : `$${setupFee.toLocaleString()}`}
+              </span>
+            </div>
+          </div>
+
+          {/* Full-width note, styled like the GHL chip so both read as the
+              same kind of informational callout. */}
+          <div className="mt-2 flex w-full items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-2 text-[11px] font-medium text-primary">
+            <Info size={14} className="shrink-0" />
+            Prices are exclusive of taxes.
+          </div>
+        </div>
+      </div>
+
+      {/* Action Notice */}
+      <div className="pt-1">
+        <p className="text-xs sm:text-sm text-text-secondary">
+          {preview?.stripePaymentLink ? (
+            <>
+              Setup Fee:{" "}
+              <span className="font-bold">${setupFee.toLocaleString()}</span> —{" "}
+              <a
+                href={preview.stripePaymentLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary font-medium hover:underline"
+              >
+                Make Payment
+              </a>
+              , then verify using your Invoice ID. Already paid? Use your Invoice
+              ID to verify your payment.
+            </>
+          ) : (
+            "Setup-fee payment isn't available online for this selection yet — please verify with an Invoice ID from your Closer."
+          )}
+        </p>
+        {preview?.stripePaymentLink && (
+          <p className="text-[11px] font-medium text-warning mt-1 bg-warning-bg p-1.5 rounded border border-warning/20 inline-block">
+            ⚠️ Make sure to use "
+            {user?.email ? (
+              <span className="font-bold">{user.email}</span>
+            ) : (
+              "the email linked to this account"
+            )}
+            " while making the payment, otherwise a mismatch will cause
+            verification to fail.
+          </p>
+        )}
+      </div>
+
+      {/* Invoice ID verification — always visible, no heading (per design) */}
+      <div className="rounded-xl bg-card-secondary border border-border p-4">
+        {(
+          <div className="pt-0.5">
+            <div className="flex items-end gap-3">
+              <div className="flex-1">
+                <Input
+                  type="text"
+                  label="Invoice ID"
+                  name="op-invoice-id"
+                  value={
+                    invoiceVerified && invoiceDisplay
+                      ? invoiceDisplay
+                      : (invoiceId ?? "")
+                  }
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setInvoiceId(val);
+                    if (invoiceVerified) setInvoiceVerified(false);
+                    if (invoiceError) setInvoiceError(null);
+                  }}
+                  placeholder={
+                    hasNoServiceSelected
+                      ? "Select a service first"
+                      : "Enter invoice ID"
+                  }
+                  disabled={hasNoServiceSelected}
+                  className="bg-input-bg"
+                  autoComplete="off"
+                  data-lpignore="true"
+                  data-1p-ignore=""
+                  data-bwignore="true"
+                  data-form-type="other"
+                />
+              </div>
+              {invoiceVerified ? (
+                <span className="flex items-center gap-1 text-success font-semibold text-sm pb-3">
+                  <Check size={14} strokeWidth={3} />
+                  Verified
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleVerifyInvoice}
+                  disabled={
+                    hasNoServiceSelected ||
+                    !invoiceId?.trim() ||
+                    isVerifyingInvoice
+                  }
+                  className="flex items-center gap-1.5 text-primary font-semibold text-sm hover:underline cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:no-underline pb-3"
+                >
+                  {isVerifyingInvoice && <LoadingSpinner size={3} />}
+                  {isVerifyingInvoice ? "Verifying…" : "Verify"}
+                </button>
+              )}
+            </div>
+            {invoiceError && (
+              <p className="text-xs text-red font-medium pt-1.5">
+                {invoiceError}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+
+      <p className="text-xs sm:text-sm text-text-secondary">
+        For any questions, contact{" "}
+        <a
+          href="mailto:support@ownerspulse.com"
+          className="text-primary hover:underline"
+        >
+          support@ownerspulse.com
+        </a>{" "}
+        |{" "}
+        <a
+          href="tel:+15405592908"
+          className="text-primary hover:underline"
+        >
+          (540) 559-2908
+        </a>
+        .
+      </p>
+    </div>
+  );
+};
+
+export default OpServicesSelector;
