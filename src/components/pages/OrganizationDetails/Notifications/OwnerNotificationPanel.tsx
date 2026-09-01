@@ -1,7 +1,8 @@
 import React from 'react';
 import { NotificationSection } from '@/components/pages/OrganizationDetails/Notifications/NotificationSection';
 import { ShoppingCart, ClipboardCheck, Truck, ChartColumnIncreasing } from 'lucide-react';
-import { OwnerKey, NotificationSettings } from '@/app/organization-details/[orgId]/notifications/page';
+import { NotificationSettings } from '@/app/organization-details/[orgId]/notifications/page';
+import { OwnerKey } from '@/components/pages/OrganizationDetails/Billing/OwnersProductItem';
 
 interface OwnerNotificationPanelProps {
   owner: OwnerKey;

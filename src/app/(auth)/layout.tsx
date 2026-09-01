@@ -102,48 +102,64 @@ const AuthLayout = ({ children }: AuthLayoutProp) => {
   const Content = (
     <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
-  return (
-    <div className="min-h-screen bg-card relative overflow-hidden">
-      <div className="absolute inset-0 opacity-40"></div>
+  // These routes render their own full-bleed AuthPageShell (brand panel +
+  // embedded footer), so the layout's own header/footer chrome would duplicate it.
+  const SHELL_ROUTES = [
+    "/login",
+    "/sign-up",
+    "/forgot-password",
+    "/reset-password",
+    "/otp",
+    "/accept-email-change",
+    "/decline-email-change",
+    "/verify-change-email-otp",
+  ];
+  const usesOwnShell = SHELL_ROUTES.includes(pathname);
 
-      <div className="relative z-10 flex items-center  justify-between p-4 sm:p-6 lg:p-8">
-        <a href="https://ownersinventory.com/" target="_blank" rel="noopener noreferrer">
-          <Logo Icon="ownersInventory" className="cursor-pointer" />
-        </a>
-        <div className="flex items-center gap-2 sm:gap-3">
-          {pathname === "/login" ? (
-            <span className="text-xs sm:text-sm hidden sm:block text-text">
-              Don't have an account?
-            </span>
-          ) : (
-            <span className="text-xs sm:text-sm hidden sm:block text-text">
-              Already have an account?
-            </span>
-          )}
-          {pathname === "/login" ? (
-            <Link
-              href={`/sign-up?app=${app}`}
-              className="bg-primary border hover:bg-primary/80 text-btn-text text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition-colors"
+  return (
+    <div
+      className={
+        usesOwnShell
+          ? "min-h-screen relative overflow-hidden"
+          : "min-h-screen bg-card relative overflow-hidden"
+      }
+    >
+      {!usesOwnShell && (
+        <>
+          <div className="absolute inset-0 opacity-40"></div>
+
+          <div className="relative z-10 flex items-center  justify-between p-4 sm:p-6 lg:p-8">
+            <a
+              href="https://ownersinventory.com/"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              Sign Up
-            </Link>
-          ) : (
-            <Link
-              href={`/login?app=${app}`}
-              className="bg-primary border hover:bg-primary/80 text-btn-text text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition-colors"
-            >
-              Sign In
-            </Link>
-          )}
-        </div>
-      </div>
+              <Logo Icon="ownersUniverse" className="cursor-pointer" />
+            </a>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <span className="text-xs sm:text-sm hidden sm:block text-text">
+                Already have an account?
+              </span>
+              <Link
+                href={`/login?app=${app}`}
+                className="bg-primary border hover:bg-primary/80 text-btn-text text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition-colors"
+              >
+                Sign In
+              </Link>
+            </div>
+          </div>
+        </>
+      )}
       {!redirectUrlParam ? <PublicRoute>{Content}</PublicRoute> : Content}
 
-      <div className="mt-6 inset-x-0 z-10 pb-6 sm:pb-8 flex justify-center">
-        <p className="text-xs text-center text-text">
-          © {new Date().getFullYear()} Owners Inventory - All rights reserved
-        </p>
-      </div>
+      {!usesOwnShell && (
+        <div className="mt-6 inset-x-0 z-10 pb-6 sm:pb-8 flex justify-center">
+          <p className="text-xs text-center text-text">
+            © {new Date().getFullYear()} Owners Inventory - All rights reserved
+            here
+          </p>
+        </div>
+      )}
     </div>
   );
 };

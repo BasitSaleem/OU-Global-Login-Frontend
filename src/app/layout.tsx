@@ -12,8 +12,8 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL("https://osglobal.ownersjungle.com"),
   title: {
-    default: "Owners Inventory",
-    template: "%s | Owners Inventory"
+    default: "Owners Universe",
+    template: "%s | Owners Universe"
   },
   description: "Global authentication and business management platform for Owners Inventory. Streamline your business operations with our suite of integrated products including Owners Inventory, Owners Jobs, Owners Marketplace, and more.",
   keywords: [
@@ -66,11 +66,10 @@ export const metadata: Metadata = {
 
   // App icons and favicons
   icons: {
-    icon: [
-      { url: "/OI_LOGO.svg", sizes: "26x26", type: "image/svg+xml" },
-      { url: "/og-image.png", sizes: "16x16", type: "image/png" },
-      { url: "/og-image.png", sizes: "32x32", type: "image/png" },
-    ],
+    // public/favicon.ico is actually a PNG despite the extension — declare the
+    // real type so browsers don't reject it as a malformed .ico.
+    icon: [{ url: "/favicon.ico", sizes: "any", type: "image/png" }],
+    shortcut: ["/favicon.ico"],
     apple: [
       { url: "/og-image.png", sizes: "180x180", type: "image/png" },
     ],

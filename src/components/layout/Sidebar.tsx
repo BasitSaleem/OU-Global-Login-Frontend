@@ -61,25 +61,11 @@ export default function Sidebar({
       isActive: currentPath === "/ownersinventory.com",
     },
     {
-      href: "/marketplace",
-      svgName: "OM",
-      label: "Marketplace",
-      hasTime: true,
-      isActive: currentPath === "/marketplace",
-    },
-    {
-      href: "/jungle",
-      svgName: "OJ",
-      label: "Jungle",
-      hasTime: true,
-      isActive: currentPath === "/jungle",
-    },
-    {
-      href: "/analytics",
-      svgName: "OA",
-      label: "Analytics",
-      hasTime: true,
-      isActive: currentPath === "/analytics",
+      href: "https://ownerspulse.com/",
+      hasExternal: true,
+      svgName: "OP",
+      label: "Pulse",
+      isActive: currentPath === "/ownerspulse.com",
     },
   ];
 
@@ -136,13 +122,35 @@ export default function Sidebar({
         title={collapsed ? item.label : ""}
       >
         {collapsed ? (
-          <SvgIcon name={item.svgName} width={20} height={20} />
+          <div className="relative w-5 h-5 shrink-0">
+            <div
+              className={cn(
+                "absolute inset-y-0 flex items-center justify-center",
+                item.svgName === "OP" ? "w-5" : "w-5 ",
+              )}
+            >
+              <SvgIcon
+                name={item.svgName}
+                className="w-full h-full object-contain"
+              />
+            </div>
+          </div>
         ) : (
           <>
             <div className="flex items-center gap-3 ">
-              {/* {renderIcon(item, false)}
-               */}
-              <SvgIcon name={item.svgName} width={20} height={20} />
+              <div className="relative w-5 h-5 shrink-0">
+                <div
+                  className={cn(
+                    "absolute inset-y-0 flex items-center justify-center",
+                    item.svgName === "OP" ? "w-6" : "w-5 left-0",
+                  )}
+                >
+                  <SvgIcon
+                    name={item.svgName}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              </div>
               <span className={cn("", { "font-medium": item.isActive })}>
                 {item.label}
               </span>
@@ -228,7 +236,7 @@ export default function Sidebar({
       {/* Sidebar */}
       <aside
         className={cn(
-          "border-r bg-bg-secondary flex-shrink-0 transition-all duration-300 ease-in-out fixed lg:relative inset-y-0 left-0 z-50",
+          "border-r bg-bg-secondary shrink-0 transition-all duration-300 ease-in-out fixed lg:relative inset-y-0 left-0 z-50",
           {
             "w-17": collapsed,
             "w-70": !collapsed, //else use w-64
@@ -241,19 +249,16 @@ export default function Sidebar({
         <Link
           href="/"
           className={cn(
-            "h-14  flex items-center justify-start border-b cursor-pointer",
-            collapsed ? "px-3" : "px-3",
+            "h-14 flex items-center border-b cursor-pointer",
+            collapsed ? "justify-center px-0" : "justify-start px-3",
           )}
         >
           {collapsed ? (
-            <div className="w-20 h-10 rounded-lg flex items-center justify-center">
-              <SvgIcon name="OI" width={30} height={30} />
+            <div className="h-10 rounded-lg flex items-center justify-center">
+              <SvgIcon name="ownersUniverseColl" width={30} height={30} />
             </div>
           ) : (
-            <SvgIcon
-              name="ownersInventory"
-              width={130}
-            />
+            <SvgIcon name="ownersUniverse" width={130} />
           )}
         </Link>
 

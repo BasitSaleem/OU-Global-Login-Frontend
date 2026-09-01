@@ -34,7 +34,7 @@ export const useSSE = (orgId: string | undefined, subscriptionId?: string) => {
     };
 
     es.onerror = (err) => {
-      logger.error(` SSE error for org: ${orgId}`, err);
+      logger.warn(` SSE warning for org: ${orgId} - Connection lost or reconnecting.`);
       errorCountRef.current += 1;
 
       if (errorCountRef.current >= 5) {

@@ -3,9 +3,10 @@
 import React from "react";
 import { Document, Page, Text, View, Image, Link } from "@react-pdf/renderer";
 
-import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
+import { Invoice, InvoiceBreakdown } from "@/apiHooks.ts/invoice/invoice.types";
 import { User } from "@/types/auth.types";
 import { calculateMidCycleAddonFinancial } from "@/utils/invoicesUtils";
+import { breakdownToDisplay } from "@/utils/invoiceBreakdown";
 import { oiLogoBase64 } from "./logoBase64";
 import { formatDate } from "@/utils/helpers";
 import { styles, getStatusStyle } from "./InvoicePDFStyles";
@@ -14,22 +15,44 @@ interface MidCycleInvoicePDFProps {
   invoice: Invoice;
   orgName?: string;
   user: User | null;
+  breakdown?: InvoiceBreakdown | null;
 }
 
 const MidCycleInvoicePDF: React.FC<MidCycleInvoicePDFProps> = ({
   invoice,
   orgName,
   user,
+  breakdown,
 }) => {
   const statusStyle = getStatusStyle(invoice.status);
-  const { subtotal, tax, total, midCycleAddons, discountPercent } =
-    calculateMidCycleAddonFinancial(invoice);
+  const authoritative = breakdownToDisplay(breakdown);
+  const legacy = calculateMidCycleAddonFinancial(invoice);
 
-  const addonsDiscountedYearlyTotal =
-    midCycleAddons?.reduce((acc: number, addon: any) => {
-      return acc + Number(addon.price || 0) * (addon.quantity || 1);
-    }, 0) *
-      ((100 - discountPercent) / 100) || 0;
+  const rows = authoritative
+    ? authoritative.rows
+    : (legacy.midCycleAddons || []).map((addon: any) => {
+        const qty = addon.quantity || 1;
+        const price = parseFloat(addon.price || "0");
+        return {
+          name: addon.name || "Add-on Module",
+          type: "Mid-cycle",
+          quantity: qty,
+          unitPrice: price,
+          amount: price * qty,
+          proration: true,
+        };
+      });
+
+  const summary = authoritative
+    ? authoritative.summary
+    : {
+        subtotal: legacy.subtotal,
+        discount: 0,
+        tax: legacy.tax,
+        total: legacy.total,
+        currency: invoice.payment?.currency || "USD",
+      };
+  const showDiscount = summary.discount > 0.001;
 
   return (
     <Document title={`Invoice-${invoice.invoice_number}`}>
@@ -135,52 +158,59 @@ const MidCycleInvoicePDF: React.FC<MidCycleInvoicePDFProps> = ({
             </Text>
           </View>
 
-          {midCycleAddons.map((addon, index) => {
-            const qty = addon.quantity || 1;
-            const price = parseFloat(addon.price || "0");
-            const rowTotal = price * qty;
-            return (
-              <View style={styles.tableRow} key={index}>
-                <View style={styles.colDesc}>
-                  <Text style={styles.itemTitle}>
-                    {addon.name || "Add-on Module"}
-                  </Text>
-                </View>
-                <View style={styles.colType}>
-                  <Text style={styles.itemSub}>Mid-cycle</Text>
-                </View>
-                <Text style={styles.colQty}>{qty}</Text>
-                <Text style={styles.colPrice}>${price.toFixed(2)}</Text>
-                <Text style={styles.colSub}>${rowTotal.toFixed(2)}</Text>
-                <Text style={styles.colTotal}>${rowTotal.toFixed(2)}</Text>
+          {rows.map((row, index) => (
+            <View style={styles.tableRow} key={index}>
+              <View style={styles.colDesc}>
+                <Text style={styles.itemTitle}>{row.name}</Text>
               </View>
-            );
-          })}
+              <View style={styles.colType}>
+                <Text
+                  style={
+                    row.type === "Subscription"
+                      ? styles.itemSubBase
+                      : styles.itemSub
+                  }
+                >
+                  {row.type}
+                </Text>
+              </View>
+              <Text style={styles.colQty}>{row.quantity}</Text>
+              <Text style={styles.colPrice}>${row.unitPrice.toFixed(2)}</Text>
+              <Text style={styles.colSub}>
+                ${(row.unitPrice * row.quantity).toFixed(2)}
+              </Text>
+              <Text style={styles.colTotal}>${row.amount.toFixed(2)}</Text>
+            </View>
+          ))}
         </View>
 
         <View style={styles.summarySection}>
           <View style={styles.summaryGrid}>
-            {invoice?.subscription?.billing_cycle === "YEARLY" && (
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Subtotal:</Text>
+              <Text style={styles.summaryValue}>
+                ${summary.subtotal.toFixed(2)}
+              </Text>
+            </View>
+            {showDiscount && (
               <View style={styles.summaryRow}>
-                <Text style={styles.summaryLabel}>Discounted Price:</Text>
+                <Text style={styles.summaryLabel}>Discount:</Text>
                 <Text style={styles.summaryValue}>
-                  ${addonsDiscountedYearlyTotal.toFixed(2)} (
-                  {discountPercent || 0}%)
+                  -${summary.discount.toFixed(2)}
                 </Text>
               </View>
             )}
             <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Subtotal (prorated):</Text>
-              <Text style={styles.summaryValue}>${subtotal.toFixed(2)}</Text>
-            </View>
-            <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Tax:</Text>
-              <Text style={styles.summaryValue}>${tax.toFixed(2)}</Text>
+              <Text style={styles.summaryValue}>${summary.tax.toFixed(2)}</Text>
             </View>
             <View style={styles.grandTotalRow}>
               <Text style={styles.grandTotalLabel}>Total Paid:</Text>
               <Text style={styles.grandTotalValue}>
-                ${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                $
+                {summary.total.toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                })}
               </Text>
             </View>
           </View>

@@ -1,6 +1,7 @@
 "use client";
 import React, { useCallback, useEffect, } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useQueryClient } from '@tanstack/react-query';
 import { ProgressTracker } from './ProgressTracker';
 import { useCreateOrganizationProgress } from '@/hooks/useProgressTracking';
 import { CreateOrganizationResponse } from '@/apiHooks.ts/organization/organization.types';
@@ -29,6 +30,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
   isFromMain
 }) => {
   const dispatch = useAppDispatch()
+  const queryClient = useQueryClient()
   useScrollLock(isOpen)
   const router = useRouter()
   const handleProgress = useCallback((progress: any) => {
@@ -36,6 +38,12 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
 
   const handleComplete = useCallback(
     (progress: any) => {
+      // The org list's status badge only ever fetched once, right after the
+      // org was created (before GHL provisioning even started) — nothing
+      // told it to check again once provisioning actually finished, so it
+      // was stuck on "Processing..." until a manual refresh. Re-invalidate
+      // it here so it reflects the real, final state on its own.
+      queryClient.invalidateQueries({ queryKey: ["organizations"] });
       onComplete?.();
       toast.success("Created", "The organization has been successfully created.");
       if (isFromMain) {
@@ -46,11 +54,15 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
       }
       onClose();
     },
-    [onComplete, isFromMain, organizationData, dispatch, router, onClose]
+    [queryClient, onComplete, isFromMain, organizationData, dispatch, router, onClose]
   );
 
   const handleError = useCallback((err: any) => {
-  }, []);
+    // Same reasoning as handleComplete — a failed provisioning attempt is
+    // also a terminal state the list should reflect (e.g. "Provisioning
+    // failed") instead of sitting on a stale "Processing..." badge.
+    queryClient.invalidateQueries({ queryKey: ["organizations"] });
+  }, [queryClient]);
   const {
     progress,
     isConnected,

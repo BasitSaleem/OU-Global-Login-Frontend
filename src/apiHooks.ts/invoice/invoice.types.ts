@@ -85,3 +85,32 @@ export interface GetUpcomingInvoiceResponse {
   message: string;
   success: boolean;
 }
+
+// Authoritative invoice breakdown (Stripe line items) from the backend.
+export interface NormalizedLineItem {
+  name: string;
+  description: string;
+  quantity: number;
+  unit_amount: number;
+  amount: number;
+  currency: string;
+  proration: boolean;
+  type: "Subscription" | "Add-on" | "Proration" | "Item";
+  period_start: string | null;
+  period_end: string | null;
+}
+
+export interface InvoiceBreakdown {
+  lineItems: NormalizedLineItem[] | null; // null -> use legacy client calc
+  subtotal: number | null;
+  tax: number | null;
+  total: number | null;
+  currency: string;
+}
+
+export interface GetInvoiceBreakdownResponse {
+  statusCode: number;
+  data: InvoiceBreakdown;
+  message: string;
+  success: boolean;
+}

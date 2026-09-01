@@ -108,7 +108,7 @@ export const DeleteOrganizationModal: React.FC<
                 error={error}
                 onRetry={reconnect}
                 title="Deleting Organization"
-                iconName="OI"
+                iconName="ownersUniverseColl"
               />
 
               {/* {(isCompleted || isFailed) && (

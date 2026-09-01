@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { SvgIcon, IconName } from './SvgIcon';
+import React from 'react';
+import { motion } from 'framer-motion';
+import { SvgIcon } from './SvgIcon';
 import { Dots } from './Dots';
 import { cn } from '@/utils/helpers';
 
@@ -12,22 +12,11 @@ interface LoaderProps {
     iconSize?: number;
 }
 
-const ICONS: IconName[] = ["OA", 'OI', 'OJ', 'OM'];
-
 export const Loader: React.FC<LoaderProps> = ({
     className = "",
     iconSize = 80,
     text
 }) => {
-    const [currentIconIndex, setCurrentIconIndex] = useState(0);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setCurrentIconIndex((prev) => (prev + 1) % ICONS.length);
-        }, 800);
-        return () => clearInterval(interval);
-    }, []);
-
     return (
         <div
             className={cn(
@@ -37,27 +26,23 @@ export const Loader: React.FC<LoaderProps> = ({
             aria-modal="true"
             role="status"
         >            <div className="relative flex items-center justify-center">
-                <AnimatePresence mode="popLayout">
-                    <motion.div
-                        key={currentIconIndex}
-                        initial={{ opacity: 0, scale: 0.5, y: 20, rotate: -10 }}
-                        animate={{ opacity: 1, scale: 1, y: 0, rotate: 0 }}
-                        exit={{ opacity: 0, scale: 1.2, filter: "blur(10px)" }}
-                        transition={{
-                            duration: 0.5,
-                            ease: "circOut"
-                        }}
-                        className="absolute"
-                    >
-                        <div className={`flex items-center justify-center p-4 bg-background/10 backdrop-blur-sm rounded-full shadow-sm border border-gray-100/20`}>
-                            <SvgIcon
-                                name={ICONS[currentIconIndex]}
-                                width={iconSize}
-                                height={iconSize}
-                            />
-                        </div>
-                    </motion.div>
-                </AnimatePresence>
+                {/* The Owners Universe mark breathes in place. Its brand colours
+                    are fixed (#795CF5 / #F95C5B), so it reads the same in both themes. */}
+                <motion.div
+                    animate={{ scale: [1, 1.08, 1] }}
+                    transition={{
+                        duration: 1.6,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                    }}
+                    className="flex items-center justify-center p-4 bg-background/10 backdrop-blur-sm rounded-full shadow-sm border border-gray-100/20"
+                >
+                    <SvgIcon
+                        name="ownersUniverseColl"
+                        width={iconSize}
+                        height={iconSize}
+                    />
+                </motion.div>
                 <motion.div
                     animate={{
                         scale: [1, 1.2, 1],

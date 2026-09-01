@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { request } from "@/utils/requestFunction";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/useToast";
 import {
   BuyAddonPayloadType,
@@ -8,6 +8,12 @@ import {
   UpgradePlanPayload,
   UpgradePlanResponse,
   previewAddonResponse,
+  ScheduleDowngradePayload,
+  ScheduleDowngradeData,
+  ChangeFrequencyPayload,
+  CancelAddonPayload,
+  CancelScheduledChangePayload,
+  SubscriptionState,
 } from "./subscription.types";
 import { confirm3DSIfNeeded } from "@/utils/stripeClient";
 
@@ -20,6 +26,13 @@ const ENDPOINTS = {
   TEST_AUTO_SUBSCRIPTION: `/og/subscription/test-auto-renewal`,
   PREVIEW_ADDON: `/og/subscription/addon/preview`,
   BUY_ADDON: `/og/subscription/addon/buy`,
+  DOWNGRADE: `/og/subscription/downgrade`,
+  SCHEDULE_UPGRADE: `/og/subscription/upgrade/schedule`,
+  CANCEL_SCHEDULED_CHANGE: `/og/subscription/downgrade/cancel`,
+  CHANGE_FREQUENCY: `/og/subscription/frequency`,
+  CANCEL_ADDON: `/og/subscription/addon/cancel`,
+  UNDO_CANCEL_ADDON: `/og/subscription/addon/cancel/undo`,
+  STATE: (orgId: string) => `/og/subscription/state?orgId=${orgId}`,
 };
 
 interface TaxPayload {
@@ -195,6 +208,183 @@ export const useBuyNewAddons = () => {
     onError: (error: any) => {
       const message = error?.message || "Failed to buy add-on";
       toast.error("Buy failed", message);
+    },
+  });
+};
+
+// --- Subscription billing policy hooks ---
+
+const invalidateBilling = (queryClient: any, orgId: string) => {
+  queryClient.invalidateQueries({ queryKey: ["organization", orgId] });
+  queryClient.invalidateQueries({ queryKey: ["subscriptionState", orgId] });
+};
+
+// Schedule a plan downgrade (to end of billing period). On a 409 the API
+// returns the incompatible add-ons; the caller re-submits with
+// confirmIncompatibleRemoval=true. We surface that via the thrown ApiError.
+export const useScheduleDowngrade = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: ScheduleDowngradePayload) => {
+      const res = await request<{ data: ScheduleDowngradeData }>(
+        ENDPOINTS.DOWNGRADE,
+        "POST",
+        {},
+        data,
+      );
+      return res.data;
+    },
+    onSuccess: (_data, variables) => {
+      invalidateBilling(queryClient, variables.orgId);
+    },
+    // No toast here: the component decides (409 = confirmation, not an error).
+  });
+};
+
+// Schedule a plan upgrade to the next cycle (deferred; no immediate charge).
+export const useScheduleUpgrade = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: ScheduleDowngradePayload) => {
+      const res = await request<{ data: ScheduleDowngradeData }>(
+        ENDPOINTS.SCHEDULE_UPGRADE,
+        "POST",
+        {},
+        data,
+      );
+      return res.data;
+    },
+    onSuccess: (_data, variables) => {
+      invalidateBilling(queryClient, variables.orgId);
+      toast.success(
+        "Upgrade scheduled",
+        "Your plan will upgrade at the start of the next billing cycle.",
+      );
+    },
+    onError: (error: any) => {
+      toast.error(
+        "Failed to schedule upgrade",
+        (error as Error)?.message || "Please try again",
+      );
+    },
+  });
+};
+
+export const useCancelScheduledChange = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: CancelScheduledChangePayload) => {
+      const res = await request<{ data: any }>(
+        ENDPOINTS.CANCEL_SCHEDULED_CHANGE,
+        "POST",
+        {},
+        data,
+      );
+      return res.data;
+    },
+    onSuccess: (_data, variables) => {
+      invalidateBilling(queryClient, variables.orgId);
+      toast.success("Change cancelled", "Your scheduled change was cancelled.");
+    },
+    onError: (error: any) => {
+      toast.error(
+        "Failed to cancel change",
+        (error as Error)?.message || "Please try again",
+      );
+    },
+  });
+};
+
+export const useChangeBillingFrequency = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: ChangeFrequencyPayload) => {
+      const res = await request<{ data: any }>(
+        ENDPOINTS.CHANGE_FREQUENCY,
+        "POST",
+        {},
+        data,
+      );
+      return res.data;
+    },
+    onSuccess: (data: any, variables) => {
+      invalidateBilling(queryClient, variables.orgId);
+      toast.success("Billing updated", data?.message || "Frequency updated.");
+    },
+    onError: (error: any) => {
+      toast.error(
+        "Failed to change frequency",
+        (error as Error)?.message || "Please try again",
+      );
+    },
+  });
+};
+
+export const useCancelAddon = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: CancelAddonPayload) => {
+      const res = await request<{ data: any }>(
+        ENDPOINTS.CANCEL_ADDON,
+        "POST",
+        {},
+        data,
+      );
+      return res.data;
+    },
+    onSuccess: (_data, variables) => {
+      invalidateBilling(queryClient, variables.orgId);
+      queryClient.invalidateQueries({ queryKey: ["addons"] });
+      toast.success(
+        "Add-on cancellation scheduled",
+        "It will be removed at the end of your billing period.",
+      );
+    },
+    onError: (error: any) => {
+      toast.error(
+        "Failed to cancel add-on",
+        (error as Error)?.message || "Please try again",
+      );
+    },
+  });
+};
+
+export const useUndoCancelAddon = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: CancelAddonPayload) => {
+      const res = await request<{ data: any }>(
+        ENDPOINTS.UNDO_CANCEL_ADDON,
+        "POST",
+        {},
+        data,
+      );
+      return res.data;
+    },
+    onSuccess: (_data, variables) => {
+      invalidateBilling(queryClient, variables.orgId);
+      queryClient.invalidateQueries({ queryKey: ["addons"] });
+      toast.success("Add-on kept", "It will continue next cycle.");
+    },
+    onError: (error: any) => {
+      toast.error(
+        "Failed to undo",
+        (error as Error)?.message || "Please try again",
+      );
+    },
+  });
+};
+
+export const useSubscriptionState = (orgId: string | undefined) => {
+  return useQuery({
+    queryKey: ["subscriptionState", orgId],
+    enabled: Boolean(orgId),
+    queryFn: async () => {
+      const res = await request<{ data: SubscriptionState | null }>(
+        ENDPOINTS.STATE(orgId as string),
+        "GET",
+      );
+      return res.data;
     },
   });
 };

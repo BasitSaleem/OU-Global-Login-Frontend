@@ -4,7 +4,8 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/utils/helpers";
 import { IconName, SvgIcon } from "@/components/ui/SvgIcon";
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
-import { useAppSelector } from "@/redux/store";
+import { useAppSelector } from "@/redux/store";
+import { TEAM_INVITE_ENABLED } from "@/config/featureFlags";
 
 interface OrgSidebarProps {
   collapsed: boolean;
@@ -17,6 +18,7 @@ interface SidebarItem {
   href: (orgId: string) => string;
   icon: IconName;
   showForRoles: string[];
+  enabled?: boolean;
 }
 
 const sidebarItems: SidebarItem[] = [
@@ -27,12 +29,25 @@ const sidebarItems: SidebarItem[] = [
     showForRoles: ["OWNER", "ADMIN"],
   },
   {
+    label: "Products",
+    href: (orgId) => `/organization-details/${orgId}/products`,
+    icon: "AllProducts",
+    showForRoles: ["OWNER", "ADMIN"],
+  },
+  {
     label: "Payment Cards",
     href: (orgId) => `/organization-details/${orgId}/payment-cards`,
     icon: "payment-methods",
     showForRoles: ["OWNER", "ADMIN"],
   },
 
+  {
+    label: "Team",
+    enabled: TEAM_INVITE_ENABLED,
+    href: (orgId) => `/organization-details/${orgId}/team`,
+    icon: "profile",
+    showForRoles: ["OWNER", "ADMIN"],
+  },
   {
     label: "Notifications",
     href: (orgId) => `/organization-details/${orgId}/notifications`,
@@ -64,23 +79,22 @@ export default function OrgSidebar({
         isShow={true}
         href="/"
         className={cn(
-          "h-14 flex items-center justify-start border-b cursor-pointer",
-          collapsed ? "px-3" : "px-3",
+          "h-14 flex items-center border-b cursor-pointer",
+          collapsed ? "justify-center px-0" : "justify-start px-3",
         )}
         rightIcon={
           !collapsed ? (
             <SvgIcon
-              name="ownersInventory"
+              name="ownersUniverse"
               className="text-foreground"
               width={130}
-              height={130}
             />
           ) : (
             <SvgIcon
-              name="OI"
+              name="ownersUniverseColl"
               className="text-foreground"
-              width={40}
-              height={40}
+              width={30}
+              height={30}
             />
           )
         }
@@ -110,7 +124,8 @@ export default function OrgSidebar({
         {sidebarItems.map((item) => {
           const href = item.href(organizationDetails?.id);
           const isActive = pathname === href;
-          const isShow = item.showForRoles.includes(userRole);
+          const isShow =
+            item.showForRoles.includes(userRole) && item.enabled !== false;
           return (
             <Link
               key={href}

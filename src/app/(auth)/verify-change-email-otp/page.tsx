@@ -18,6 +18,7 @@ import { clearAuth } from "@/redux/slices/auth.slice";
 import { useAppDispatch } from "@/redux/store";
 import { toast } from "@/hooks/useToast";
 import logger from "@/utils/logger";
+import { AuthPageShell } from "@/components/auth/AuthPageShell";
 
 export default function VerifyChangeEmailOTPPage() {
   const { mutate: logout, isPending } = useLogout();
@@ -100,102 +101,96 @@ export default function VerifyChangeEmailOTPPage() {
 
   if (!token) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh] px-6">
-        <div className="text-center space-y-4 bg-bg-secondary p-8 rounded-3xl border border-red-100 shadow-sm max-w-sm w-full">
+      <AuthPageShell>
+        <div className="text-center space-y-4">
           <p className="text-red-500 font-bold text-lg">Invalid Session</p>
-          <p className="text-text-secondary text-sm">
+          <p className="text-gray-500 text-sm">
             Please restart the email change process from your settings.
           </p>
           <Button
             onClick={() => router.push(ROUTES.LOGIN)}
             variant="primary"
-            className="w-full rounded-2xl"
+            className="w-full h-12.5 text-white text-sm bg-linear-to-r from-primary to-[#F95C5B] hover:opacity-90 border-none font-bold rounded-full"
           >
             Back to Login
           </Button>
         </div>
-      </div>
+      </AuthPageShell>
     );
   }
 
   return (
-    <main className="flex items-center justify-center px-6 pb-4 md:pt-1 pt-20">
-      <div className="relative z-10 w-full max-w-sm sm:max-w-md xl:max-w-md">
-        <div className="bg-bg-secondary rounded-[24px] sm:rounded-[32px] px-6 sm:px-12 py-10 sm:py-12">
-          <div className="text-center mb-10">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-[22px] bg-primary/10 mb-8 transform hover:scale-105 transition-transform duration-300">
-              <Mail className="w-8 h-8 text-primary" />
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-text tracking-tight mb-3">
-              Check Your Email
-            </h1>
-            <p className="text-sm font-medium leading-relaxed max-w-[280px] mx-auto">
-              We've sent a 6-digit confirmation code to your new email address.
-            </p>
-          </div>
-
-          <FormProvider {...methods}>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-              <div className="flex flex-col items-end">
-                <OTPInput
-                  length={6}
-                  value={otpValue}
-                  onChange={handleOtpChange}
-                  error={errors.otp?.message as string}
-                />
-                <div className="mt-6 text-center">
-                  <p className="text-sm font-medium text-text-secondary">
-                    Didn't receive the code?{" "}
-                    {canResend ? (
-                      <button
-                        type="button"
-                        onClick={handleResendOtp}
-                        disabled={isResending}
-                        className="text-primary font-bold hover:underline cursor-pointer disabled:opacity-50"
-                      >
-                        {isResending ? "Sending..." : "Resend Code"}
-                      </button>
-                    ) : (
-                      <span className="text-primary font-bold">
-                        Resend in {countdown}s
-                      </span>
-                    )}
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <Button
-                  type="submit"
-                  isLoading={isVerifying}
-                  disabled={isVerifying || otpValue.length !== 6}
-                  variant="primary"
-                  className="w-full h-14 text-white text-base bg-primary hover:bg-primary/90 font-bold rounded-2xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98] border-none"
-                >
-                  {!isVerifying
-                    ? "Confirm Email Change"
-                    : "Finalizing Change..."}
-                </Button>
-
-                <button
-                  type="button"
-                  onClick={() => router.back()}
-                  className="w-full flex items-center justify-center gap-2 py-2 text-sm font-bold text-text-secondary hover:text-text transition-all duration-200 group"
-                >
-                  <ArrowLeft className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" />
-                  <span>Back to previous step</span>
-                </button>
-              </div>
-            </form>
-          </FormProvider>
-
-          <div className="mt-10 pt-8 border-t border-border/10 text-center">
-            <p className="text-[11px] text-text-secondary/50 font-medium italic">
-              Email will be updated immediately upon successful verification
-            </p>
-          </div>
+    <AuthPageShell>
+      <div className="text-center mb-10">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-[22px] bg-primary/10 mb-8 transform hover:scale-105 transition-transform duration-300">
+          <Mail className="w-8 h-8 text-primary" />
         </div>
+        <h1 className="text-2xl sm:text-3xl font-bold text-text tracking-tight mb-3">
+          Check Your Email
+        </h1>
+        <p className="text-sm text-gray-500 leading-relaxed max-w-70 mx-auto">
+          We've sent a 6-digit confirmation code to your new email address.
+        </p>
       </div>
-    </main>
+
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          <div className="flex flex-col items-end">
+            <OTPInput
+              length={6}
+              value={otpValue}
+              onChange={handleOtpChange}
+              error={errors.otp?.message as string}
+            />
+            <div className="mt-6 text-center">
+              <p className="text-sm font-medium text-gray-500">
+                Didn't receive the code?{" "}
+                {canResend ? (
+                  <button
+                    type="button"
+                    onClick={handleResendOtp}
+                    disabled={isResending}
+                    className="text-primary font-bold hover:underline cursor-pointer disabled:opacity-50"
+                  >
+                    {isResending ? "Sending..." : "Resend Code"}
+                  </button>
+                ) : (
+                  <span className="text-primary font-bold">
+                    Resend in {countdown}s
+                  </span>
+                )}
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <Button
+              type="submit"
+              isLoading={isVerifying}
+              disabled={isVerifying || otpValue.length !== 6}
+              variant="primary"
+              className="w-full h-12.5 text-white text-sm bg-linear-to-r from-primary to-[#F95C5B] hover:opacity-90 font-bold rounded-xl border-none"
+            >
+              {!isVerifying ? "Confirm Email Change" : "Finalizing Change..."}
+            </Button>
+
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="w-full flex items-center justify-center gap-2 py-2 text-sm font-bold text-gray-500 hover:text-text transition-all duration-200 group"
+            >
+              <ArrowLeft className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" />
+              <span>Back to previous step</span>
+            </button>
+          </div>
+        </form>
+      </FormProvider>
+
+      <div className="mt-10 pt-8 border-t border-border text-center">
+        <p className="text-[11px] text-gray-500 font-medium italic">
+          Email will be updated immediately upon successful verification
+        </p>
+      </div>
+    </AuthPageShell>
   );
 }
