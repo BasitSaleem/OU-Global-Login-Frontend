@@ -14,7 +14,7 @@ import { toast } from "@/hooks/useToast";
 const ENDPOINTS = {
   GET_ALL_INVITATIONS: `/og/invite/all`,
   GET_INVITATION_BY_TOKEN: (token: string) => `/og/invite/${token}`,
-  CREATE_INVITATION: `/og/invite/create`,
+  CREATE_INVITATION: `/og/invite`,
   ACCEPT_INVITATION: `/og/invite/accept`,
   DECLINE_INVITATION: `/og/invite/decline`,
   CHECK_STATUS: "/og/invite/check-status",

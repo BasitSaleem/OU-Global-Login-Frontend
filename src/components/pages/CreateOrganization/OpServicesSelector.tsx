@@ -54,6 +54,11 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
   const { user } = useAppSelector((s) => s.auth);
   const { data: services, isPending } = useGetOpServices();
   const [invoiceError, setInvoiceError] = useState<string | null>(null);
+  // What the field SHOWS once verified. The submitted value stays the canonical
+  // Stripe invoice id (see onSuccess below), but customers only ever recognise
+  // the human-readable Invoice Number from their receipt, so showing them
+  // "in_1UAm..." back reads like the field lost their input.
+  const [invoiceDisplay, setInvoiceDisplay] = useState<string | null>(null);
   const [isAutoBundled, setIsAutoBundled] = useState(false);
   const {
     mutate: verifyInvoice,
@@ -79,6 +84,8 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
           // the backend looks up at creation time — otherwise submitting the
           // originally-typed value (e.g. the Invoice Number) wouldn't match.
           setInvoiceId(data.invoiceId);
+          // Display only — falls back to the id when Stripe assigned no number.
+          setInvoiceDisplay(data.number ?? data.invoiceId);
           setInvoiceVerified(true);
         },
         onError: (error: any) => {
@@ -318,7 +325,7 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
       {/* Order Summary Box */}
       <div className="rounded-xl border border-border/80 bg-bg-secondary overflow-hidden shadow-2xs">
         {/* Header with Column Titles */}
-        <div className="px-4 py-3 bg-card-secondary border-b border-border/60 flex items-center justify-between">
+        <div className="px-4 py-3 bg-surface-subtle border-b border-border/60 flex items-center justify-between">
           <h4 className="text-sm font-semibold text-text">Order Summary</h4>
           <div className="flex items-center gap-6 sm:gap-10 text-xs font-medium text-text-secondary">
             <span className="w-20 text-right">
@@ -364,7 +371,7 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
           )}
 
           {/* Included plan banner */}
-          <div className="bg-card-secondary rounded-xl px-4 py-2.5 flex items-center justify-between text-xs sm:text-sm">
+          <div className="bg-surface-subtle border border-border/60 rounded-xl px-4 py-2.5 flex items-center justify-between text-xs sm:text-sm">
             <span className="font-medium text-text-secondary">Included plan</span>
             {dominationUpgrade ? (
               <span className="font-semibold text-primary">
@@ -473,7 +480,11 @@ const OpServicesSelector: React.FC<OpServicesSelectorProps> = ({
                   type="text"
                   label="Invoice ID"
                   name="op-invoice-id"
-                  value={invoiceId ?? ""}
+                  value={
+                    invoiceVerified && invoiceDisplay
+                      ? invoiceDisplay
+                      : (invoiceId ?? "")
+                  }
                   onChange={(e) => {
                     const val = e.target.value;
                     setInvoiceId(val);

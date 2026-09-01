@@ -42,9 +42,10 @@ export default function OrganizationDetailsLayout({
       const isBillingPage = pathname.includes("/billing");
       const isPaymentPage = pathname.includes("/payment-cards");
       const isProductsPage = pathname.includes("/products");
+      const isTeamPage = pathname.includes("/team");
 
       if (
-        (isBillingPage || isPaymentPage || isProductsPage) &&
+        (isBillingPage || isPaymentPage || isProductsPage || isTeamPage) &&
         userRole !== "OWNER" &&
         userRole !== "ADMIN"
       ) {

@@ -4,7 +4,8 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/utils/helpers";
 import { IconName, SvgIcon } from "@/components/ui/SvgIcon";
 import { OgOrganization } from "@/apiHooks.ts/organization/organization.types";
-import { useAppSelector } from "@/redux/store";
+import { useAppSelector } from "@/redux/store";
+import { TEAM_INVITE_ENABLED } from "@/config/featureFlags";
 
 interface OrgSidebarProps {
   collapsed: boolean;
@@ -17,6 +18,7 @@ interface SidebarItem {
   href: (orgId: string) => string;
   icon: IconName;
   showForRoles: string[];
+  enabled?: boolean;
 }
 
 const sidebarItems: SidebarItem[] = [
@@ -39,6 +41,13 @@ const sidebarItems: SidebarItem[] = [
     showForRoles: ["OWNER", "ADMIN"],
   },
 
+  {
+    label: "Team",
+    enabled: TEAM_INVITE_ENABLED,
+    href: (orgId) => `/organization-details/${orgId}/team`,
+    icon: "profile",
+    showForRoles: ["OWNER", "ADMIN"],
+  },
   {
     label: "Notifications",
     href: (orgId) => `/organization-details/${orgId}/notifications`,
@@ -115,7 +124,8 @@ export default function OrgSidebar({
         {sidebarItems.map((item) => {
           const href = item.href(organizationDetails?.id);
           const isActive = pathname === href;
-          const isShow = item.showForRoles.includes(userRole);
+          const isShow =
+            item.showForRoles.includes(userRole) && item.enabled !== false;
           return (
             <Link
               key={href}
