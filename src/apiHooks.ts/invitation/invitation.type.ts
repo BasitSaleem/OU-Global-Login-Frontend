@@ -1,6 +1,8 @@
 export interface CreateInvitationData {
     email: string;
-    organizationId: string;
+    orgId: string;
+    productId: string;
+    role: "OWNER" | "ADMIN" | "MEMBER";
 }
 export interface CreateInvitationResponse {
     statusCode: number;
