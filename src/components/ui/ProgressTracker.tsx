@@ -22,7 +22,7 @@ interface ProgressTrackerProps {
 export const ProgressTracker: React.FC<ProgressTrackerProps> = ({
   progress,
   className,
-  iconName = 'OI',
+  iconName = 'ownersUniverseColl',
   title = 'Processing...',
 }) => {
   const percentage = progress?.progress || 0;

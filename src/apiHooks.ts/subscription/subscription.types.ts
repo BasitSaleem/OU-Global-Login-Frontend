@@ -109,3 +109,69 @@ export interface BuyAddonResponse {
     success: boolean;
   };
 }
+
+// --- Subscription billing policy (scheduled downgrade / frequency / add-ons) ---
+
+export interface ScheduleDowngradePayload {
+  orgId: string;
+  subscriptionId: string;
+  packageId: string;
+  confirmIncompatibleRemoval?: boolean;
+}
+
+export interface ScheduleDowngradeData {
+  subscriptionId: string;
+  scheduledPackageId?: string;
+  effectiveDate?: string;
+  removedAddons?: { id: string; name: string }[];
+  // present on 409 (confirmation required)
+  requiresConfirmation?: boolean;
+  incompatibleAddons?: { id: string; name: string }[];
+}
+
+export interface ChangeFrequencyPayload {
+  orgId: string;
+  subscriptionId: string;
+  billingCycle: "MONTHLY" | "YEARLY";
+}
+
+export interface CancelAddonPayload {
+  orgId: string;
+  subscriptionId: string;
+  addonId: string;
+}
+
+export interface CancelScheduledChangePayload {
+  orgId: string;
+  subscriptionId: string;
+}
+
+export interface SubscriptionStateAddon {
+  id: string;
+  name: string;
+  quantity: number;
+  status: "ACTIVE" | "CANCELLED" | "REMOVED_INCOMPATIBLE";
+  cancellationRequested: boolean;
+  cancellationEffectiveDate: string | null;
+}
+
+export interface SubscriptionState {
+  subscriptionId: string;
+  status: string;
+  billingCycle: "MONTHLY" | "YEARLY";
+  currentPeriodEnd: string | null;
+  cancelAtPeriodEnd: boolean;
+  cancellationEffectiveDate: string | null;
+  planChangeScheduled: boolean;
+  scheduledChangeType: "UPGRADE" | "DOWNGRADE" | null;
+  downgradeScheduled: boolean;
+  upgradeScheduled: boolean;
+  scheduledPackage: { id: string; name: string } | null;
+  downgradeEffectiveDate: string | null;
+  planChangeEffectiveDate: string | null;
+  frequencyChangeScheduled: boolean;
+  scheduledBillingCycle: "MONTHLY" | "YEARLY" | null;
+  frequencyChangeDate: string | null;
+  addons: SubscriptionStateAddon[];
+  pendingIncompatibleRemovals: { id: string; name: string }[];
+}

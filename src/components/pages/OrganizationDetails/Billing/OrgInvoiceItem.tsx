@@ -1,14 +1,19 @@
+import { useState } from "react";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { PDFDownloadLink } from "@react-pdf/renderer";
+import { pdf } from "@react-pdf/renderer";
 import { Download, Eye, Loader2, RefreshCcw } from "lucide-react";
 
 import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
 import InvoicePDF from "./InvoicePDF";
 import { Button } from "@/components/ui";
 import { calculateInvoiceFinancial } from "@/utils/invoicesUtils";
-import { useRetryInvoicePayment } from "@/apiHooks.ts/invoice/inovice.api";
+import {
+  useRetryInvoicePayment,
+  fetchInvoiceBreakdown,
+} from "@/apiHooks.ts/invoice/inovice.api";
+import { formatDate } from "@/utils/helpers";
 
 interface OrgInvoiceItemProps {
   invoice: Invoice;
@@ -20,11 +25,44 @@ const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
   const { user } = useSelector((state: RootState) => state.auth);
   const { mutateAsync: retryPayment, isPending: isRetrying } =
     useRetryInvoicePayment();
+  const [downloading, setDownloading] = useState(false);
 
   const { originalSubtotal, discountPercent } = calculateInvoiceFinancial(
     invoice,
     invoice.subscription?.billing_cycle,
   );
+
+  // Generate the PDF on click using the authoritative Stripe breakdown (falls
+  // back to legacy calc inside InvoicePDF when the breakdown is unavailable).
+  const handleDownload = async () => {
+    try {
+      setDownloading(true);
+      const breakdown = await fetchInvoiceBreakdown(invoice.id).catch(
+        () => null,
+      );
+      const blob = await pdf(
+        <InvoicePDF
+          invoice={invoice}
+          orgName={orgName}
+          user={user}
+          billingCycle={invoice?.subscription?.billing_cycle || "MONTHLY"}
+          breakdown={breakdown}
+        />,
+      ).toBlob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `invoice-${invoice.invoice_number}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch {
+      toast.error("Failed to generate invoice PDF");
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   const handleRepay = async () => {
     if (invoice.status === "PAID") {
@@ -44,54 +82,39 @@ const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
 
   return (
     <tr>
-      {/* Date */}
       <td className="px-6 py-4 whitespace-nowrap text-sm">
-        {new Date(invoice.created_at).toLocaleDateString()}
+        {formatDate(invoice.created_at)}
       </td>
-
-      {/* Invoice number */}
       <td
         className="px-6 py-4 whitespace-nowrap text-sm underline cursor-pointer"
         onClick={() => onView(invoice)}
       >
         {invoice.invoice_number}
       </td>
-
-      {/* Subtotal */}
       <td
         className="px-6 py-4 whitespace-nowrap text-sm cursor-pointer"
         onClick={() => onView(invoice)}
       >
         ${originalSubtotal.toFixed(2)}
       </td>
-
-      {/* Discount */}
       <td
         className="px-6 py-4 whitespace-nowrap text-sm cursor-pointer"
         onClick={() => onView(invoice)}
       >
         {Number(discountPercent).toFixed(0)}%
       </td>
-
-      {/* Net Total */}
       <td className="px-6 py-4 whitespace-nowrap text-sm">
         $
         {Number(
           invoice.payment?.subtotal ?? invoice.payment?.amount ?? 0,
         ).toFixed(2)}
       </td>
-
-      {/* Tax */}
       <td className="px-6 py-4 whitespace-nowrap text-sm">
         ${invoice.payment?.tax_amount || "0.00"}
       </td>
-
-      {/* Amount */}
       <td className="px-6 py-4 whitespace-nowrap text-sm">
         ${Number(invoice.amount ?? 0).toFixed(2)}
       </td>
-
-      {/* Status */}
       <td className="px-6 py-4 whitespace-nowrap text-sm">
         <span
           className={`inline-flex px-2 text-xs font-semibold leading-5 rounded-full ${
@@ -105,8 +128,6 @@ const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
           {invoice.status}
         </span>
       </td>
-
-      {/* Actions */}
       <td className="px-6 py-4 whitespace-nowrap text-sm text-center flex justify-center gap-3">
         {invoice.status === "PAID" ? (
           <>
@@ -118,29 +139,19 @@ const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
               <Eye size={18} />
             </button>
 
-            <PDFDownloadLink
-              document={
-                <InvoicePDF
-                  invoice={invoice}
-                  orgName={orgName}
-                  user={user}
-                  billingCycle={
-                    invoice?.subscription?.billing_cycle || "MONTHLY"
-                  }
-                />
-              }
-              fileName={`invoice-${invoice.invoice_number}.pdf`}
+            <Button
+              variant="basic"
+              onClick={handleDownload}
+              disabled={downloading}
+              className="gap-2 cursor-pointer hover:text-primary p-0"
+              title="Download PDF"
             >
-              {({ loading }) => (
-                <Button
-                  variant="basic"
-                  disabled={loading}
-                  className="gap-2 cursor-pointer hover:text-primary p-0"
-                >
-                  {loading ? <Loader2 size={16} /> : <Download size={16} />}
-                </Button>
+              {downloading ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <Download size={16} />
               )}
-            </PDFDownloadLink>
+            </Button>
           </>
         ) : (
           <button

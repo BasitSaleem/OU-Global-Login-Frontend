@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui";
 import {
   Bell,
@@ -10,8 +10,13 @@ import {
   ShoppingCart,
   Truck,
 } from "lucide-react";
-import OwnersProductItem from "@/components/pages/OrganizationDetails/Billing/OwnersProductItem";
+import OwnersProductItem, {
+  OwnerKey,
+} from "@/components/pages/OrganizationDetails/Billing/OwnersProductItem";
+import OpBillingSection from "@/components/pages/OrganizationDetails/Billing/OpBillingSection";
+import { useParams } from "next/navigation";
 import { NotificationSection } from "@/components/pages/OrganizationDetails/Notifications/NotificationSection";
+import { useOrganizationDetails } from "@/apiHooks.ts/organization/organization.api";
 // Types
 export type NotificationSettings = {
   inAppNotifications: boolean;
@@ -34,7 +39,6 @@ export type NotificationSettings = {
   productionCancelled: { inApp: boolean; email: boolean };
 };
 
-export type OwnerKey = "inventory" | "jungle" | "marketplace" | "analytics";
 const owners: {
   value: OwnerKey;
   toolTipText: string;
@@ -47,22 +51,28 @@ const owners: {
     iconUrl: "OI",
     isDisabled: false,
   },
+  // {
+  //   value: "jungle",
+  //   toolTipText: "Owners Jungle",
+  //   iconUrl: "OJ",
+  //   isDisabled: false,
+  // },
+  // {
+  //   value: "marketplace",
+  //   toolTipText: "Owner Marketplace",
+  //   iconUrl: "OM",
+  //   isDisabled: false,
+  // },
+  // {
+  //   value: "analytics",
+  //   toolTipText: "Analytics",
+  //   iconUrl: "OA",
+  //   isDisabled: false,
+  // },
   {
-    value: "jungle",
-    toolTipText: "Owners Jungle",
-    iconUrl: "OJ",
-    isDisabled: false,
-  },
-  {
-    value: "marketplace",
-    toolTipText: "Owner Marketplace",
-    iconUrl: "OM",
-    isDisabled: false,
-  },
-  {
-    value: "analytics",
-    toolTipText: "Analytics",
-    iconUrl: "OA",
+    value: "pulse",
+    toolTipText: "Owners Pulse",
+    iconUrl: "OP",
     isDisabled: false,
   },
 ];
@@ -100,10 +110,33 @@ export default function NotificationPreferencesPage() {
     jungle: { ...defaultSettings },
     marketplace: { ...defaultSettings },
     analytics: { ...defaultSettings },
+    pulse: { ...defaultSettings },
   });
 
   // Which owner is active
+  const { orgId } = useParams<{ orgId: string }>();
+  const { data: organization } = useOrganizationDetails(orgId as string);
   const [selectedOwner, setSelectedOwner] = useState<OwnerKey>("inventory");
+
+  // Only show a switcher icon for the products this organization actually has.
+  const productNames = (organization?.products ?? [])
+    .map((p) => p.product_name)
+    .filter(Boolean) as string[];
+  const availableOwners = owners.filter((owner) =>
+    productNames.includes(owner.iconUrl),
+  );
+
+  // Keep the selected product valid for THIS org: default to the first
+  // product the org actually has, and correct the selection if it's not one
+  // the org owns.
+  useEffect(() => {
+    if (
+      availableOwners.length &&
+      !availableOwners.some((owner) => owner.value === selectedOwner)
+    ) {
+      setSelectedOwner(availableOwners[0].value);
+    }
+  }, [availableOwners, selectedOwner]);
 
   // update methods (scoped to selectedOwner)
   const updateNotificationSetting = (
@@ -239,24 +272,34 @@ export default function NotificationPreferencesPage() {
             </p>
           </div>
 
-          {/* Owner Icons */}
-          <div className="flex justify-center md:justify-start mt-3">
-            <div className="flex items-center justify-center w-full gap-2 mb-3">
-              {owners.map((owner) => (
-                <OwnersProductItem
-                  key={owner.value}
-                  value={owner.value}
-                  toolTipText={owner.toolTipText}
-                  iconUrl={owner.iconUrl}
-                  isDisabled={owner.isDisabled}
-                  selectedOwner={selectedOwner}
-                  setSelectedOwner={setSelectedOwner}
-                />
-              ))}
+          {/* Owner Icons — only shown when the org has more than one product to switch between */}
+          {availableOwners.length > 1 && (
+            <div className="flex justify-center md:justify-start mt-3">
+              <div className="flex items-center justify-center w-full gap-2 mb-3">
+                {availableOwners.map((owner) => (
+                  <OwnersProductItem
+                    key={owner.value}
+                    value={owner.value}
+                    toolTipText={owner.toolTipText}
+                    iconUrl={owner.iconUrl}
+                    isDisabled={owner.isDisabled}
+                    selectedOwner={selectedOwner}
+                    setSelectedOwner={(value) => setSelectedOwner(value)}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
+        {selectedOwner === "pulse" ? (
+          <OpBillingSection
+            orgId={orgId as string}
+            title="Owners Pulse Notifications"
+            message="To manage your notification preferences, please navigate to your Owners Pulse account."
+          />
+        ) : (
+          <>
         <div className="bg-bg-secondary border rounded-lg p-5 mb-5">
           <h2 className="text-body-medium-bold font-medium text-black mb-2">
             Notification Methods
@@ -329,6 +372,8 @@ export default function NotificationPreferencesPage() {
             Save Preferences
           </Button>
         </div>
+          </>
+        )}
       </div>
     </main>
   );

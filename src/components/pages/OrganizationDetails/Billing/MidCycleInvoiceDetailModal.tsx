@@ -5,6 +5,8 @@ import { Modal } from "@/components/modals/GenericModal";
 import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
 import { RootState } from "@/redux/store";
 import { calculateMidCycleAddonFinancial } from "@/utils/invoicesUtils";
+import { breakdownToDisplay } from "@/utils/invoiceBreakdown";
+import { useInvoiceBreakdown } from "@/apiHooks.ts/invoice/inovice.api";
 import { SvgIcon } from "@/components/ui/SvgIcon";
 import InvoiceModalHeader from "./InvoiceModalHeader";
 
@@ -22,16 +24,36 @@ const MidCycleInvoiceDetailModal: React.FC<MidCycleInvoiceDetailModalProps> = ({
   orgName,
 }) => {
   const { user } = useSelector((state: RootState) => state.auth);
+  const { data: breakdown } = useInvoiceBreakdown(invoice?.id, isOpen);
   if (!invoice) return null;
 
-  const { subtotal, tax, total, midCycleAddons, discountPercent } =
-    calculateMidCycleAddonFinancial(invoice);
+  const authoritative = breakdownToDisplay(breakdown);
+  const legacy = calculateMidCycleAddonFinancial(invoice);
+  const rows = authoritative
+    ? authoritative.rows
+    : (legacy.midCycleAddons || []).map((addon: any) => {
+        const qty = addon.quantity || 1;
+        const price = parseFloat(addon.price || "0");
+        return {
+          name: addon.name || "Add-on Module",
+          type: "Mid-cycle",
+          quantity: qty,
+          unitPrice: price,
+          amount: price * qty,
+          proration: true,
+        };
+      });
 
-  const addonsDiscountedYearlyTotal =
-    midCycleAddons?.reduce((acc: number, addon: any) => {
-      return acc + Number(addon.price || 0) * (addon.quantity || 1);
-    }, 0) *
-      ((100 - discountPercent) / 100) || 0;
+  const summary = authoritative
+    ? authoritative.summary
+    : {
+        subtotal: legacy.subtotal,
+        discount: 0,
+        tax: legacy.tax,
+        total: legacy.total,
+        currency: invoice.payment?.currency || "USD",
+      };
+  const showDiscount = summary.discount > 0.001;
 
   return (
     <Modal
@@ -89,35 +111,41 @@ const MidCycleInvoiceDetailModal: React.FC<MidCycleInvoiceDetailModalProps> = ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {midCycleAddons?.map((addon: any, idx: number) => {
-                  const qty = addon.quantity || 1;
-                  const price = parseFloat(addon.price || "0");
-                  const itemTotal = price * qty;
-
-                  return (
-                    <tr key={`mid-cycle-${idx}`}>
-                      <td className="py-4 font-medium text-gray-700">
-                        {addon.name || "Add-on Module"}
+                {rows.map((row, idx) => (
+                  <tr key={`mid-cycle-${idx}`}>
+                    <td className="py-4 font-medium text-gray-700">
+                      {row.name}
+                      {row.proration && (
                         <p className="text-xs text-gray-400 font-normal">
                           Prorated purchase
                         </p>
-                      </td>
-                      <td className="py-4 text-center">
-                        <span className="bg-purple-50 text-purple-600 px-3 py-1 rounded-full text-[10px] font-bold">
-                          Mid-cycle
-                        </span>
-                      </td>
-                      <td className="py-4 text-center">{qty}</td>
-                      <td className="py-4 text-center">${price.toFixed(2)}</td>
-                      <td className="py-4 text-center">
-                        ${itemTotal.toFixed(2)}
-                      </td>
-                      <td className="py-4 text-center font-bold">
-                        ${itemTotal.toFixed(2)}
-                      </td>
-                    </tr>
-                  );
-                })}
+                      )}
+                    </td>
+                    <td className="py-4 text-center">
+                      <span
+                        className={`px-3 py-1 rounded-full text-[10px] font-bold ${
+                          row.type === "Subscription"
+                            ? "bg-indigo-50 text-indigo-600"
+                            : row.proration || row.type === "Proration"
+                              ? "bg-purple-50 text-purple-600"
+                              : "bg-amber-50 text-amber-600"
+                        }`}
+                      >
+                        {row.type}
+                      </span>
+                    </td>
+                    <td className="py-4 text-center">{row.quantity}</td>
+                    <td className="py-4 text-center">
+                      ${row.unitPrice.toFixed(2)}
+                    </td>
+                    <td className="py-4 text-center">
+                      ${(row.unitPrice * row.quantity).toFixed(2)}
+                    </td>
+                    <td className="py-4 text-center font-bold">
+                      ${row.amount.toFixed(2)}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -150,30 +178,31 @@ const MidCycleInvoiceDetailModal: React.FC<MidCycleInvoiceDetailModalProps> = ({
             </div>
 
             <div className="w-full max-w-xs space-y-3">
-              {invoice?.subscription?.billing_cycle === "YEARLY" && (
+              <div className="flex justify-between text-sm text-text">
+                <span>Subtotal:</span>
+                <span className="font-bold text-text">
+                  ${summary.subtotal.toFixed(2)}
+                </span>
+              </div>
+              {showDiscount && (
                 <div className="flex justify-between text-sm text-text">
-                  <span>Discounted Price:</span>
+                  <span>Discounts:</span>
                   <span className="font-bold text-text">
-                    ${addonsDiscountedYearlyTotal.toFixed(2)} ({discountPercent}
-                    %)
+                    -${summary.discount.toFixed(2)}
                   </span>
                 </div>
               )}
               <div className="flex justify-between text-sm text-text">
-                <span>Subtotal (prorated):</span>
-                <span className="font-bold text-text">
-                  ${subtotal.toFixed(2)}
-                </span>
-              </div>
-              <div className="flex justify-between text-sm text-text">
                 <span>Tax:</span>
-                <span className="font-bold text-text">${tax.toFixed(2)}</span>
+                <span className="font-bold text-text">
+                  ${summary.tax.toFixed(2)}
+                </span>
               </div>
               <div className="pt-4 border-t border-border flex justify-between items-end">
                 <span className="text-lg font-bold text-text">Total :</span>
                 <span className="text-3xl font-black text-[#0D9488]">
                   $
-                  {total.toLocaleString(undefined, {
+                  {summary.total.toLocaleString(undefined, {
                     minimumFractionDigits: 2,
                   })}
                 </span>

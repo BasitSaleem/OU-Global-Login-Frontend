@@ -26,8 +26,8 @@ export const ProductSelectionCard: React.FC<ProductSelectionCardProps> = ({
   return (
     <div
       onClick={() => !isDisabled && onClick()}
-      className={`relative flex items-center gap-4 p-4 rounded-xl transition-all duration-300 cursor-pointer ${isDisabled
-        ? "opacity-50 cursor-not-allowed bg-bg-secondary border-border border"
+      className={`relative flex items-center gap-4 p-4 rounded-xl border transition-all duration-300 cursor-pointer ${isDisabled
+        ? "opacity-50 cursor-not-allowed bg-bg-secondary border-border"
         : isSelected
           ? "border-primary bg-primary/5 ring-1 ring-primary"
           : "border-border hover:border-primary/50 bg-background"

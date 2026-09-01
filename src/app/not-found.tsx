@@ -19,7 +19,7 @@ export default function NotFound() {
       {/* Header with logo and home button */}
       <div className="relative z-10 flex items-center justify-between p-4 sm:p-6">
         <Link href="https://ownersinventory.com" target='_blank'>
-          <Logo Icon="ownersInventory" className="cursor-pointer" />
+          <Logo Icon="ownersUniverse" className="cursor-pointer" />
         </Link>
         <div className="flex items-center gap-2 sm:gap-3">
           <Link href="/" className="bg-[#795CF5] hover:bg-[#7C3AED] text-white text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition-colors">

@@ -36,7 +36,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     permissionFallback,
     ...props
   }, ref) => {
-    const baseStyles = ' inline-flex  cursor-pointer items-center justify-center gap-1.5 rounded  transition-all duration-300 focus:outline-none disabled:pointer-events-none disabled:opacity-50';
+    const baseStyles = ' inline-flex  cursor-pointer items-center justify-center gap-1.5 rounded  transition-all duration-300 focus:outline-none disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale-[0.4]';
 
     const variants = {
       primary: 'bg-primary py-4 text-white hover:bg-primary/80 rounded-lg border border-primary',

@@ -43,6 +43,7 @@ export const Icons = {
   emailwhite: "/Icons/Emailwhite.svg",
   changePasswordwhite: "/Icons/Change Passwordwhite.svg",
   homepageimage: "/Icons/Welcome-cuate.svg",
+  homeBannerBg: "/images/home-banner-bg.svg",
   OI: "/Icons/OI.svg",
 
 } as const;

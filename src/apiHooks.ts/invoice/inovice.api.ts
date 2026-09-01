@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   GetOrganizationInvoicesResponse,
   GetUpcomingInvoiceResponse,
+  InvoiceBreakdown,
 } from "./invoice.types";
 import { toast } from "@/hooks/useToast";
 import { confirm3DSIfNeeded } from "@/utils/stripeClient";
@@ -22,6 +23,33 @@ const ENDPOINTS = {
   GET_ORG_INVOICE: `/og/invoice/get-organization-invoices`,
   RETRY_INVOICE_PAYMENT: `/og/invoice/retry-payment`,
   GET_UPCOMING_INVOICE: `/og/invoice/upcoming`,
+  GET_INVOICE_BREAKDOWN: `/og/invoice/breakdown`,
+};
+
+// Authoritative invoice breakdown (Stripe line items). Used by the detail modal
+// and PDF; falls back to the legacy client calc when lineItems is null.
+export const fetchInvoiceBreakdown = async (
+  invoiceId: string,
+): Promise<InvoiceBreakdown> => {
+  const res = await request<{ data: InvoiceBreakdown }>(
+    `${ENDPOINTS.GET_INVOICE_BREAKDOWN}/${invoiceId}`,
+    "GET",
+  );
+  return res.data;
+};
+
+export const useInvoiceBreakdown = (
+  invoiceId: string | undefined,
+  enabled: boolean,
+) => {
+  return useQuery({
+    queryKey: ["invoice-breakdown", invoiceId],
+    queryFn: () => fetchInvoiceBreakdown(invoiceId as string),
+    enabled: !!invoiceId && enabled,
+    retry: false,
+    refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000,
+  });
 };
 
 export const useGetOrgInvoices = (id: string | undefined) => {

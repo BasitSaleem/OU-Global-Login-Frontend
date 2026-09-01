@@ -13,8 +13,8 @@ import { useAppSelector } from "@/redux/store";
 import { DeleteOrganizationModal } from "@/components/modals/DeleteOrganizationModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizationGridComponent } from "./OrganizationGridComponent";
-import { Tooltip } from "@/components/ui";
 import { PermissionGuard } from "@/components/HOCs/permission-guard";
+import { toast } from "@/hooks/useToast";
 
 export interface OrganizationGridProps {
   organizations: OgOrganization[];
@@ -23,6 +23,7 @@ export interface OrganizationGridProps {
   loading?: boolean;
   metaData?: any;
   onSearchChange?: (value: string) => void;
+  onAddProduct?: (org: OgOrganization) => void;
 }
 
 export default function OrganizationGrid({
@@ -32,6 +33,7 @@ export default function OrganizationGrid({
   loading,
   metaData,
   onSearchChange,
+  onAddProduct,
 }: OrganizationGridProps) {
   const { user } = useAppSelector((s) => s.auth);
   const { mutate: toggleFavorite, isPending } = useIsFavorite();
@@ -73,6 +75,19 @@ export default function OrganizationGrid({
         if (onOrganizationDeleted) {
           onOrganizationDeleted(selectedOrg.id);
         }
+        // Deletion is a plain, instant REST call, not a background job — this
+        // onSuccess IS the real completion signal. The modal's own toast/close
+        // logic is wired to a job-progress stream that deletion never
+        // populates, so nothing ever fired without this.
+        // useDeleteOrganization already shows its own error toast + rolls
+        // back the optimistic update in its onError - only the success side
+        // needs handling here, so this doesn't duplicate that.
+        toast.success(
+          "Organization deleted",
+          "The organization is deleted successfully",
+        );
+        setIsModalOpen(false);
+        setSelectedOrg(null);
       },
     });
   };
@@ -126,43 +141,38 @@ export default function OrganizationGrid({
         ) : (
           <>
             {organizations?.map((org) => (
-              <Tooltip
+              <div
                 key={org?.id}
-                content={org?.isAddNew ? "" : org?.name}
-                position="top"
-                wrapperClassName="w-full"
+                className={`relative group h-30 w-full ${
+                  org?.isAddNew
+                    ? ""
+                    : "bg-bg-secondary border border-border rounded-xl"
+                }  ${
+                  org?.isAddNew ? "" : "p-3"
+                } hover:shadow-sm transition-shadow cursor-pointer rounded-xl`}
               >
-                <div
-                  className={`relative group h-30 w-full ${
-                    org?.isAddNew
-                      ? ""
-                      : "bg-bg-secondary border border-border rounded-xl"
-                  }  ${
-                    org?.isAddNew ? "" : "p-3"
-                  } hover:shadow-sm transition-shadow cursor-pointer rounded-xl`}
-                >
-                  {org?.isAddNew ? (
-                    <div
-                      className="flex flex-col border border-dashed border-border items-center justify-center text-center h-full rounded-xl bg-primary/5  w-full"
-                      onClick={onAddNew}
-                    >
-                      <div className="text-primary">
-                        <Plus size={50} />
-                      </div>
-                      <span className=" text-primary font-bold">Add New</span>
+                {org?.isAddNew ? (
+                  <div
+                    className="flex flex-col border border-dashed border-border items-center justify-center text-center h-full rounded-xl bg-primary/5  w-full"
+                    onClick={onAddNew}
+                  >
+                    <div className="text-primary">
+                      <Plus size={50} />
                     </div>
-                  ) : (
-                    <OrganizationGridComponent
-                      id={org?.id}
-                      org={org}
-                      isPending={isPending}
-                      handleFavoriteClick={handleFavoriteClick}
-                      user={user}
-                      handleDeleteClick={handleDeleteClick}
-                    />
-                  )}
-                </div>
-              </Tooltip>
+                    <span className=" text-primary font-bold">Add New</span>
+                  </div>
+                ) : (
+                  <OrganizationGridComponent
+                    id={org?.id}
+                    org={org}
+                    isPending={isPending}
+                    handleFavoriteClick={handleFavoriteClick}
+                    user={user}
+                    handleDeleteClick={handleDeleteClick}
+                    onAddProduct={onAddProduct}
+                  />
+                )}
+              </div>
             ))}
           </>
         )}

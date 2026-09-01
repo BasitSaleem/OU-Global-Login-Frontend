@@ -1,5 +1,9 @@
 "use client";
-import { getAllIdentities, useRemoveIdentity, useSendChangeEmailVerification } from "@/apiHooks.ts/auth/auth.api";
+import {
+  getAllIdentities,
+  useRemoveIdentity,
+  useSendChangeEmailVerification,
+} from "@/apiHooks.ts/auth/auth.api";
 import { Button, Input } from "@/components/ui";
 import { SvgIcon } from "@/components/ui/SvgIcon";
 import { useAppSelector } from "@/redux/store";
@@ -60,7 +64,7 @@ export default function EmailSettingsPage() {
         onSuccess: () => {
           setShowDeleteModal(false);
           setIdentityToDelete(null);
-        }
+        },
       });
     }
   };
@@ -69,12 +73,10 @@ export default function EmailSettingsPage() {
     <main className="p-3">
       <div className="flex justify-center items-center">
         <div className="flex lg:flex-row flex-col lg:m-10 border rounded-lg w-full max-w-6xl overflow-hidden">
-          <div className="flex flex-col justify-center items-center bg-primary/10 p-6 lg:p-10 border-r w-full lg:w-[420px]">
+          <div className="flex flex-col justify-center items-center bg-primary/10 p-6 lg:p-10 border-r w-full lg:w-105">
             <div className="flex flex-col items-center space-y-4 text-center">
               <SvgIcon name="email" className="w-20 h-20 text-primary" />
-              <h2 className="mt-10 font-bold text-heading-1">
-                Email Security
-              </h2>
+              <h2 className="mt-10 font-bold text-heading-1">Email Security</h2>
               <ul className="space-y-3 mt-5 w-full text-body-small text-left">
                 <li>• Use a valid email address</li>
                 <li>
@@ -111,20 +113,27 @@ export default function EmailSettingsPage() {
                       . Please confirm it to change your email.
                     </p>
                   </div>
-                  <Button onClick={() => setShowSuccessModal(false)}>Go Back</Button>
+                  <Button onClick={() => setShowSuccessModal(false)}>
+                    Go Back
+                  </Button>
                 </div>
               ) : (
                 <>
                   <section className="space-y-6">
                     <div className="space-y-2">
-                      <h1 className="font-bold text-2xl lg:text-3xl">Change Email</h1>
+                      <h1 className="font-bold text-2xl lg:text-3xl">
+                        Change Email
+                      </h1>
                       <p className="text-text-secondary leading-snug">
-                        Ensure your account stays secure with a strong email that
-                        you don’t use elsewhere.
+                        Ensure your account stays secure with a strong email
+                        that you don’t use elsewhere.
                       </p>
                     </div>
 
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                    <form
+                      onSubmit={handleSubmit(onSubmit)}
+                      className="space-y-4"
+                    >
                       <Input
                         label="Current Email"
                         name="oldEmail"
@@ -145,7 +154,9 @@ export default function EmailSettingsPage() {
                         <Input
                           label="Confirm New Email"
                           {...methods.register("confirmEmail")}
-                          error={methods.formState.errors?.confirmEmail?.message}
+                          error={
+                            methods.formState.errors?.confirmEmail?.message
+                          }
                           placeholder="Confirm your new email"
                           required
                         />
@@ -199,4 +210,3 @@ export default function EmailSettingsPage() {
     </main>
   );
 }
-

@@ -298,7 +298,11 @@ const PlanSection = ({
         </div>
       ) : (
         <div
-          className="mt-9 relative group w-full grid grid-cols-1"
+          // min-w-0 stops the grid item stretching to the track's min-content
+          // width. The clipping lives on the inner py-4 wrapper below, not
+          // here, so the "Most Popular" badge (-top-3.5 on the card) and the
+          // prev/next arrows aren't cut off.
+          className="mt-9 relative group w-full grid grid-cols-1 min-w-0"
           ref={containerRef}
         >
           {planCount > 3 && (
@@ -323,7 +327,11 @@ const PlanSection = ({
               </Button>
             </>
           )}
-          <div className=" w-full py-4 -my-4">
+          {/* Padding gives the clip box breathing room, negative margins cancel
+              it so layout is unchanged: py-4 for the card's -top-3.5 "Most
+              Popular" badge, px-4 for the hover scale-[1.02] + gradient border
+              on the first/last card. */}
+          <div className=" w-full py-4 -my-4 px-4 -mx-4 overflow-hidden">
             {error && <ErrorMessage message={error.message} />}
             {!isLoading && data && (
               <motion.div
