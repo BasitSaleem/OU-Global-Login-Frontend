@@ -15,6 +15,7 @@
   /* Light theme colors */
   --color-primary-50: #f5f3ff;
   --color-card-secondary: #fff;
+  --color-surface-subtle: #f7f8fa;
   --gradient-primary-start: #faf5ff;
   --gradient-primary-end: #fdf2f8;
   --color-primary-100: #ede9fe;
@@ -84,6 +85,7 @@
   --color-border: #4b5563;
   --color-bg-secondary: #1f2937;
   --color-card-secondary: #4b5563;
+  --color-surface-subtle: #252f3d;
   --color-primary-100: #ede9fe;
   --color-primary-500: #985cff;
   --color-primary: #985cff;
@@ -121,6 +123,7 @@
   --color-border: #1e3a5f;
   --color-bg-secondary: #1e293b;
   --color-card-secondary: #334155;
+  --color-surface-subtle: #243346;
   --color-primary-100: #e0f2fe;
   --color-primary-500: #0ea5e9;
   --gradient-primary-start: #0369a1;
@@ -138,6 +141,7 @@
   --color-border: #5c1a2e;
   --color-bg-secondary: #291521;
   --color-card-secondary: #451a32;
+  --color-surface-subtle: #331a2a;
   --color-primary-100: #fce7f3;
   --color-primary-500: #be185d;
   --gradient-primary-start: #831843;
@@ -196,6 +200,7 @@
   /* --color-hover: var(--color-primary-900); */
   --color-google-button: var(--color-google-button);
   --color-card-secondary: var(--color-card-secondary);
+  --color-surface-subtle: var(--color-surface-subtle);
   --color-text-secondary: var(--color-card-secondary);
   --color-bg-secondary: var(--color-bg-secondary);
   --color-skeleton: var(--color-skeleton);
