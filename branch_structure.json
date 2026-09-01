@@ -1,0 +1,18 @@
+{
+  "default_branch": "main",
+  "branches": [
+    "devbasit",
+    "main",
+    "stagging"
+  ],
+  "parent": {
+    "devbasit": "main",
+    "main": null,
+    "stagging": "main"
+  },
+  "order": [
+    "main",
+    "devbasit",
+    "stagging"
+  ]
+}
