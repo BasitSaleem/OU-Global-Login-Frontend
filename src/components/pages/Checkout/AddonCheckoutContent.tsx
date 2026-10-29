@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useGetPaymentMethods } from "@/apiHooks.ts/paymentMethod/paymentMethod.api";
 import { useOrganizationDetails } from "@/apiHooks.ts/organization/organization.api";
+import { withOiSubscriptions } from "@/utils/oiSubscriptions";
 import {
   useBuyNewAddons,
   useGetStripeTax,
@@ -77,7 +78,7 @@ const AddonCheckoutContent = () => {
   const { data: billingInfo, isPending: loadingBillingInfo } =
     useGetBillingInfo();
 
-  const currentSubscription = organization?.subscriptions?.[0];
+  const currentSubscription = withOiSubscriptions(organization)?.subscriptions?.[0];
   const billingCycle = currentSubscription?.billing_cycle;
   const subscriptionId = currentSubscription?.id ?? null;
 

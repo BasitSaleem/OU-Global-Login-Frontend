@@ -1,0 +1,20 @@
+{
+  "version": "1.0.0",
+  "schemaVersion": "1.0",
+  "generators": {
+    "ajv": "8.18.0",
+    "esbuild": "0.27.4"
+  },
+  "files": {
+    "README.md": "682aface6ed321d8156f7b921e0c54c9a22cc9110001715b26333622ae61e998",
+    "THIRD-PARTY-NOTICES.txt": "6eb74a55c059f78e8fffb64f952802aa8e35bf8ed3d8daa21e69acb288d9d2f4",
+    "contract.test.cjs": "e497c46a4e4fc2bf7dc39bcdf20407194d51b8f4f3c0146b5bdd99356007fd4b",
+    "endpoints.json": "e37851d5b8ac35667d7700f62c5c37bf71e1acf2166056f1e0c3d19bc2dfbb57",
+    "fixtures.json": "2941a128805a76494a37fbd003a65d80ec5448bfc3561491801db17070e876d4",
+    "permissions.json": "aad16a9cf47507d175ed7d015f99d23c0faabb0809300049443ee022bade9b62",
+    "reference.cjs": "03c816b0a0d8ec0dcc30938aa4493693035e48fa081f04c5958d2e5b02b73673",
+    "schema.json": "98ac810124cb44128362b85d6f26f671d952ebb76aedd97703c430114f9a4b2c",
+    "tenant-fixtures.json": "6d92b8a60687d0ae2f754b29adf7fa100d85861f080097dd4d560d55fdc6048c",
+    "validators.cjs": "cbc4e97d99f33c61b95adfaed9d0d492190ad13a4c6a49eada187f4bfc39c6cd"
+  }
+}

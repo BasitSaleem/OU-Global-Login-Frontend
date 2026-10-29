@@ -5,8 +5,9 @@ import { organizationName } from "@/utils/organizationName";
 import Link from "next/link";
 import OrganizationProductItem from "./OrganizationProductItem";
 import OrganizationOpItem from "./OrganizationOpItem";
+import OrganizationOrItem from "./OrganizationOrItem";
 interface CardProps {
-  code: "OI" | "OJ" | "OM" | "OA" | "OP";
+  code: "OI" | "OJ" | "OM" | "OA" | "OP" | "OR";
   metaData:
     | {
         totalCount: number;
@@ -38,6 +39,7 @@ const OrganizationProductCard = ({
     OM: "Owners Marketplace",
     OA: "Owners Analytics",
     OP: "Owners Pulse",
+    OR: "Owners Reach",
   };
 
   const PRODUCT_DESC_MAP: Record<string, string> = {
@@ -46,6 +48,7 @@ const OrganizationProductCard = ({
     OM: "Sell across channels",
     OA: "Deep business insights",
     OP: "Marketing & CRM automation",
+    OR: "AI-powered lead generation",
   };
 
   const getProductDisplayName = (code: string): string => {
@@ -98,6 +101,13 @@ const OrganizationProductCard = ({
                     .map((product) =>
                       code === "OP" ? (
                         <OrganizationOpItem
+                          key={product.id}
+                          product={product}
+                          org={org}
+                          bgColor={bgColor}
+                        />
+                      ) : code === "OR" ? (
+                        <OrganizationOrItem
                           key={product.id}
                           product={product}
                           org={org}

@@ -1,7 +1,7 @@
 import OwnersProductItem, { OwnerKey, OWNER_META } from "./OwnersProductItem";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const OWNER_ORDER = ["OI", "OP", "OJ", "OM", "OA"];
+const OWNER_ORDER = ["OI", "OP", "OR", "OJ", "OM", "OA"];
 
 interface BillingSectionProps {
   loading: boolean;

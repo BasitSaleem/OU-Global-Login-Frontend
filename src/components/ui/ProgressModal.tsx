@@ -13,6 +13,7 @@ import { useScrollLock } from '@/hooks/useScrollLock';
 import { ROUTES } from '@/constants';
 import logger from '@/utils/logger';
 import { useSSE } from '@/hooks/useSSE';
+import { useOrTrialActivation, useOrProvisionRetry } from '@/apiHooks.ts/orTrial/orTrial.api';
 
 interface ProgressModalProps {
   isOpen: boolean;
@@ -33,17 +34,26 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
   const queryClient = useQueryClient()
   useScrollLock(isOpen)
   const router = useRouter()
+  const { mutateAsync: activateOrTrial } = useOrTrialActivation();
+  const { mutateAsync: retryOrProvision } = useOrProvisionRetry();
   const handleProgress = useCallback((progress: any) => {
   }, []);
 
   const handleComplete = useCallback(
-    (progress: any) => {
-      // The org list's status badge only ever fetched once, right after the
-      // org was created (before GHL provisioning even started) — nothing
-      // told it to check again once provisioning actually finished, so it
-      // was stuck on "Processing..." until a manual refresh. Re-invalidate
-      // it here so it reflects the real, final state on its own.
+    async (progress: any) => {
       queryClient.invalidateQueries({ queryKey: ["organizations"] });
+
+      const product = organizationData?.data?.product;
+      const orgId = organizationData?.data?.organization?.id;
+      if (product?.product_name === "OR" && orgId && product.id) {
+        try {
+          await activateOrTrial({ orgId, productId: product.id });
+        } catch { }
+        try {
+          await retryOrProvision({ orgId, productId: product.id });
+        } catch { }
+      }
+
       onComplete?.();
       toast.success("Created", "The organization has been successfully created.");
       if (isFromMain) {
@@ -54,7 +64,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
       }
       onClose();
     },
-    [queryClient, onComplete, isFromMain, organizationData, dispatch, router, onClose]
+    [queryClient, onComplete, isFromMain, organizationData, dispatch, router, onClose, activateOrTrial, retryOrProvision]
   );
 
   const handleError = useCallback((err: any) => {

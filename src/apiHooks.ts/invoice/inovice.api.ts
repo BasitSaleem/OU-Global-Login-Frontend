@@ -52,12 +52,13 @@ export const useInvoiceBreakdown = (
   });
 };
 
-export const useGetOrgInvoices = (id: string | undefined) => {
+// Owners Reach invoices are listed separately (product "OR").
+export const useGetOrgInvoices = (id: string | undefined, product?: "OR") => {
   return useQuery({
-    queryKey: ["org-invoices", id],
+    queryKey: product ? ["org-invoices", id, product] : ["org-invoices", id],
     queryFn: async () => {
       const res = await request<GetOrganizationInvoicesResponse>(
-        `${ENDPOINTS.GET_ORG_INVOICE}/${id}`,
+        `${ENDPOINTS.GET_ORG_INVOICE}/${id}${product ? "?product=" + product : ""}`,
         "GET",
       );
       return res.data;

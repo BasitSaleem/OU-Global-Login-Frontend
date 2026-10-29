@@ -1,0 +1,748 @@
+{
+  "version": "1.0.0",
+  "synthetic": true,
+  "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+  "environment": "development",
+  "organizations": [
+    {
+      "id": "00000001-1111-4111-8111-111111111111",
+      "state": "active"
+    },
+    {
+      "id": "00000002-1111-4111-8111-111111111111",
+      "state": "active"
+    }
+  ],
+  "products": [
+    {
+      "id": "00000011-1111-4111-8111-111111111111",
+      "orgId": "00000001-1111-4111-8111-111111111111",
+      "code": "OR",
+      "state": "active",
+      "entitlement": "active"
+    },
+    {
+      "id": "00000012-1111-4111-8111-111111111111",
+      "orgId": "00000001-1111-4111-8111-111111111111",
+      "code": "OI",
+      "state": "active",
+      "entitlement": "active"
+    },
+    {
+      "id": "00000013-1111-4111-8111-111111111111",
+      "orgId": "00000001-1111-4111-8111-111111111111",
+      "code": "OP",
+      "state": "active",
+      "entitlement": "active"
+    },
+    {
+      "id": "00000021-1111-4111-8111-111111111111",
+      "orgId": "00000002-1111-4111-8111-111111111111",
+      "code": "OR",
+      "state": "active",
+      "entitlement": "active"
+    }
+  ],
+  "users": [
+    {
+      "subject": "owner-a",
+      "status": "active"
+    },
+    {
+      "subject": "admin-a",
+      "status": "active"
+    },
+    {
+      "subject": "member-a",
+      "status": "active"
+    },
+    {
+      "subject": "owner-b",
+      "status": "active"
+    },
+    {
+      "subject": "suspended",
+      "status": "suspended"
+    },
+    {
+      "subject": "org-only",
+      "status": "active"
+    },
+    {
+      "subject": "oi-only",
+      "status": "active"
+    },
+    {
+      "subject": "op-only",
+      "status": "active"
+    },
+    {
+      "subject": "suspended-member",
+      "status": "active"
+    },
+    {
+      "subject": "no-membership",
+      "status": "active"
+    }
+  ],
+  "memberships": [
+    {
+      "subject": "owner-a",
+      "orgId": "00000001-1111-4111-8111-111111111111",
+      "productId": "00000011-1111-4111-8111-111111111111",
+      "role": "OWNER",
+      "status": "active"
+    },
+    {
+      "subject": "owner-a",
+      "orgId": "00000002-1111-4111-8111-111111111111",
+      "productId": "00000021-1111-4111-8111-111111111111",
+      "role": "MEMBER",
+      "status": "active"
+    },
+    {
+      "subject": "admin-a",
+      "orgId": "00000001-1111-4111-8111-111111111111",
+      "productId": "00000011-1111-4111-8111-111111111111",
+      "role": "ADMIN",
+      "status": "active"
+    },
+    {
+      "subject": "member-a",
+      "orgId": "00000001-1111-4111-8111-111111111111",
+      "productId": "00000011-1111-4111-8111-111111111111",
+      "role": "MEMBER",
+      "status": "active"
+    },
+    {
+      "subject": "owner-b",
+      "orgId": "00000002-1111-4111-8111-111111111111",
+      "productId": "00000021-1111-4111-8111-111111111111",
+      "role": "OWNER",
+      "status": "active"
+    },
+    {
+      "subject": "suspended",
+      "orgId": "00000001-1111-4111-8111-111111111111",
+      "productId": "00000011-1111-4111-8111-111111111111",
+      "role": "OWNER",
+      "status": "active"
+    },
+    {
+      "subject": "org-only",
+      "orgId": "00000001-1111-4111-8111-111111111111",
+      "productId": null,
+      "role": "OWNER",
+      "status": "active"
+    },
+    {
+      "subject": "oi-only",
+      "orgId": "00000001-1111-4111-8111-111111111111",
+      "productId": "00000012-1111-4111-8111-111111111111",
+      "role": "OWNER",
+      "status": "active"
+    },
+    {
+      "subject": "op-only",
+      "orgId": "00000001-1111-4111-8111-111111111111",
+      "productId": "00000013-1111-4111-8111-111111111111",
+      "role": "OWNER",
+      "status": "active"
+    },
+    {
+      "subject": "suspended-member",
+      "orgId": "00000001-1111-4111-8111-111111111111",
+      "productId": "00000011-1111-4111-8111-111111111111",
+      "role": "ADMIN",
+      "status": "suspended"
+    }
+  ],
+  "cases": [
+    {
+      "name": "owner-A-manages-A",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "owner-a",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "pipeline.publish",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "ALLOW"
+    },
+    {
+      "name": "owner-A-is-only-member-B",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "owner-a",
+        "orgId": "00000002-1111-4111-8111-111111111111",
+        "productId": "00000021-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000002-1111-4111-8111-111111111111",
+        "action": "billing.manage",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "ROLE_DENIED"
+    },
+    {
+      "name": "shared-user-reads-B",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "owner-a",
+        "orgId": "00000002-1111-4111-8111-111111111111",
+        "productId": "00000021-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000002-1111-4111-8111-111111111111",
+        "action": "lead.read",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "ALLOW"
+    },
+    {
+      "name": "owner-B-cannot-use-A",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "owner-b",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "lead.read",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "NO_MEMBERSHIP"
+    },
+    {
+      "name": "resource-A-under-B-context",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "owner-a",
+        "orgId": "00000002-1111-4111-8111-111111111111",
+        "productId": "00000021-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "lead.read",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "TENANT_MISMATCH"
+    },
+    {
+      "name": "B-product-with-A-org",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "owner-a",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000021-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "lead.read",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "TENANT_MISMATCH"
+    },
+    {
+      "name": "suspended-user",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "suspended",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "lead.read",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "USER_INACTIVE"
+    },
+    {
+      "name": "suspended-membership",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "suspended-member",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "lead.read",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "NO_MEMBERSHIP"
+    },
+    {
+      "name": "org-membership-is-not-product-grant",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "org-only",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "lead.read",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "NO_MEMBERSHIP"
+    },
+    {
+      "name": "oi-only-cannot-open-OR",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "oi-only",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "lead.read",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "NO_MEMBERSHIP"
+    },
+    {
+      "name": "op-only-cannot-open-OR",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "op-only",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "lead.read",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "NO_MEMBERSHIP"
+    },
+    {
+      "name": "OI-product-selector-rejected",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "oi-only",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000012-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "lead.read",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "WRONG_PRODUCT"
+    },
+    {
+      "name": "OP-product-selector-rejected",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "op-only",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000013-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "lead.read",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "WRONG_PRODUCT"
+    },
+    {
+      "name": "same-subject-wrong-issuer",
+      "request": {
+        "issuer": "https://untrusted.invalid",
+        "environment": "development",
+        "subject": "owner-a",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "lead.read",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "WRONG_ISSUER"
+    },
+    {
+      "name": "development-identity-production-context",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "production",
+        "subject": "owner-a",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "lead.read",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "WRONG_ENVIRONMENT"
+    },
+    {
+      "name": "member-can-export",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "member-a",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "lead.export",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "ALLOW"
+    },
+    {
+      "name": "member-cannot-buy",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "member-a",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "credits.purchase",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "ROLE_DENIED"
+    },
+    {
+      "name": "admin-cannot-bill",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "admin-a",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "billing.manage",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "ROLE_DENIED"
+    },
+    {
+      "name": "admin-manages-pipeline",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "admin-a",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "pipeline.publish",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "ALLOW"
+    },
+    {
+      "name": "member-other-run",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "member-a",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "run.cancel",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": false,
+        "paidPlan": true
+      },
+      "expected": "ROLE_DENIED"
+    },
+    {
+      "name": "member-own-run",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "member-a",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "run.cancel",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "ALLOW"
+    },
+    {
+      "name": "unknown-action",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "owner-a",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "unknown.action",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "ROLE_DENIED"
+    },
+    {
+      "name": "missing-entitlement",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "owner-a",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "run.start",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true,
+        "entitlementOverride": "none"
+      },
+      "expected": "NO_ENTITLEMENT"
+    },
+    {
+      "name": "retained-can-read",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "member-a",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "lead.read",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true,
+        "entitlementOverride": "retained"
+      },
+      "expected": "ALLOW"
+    },
+    {
+      "name": "retained-cannot-run",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "member-a",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "run.start",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true,
+        "entitlementOverride": "retained"
+      },
+      "expected": "NO_ENTITLEMENT"
+    },
+    {
+      "name": "past-due-read",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "member-a",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "lead.read",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true,
+        "billingState": "past_due",
+        "entitlementOverride": "retained"
+      },
+      "expected": "ALLOW"
+    },
+    {
+      "name": "cancelled-no-new-paid-work",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "member-a",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "run.start",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true,
+        "billingState": "cancelled",
+        "entitlementOverride": "retained"
+      },
+      "expected": "NO_ENTITLEMENT"
+    },
+    {
+      "name": "trial-cannot-top-up",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "owner-a",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "credits.purchase",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": false
+      },
+      "expected": "ROLE_DENIED"
+    },
+    {
+      "name": "blocked-product",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "owner-a",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "lead.read",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true,
+        "productStateOverride": "blocked"
+      },
+      "expected": "PRODUCT_INACTIVE"
+    },
+    {
+      "name": "outage-cached-read",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "member-a",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "lead.read",
+        "authorityAvailable": false,
+        "cacheAgeSeconds": 59,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "ALLOW"
+    },
+    {
+      "name": "outage-expired-cache",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "member-a",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "lead.read",
+        "authorityAvailable": false,
+        "cacheAgeSeconds": 61,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "AUTHORITY_UNAVAILABLE"
+    },
+    {
+      "name": "outage-paid-work",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "owner-a",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "run.start",
+        "authorityAvailable": false,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "AUTHORITY_UNAVAILABLE"
+    },
+    {
+      "name": "outage-export",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "owner-a",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "lead.export",
+        "authorityAvailable": false,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "AUTHORITY_UNAVAILABLE"
+    },
+    {
+      "name": "no-user",
+      "request": {
+        "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+        "environment": "development",
+        "subject": "missing-user",
+        "orgId": "00000001-1111-4111-8111-111111111111",
+        "productId": "00000011-1111-4111-8111-111111111111",
+        "resourceOrgId": "00000001-1111-4111-8111-111111111111",
+        "action": "lead.read",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "expected": "USER_INACTIVE"
+    }
+  ]
+}

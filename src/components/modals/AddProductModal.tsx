@@ -1,6 +1,8 @@
 "use client";
+import { useOrPlanSelection } from "@/hooks/useOrPlanSelection";
+import type { OrPlanIntent } from "@/apiHooks.ts/orCatalog/orCatalog.types";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { Modal } from "./GenericModal";
 import { Button } from "@/components/ui";
@@ -13,9 +15,20 @@ import {
   useCheckSubDomainAvailability,
   useGenerateSubdomainSuggestions,
 } from "@/apiHooks.ts/organization/organization.api";
+import {
+  useOrTrialActivation,
+  useOrProvisionRetry,
+  useOrProvisionReactivate,
+} from "@/apiHooks.ts/orTrial/orTrial.api";
 import { useDebounce } from "@/hooks/useDebounce";
-import { CreateOrganizationData } from "@/apiHooks.ts/organization/organization.types";
+import {
+  CreateOrganizationData,
+  OgRemovedProduct,
+} from "@/apiHooks.ts/organization/organization.types";
 import { toast } from "@/hooks/useToast";
+import { formatDate } from "@/utils/helpers";
+import { useProductAvailability } from "@/apiHooks.ts/productAccess/productAccess.api";
+import { addableProducts } from "@/utils/productAvailability";
 
 interface AddProductModalProps {
   isOpen: boolean;
@@ -23,6 +36,8 @@ interface AddProductModalProps {
   orgName: string;
   // Product codes already provisioned on this org (e.g. ["OI"]).
   existingProducts: string[];
+  // Previously removed products (OR only) that are restored instead of re-created.
+  removedProducts?: OgRemovedProduct[];
   onClose: () => void;
   onDone?: () => void;
 }
@@ -32,6 +47,7 @@ const DEFAULT_OI_PLAN_ID = "d755fe7d-4372-426c-af33-e63b71a6521f";
 const PRODUCT_DESCRIPTIONS: Record<string, string> = {
   OI: "Track and manage stock",
   OP: "Marketing & CRM automation",
+  OR: "Discover and qualify business leads",
   OM: "Sell across channels",
   OA: "Deep business insights",
   OJ: "Themes and templates",
@@ -42,12 +58,26 @@ export default function AddProductModal({
   orgId,
   orgName,
   existingProducts,
+  removedProducts = [],
   onClose,
   onDone,
 }: AddProductModalProps) {
-  const available = useMemo(
-    () => ["OI", "OP"].filter((p) => !existingProducts.includes(p)),
-    [existingProducts],
+  const removedOr = removedProducts.find((p) => p.product_name === "OR");
+  const access = useProductAvailability();
+  const available = addableProducts(
+    access.isAvailable,
+    existingProducts,
+    removedProducts,
+  );
+  // Products already on the org, or removed from it, keep their card for context.
+  // Other launched products show only when this account may add them.
+  const shown = PRODUCTS.filter(
+    (p) =>
+      p.isDisabled ||
+      available.includes(p.name) ||
+      existingProducts.includes(p.name) ||
+      (removedProducts.some((r) => r.product_name === p.name) &&
+        access.isAvailable(p.name)),
   );
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -66,6 +96,12 @@ export default function AddProductModal({
   const [opInvoiceVerified, setOpInvoiceVerified] = useState(false);
   const [isSuggestionSubdomain, setIsSuggestionSubdomain] = useState(false);
 
+  // A restore keeps the original plan, so no OR plan is picked for it.
+  const isOrRestore = !!removedOr?.canRestore && selectedProducts.includes("OR");
+  const orPlanState = useOrPlanSelection(
+    isOpen && selectedProducts.includes("OR") && !removedOr,
+    null,
+  );
   const isOiSelected = selectedProducts.includes("OI");
   const isOpSelected = selectedProducts.includes("OP");
   const isOpServices = isOpSelected && opMode === "services";
@@ -87,7 +123,11 @@ export default function AddProductModal({
     );
   const finalIsSubAvailable = isSuggestionSubdomain ? true : isSubAvailable;
 
-  const { mutate: addProduct, isPending } = useAddProduct(orgId);
+  const { mutateAsync: addProduct, isPending } = useAddProduct(orgId);
+  const { mutateAsync: activateOrTrial } = useOrTrialActivation();
+  const { mutateAsync: retryOrProvision } = useOrProvisionRetry();
+  const { mutateAsync: reactivateOr, isPending: isRestoring } =
+    useOrProvisionReactivate();
 
   const toggleProduct = (name: string) => {
     setSelectedProducts((prev) =>
@@ -102,6 +142,7 @@ export default function AddProductModal({
 
   const canSubmit = () => {
     if (selectedProducts.length === 0) return false;
+    if (selectedProducts.includes("OR") && !orPlanState.canSubmit) return false;
     if (isOiSelected) {
       if (!subDomain.trim()) return false;
       if (isSubDomainDebouncing || checkingSub) return false;
@@ -119,11 +160,15 @@ export default function AddProductModal({
     return true;
   };
 
-  const handleAdd = () => {
-    // `name` is the existing org's name — the backend uses the org's own name
+  const handleAdd = async () => {
+    if (!canSubmit()) return;
+    // `name` is the existing org's name, the backend uses the org's own name
     // for the shell, but the per-product schemas still require it.
     const payload: CreateOrganizationData = {
       name: orgName,
+      orSelection: selectedProducts.includes("OR")
+        ? (orPlanState.selection ?? undefined)
+        : undefined,
       product: selectedProducts,
       subDomainName: isOiSelected ? subDomain.trim() : undefined,
       packageId: isOiSelected ? selectedPlanId : null,
@@ -134,16 +179,33 @@ export default function AddProductModal({
       billingCycle: "Monthly",
     };
 
-    addProduct(payload, {
-      onSuccess: () => {
-        toast.success(
-          "Product added",
-          "Provisioning is running in the background.",
-        );
-        onDone?.();
-        onClose();
-      },
-    });
+    try {
+      const data = await addProduct(payload);
+      const orProduct = data?.products?.OR;
+      if (orProduct?.productId) {
+        try {
+          await activateOrTrial({ orgId, productId: orProduct.productId });
+        } catch { /* toast handled by mutation hook */ }
+        try {
+          await retryOrProvision({ orgId, productId: orProduct.productId });
+        } catch { /* provisioning retry is best-effort */ }
+      }
+      toast.success(
+        "Product added",
+        "Provisioning is running in the background.",
+      );
+      onDone?.();
+      onClose();
+    } catch { /* error toast handled by useAddProduct */ }
+  };
+
+  const handleRestore = async () => {
+    if (!removedOr) return;
+    try {
+      await reactivateOr({ orgId, productId: removedOr.id });
+      onDone?.();
+      onClose();
+    } catch { /* error toast handled by useOrProvisionReactivate */ }
   };
 
   const steps = [
@@ -166,7 +228,9 @@ export default function AddProductModal({
         {currentStep === 1 ? (
           <div className="space-y-4">
             <div>
-              <h2 className="text-xl font-bold text-text mb-1">Add a Product</h2>
+              <h2 className="text-xl font-bold text-text mb-1">
+                Add a Product
+              </h2>
               <p className="text-text-secondary text-sm">
                 Add another product to{" "}
                 <span className="font-semibold">{orgName}</span>.
@@ -177,9 +241,23 @@ export default function AddProductModal({
               <label className="block text-base font-semibold text-text">
                 Select a product
               </label>
+              {access.isPending && (
+                <p role="status" className="text-sm text-text-secondary">
+                  Loading your products…
+                </p>
+              )}
+              {access.isError && (
+                <p role="alert" className="text-sm text-text-secondary">
+                  We could not load your products. Close this window and try
+                  again.
+                </p>
+              )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {PRODUCTS.map((product) => {
+                {shown.map((product) => {
                   const alreadyAdded = existingProducts.includes(product.name);
+                  const removed = removedProducts.find(
+                    (p) => p.product_name === product.name,
+                  );
                   return (
                     <ProductSelectionCard
                       key={product.id}
@@ -189,11 +267,22 @@ export default function AddProductModal({
                       description={
                         alreadyAdded
                           ? "Already added to this organization"
-                          : PRODUCT_DESCRIPTIONS[product.name] || ""
+                          : removed
+                            ? removed.canRestore && removed.restoreUntil
+                              ? `Restore your previous ${product.fullname} setup. Available until ${formatDate(removed.restoreUntil)}`
+                              : removed.restoreUntil &&
+                                  new Date(removed.restoreUntil) > new Date()
+                                ? "Removed earlier. Only the owner who removed it can restore it"
+                                : `${product.fullname} access has ended, so it cannot be restored`
+                            : PRODUCT_DESCRIPTIONS[product.name] || ""
                       }
                       icon={product.icon}
                       isSelected={selectedProducts.includes(product.name)}
-                      isDisabled={product.isDisabled || alreadyAdded}
+                      isDisabled={
+                        product.isDisabled ||
+                        alreadyAdded ||
+                        (!!removed && !removed.canRestore)
+                      }
                       onClick={() => toggleProduct(product.name)}
                     />
                   );
@@ -201,22 +290,39 @@ export default function AddProductModal({
               </div>
             </div>
 
+            {isOrRestore && selectedProducts.length > 1 && (
+              <p className="text-sm text-text-secondary">
+                Restore Owners Reach on its own, then add the other products.
+              </p>
+            )}
+
             <div className="flex justify-end gap-4 pt-2">
               <Button variant="secondary" onClick={onClose}>
                 Cancel
               </Button>
-              <Button
-                variant="primary"
-                rightIcon={<ArrowRight />}
-                onClick={() => setCurrentStep(2)}
-                disabled={selectedProducts.length === 0}
-              >
-                Next
-              </Button>
+              {isOrRestore ? (
+                <Button
+                  variant="primary"
+                  onClick={handleRestore}
+                  disabled={selectedProducts.length > 1 || isRestoring}
+                >
+                  {isRestoring ? "Restoring…" : "Restore"}
+                </Button>
+              ) : (
+                <Button
+                  variant="primary"
+                  rightIcon={<ArrowRight />}
+                  onClick={() => setCurrentStep(2)}
+                  disabled={selectedProducts.length === 0}
+                >
+                  Next
+                </Button>
+              )}
             </div>
           </div>
         ) : (
           <SetupStep
+            orPlanState={orPlanState}
             companyName={orgName}
             setCompanyName={() => {}}
             selectedProducts={selectedProducts}

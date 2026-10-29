@@ -12,6 +12,7 @@ const SSE_EVENTS = {
   INVOICE_PAID: "invoice:paid",
   INVOICE_PAYMENT_FAILED: "invoice:payment_failed",
   PAYMENT_METHOD_ADDED: "payment_method:added",
+  OR_BILLING_UPDATED: "or_billing:updated",
 };
 export const useSSE = (orgId: string | undefined, subscriptionId?: string) => {
   const queryClient = useQueryClient();
@@ -106,6 +107,17 @@ export const useSSE = (orgId: string | undefined, subscriptionId?: string) => {
       const data = JSON.parse(e.data);
       toast.success(data.title, data.message);
       queryClient.invalidateQueries({ queryKey: ["payment-methods"] });
+    });
+
+    // Owners Reach plan, payment and credit pack updates.
+    es.addEventListener(SSE_EVENTS.OR_BILLING_UPDATED, (e: any) => {
+      const data = JSON.parse(e.data);
+      if (data.type === "ERROR") toast.error(data.title, data.message);
+      else toast.success(data.title, data.message);
+      queryClient.invalidateQueries({ queryKey: ["or-billing", orgId] });
+      queryClient.invalidateQueries({ queryKey: ["org-invoices", orgId] });
+      queryClient.invalidateQueries({ queryKey: ["organization", orgId] });
+      queryClient.invalidateQueries({ queryKey: ["organizations"] });
     });
 
     return () => {

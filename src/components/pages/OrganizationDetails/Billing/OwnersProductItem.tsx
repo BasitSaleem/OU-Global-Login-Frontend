@@ -5,7 +5,8 @@ export type OwnerKey =
   | "jungle"
   | "marketplace"
   | "analytics"
-  | "pulse";
+  | "pulse"
+  | "lead";
 
 // Maps an ogProduct.product_name to its billing-switcher metadata. Used to show
 // only the products an organization actually has.
@@ -18,6 +19,7 @@ export const OWNER_META: Record<
   OJ: { value: "jungle", toolTipText: "Owners Jungle", iconUrl: "OJ" },
   OM: { value: "marketplace", toolTipText: "Owners Marketplace", iconUrl: "OM" },
   OA: { value: "analytics", toolTipText: "Owners Analytics", iconUrl: "OA" },
+  OR: { value: "lead", toolTipText: "Owners Reach", iconUrl: "OR" },
 };
 
 interface OwnersProductItemProps {

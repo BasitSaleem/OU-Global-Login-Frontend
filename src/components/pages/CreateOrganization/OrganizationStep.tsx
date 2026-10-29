@@ -2,7 +2,8 @@
 import React from "react";
 import { Input, Button } from "@/components/ui";
 import { ProductSelectionCard } from "./ProductSelectionCard";
-import { PRODUCTS } from "@/constants";
+import { useProductAvailability } from "@/apiHooks.ts/productAccess/productAccess.api";
+import { creatableProducts } from "@/utils/productAvailability";
 import { ArrowRight, ChevronRight } from "lucide-react";
 
 interface OrganizationStepProps {
@@ -17,6 +18,7 @@ interface OrganizationStepProps {
 const PRODUCT_DESCRIPTIONS: Record<string, string> = {
   OI: "Track and manage stock",
   OP: "Marketing & CRM automation",
+  OR: "Discover and qualify business leads",
   OM: "Sell across channels",
   OA: "Deep business insights",
   OJ: "Themes and templates",
@@ -30,6 +32,10 @@ export const OrganizationStep: React.FC<OrganizationStepProps> = ({
   onNext,
   onReset,
 }) => {
+  const access = useProductAvailability();
+  const products = creatableProducts(access.isAvailable, selectedProducts);
+  const noneAvailable =
+    access.isSuccess && !products.some((product) => !product.isDisabled);
   return (
     <div className="space-y-4">
       <div className="text-center md:text-left my-8">
@@ -69,8 +75,24 @@ export const OrganizationStep: React.FC<OrganizationStepProps> = ({
               (choose one or more)
             </span>
           </label>
+          {access.isPending && (
+            <p role="status" className="text-sm text-text-secondary">
+              Loading your products…
+            </p>
+          )}
+          {access.isError && (
+            <p role="alert" className="text-sm text-text-secondary">
+              We could not load your products. Refresh the page to try again.
+            </p>
+          )}
+          {noneAvailable && (
+            <p role="status" className="text-sm text-text-secondary">
+              No products are available for your account yet. Contact Owners
+              Universe support to get access.
+            </p>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {PRODUCTS.map((product) => (
+            {products.map((product) => (
               <ProductSelectionCard
                 key={product.id}
                 id={product.id}

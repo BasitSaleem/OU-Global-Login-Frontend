@@ -1,0 +1,155 @@
+[
+  {
+    "owner": "UB",
+    "method": "GET",
+    "path": "/api/v1/or/catalog",
+    "request": null,
+    "response": "Catalog",
+    "authorization": "public published catalog only",
+    "status": "Specified; not implemented"
+  },
+  {
+    "owner": "UB",
+    "method": "GET",
+    "path": "/api/v1/or/engines",
+    "request": null,
+    "response": "EngineCatalog",
+    "authorization": "public metadata; availability rechecked with tenant at quote",
+    "status": "Specified; not implemented"
+  },
+  {
+    "owner": "UB",
+    "method": "GET",
+    "path": "/api/v1/or/templates",
+    "request": null,
+    "response": "TemplateCatalog",
+    "authorization": "public starters, no tenant copies",
+    "status": "Specified; not implemented"
+  },
+  {
+    "owner": "UB",
+    "method": "POST",
+    "path": "/api/v1/internal/or/access/decisions",
+    "request": "AccessRequest",
+    "response": "AccessDecision",
+    "authorization": "signed service; never browser actor assertion",
+    "status": "Specified; not implemented"
+  },
+  {
+    "owner": "OR",
+    "method": "POST",
+    "path": "/api/v1/internal/or/provision",
+    "request": "Provision",
+    "response": "ProvisionResult",
+    "authorization": "signed OU service; idempotent",
+    "status": "Specified; not implemented"
+  },
+  {
+    "owner": "OR",
+    "method": "POST",
+    "path": "/api/v1/internal/or/events",
+    "request": "Event",
+    "response": "Acknowledgement",
+    "authorization": "signed OU service; durable inbox before acknowledgment",
+    "status": "Specified; not implemented"
+  },
+  {
+    "owner": "UB",
+    "method": "POST",
+    "path": "/api/v1/or/checkout",
+    "request": "Checkout",
+    "response": "CheckoutResult",
+    "authorization": "OU customer session; owner; idempotent",
+    "status": "Specified; not implemented"
+  },
+  {
+    "owner": "OR",
+    "method": "POST",
+    "path": "/api/v1/or/quotes",
+    "request": "QuoteRequest",
+    "response": "Quote",
+    "authorization": "OR session; action authorization; quotation creates no supplier spend",
+    "status": "Specified; not implemented"
+  },
+  {
+    "owner": "OR",
+    "method": "POST",
+    "path": "/api/v1/or/runs",
+    "request": "StartRun",
+    "response": "RunAccepted",
+    "authorization": "OR session; idempotent; atomic reserve before queued paid work",
+    "status": "Specified; not implemented"
+  },
+  {
+    "owner": "OR",
+    "method": "GET",
+    "path": "/api/v1/or/balance",
+    "request": null,
+    "response": "Balance",
+    "authorization": "OR session; tenant derived server-side",
+    "status": "Specified; not implemented"
+  },
+  {
+    "owner": "OR",
+    "method": "POST",
+    "path": "/api/v1/internal/or/balance",
+    "request": "AccessRequest",
+    "response": "Balance",
+    "authorization": "signed OU service plus user action authorization; projection only",
+    "status": "Specified; not implemented"
+  },
+  {
+    "owner": "UB",
+    "method": "GET",
+    "path": "/api/v1/internal/or/engine-config",
+    "request": null,
+    "response": "PrivateEngineCatalog",
+    "authorization": "signed OR service scoped to execution config",
+    "status": "Specified; not implemented"
+  },
+  {
+    "owner": "UB",
+    "method": "GET",
+    "path": "/api/v1/internal/or/templates",
+    "request": null,
+    "response": "TemplateCatalog",
+    "authorization": "signed OR service; revision recovery",
+    "status": "Specified; not implemented"
+  },
+  {
+    "owner": "UB",
+    "method": "PUT",
+    "path": "/api/v1/admin/or/catalog/drafts/{draftId}",
+    "request": "CatalogDraft",
+    "response": "CatalogDraft",
+    "authorization": "Staff or.catalog.edit; expected revision required",
+    "status": "Specified; not implemented"
+  },
+  {
+    "owner": "UB",
+    "method": "POST",
+    "path": "/api/v1/admin/or/catalog/publications",
+    "request": "PublishCatalog",
+    "response": "Catalog",
+    "authorization": "Staff or.catalog.publish; production release gate; new Stripe Price IDs",
+    "status": "Specified; not implemented"
+  },
+  {
+    "owner": "UB",
+    "method": "PUT",
+    "path": "/api/v1/admin/or/settings/drafts/{draftId}",
+    "request": "CommercialSettings",
+    "response": "CommercialSettings",
+    "authorization": "Staff or.policy.edit; immutable publish version and gate checks through catalog publication workflow",
+    "status": "Specified; not implemented"
+  },
+  {
+    "owner": "UB",
+    "method": "POST",
+    "path": "/api/v1/admin/or/settings/publications",
+    "request": "PublishCatalog",
+    "response": "CommercialSettings",
+    "authorization": "Staff or.policy.publish; revision check, immutable publication and production activation gates",
+    "status": "Specified; not implemented"
+  }
+]

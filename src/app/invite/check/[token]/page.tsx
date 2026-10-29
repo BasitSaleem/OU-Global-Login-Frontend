@@ -64,6 +64,11 @@ export default function AcceptInvitePage() {
                 router.replace(ROUTES.LOGIN);
                 return;
             }
+            if (inviteStatus === 'REVOKED') {
+                toast.info('Invitation Cancelled', 'This invitation was cancelled by the team');
+                router.replace(ROUTES.DASHBOARD);
+                return;
+            }
 
         }
 
@@ -92,6 +97,15 @@ export default function AcceptInvitePage() {
             toast.info('Already Declined', 'Invitation already declined');
             router.replace(ROUTES.LOGIN);
             return
+        }
+
+        if (inviteStatus === 'REVOKED' || inviteStatus === 'EXPIRED') {
+            toast.info(
+                inviteStatus === 'REVOKED' ? 'Invitation Cancelled' : 'Invitation Expired',
+                inviteStatus === 'REVOKED' ? 'This invitation was cancelled by the team' : 'Invitation has expired',
+            );
+            router.replace(ROUTES.LOGIN);
+            return;
         }
     }, [
         statusData,

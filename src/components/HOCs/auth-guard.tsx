@@ -1,4 +1,9 @@
 "use client";
+import {
+  INCOMING_PACKAGE_KEYS,
+  persistPackageQuery,
+  readStoredPackageSelection,
+} from "@/utils/incomingPackageSelection";
 
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants";
@@ -33,9 +38,9 @@ export function AuthGuard({
   const { data, isLoading, isError } = useGetMe();
 
   const organization = data?.data?.user
-    ? data.data.user.organizations?.[0] ??
+    ? (data.data.user.organizations?.[0] ??
       data.data.user.memberships?.[0]?.organization ??
-      undefined
+      undefined)
     : undefined;
 
   useEffect(() => {
@@ -62,24 +67,23 @@ export function AuthGuard({
       hasRedirected.current = true;
       dispatch(clearAuth());
       queryClient.clear();
-      // Preserve the OI/OP package selection across the auth redirect
-      const preserveKeys = [
-        "pkgId",
-        "product",
-        "billingCycle",
-        "op_pkgId",
-        "op_billingCycle",
-      ];
-      const saved = Object.fromEntries(
-        preserveKeys.map((key) => [key, localStorage.getItem(key)]),
-      );
-      localStorage.clear();
-      preserveKeys.forEach((key) => {
-        if (saved[key]) {
-          localStorage.setItem(key, saved[key]);
-        }
-      });
-      sessionStorage.clear();
+      // Preserve the product/package selection across the auth redirect
+      persistPackageQuery(new URLSearchParams(window.location.search));
+      const preserveKeys = INCOMING_PACKAGE_KEYS;
+      const saved = readStoredPackageSelection();
+      try {
+        localStorage.clear();
+        preserveKeys.forEach((key) => {
+          if (saved[key]) localStorage.setItem(key, saved[key]!);
+        });
+      } catch {
+        /* Storage may be unavailable in privacy mode. */
+      }
+      try {
+        sessionStorage.clear();
+      } catch {
+        /* Redirect still proceeds. */
+      }
       router.replace(redirectTo || ROUTES.LOGIN);
     }
   }, [isLoading, isError, router, dispatch, queryClient, redirectTo]);

@@ -26,6 +26,10 @@ interface PaymentMethodCardProps {
   last4?: string;
   expiry?: string;
   isPrimary?: boolean;
+  // Extra label shown under the card details, e.g. which plan uses the card.
+  tag?: string;
+  // False hides delete, e.g. for the card a paid plan is charged to.
+  canDelete?: boolean;
   isMakePrimaryLoading?: boolean;
   onDelete?: () => void;
   onMakePrimary?: () => void;
@@ -38,6 +42,8 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
   last4,
   expiry,
   isPrimary,
+  tag,
+  canDelete = true,
   // onEdit,
   onDelete,
   onMakePrimary,
@@ -66,6 +72,11 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
           <div>
             <p className="font-semibold">....{last4}</p>
             <p className="text-sm">Expires {expiry}</p>
+            {tag && (
+              <span className="mt-1.5 inline-flex rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">
+                {tag}
+              </span>
+            )}
           </div>
         </div>
         {isPrimary && (
@@ -104,7 +115,7 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
           >
             <Edit2 size={18} />
           </Button> */}
-          {!isPrimary && (
+          {!isPrimary && canDelete && (
             <Button
               variant="basic"
               className="hover:scale-110 transition-all duration-300"

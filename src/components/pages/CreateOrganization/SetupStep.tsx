@@ -1,4 +1,6 @@
 "use client";
+import OrPlanSelection from "./OrPlanSelection";
+import type { OrPlanSelectionState } from "@/hooks/useOrPlanSelection";
 import React, { useMemo, useState, useEffect } from "react";
 import { Input, Button, LoadingSpinner, Dots } from "@/components/ui";
 import { SubdomainSuggestion } from "@/components/SubdomainSuggestion";
@@ -155,6 +157,7 @@ const OpTierSelection: React.FC<{
 };
 
 interface SetupStepProps {
+  orPlanState?: OrPlanSelectionState;
   companyName: string;
   setCompanyName: (val: string) => void;
   selectedProducts: string[];
@@ -198,6 +201,7 @@ const typeData = [
 ];
 
 export const SetupStep: React.FC<SetupStepProps> = ({
+  orPlanState,
   companyName,
   setCompanyName,
   selectedProducts,
@@ -264,6 +268,14 @@ export const SetupStep: React.FC<SetupStepProps> = ({
         return "Choose an Owners Pulse plan.";
       }
     }
+    if (selectedProducts.includes("OR") && !orPlanState?.canSubmit)
+      return orPlanState &&
+        !orPlanState.selectionEnabled &&
+        !orPlanState.accessPending
+        ? "Owners Reach is not available for your account."
+        : orPlanState?.onboardingEnabled
+          ? "Choose a current Owners Reach plan."
+          : "Owners Reach activation is not available yet.";
     return undefined;
   })();
 
@@ -662,6 +674,16 @@ export const SetupStep: React.FC<SetupStepProps> = ({
           )}
         </div>
       )}
+
+      {selectedProducts.includes("OR") &&
+        activeProduct === "OR" &&
+        orPlanState && (
+          <OrPlanSelection
+            state={orPlanState}
+            billingCycle={billingCycle}
+            setBillingCycle={setBillingCycle}
+          />
+        )}
 
       <div
         className={`${isDirectFlow ? "flex justify-end" : "flex justify-between gap-4"} pt-4`}

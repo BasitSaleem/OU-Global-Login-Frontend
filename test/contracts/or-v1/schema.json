@@ -1,0 +1,1517 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.owners.invalid/or/1.0",
+  "$defs": {
+    "Tenant": {
+      "type": "object",
+      "properties": {
+        "environment": {
+          "enum": [
+            "development",
+            "staging",
+            "production"
+          ]
+        },
+        "orgId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "productId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "productCode": {
+          "const": "OR"
+        }
+      },
+      "required": [
+        "environment",
+        "orgId",
+        "productId",
+        "productCode"
+      ],
+      "additionalProperties": false
+    },
+    "Actor": {
+      "type": "object",
+      "properties": {
+        "issuer": {
+          "type": "string",
+          "pattern": "^https?://[^\\s]+$",
+          "maxLength": 300
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        }
+      },
+      "required": [
+        "issuer",
+        "subject"
+      ],
+      "additionalProperties": false
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "enum": [
+                "INVALID_REQUEST",
+                "UNAUTHENTICATED",
+                "FORBIDDEN",
+                "ENTITLEMENT_REQUIRED",
+                "INSUFFICIENT_CREDITS",
+                "STALE_VERSION",
+                "IDEMPOTENCY_CONFLICT",
+                "QUOTE_EXPIRED",
+                "NOT_FOUND",
+                "RATE_LIMITED",
+                "DEPENDENCY_UNAVAILABLE"
+              ]
+            },
+            "message": {
+              "type": "string",
+              "maxLength": 300
+            },
+            "requestId": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "retryable": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "code",
+            "message",
+            "requestId",
+            "retryable"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "error"
+      ],
+      "additionalProperties": false
+    },
+    "AccessRequest": {
+      "type": "object",
+      "properties": {
+        "tenant": {
+          "$ref": "#/$defs/Tenant"
+        },
+        "actor": {
+          "$ref": "#/$defs/Actor"
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        }
+      },
+      "required": [
+        "tenant",
+        "actor",
+        "action"
+      ],
+      "additionalProperties": false
+    },
+    "AccessDecision": {
+      "type": "object",
+      "properties": {
+        "tenant": {
+          "$ref": "#/$defs/Tenant"
+        },
+        "actor": {
+          "$ref": "#/$defs/Actor"
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "allowed": {
+          "type": "boolean"
+        },
+        "reason": {
+          "enum": [
+            "ALLOWED",
+            "NO_MEMBERSHIP",
+            "SUSPENDED",
+            "WRONG_PRODUCT",
+            "NO_ENTITLEMENT",
+            "ROLE_DENIED"
+          ]
+        },
+        "role": {
+          "enum": [
+            "OWNER",
+            "ADMIN",
+            "MEMBER",
+            null
+          ]
+        },
+        "authorizationVersion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "policyVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "checkedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?Z$"
+        },
+        "validUntil": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?Z$"
+        }
+      },
+      "required": [
+        "tenant",
+        "actor",
+        "action",
+        "allowed",
+        "reason",
+        "role",
+        "authorizationVersion",
+        "policyVersion",
+        "checkedAt",
+        "validUntil"
+      ],
+      "additionalProperties": false
+    },
+    "Plan": {
+      "type": "object",
+      "properties": {
+        "planId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "currency": {
+          "const": "USD"
+        },
+        "monthlyPriceMinor": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "includedCredits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "seats": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "concurrentRuns": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "trialDays": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "trialCredits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "planId",
+        "version",
+        "code",
+        "displayName",
+        "currency",
+        "monthlyPriceMinor",
+        "includedCredits",
+        "seats",
+        "concurrentRuns",
+        "trialDays",
+        "trialCredits"
+      ],
+      "additionalProperties": false
+    },
+    "Catalog": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0"
+        },
+        "catalogVersion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "effectiveAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?Z$"
+        },
+        "plans": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Plan"
+          },
+          "maxItems": 3
+        },
+        "packs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "packId": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+              },
+              "version": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "priceMinor": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "credits": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "packId",
+              "version",
+              "priceMinor",
+              "credits"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 20
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "catalogVersion",
+        "effectiveAt",
+        "plans",
+        "packs"
+      ],
+      "additionalProperties": false
+    },
+    "Engine": {
+      "type": "object",
+      "properties": {
+        "engineId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "maxItems": 30
+        },
+        "regions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "maxItems": 300
+        },
+        "freshnessDescription": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "rateVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "available": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "engineId",
+        "revision",
+        "displayName",
+        "capabilities",
+        "regions",
+        "freshnessDescription",
+        "rateVersion",
+        "available"
+      ],
+      "additionalProperties": false
+    },
+    "EngineCatalog": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "engines": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Engine"
+          },
+          "maxItems": 50
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "revision",
+        "engines"
+      ],
+      "additionalProperties": false
+    },
+    "PrivateEngine": {
+      "type": "object",
+      "properties": {
+        "engine": {
+          "$ref": "#/$defs/Engine"
+        },
+        "adapterKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "credentialRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "maxAttempts": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2
+        },
+        "supplierBudgetMinor": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "currency": {
+          "const": "USD"
+        },
+        "enabled": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "engine",
+        "adapterKey",
+        "credentialRef",
+        "maxAttempts",
+        "supplierBudgetMinor",
+        "currency",
+        "enabled"
+      ],
+      "additionalProperties": false
+    },
+    "PrivateEngineCatalog": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "engines": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PrivateEngine"
+          },
+          "maxItems": 50
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "revision",
+        "engines"
+      ],
+      "additionalProperties": false
+    },
+    "Template": {
+      "type": "object",
+      "properties": {
+        "templateId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "stepKeys": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "maxItems": 16
+        },
+        "engineId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        }
+      },
+      "required": [
+        "templateId",
+        "revision",
+        "name",
+        "stepKeys",
+        "engineId"
+      ],
+      "additionalProperties": false
+    },
+    "TemplateCatalog": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "templates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Template"
+          },
+          "maxItems": 50
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "revision",
+        "templates"
+      ],
+      "additionalProperties": false
+    },
+    "PipelineVersion": {
+      "type": "object",
+      "properties": {
+        "pipelineId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "published",
+            "archived"
+          ]
+        },
+        "engineId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "engineRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "stepKeys": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "maxItems": 16
+        },
+        "configurationHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "pipelineId",
+        "version",
+        "status",
+        "engineId",
+        "engineRevision",
+        "stepKeys",
+        "configurationHash"
+      ],
+      "additionalProperties": false
+    },
+    "Provision": {
+      "type": "object",
+      "properties": {
+        "tenant": {
+          "$ref": "#/$defs/Tenant"
+        },
+        "requestId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "actor": {
+          "$ref": "#/$defs/Actor"
+        },
+        "catalogVersion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "planId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "planVersion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "activation": {
+          "enum": [
+            "trial",
+            "paid"
+          ]
+        }
+      },
+      "required": [
+        "tenant",
+        "requestId",
+        "actor",
+        "catalogVersion",
+        "planId",
+        "planVersion",
+        "activation"
+      ],
+      "additionalProperties": false
+    },
+    "ProvisionResult": {
+      "type": "object",
+      "properties": {
+        "tenant": {
+          "$ref": "#/$defs/Tenant"
+        },
+        "requestId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "state": {
+          "enum": [
+            "pending",
+            "provisioned",
+            "failed"
+          ]
+        },
+        "localTenantId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "tenant",
+        "requestId",
+        "state",
+        "localTenantId"
+      ],
+      "additionalProperties": false
+    },
+    "Checkout": {
+      "type": "object",
+      "properties": {
+        "tenant": {
+          "$ref": "#/$defs/Tenant"
+        },
+        "requestId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "catalogVersion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "kind": {
+          "enum": [
+            "subscription",
+            "topup"
+          ]
+        },
+        "itemId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "itemVersion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "returnPath": {
+          "type": "string",
+          "pattern": "^/[A-Za-z0-9/_-]*$"
+        }
+      },
+      "required": [
+        "tenant",
+        "requestId",
+        "catalogVersion",
+        "kind",
+        "itemId",
+        "itemVersion",
+        "returnPath"
+      ],
+      "additionalProperties": false
+    },
+    "CheckoutResult": {
+      "type": "object",
+      "properties": {
+        "purchaseId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "checkoutUrl": {
+          "type": "string",
+          "pattern": "^https://checkout\\.stripe\\.com/"
+        },
+        "state": {
+          "const": "pending"
+        }
+      },
+      "required": [
+        "purchaseId",
+        "checkoutUrl",
+        "state"
+      ],
+      "additionalProperties": false
+    },
+    "Grant": {
+      "type": "object",
+      "properties": {
+        "grantId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "originId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "bucket": {
+          "enum": [
+            "trial",
+            "allowance",
+            "purchased"
+          ]
+        },
+        "credits": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "expiresAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "policyVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        }
+      },
+      "required": [
+        "grantId",
+        "originId",
+        "bucket",
+        "credits",
+        "expiresAt",
+        "policyVersion"
+      ],
+      "additionalProperties": false
+    },
+    "Adjustment": {
+      "type": "object",
+      "properties": {
+        "adjustmentId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "originalGrantId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "creditDelta": {
+          "type": "integer",
+          "maximum": -1
+        },
+        "reason": {
+          "enum": [
+            "refund",
+            "dispute",
+            "correction"
+          ]
+        }
+      },
+      "required": [
+        "adjustmentId",
+        "originalGrantId",
+        "creditDelta",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "Lifecycle": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "enum": [
+            "pending",
+            "active",
+            "past_due",
+            "suspended",
+            "cancelled",
+            "deleted"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "authorizationVersion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "state",
+        "reason",
+        "authorizationVersion"
+      ],
+      "additionalProperties": false
+    },
+    "Balance": {
+      "type": "object",
+      "properties": {
+        "tenant": {
+          "$ref": "#/$defs/Tenant"
+        },
+        "ledgerVersion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "availableCredits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "reservedCredits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "debtCredits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "asOf": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?Z$"
+        }
+      },
+      "required": [
+        "tenant",
+        "ledgerVersion",
+        "availableCredits",
+        "reservedCredits",
+        "debtCredits",
+        "asOf"
+      ],
+      "additionalProperties": false
+    },
+    "QuoteRequest": {
+      "type": "object",
+      "properties": {
+        "tenant": {
+          "$ref": "#/$defs/Tenant"
+        },
+        "campaignId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "pipelineId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "pipelineVersion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "criteriaVersion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "requestedMaxLeads": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "fundingMode": {
+          "enum": [
+            "platform",
+            "byok"
+          ]
+        }
+      },
+      "required": [
+        "tenant",
+        "campaignId",
+        "pipelineId",
+        "pipelineVersion",
+        "criteriaVersion",
+        "requestedMaxLeads",
+        "fundingMode"
+      ],
+      "additionalProperties": false
+    },
+    "Quote": {
+      "type": "object",
+      "properties": {
+        "quoteId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "tenant": {
+          "$ref": "#/$defs/Tenant"
+        },
+        "campaignId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "pipeline": {
+          "$ref": "#/$defs/PipelineVersion"
+        },
+        "criteriaVersion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "rateVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "policyVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "fundingMode": {
+          "enum": [
+            "platform",
+            "byok"
+          ]
+        },
+        "estimatedCredits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "maxCredits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expiresAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?Z$"
+        }
+      },
+      "required": [
+        "quoteId",
+        "tenant",
+        "campaignId",
+        "pipeline",
+        "criteriaVersion",
+        "rateVersion",
+        "policyVersion",
+        "fundingMode",
+        "estimatedCredits",
+        "maxCredits",
+        "expiresAt"
+      ],
+      "additionalProperties": false
+    },
+    "StartRun": {
+      "type": "object",
+      "properties": {
+        "tenant": {
+          "$ref": "#/$defs/Tenant"
+        },
+        "quoteId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "requestId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "authorizedMaxCredits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "tenant",
+        "quoteId",
+        "requestId",
+        "authorizedMaxCredits"
+      ],
+      "additionalProperties": false
+    },
+    "RunAccepted": {
+      "type": "object",
+      "properties": {
+        "runId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "state": {
+          "enum": [
+            "queued",
+            "running",
+            "paused",
+            "completed",
+            "failed",
+            "cancelled"
+          ]
+        },
+        "reservedCredits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "quoteId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        }
+      },
+      "required": [
+        "runId",
+        "state",
+        "reservedCredits",
+        "quoteId"
+      ],
+      "additionalProperties": false
+    },
+    "Acknowledgement": {
+      "type": "object",
+      "properties": {
+        "eventId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "state": {
+          "enum": [
+            "accepted",
+            "duplicate",
+            "pending_reconciliation"
+          ]
+        }
+      },
+      "required": [
+        "eventId",
+        "state"
+      ],
+      "additionalProperties": false
+    },
+    "Event": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0"
+        },
+        "eventId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "eventType": {
+          "enum": [
+            "or.credit.granted",
+            "or.credit.adjusted",
+            "or.product.provisioned",
+            "or.product.lifecycle",
+            "or.access.changed",
+            "or.engines.published",
+            "or.templates.published"
+          ]
+        },
+        "environment": {
+          "enum": [
+            "development",
+            "staging",
+            "production"
+          ]
+        },
+        "tenant": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tenant"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "aggregateId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "aggregateVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "businessKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "policyVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "occurredAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?Z$"
+        },
+        "effectiveAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?Z$"
+        },
+        "data": {}
+      },
+      "required": [
+        "schemaVersion",
+        "eventId",
+        "eventType",
+        "environment",
+        "tenant",
+        "aggregateId",
+        "aggregateVersion",
+        "businessKey",
+        "policyVersion",
+        "occurredAt",
+        "effectiveAt",
+        "data"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "eventType": {
+                "const": "or.credit.granted"
+              }
+            },
+            "required": [
+              "eventType"
+            ]
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/Grant"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "eventType": {
+                "const": "or.credit.adjusted"
+              }
+            },
+            "required": [
+              "eventType"
+            ]
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/Adjustment"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "eventType": {
+                "const": "or.product.provisioned"
+              }
+            },
+            "required": [
+              "eventType"
+            ]
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/ProvisionResult"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "eventType": {
+                "const": "or.product.lifecycle"
+              }
+            },
+            "required": [
+              "eventType"
+            ]
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/Lifecycle"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "eventType": {
+                "const": "or.access.changed"
+              }
+            },
+            "required": [
+              "eventType"
+            ]
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/Lifecycle"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "eventType": {
+                "const": "or.engines.published"
+              }
+            },
+            "required": [
+              "eventType"
+            ]
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/PrivateEngineCatalog"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "eventType": {
+                "const": "or.templates.published"
+              }
+            },
+            "required": [
+              "eventType"
+            ]
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/TemplateCatalog"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "eventType": {
+                "enum": [
+                  "or.engines.published",
+                  "or.templates.published"
+                ]
+              }
+            },
+            "required": [
+              "eventType"
+            ]
+          },
+          "then": {
+            "properties": {
+              "tenant": {
+                "type": "null"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "tenant": {
+                "$ref": "#/$defs/Tenant"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "CatalogDraft": {
+      "type": "object",
+      "properties": {
+        "draftId": {
+          "$ref": "#/$defs/Plan/properties/planId"
+        },
+        "draftVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "catalog": {
+          "$ref": "#/$defs/Catalog"
+        },
+        "status": {
+          "const": "draft"
+        }
+      },
+      "required": [
+        "draftId",
+        "draftVersion",
+        "catalog",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "PublishCatalog": {
+      "type": "object",
+      "properties": {
+        "draftId": {
+          "$ref": "#/$defs/Plan/properties/planId"
+        },
+        "expectedDraftVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "effectiveAt": {
+          "$ref": "#/$defs/Catalog/properties/effectiveAt"
+        },
+        "existingSubscriptions": {
+          "enum": [
+            "keep_existing_terms",
+            "explicit_migration_required"
+          ]
+        }
+      },
+      "required": [
+        "draftId",
+        "expectedDraftVersion",
+        "effectiveAt",
+        "existingSubscriptions"
+      ],
+      "additionalProperties": false
+    },
+    "CommercialSettings": {
+      "type": "object",
+      "properties": {
+        "policyVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "trial": {
+          "type": "object",
+          "properties": {
+            "days": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 30
+            },
+            "credits": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "requiresCard": {
+              "type": "boolean"
+            },
+            "enabled": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "days",
+            "credits",
+            "requiresCard",
+            "enabled"
+          ],
+          "additionalProperties": false
+        },
+        "stageRates": {
+          "type": "object",
+          "properties": {
+            "discovery": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "icp": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "phone": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "website": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "reviews": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "registry": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "personalization": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "discovery",
+            "icp",
+            "phone",
+            "website",
+            "reviews",
+            "registry",
+            "personalization"
+          ],
+          "additionalProperties": false
+        },
+        "maxPipelines": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "byokEnabled": {
+          "type": "boolean"
+        },
+        "secondEngineEnabled": {
+          "type": "boolean"
+        },
+        "automaticFallbackEnabled": {
+          "type": "boolean"
+        },
+        "liveProviderSpendEnabled": {
+          "type": "boolean"
+        },
+        "liveProviderBudgetMinor": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "policyVersion",
+        "trial",
+        "stageRates",
+        "maxPipelines",
+        "byokEnabled",
+        "secondEngineEnabled",
+        "automaticFallbackEnabled",
+        "liveProviderSpendEnabled",
+        "liveProviderBudgetMinor"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -11,12 +11,21 @@ interface PaymentSuccessModalProps {
   onClose: () => void;
   planName?: string;
   amount?: string;
+  /** Where to go afterwards; defaults to the organization billing page. */
+  redirectTo?: string;
+  /** Replaces the default confirmation sentence. */
+  message?: React.ReactNode;
+  /** Extra highlighted line, e.g. that credits take a moment to arrive. */
+  note?: string;
 }
 
 export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
   isOpen,
   onClose,
   planName = "Pro Plan",
+  redirectTo,
+  message,
+  note,
 }) => {
   const router = useRouter();
   const { orgId } = useParams();
@@ -24,8 +33,8 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
 
   const handleDone = React.useCallback(() => {
     onClose();
-    router.replace(`/organization-details/${orgId}/billing`);
-  }, [onClose, router, orgId]);
+    router.replace(redirectTo ?? `/organization-details/${orgId}/billing`);
+  }, [onClose, router, orgId, redirectTo]);
 
   React.useEffect(() => {
     if (!isOpen) {
@@ -105,8 +114,17 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
               <div className="space-y-2">
                 <h2 className="text-2xl font-bold text-gray-900">Payment Successful</h2>
                 <p className="text-sm text-gray-500 px-4 leading-relaxed">
-                  Thanks for your purchase. Your subscriptions to the <span className="font-bold text-gray-700">{planName}</span> is now active.
+                  {message ?? (
+                    <>
+                      Thanks for your purchase. Your subscriptions to the <span className="font-bold text-gray-700">{planName}</span> is now active.
+                    </>
+                  )}
                 </p>
+                {note && (
+                  <p className="text-xs text-primary bg-primary/10 rounded-lg px-3 py-2 mx-4">
+                    {note}
+                  </p>
+                )}
               </div>
 
               <div className="pt-4">

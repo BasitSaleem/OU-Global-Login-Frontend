@@ -1,0 +1,895 @@
+{
+  "version": "1.0",
+  "status": "Selected implementation policy under delegated authority",
+  "actions": [
+    {
+      "action": "lead.read",
+      "roles": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER"
+      ],
+      "fresh": false,
+      "entitlement": "active-or-retained",
+      "note": "Read tenant leads"
+    },
+    {
+      "action": "lead.edit",
+      "roles": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER"
+      ],
+      "fresh": true,
+      "entitlement": "active",
+      "note": "Edit tenant evidence with provenance"
+    },
+    {
+      "action": "lead.export",
+      "roles": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER"
+      ],
+      "fresh": true,
+      "entitlement": "active-or-retained",
+      "note": "Export own tenant only"
+    },
+    {
+      "action": "lead.delete",
+      "roles": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER"
+      ],
+      "fresh": true,
+      "entitlement": "active",
+      "note": "Single/bulk delete subject to retention hold"
+    },
+    {
+      "action": "campaign.manage",
+      "roles": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER"
+      ],
+      "fresh": true,
+      "entitlement": "active",
+      "note": "Create/edit/archive campaigns"
+    },
+    {
+      "action": "pipeline.read",
+      "roles": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER"
+      ],
+      "fresh": false,
+      "entitlement": "active-or-retained",
+      "note": "View published/draft tenant pipelines"
+    },
+    {
+      "action": "pipeline.create",
+      "roles": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER"
+      ],
+      "fresh": true,
+      "entitlement": "active",
+      "note": "Create or duplicate pipelines"
+    },
+    {
+      "action": "pipeline.edit",
+      "roles": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER"
+      ],
+      "fresh": true,
+      "entitlement": "active",
+      "note": "Edit drafts only"
+    },
+    {
+      "action": "pipeline.publish",
+      "roles": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER"
+      ],
+      "fresh": true,
+      "entitlement": "active",
+      "note": "Publish immutable version"
+    },
+    {
+      "action": "pipeline.archive",
+      "roles": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER"
+      ],
+      "fresh": true,
+      "entitlement": "active",
+      "note": "Archive retaining referenced versions"
+    },
+    {
+      "action": "pipeline.assign",
+      "roles": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER"
+      ],
+      "fresh": true,
+      "entitlement": "active",
+      "note": "Assign published version to campaign"
+    },
+    {
+      "action": "run.start",
+      "roles": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER"
+      ],
+      "fresh": true,
+      "entitlement": "active",
+      "note": "Run assigned published pipeline within quote/org caps"
+    },
+    {
+      "action": "run.cancel",
+      "roles": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER"
+      ],
+      "fresh": true,
+      "entitlement": "active",
+      "note": "Members cancel only their own runs; admins/owner any tenant run"
+    },
+    {
+      "action": "run.resume",
+      "roles": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER"
+      ],
+      "fresh": true,
+      "entitlement": "active",
+      "note": "Members resume only own runs; explicit new authorization"
+    },
+    {
+      "action": "credentials.manage",
+      "roles": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER"
+      ],
+      "fresh": true,
+      "entitlement": "active",
+      "note": "Write/test/revoke masked credentials; never retrieve secrets"
+    },
+    {
+      "action": "activity.read",
+      "roles": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER"
+      ],
+      "fresh": false,
+      "entitlement": "active-or-retained",
+      "note": "Read organization activity with external actor references; no local user profiles"
+    },
+    {
+      "action": "usage.read",
+      "roles": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER"
+      ],
+      "fresh": false,
+      "entitlement": "active-or-retained",
+      "note": "Org usage; Member sees own run usage only"
+    },
+    {
+      "action": "usage.own",
+      "roles": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER"
+      ],
+      "fresh": false,
+      "entitlement": "active-or-retained",
+      "note": "Own run costs"
+    },
+    {
+      "action": "billing.manage",
+      "roles": [
+        "OWNER"
+      ],
+      "fresh": true,
+      "entitlement": "active-or-retained",
+      "note": "Subscription checkout/change/cancel via OU"
+    },
+    {
+      "action": "credits.purchase",
+      "roles": [
+        "OWNER"
+      ],
+      "fresh": true,
+      "entitlement": "active",
+      "note": "Owner buys packs on paid plan"
+    },
+    {
+      "action": "team.manage",
+      "roles": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER"
+      ],
+      "fresh": true,
+      "entitlement": "active",
+      "note": "Central OU invitation/role changes; Admins never change the Owner"
+    },
+    {
+      "action": "organization.delete",
+      "roles": [
+        "OWNER"
+      ],
+      "fresh": true,
+      "entitlement": "active-or-retained",
+      "note": "Central lifecycle, hold checks and explicit confirmation"
+    },
+    {
+      "action": "settings.manage",
+      "roles": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER"
+      ],
+      "fresh": true,
+      "entitlement": "active",
+      "note": "Update validated tenant preferences only; no credentials, commercial policy or pipeline publication"
+    }
+  ],
+  "cases": [
+    {
+      "name": "member-read-own-tenant",
+      "action": "lead.read",
+      "context": {
+        "role": "MEMBER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": true
+    },
+    {
+      "name": "member-can-run-assigned-pipeline",
+      "action": "run.start",
+      "context": {
+        "role": "MEMBER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": true
+    },
+    {
+      "name": "member-publish-when-granted",
+      "action": "pipeline.publish",
+      "context": {
+        "role": "MEMBER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": true
+    },
+    {
+      "name": "member-delete-when-granted",
+      "action": "lead.delete",
+      "context": {
+        "role": "MEMBER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": true
+    },
+    {
+      "name": "member-cannot-buy",
+      "action": "credits.purchase",
+      "context": {
+        "role": "MEMBER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": false
+    },
+    {
+      "name": "admin-cannot-bill",
+      "action": "billing.manage",
+      "context": {
+        "role": "ADMIN",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": false
+    },
+    {
+      "name": "owner-can-bill",
+      "action": "billing.manage",
+      "context": {
+        "role": "OWNER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": true
+    },
+    {
+      "name": "suspended-user",
+      "action": "lead.read",
+      "context": {
+        "role": "MEMBER",
+        "userActive": false,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": false
+    },
+    {
+      "name": "suspended-membership",
+      "action": "lead.read",
+      "context": {
+        "role": "MEMBER",
+        "userActive": true,
+        "membershipActive": false,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": false
+    },
+    {
+      "name": "oi-membership-not-ol",
+      "action": "lead.read",
+      "context": {
+        "role": "MEMBER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OI",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": false
+    },
+    {
+      "name": "wrong-org",
+      "action": "lead.read",
+      "context": {
+        "role": "MEMBER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": false,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": false
+    },
+    {
+      "name": "wrong-environment",
+      "action": "lead.read",
+      "context": {
+        "role": "MEMBER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": false,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": false
+    },
+    {
+      "name": "no-entitlement",
+      "action": "run.start",
+      "context": {
+        "role": "MEMBER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "none",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": false
+    },
+    {
+      "name": "cached-read-during-outage",
+      "action": "lead.read",
+      "context": {
+        "role": "MEMBER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": false,
+        "cacheAgeSeconds": 30,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": true
+    },
+    {
+      "name": "expired-cache-outage",
+      "action": "lead.read",
+      "context": {
+        "role": "MEMBER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": false,
+        "cacheAgeSeconds": 61,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": false
+    },
+    {
+      "name": "outage-prevents-paid-start",
+      "action": "run.start",
+      "context": {
+        "role": "MEMBER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": false,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": false
+    },
+    {
+      "name": "outage-prevents-export",
+      "action": "lead.export",
+      "context": {
+        "role": "MEMBER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": false,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": false
+    },
+    {
+      "name": "member-other-run-cancel",
+      "action": "run.cancel",
+      "context": {
+        "role": "MEMBER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": false,
+        "paidPlan": true
+      },
+      "allowed": false
+    },
+    {
+      "name": "admin-other-run-cancel",
+      "action": "run.cancel",
+      "context": {
+        "role": "ADMIN",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": false,
+        "paidPlan": true
+      },
+      "allowed": true
+    },
+    {
+      "name": "retained-data-read",
+      "action": "lead.read",
+      "context": {
+        "role": "MEMBER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "retained",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": true
+    },
+    {
+      "name": "retained-cannot-run",
+      "action": "run.start",
+      "context": {
+        "role": "MEMBER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "retained",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": false
+    },
+    {
+      "name": "unknown-action-denied",
+      "action": "or.unrecognized",
+      "context": {
+        "role": "MEMBER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": false
+    },
+    {
+      "name": "trial-no-topup",
+      "action": "credits.purchase",
+      "context": {
+        "role": "OWNER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": false
+      },
+      "allowed": false
+    },
+    {
+      "name": "owner-activity",
+      "action": "activity.read",
+      "context": {
+        "role": "OWNER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": true
+    },
+    {
+      "name": "admin-activity",
+      "action": "activity.read",
+      "context": {
+        "role": "ADMIN",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": true
+    },
+    {
+      "name": "member-activity",
+      "action": "activity.read",
+      "context": {
+        "role": "MEMBER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": true
+    },
+    {
+      "name": "foreign-activity",
+      "action": "activity.read",
+      "context": {
+        "role": "OWNER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": false,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": false
+    },
+    {
+      "name": "suspended-activity",
+      "action": "activity.read",
+      "context": {
+        "role": "OWNER",
+        "userActive": true,
+        "membershipActive": false,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": false
+    },
+    {
+      "name": "owner-settings",
+      "action": "settings.manage",
+      "context": {
+        "role": "OWNER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": true
+    },
+    {
+      "name": "admin-settings",
+      "action": "settings.manage",
+      "context": {
+        "role": "ADMIN",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": true
+    },
+    {
+      "name": "member-settings",
+      "action": "settings.manage",
+      "context": {
+        "role": "MEMBER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": true
+    },
+    {
+      "name": "retained-settings",
+      "action": "settings.manage",
+      "context": {
+        "role": "OWNER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": true,
+        "environmentMatches": true,
+        "entitlement": "retained",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": false
+    },
+    {
+      "name": "foreign-settings",
+      "action": "settings.manage",
+      "context": {
+        "role": "OWNER",
+        "userActive": true,
+        "membershipActive": true,
+        "product": "OR",
+        "tenantMatches": false,
+        "environmentMatches": true,
+        "entitlement": "active",
+        "authorityAvailable": true,
+        "cacheAgeSeconds": 0,
+        "ownsRun": true,
+        "paidPlan": true
+      },
+      "allowed": false
+    }
+  ],
+  "staff": [
+    {
+      "permission": "or.catalog.view",
+      "purpose": "Read package and rate settings"
+    },
+    {
+      "permission": "or.catalog.edit",
+      "purpose": "Edit catalog drafts; no publication"
+    },
+    {
+      "permission": "or.catalog.publish",
+      "purpose": "Publish validated immutable price/catalog revisions"
+    },
+    {
+      "permission": "or.policy.edit",
+      "purpose": "Edit trial, credit and usage-limit drafts"
+    },
+    {
+      "permission": "or.policy.publish",
+      "purpose": "Publish validated policies subject to release gates"
+    },
+    {
+      "permission": "or.engine.manage",
+      "purpose": "Inspect actual provider mappings, limits and connection status; no secret retrieval"
+    },
+    {
+      "permission": "or.template.manage",
+      "purpose": "Publish starter templates; never overwrite tenant copies"
+    },
+    {
+      "permission": "or.billing.adjust",
+      "purpose": "Audited compensation/refund workflow with reason and original purchase reference"
+    },
+    {
+      "permission": "or.support.read",
+      "purpose": "Masked tenant operational metadata only; no implicit customer data access"
+    },
+    {
+      "permission": "or.support.tenant_access",
+      "purpose": "Time-bound explicit tenant scope, reason and audit trail; no impersonation by default"
+    },
+    {
+      "permission": "or.support.replay",
+      "purpose": "Replay an eligible failed event within explicit tenant scope; no credit adjustment or arbitrary provider rerun"
+    }
+  ]
+}

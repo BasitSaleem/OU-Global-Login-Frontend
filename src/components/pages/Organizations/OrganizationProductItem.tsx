@@ -6,6 +6,7 @@ import {
   OgProduct,
 } from "@/apiHooks.ts/organization/organization.types";
 import { organizationName } from "@/utils/organizationName";
+import { withOiSubscriptions } from "@/utils/oiSubscriptions";
 import Link from "next/link";
 
 interface OrganizationProductItemProps {
@@ -19,7 +20,7 @@ const OrganizationProductItem = ({
   bgColor,
   org,
 }: OrganizationProductItemProps) => {
-  const subscriptionStatus = org?.subscriptions?.[0]?.status?.toUpperCase();
+  const subscriptionStatus = withOiSubscriptions(org)?.subscriptions?.[0]?.status?.toUpperCase();
   const isSubscriptionDisabled =
     !!subscriptionStatus &&
     ["CANCELLED", "EXPIRED", "PAST_DUE"].includes(subscriptionStatus);

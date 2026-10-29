@@ -7,6 +7,17 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { getColorFromId } from '@/utils/getRandomColors';
 import { Check, X, Clock, Calendar } from 'lucide-react';
 import { useState } from 'react';
+import { PRODUCTS } from '@/constants';
+
+const ROLE_LABELS: Record<string, string> = { OWNER: 'Owner', ADMIN: 'Admin', MEMBER: 'Member' };
+
+// "Owners Reach · Admin" for product-scoped invitations; nothing for older ones.
+const invitationScope = (invitation: inviteData) => {
+  const code = invitation.product?.product_name;
+  if (!code) return null;
+  const product = PRODUCTS.find((p) => p.name === code)?.fullname ?? code;
+  return invitation.role ? `${product} · ${ROLE_LABELS[invitation.role] ?? invitation.role}` : product;
+};
 
 const formatTimeElapsed = (createdAt: string) => {
   const now = Date.now();
@@ -138,6 +149,11 @@ export default function PendingInvitations({
                     <h3 className="text-body-large-bold text-black truncate mb-1">
                       {invitation?.organization?.name}
                     </h3>
+                    {invitationScope(invitation) && (
+                      <p className="text-body-small text-primary font-medium mb-1">
+                        {invitationScope(invitation)}
+                      </p>
+                    )}
                     <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-body-small">
                       <span className="text-gray-600">
                         Invited by <span className="font-medium">{invitation?.inviter?.first_name.charAt(0).toUpperCase() + invitation?.inviter?.first_name.slice(1)} {invitation?.inviter?.last_name.charAt(0).toUpperCase() + invitation?.inviter?.last_name.slice(1)}</span>

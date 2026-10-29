@@ -15,10 +15,12 @@ import {
   useDeleteProduct,
 } from "@/apiHooks.ts/organization/organization.api";
 import { useRetryProvisioning } from "@/apiHooks.ts/ghl/ghl.api";
+import { formatDate } from "@/utils/helpers";
 
 const PRODUCT_DESC: Record<string, string> = {
   OI: "Manage your inventory",
   OP: "Marketing & CRM automation",
+  OR: "AI-powered lead generation",
   OJ: "Themes and templates",
   OM: "Sell across channels",
   OA: "Deep business insights",
@@ -59,6 +61,12 @@ function ProductsPage() {
     deleteProduct(toDelete.id, { onSuccess: () => setToDelete(null) });
   };
 
+  // A paid Owners Reach plan stops renewing on removal (see the remove modal).
+  const orPaidPlan = organization?.subscriptions?.find(
+    (s) =>
+      s.product === "OR" && (s.status === "ACTIVE" || s.status === "PAST_DUE"),
+  );
+
   const labelFor = (p: any) =>
     (p.product_name && OWNER_META[p.product_name]?.toolTipText) ||
     p.product_name ||
@@ -88,9 +96,9 @@ function ProductsPage() {
               const status = String(
                 product.provisioning_status || "",
               ).toUpperCase();
-              const isOp = product.product_name === "OP";
-              const isFailed = isOp && status === "FAILED";
-              const isPendingSetup = isOp && status === "PENDING";
+              const isProvisionedProduct = product.product_name === "OP" || product.product_name === "OR";
+              const isFailed = isProvisionedProduct && status === "FAILED";
+              const isPendingSetup = isProvisionedProduct && status === "PENDING";
               return (
                 <div
                   key={product.id}
@@ -164,12 +172,42 @@ function ProductsPage() {
         >
           <Modal.Body>
             <h2 className="font-bold text-lg text-text mb-2">Remove product?</h2>
-            <p className="text-text-secondary mb-6">
-              This removes{" "}
-              <span className="font-semibold">{labelFor(toDelete)}</span> from{" "}
-              <span className="font-semibold">{organization?.name}</span> and
-              tears down its account. This can&apos;t be undone.
-            </p>
+            {toDelete.product_name === "OR" ? (
+              <p className="text-text-secondary mb-6">
+                This removes{" "}
+                <span className="font-semibold">{labelFor(toDelete)}</span>{" "}
+                from <span className="font-semibold">{organization?.name}</span>.
+                {orPaidPlan ? (
+                  <>
+                    {" "}Your {orPaidPlan.orPlanVersion?.name ?? "Owners Reach"} plan stops
+                    renewing. You keep what you paid for until{" "}
+                    <span className="font-semibold">
+                      {formatDate(orPaidPlan.current_period_end)}
+                    </span>{" "}
+                    and will not be charged again. You can restore it from Add
+                    Product before then.
+                  </>
+                ) : toDelete.orTrialGrant?.ends_at ? (
+                  <>
+                    {" "}Your free trial keeps running until{" "}
+                    <span className="font-semibold">
+                      {formatDate(toDelete.orTrialGrant.ends_at)}
+                    </span>{" "}
+                    and you will not be charged. You can restore it from Add
+                    Product before then.
+                  </>
+                ) : (
+                  " You will not be charged for it."
+                )}
+              </p>
+            ) : (
+              <p className="text-text-secondary mb-6">
+                This removes{" "}
+                <span className="font-semibold">{labelFor(toDelete)}</span> from{" "}
+                <span className="font-semibold">{organization?.name}</span> and
+                tears down its account. This can&apos;t be undone.
+              </p>
+            )}
             <div className="flex justify-end gap-3">
               <Button
                 variant="secondary"

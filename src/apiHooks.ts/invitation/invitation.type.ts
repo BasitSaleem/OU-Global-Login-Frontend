@@ -45,6 +45,9 @@ export interface inviteData {
         id: string;
         status: string;
     };
+    // Set on product-scoped invitations (Owners Reach).
+    role?: "OWNER" | "ADMIN" | "MEMBER" | null;
+    product?: { product_name: string } | null;
 }
 
 export interface GetInvitationByTokenResponse {

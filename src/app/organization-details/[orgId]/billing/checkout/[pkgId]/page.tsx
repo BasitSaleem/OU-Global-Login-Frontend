@@ -31,6 +31,7 @@ import CheckOutSkeleton from "@/components/pages/Checkout/CheckOutSkeleton";
 import StripeWrapper from "@/components/pages/OrganizationDetails/PaymentMethods/StripeWrapper";
 import PaymentSuccessModal from "@/components/modals/PaymentSuccessModal";
 import logger from "@/utils/logger";
+import { withOiSubscriptions } from "@/utils/oiSubscriptions";
 
 type BillingCycle = "monthly" | "yearly";
 
@@ -65,7 +66,7 @@ function CheckoutPage() {
   const { data: billingInfo, isPending: loadingBillingInfo } =
     useGetBillingInfo();
 
-  const currentSubscription = organization?.subscriptions?.[0];
+  const currentSubscription = withOiSubscriptions(organization)?.subscriptions?.[0];
   const subscriptionId = currentSubscription?.id ?? null;
 
   const selectedPlan = useMemo(() => {

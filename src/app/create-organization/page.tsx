@@ -1,4 +1,7 @@
 "use client";
+import { useOrPlanSelection } from "@/hooks/useOrPlanSelection";
+import { useDropUnavailableProducts } from "@/hooks/useDropUnavailableProducts";
+import type { OrPlanIntent } from "@/apiHooks.ts/orCatalog/orCatalog.types";
 import {
   useCheckSubDomainAvailability,
   useCreateOrganization,
@@ -15,15 +18,17 @@ import {
   clearIncomingPackageSelection,
 } from "@/hooks/useIncomingPackageSelection";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { toast } from "@/hooks/useToast";
 import ProgressModal from "@/components/ui/ProgressModal";
+import { useOrTrialActivation, useOrProvisionRetry } from "@/apiHooks.ts/orTrial/orTrial.api";
 import { Loader, Button } from "@/components/ui";
 import logger from "@/utils/logger";
 import { AnimatePresence, motion } from "framer-motion";
 import { LogOut } from "lucide-react";
 import { useLogout } from "@/apiHooks.ts/auth/auth.api";
-import { clearAuth } from "@/redux/slices/auth.slice";
+import { clearAuth, setOrganization } from "@/redux/slices/auth.slice";
 import { useAppDispatch } from "@/redux/store";
 import { StepIndicator } from "@/components/pages/CreateOrganization/StepIndicator";
 import { OrganizationStep } from "@/components/pages/CreateOrganization/OrganizationStep";
@@ -34,23 +39,28 @@ export default function CreateOrgPage() {
   const {
     pkgId,
     product,
+    productRequested,
     billingCycle,
     opPkgId,
     opBillingCycle,
     queryPkgId,
     queryOpPkgId,
     hasDirectLink,
+    orIntent,
+    isReady,
   } = useIncomingPackageSelection();
 
-  const redirectTo =
-    (product === "OI" && queryPkgId) || (product === "OP" && queryOpPkgId)
-      ? ROUTES.REGISTER
-      : ROUTES.LOGIN;
+  if (!isReady) return <Loader text="Loading your selection" />;
+
+  const redirectTo = hasDirectLink ? ROUTES.REGISTER : ROUTES.LOGIN;
 
   return (
     <CreateOrgContent
+      key={product + (orIntent?.itemId ?? pkgId ?? opPkgId ?? "")}
+      initialOrIntent={orIntent}
       initialPkgId={pkgId}
       initialProduct={product}
+      productRequested={productRequested}
       queryPkgId={queryPkgId}
       initialBillingCycle={billingCycle}
       initialOpPkgId={opPkgId}
@@ -63,8 +73,10 @@ export default function CreateOrgPage() {
 }
 
 function CreateOrgContent({
+  initialOrIntent,
   initialPkgId,
   initialProduct,
+  productRequested,
   queryPkgId,
   initialBillingCycle,
   initialOpPkgId,
@@ -74,7 +86,9 @@ function CreateOrgContent({
   existingOrgRedirectTo,
 }: {
   initialPkgId: string | null;
+  initialOrIntent: OrPlanIntent | null;
   initialProduct: string;
+  productRequested: boolean;
   queryPkgId: string | null;
   initialBillingCycle: "monthly" | "yearly";
   initialOpPkgId: string | null;
@@ -88,18 +102,21 @@ function CreateOrgContent({
 
   const [companyName, setCompanyName] = useState("");
   const [subDomain, setSubDomain] = useState("");
-  const [selectedProducts, setSelectedProducts] = useState<string[]>([
-    initialProduct,
-  ]);
+  const [selectedProducts, setSelectedProducts] = useState<string[]>(
+    initialProduct ? [initialProduct] : [],
+  );
+  useDropUnavailableProducts(
+    productRequested,
+    selectedProducts,
+    setSelectedProducts,
+  );
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(
     initialPkgId,
   );
   // OP standalone plan id — kept separate from the OI selectedPlanId so both
   // products can be configured at once without colliding.
-  const [opPackageId, setOpPackageId] = useState<string | null>(
-    initialOpPkgId,
-  );
-  const hasDirectLink = !!queryPkgId || !!queryOpPkgId;
+  const [opPackageId, setOpPackageId] = useState<string | null>(initialOpPkgId);
+  const hasDirectLink = !!queryPkgId || !!queryOpPkgId || !!initialOrIntent;
   const [opMode, setOpMode] = useState<"plan" | "services">("plan");
   const [opServiceIds, setOpServiceIds] = useState<string[]>([]);
   const [opDominationUpgrade, setOpDominationUpgrade] = useState(false);
@@ -127,8 +144,11 @@ function CreateOrgContent({
       !isNameDebouncing ? debouncedCompanyName : "",
     );
 
+  const queryClient = useQueryClient();
   const { mutate: createOrgMutation, isPending: creatingOrg } =
     useCreateOrganization();
+  const { mutateAsync: activateOrTrial } = useOrTrialActivation();
+  const { mutateAsync: retryOrProvision } = useOrProvisionRetry();
   const { mutate: logout, isPending: loggingOut } = useLogout();
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -181,6 +201,10 @@ function CreateOrgContent({
     setSubDomain(suggestion);
   };
 
+  const orPlanState = useOrPlanSelection(
+    selectedProducts.includes("OR"),
+    initialOrIntent,
+  );
   const isOiSelected = selectedProducts.includes("OI");
   const isOpSelected = selectedProducts.includes("OP");
   const isOpServices = isOpSelected && opMode === "services";
@@ -188,6 +212,7 @@ function CreateOrgContent({
   const canSubmit = () => {
     if (!companyName.trim()) return false;
     if (selectedProducts.length === 0) return false;
+    if (selectedProducts.includes("OR") && !orPlanState.canSubmit) return false;
     if (isOiSelected) {
       if (!subDomain.trim()) return false;
       if (isSubDomainDebouncing || checkingSub) return false;
@@ -207,6 +232,7 @@ function CreateOrgContent({
   };
 
   const handleSubmit = () => {
+    if (!canSubmit()) return;
     const trimmedName = companyName.trim();
     const trimmedSubDomain = subDomain.trim();
 
@@ -216,6 +242,9 @@ function CreateOrgContent({
     // just like the OP plan and OI paths.
     const payload: CreateOrganizationData = {
       name: trimmedName,
+      orSelection: selectedProducts.includes("OR")
+        ? (orPlanState.selection ?? undefined)
+        : undefined,
       product: selectedProducts,
       subDomainName: isOiSelected ? trimmedSubDomain : undefined,
       packageId: isOiSelected ? selectedPlanId : null,
@@ -227,7 +256,39 @@ function CreateOrgContent({
     };
 
     createOrgMutation(payload, {
-      onSuccess: (data) => {
+      onSuccess: async (data: any) => {
+        clearIncomingPackageSelection();
+        const hasOrOnboarding = data.products && !data.leadRegistration;
+        const needsProgressModal = !!data.leadRegistration || data.product;
+        if (hasOrOnboarding && !needsProgressModal) {
+          const orProduct = data.products?.OR;
+          if (orProduct?.productId && data.organization?.id) {
+            try {
+              await activateOrTrial({ orgId: data.organization.id, productId: orProduct.productId });
+            } catch { /* toast handled by mutation hook */ }
+            try {
+              await retryOrProvision({ orgId: data.organization.id, productId: orProduct.productId });
+            } catch { /* provisioning retry is best-effort */ }
+          }
+          queryClient.invalidateQueries({ queryKey: ["organizations"] });
+          // The dashboard's organization guard reads this. Without it a first
+          // organization created with Owners Reach only bounces back here
+          // (the progress modal sets it for the other products).
+          if (data.organization) dispatch(setOrganization(data.organization));
+          queryClient.invalidateQueries({ queryKey: ["me"] });
+          toast.success("Created", "The organization has been successfully created.");
+          router.push(ROUTES.DASHBOARD);
+          return;
+        }
+        const orProduct = data.products?.OR;
+        if (orProduct?.productId && data.organization?.id) {
+          try {
+            await activateOrTrial({ orgId: data.organization.id, productId: orProduct.productId });
+          } catch { }
+          try {
+            await retryOrProvision({ orgId: data.organization.id, productId: orProduct.productId });
+          } catch { }
+        }
         setOrganizationData({
           data: {
             organization: data.organization,
@@ -236,7 +297,6 @@ function CreateOrgContent({
           },
         });
         setShowProgressModal(true);
-        clearIncomingPackageSelection();
       },
       onError: (error: any) => {
         logger.error("Organization creation failed:", error);
@@ -257,7 +317,8 @@ function CreateOrgContent({
   const handleReset = () => {
     setCompanyName("");
     setSubDomain("");
-    setSelectedProducts(["OI"]);
+    setSelectedProducts(initialProduct ? [initialProduct] : []);
+    orPlanState.reset();
     setSelectedPlanId(initialPkgId);
     setOpPackageId(null);
     setOpMode("plan");
@@ -343,8 +404,10 @@ function CreateOrgContent({
                   />
                 )}
 
-                {(currentStep === 2 || (hasDirectLink && currentStep === 1)) && (
+                {(currentStep === 2 ||
+                  (hasDirectLink && currentStep === 1)) && (
                   <SetupStep
+                    orPlanState={orPlanState}
                     companyName={companyName}
                     setCompanyName={setCompanyName}
                     selectedProducts={selectedProducts}
@@ -397,6 +460,11 @@ function CreateOrgContent({
           isOpen={showProgressModal}
           organizationData={organizationData}
           onClose={() => {
+            // The organization already exists, even when the modal is closed
+            // before setup finishes, so the dashboard must not send the user back.
+            const created = organizationData?.data?.organization;
+            if (created) dispatch(setOrganization(created));
+            queryClient.invalidateQueries({ queryKey: ["me"] });
             setShowProgressModal(false);
             setOrganizationData(null);
             router.push(ROUTES.DASHBOARD);

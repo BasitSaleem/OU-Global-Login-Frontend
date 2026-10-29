@@ -7,6 +7,7 @@ import { useSSE } from "@/hooks/useSSE";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useAppSelector } from "@/redux/store";
 import { Loader } from "@/components/ui";
+import { withOiSubscriptions } from "@/utils/oiSubscriptions";
 
 export default function OrganizationDetailsLayout({
   children,
@@ -68,7 +69,7 @@ export default function OrganizationDetailsLayout({
 
   useSSE(
     (orgId as string) || undefined,
-    organizationDetails?.subscriptions?.[0]?.id || "",
+    withOiSubscriptions(organizationDetails)?.subscriptions?.[0]?.id || "",
   );
 
   const onToggleMobileSidebar = () => {

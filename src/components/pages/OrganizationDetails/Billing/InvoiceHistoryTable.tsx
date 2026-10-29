@@ -13,8 +13,14 @@ import { Invoice } from "@/apiHooks.ts/invoice/invoice.types";
 import { Organization } from "@/apiHooks.ts/organization/organization.types";
 import { isMidCycleInvoice } from "@/utils/invoicesUtils";
 
-const InvoiceHistoryTable = ({ org }: { org: Partial<Organization> }) => {
-  const { data, isLoading } = useGetOrgInvoices(org.id);
+const InvoiceHistoryTable = ({
+  org,
+  product,
+}: {
+  org: Partial<Organization>;
+  product?: "OR";
+}) => {
+  const { data, isLoading } = useGetOrgInvoices(org.id, product);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 

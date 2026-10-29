@@ -1,4 +1,7 @@
 "use client";
+import { useOrPlanSelection } from "@/hooks/useOrPlanSelection";
+import { useDropUnavailableProducts } from "@/hooks/useDropUnavailableProducts";
+import type { OrPlanIntent } from "@/apiHooks.ts/orCatalog/orCatalog.types";
 
 import { useEffect, useState } from "react";
 import { Modal } from "./GenericModal";
@@ -21,6 +24,9 @@ interface CreateOrgModalProps {
   // All optional — default to today's behavior when the modal is opened
   // plainly via "Add Organization" with no link context.
   initialProduct?: string;
+  // True when initialProduct came from a link, not the OI default.
+  productRequested?: boolean;
+  initialOrIntent?: OrPlanIntent | null;
   initialPkgId?: string | null;
   initialOpPkgId?: string | null;
   initialBillingCycle?: "monthly" | "yearly";
@@ -35,6 +41,8 @@ export default function CreateOrgModal({
   onClose,
   onSubmit,
   initialProduct = "OI",
+  productRequested = false,
+  initialOrIntent = null,
   initialPkgId = DEFAULT_OI_PLAN_ID,
   initialOpPkgId = null,
   initialBillingCycle = "monthly",
@@ -51,9 +59,14 @@ export default function CreateOrgModal({
     initialProduct === "OP" ? initialOpPkgId : null,
   );
   const [subDomain, setSubDomain] = useState("");
-  const [selectedProducts, setSelectedProducts] = useState<string[]>([
-    initialProduct,
-  ]);
+  const [selectedProducts, setSelectedProducts] = useState<string[]>(
+    initialProduct ? [initialProduct] : [],
+  );
+  useDropUnavailableProducts(
+    productRequested,
+    selectedProducts,
+    setSelectedProducts,
+  );
   const [isSuggestionSubdomain, setIsSuggestionSubdomain] = useState(false);
   const [opMode, setOpMode] = useState<"plan" | "services">("plan");
   const [opServiceIds, setOpServiceIds] = useState<string[]>([]);
@@ -69,6 +82,10 @@ export default function CreateOrgModal({
     subDomain.trim() !== debouncedSubDomain &&
     subDomain.trim().length > 0;
 
+  const orPlanState = useOrPlanSelection(
+    isOpen && selectedProducts.includes("OR"),
+    initialOrIntent,
+  );
   const isOiSelected = selectedProducts.includes("OI");
   const isOpSelected = selectedProducts.includes("OP");
   const isOpServices = isOpSelected && opMode === "services";
@@ -120,6 +137,7 @@ export default function CreateOrgModal({
       initialProduct === "OI" ? initialPkgId : DEFAULT_OI_PLAN_ID,
     );
     setOpPackageId(initialProduct === "OP" ? initialOpPkgId : null);
+    orPlanState.reset();
     setOpMode("plan");
     setOpServiceIds([]);
     setOpDominationUpgrade(false);
@@ -129,12 +147,16 @@ export default function CreateOrgModal({
   };
 
   const handleCreate = () => {
+    if (!canSubmit()) return;
     // One combined payload for every selected product. Only include a product's
     // fields when that product is selected. OP no longer collects any in-app
     // payment (GHL bills it), so a services order flows through create like any
     // other product.
     const payload: CreateOrganizationData = {
       name: companyName.trim(),
+      orSelection: selectedProducts.includes("OR")
+        ? (orPlanState.selection ?? undefined)
+        : undefined,
       product: selectedProducts,
       subDomainName: isOiSelected ? subDomain.trim() : undefined,
       packageId: isOiSelected ? selectedPlanId : null,
@@ -156,6 +178,7 @@ export default function CreateOrgModal({
   const canSubmit = () => {
     if (!companyName.trim()) return false;
     if (selectedProducts.length === 0) return false;
+    if (selectedProducts.includes("OR") && !orPlanState.canSubmit) return false;
     if (isOiSelected) {
       if (!subDomain.trim()) return false;
       if (isSubDomainDebouncing || checkingSub) return false;
@@ -206,6 +229,7 @@ export default function CreateOrgModal({
           />
         ) : (
           <SetupStep
+            orPlanState={orPlanState}
             companyName={companyName}
             setCompanyName={setCompanyName}
             selectedProducts={selectedProducts}

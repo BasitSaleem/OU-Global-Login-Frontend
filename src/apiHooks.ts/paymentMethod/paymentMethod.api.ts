@@ -20,9 +20,15 @@ const ENDPOINTS = {
   UPDATE_PAYMENT_METHOD: `/og/payment-method/update`,
 };
 
+// A SetupIntent can be confirmed only once, so every card form gets a fresh
+// one for its own organization: never served from cache.
 export const useGetPaymentSecret = (orgId: string) => {
   return useQuery({
-    queryKey: ["payment-method-secret"],
+    queryKey: ["payment-method-secret", orgId],
+    gcTime: 0,
+    staleTime: 0,
+    refetchOnWindowFocus: false,
+    retry: false,
     queryFn: async () => {
       const res = await request<PaymentSecretRespons>(
         `${ENDPOINTS.GET_SECRET}/${orgId}`,

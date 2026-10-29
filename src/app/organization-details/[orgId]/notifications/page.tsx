@@ -111,6 +111,7 @@ export default function NotificationPreferencesPage() {
     marketplace: { ...defaultSettings },
     analytics: { ...defaultSettings },
     pulse: { ...defaultSettings },
+    lead: { ...defaultSettings },
   });
 
   // Which owner is active

@@ -30,6 +30,7 @@ export type IconName =
   | "google"
   | "check"
   | "OI-white"
+  | "OR"
   | "OP"
   | "check3";
 interface SvgIconProps {
@@ -42,6 +43,19 @@ interface SvgIconProps {
 export function SvgIcon({ name, className = "", width, height }: SvgIconProps) {
   const renderSvg = () => {
     switch (name) {
+      case "OR":
+        // Render the brand logo file (public/Icons/OR_LOGO.svg), the single
+        // source of the Owners Reach logo, like OP below.
+        return (
+          <img
+            src="/Icons/OR_LOGO.svg?v=2"
+            alt="Owners Reach"
+            width={width}
+            height={height}
+            className={className}
+            style={{ width, height, objectFit: "contain" }}
+          />
+        );
       case "ownersUniverse":
         return (
           <svg

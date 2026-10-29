@@ -25,6 +25,15 @@ const products = [
     href: "https://ownerspulse.com/",
   },
   {
+    id: "6",
+    title: "Owners Reach",
+    description: "AI-powered lead generation",
+    icon: "OR",
+    status: "Open",
+    available: true,
+    href: "https://ownersreach.com",
+  },
+  {
     id: "2",
     title: "Owners Analytics",
     description: "Get insights and analyze your business performance",

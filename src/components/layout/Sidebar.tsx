@@ -67,6 +67,13 @@ export default function Sidebar({
       label: "Pulse",
       isActive: currentPath === "/ownerspulse.com",
     },
+    {
+      href: "https://ownersreach.com",
+      hasExternal: true,
+      svgName: "OR",
+      label: "Reach",
+      isActive: currentPath === "/ownersreach.com",
+    },
   ];
 
   const handleItemClick = (item: NavigationItem, e: React.MouseEvent) => {

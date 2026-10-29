@@ -1,0 +1,1178 @@
+{
+  "version": "1.0",
+  "synthetic": true,
+  "cases": [
+    {
+      "name": "valid-AccessRequest",
+      "schema": "AccessRequest",
+      "data": {
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "actor": {
+          "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+          "subject": "fixture-user-a"
+        },
+        "action": "lead.read"
+      },
+      "valid": true
+    },
+    {
+      "name": "valid-AccessDecision",
+      "schema": "AccessDecision",
+      "data": {
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "actor": {
+          "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+          "subject": "fixture-user-a"
+        },
+        "action": "lead.read",
+        "allowed": true,
+        "reason": "ALLOWED",
+        "role": "OWNER",
+        "authorizationVersion": 1,
+        "policyVersion": "1.0",
+        "checkedAt": "2026-09-29T00:00:00Z",
+        "validUntil": "2026-09-29T00:01:00Z"
+      },
+      "valid": true
+    },
+    {
+      "name": "valid-Catalog",
+      "schema": "Catalog",
+      "data": {
+        "schemaVersion": "1.0",
+        "catalogVersion": 1,
+        "effectiveAt": "2026-09-29T00:00:00Z",
+        "plans": [
+          {
+            "planId": "33333333-3333-4333-8333-333333333333",
+            "version": 1,
+            "code": "starter",
+            "displayName": "Starter",
+            "currency": "USD",
+            "monthlyPriceMinor": 4900,
+            "includedCredits": 1000,
+            "seats": 1,
+            "concurrentRuns": 1,
+            "trialDays": 14,
+            "trialCredits": 100
+          }
+        ],
+        "packs": []
+      },
+      "valid": true
+    },
+    {
+      "name": "valid-EngineCatalog",
+      "schema": "EngineCatalog",
+      "data": {
+        "schemaVersion": "1.0",
+        "revision": 1,
+        "engines": [
+          {
+            "engineId": "33333333-3333-4333-8333-333333333333",
+            "revision": 1,
+            "displayName": "OR Maps",
+            "capabilities": [
+              "discovery"
+            ],
+            "regions": [
+              "US"
+            ],
+            "freshnessDescription": "Extraction freshness varies by listing",
+            "rateVersion": "1.0",
+            "available": true
+          }
+        ]
+      },
+      "valid": true
+    },
+    {
+      "name": "valid-TemplateCatalog",
+      "schema": "TemplateCatalog",
+      "data": {
+        "schemaVersion": "1.0",
+        "revision": 1,
+        "templates": [
+          {
+            "templateId": "33333333-3333-4333-8333-333333333333",
+            "revision": 1,
+            "name": "Business Discovery",
+            "stepKeys": [
+              "discovery",
+              "normalize",
+              "dedupe"
+            ],
+            "engineId": "33333333-3333-4333-8333-333333333333"
+          }
+        ]
+      },
+      "valid": true
+    },
+    {
+      "name": "valid-Provision",
+      "schema": "Provision",
+      "data": {
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "requestId": "33333333-3333-4333-8333-333333333333",
+        "actor": {
+          "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+          "subject": "fixture-user-a"
+        },
+        "catalogVersion": 1,
+        "planId": "33333333-3333-4333-8333-333333333333",
+        "planVersion": 1,
+        "activation": "trial"
+      },
+      "valid": true
+    },
+    {
+      "name": "valid-ProvisionResult",
+      "schema": "ProvisionResult",
+      "data": {
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "requestId": "33333333-3333-4333-8333-333333333333",
+        "state": "pending",
+        "localTenantId": null
+      },
+      "valid": true
+    },
+    {
+      "name": "valid-Checkout",
+      "schema": "Checkout",
+      "data": {
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "requestId": "33333333-3333-4333-8333-333333333333",
+        "catalogVersion": 1,
+        "kind": "subscription",
+        "itemId": "33333333-3333-4333-8333-333333333333",
+        "itemVersion": 1,
+        "returnPath": "/organizations"
+      },
+      "valid": true
+    },
+    {
+      "name": "valid-CheckoutResult",
+      "schema": "CheckoutResult",
+      "data": {
+        "purchaseId": "33333333-3333-4333-8333-333333333333",
+        "checkoutUrl": "https://checkout.stripe.com/c/pay/fixture",
+        "state": "pending"
+      },
+      "valid": true
+    },
+    {
+      "name": "valid-Balance",
+      "schema": "Balance",
+      "data": {
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "ledgerVersion": 1,
+        "availableCredits": 100,
+        "reservedCredits": 0,
+        "debtCredits": 0,
+        "asOf": "2026-09-29T00:00:00Z"
+      },
+      "valid": true
+    },
+    {
+      "name": "valid-QuoteRequest",
+      "schema": "QuoteRequest",
+      "data": {
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "campaignId": "33333333-3333-4333-8333-333333333333",
+        "pipelineId": "33333333-3333-4333-8333-333333333333",
+        "pipelineVersion": 1,
+        "criteriaVersion": 1,
+        "requestedMaxLeads": 50,
+        "fundingMode": "platform"
+      },
+      "valid": true
+    },
+    {
+      "name": "valid-PipelineVersion",
+      "schema": "PipelineVersion",
+      "data": {
+        "pipelineId": "33333333-3333-4333-8333-333333333333",
+        "version": 1,
+        "status": "published",
+        "engineId": "33333333-3333-4333-8333-333333333333",
+        "engineRevision": 1,
+        "stepKeys": [
+          "discovery",
+          "normalize",
+          "dedupe"
+        ],
+        "configurationHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "valid": true
+    },
+    {
+      "name": "valid-StartRun",
+      "schema": "StartRun",
+      "data": {
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "quoteId": "33333333-3333-4333-8333-333333333333",
+        "requestId": "33333333-3333-4333-8333-333333333333",
+        "authorizedMaxCredits": 50
+      },
+      "valid": true
+    },
+    {
+      "name": "valid-RunAccepted",
+      "schema": "RunAccepted",
+      "data": {
+        "runId": "33333333-3333-4333-8333-333333333333",
+        "state": "queued",
+        "reservedCredits": 50,
+        "quoteId": "33333333-3333-4333-8333-333333333333"
+      },
+      "valid": true
+    },
+    {
+      "name": "valid-Acknowledgement",
+      "schema": "Acknowledgement",
+      "data": {
+        "eventId": "33333333-3333-4333-8333-333333333333",
+        "state": "accepted"
+      },
+      "valid": true
+    },
+    {
+      "name": "valid-PrivateEngineCatalog",
+      "schema": "PrivateEngineCatalog",
+      "data": {
+        "schemaVersion": "1.0",
+        "revision": 1,
+        "engines": [
+          {
+            "engine": {
+              "engineId": "33333333-3333-4333-8333-333333333333",
+              "revision": 1,
+              "displayName": "OR Maps",
+              "capabilities": [
+                "discovery"
+              ],
+              "regions": [
+                "US"
+              ],
+              "freshnessDescription": "Extraction freshness varies by listing",
+              "rateVersion": "1.0",
+              "available": true
+            },
+            "adapterKey": "outscraper",
+            "credentialRef": "fixture-secret-reference",
+            "maxAttempts": 2,
+            "supplierBudgetMinor": 0,
+            "currency": "USD",
+            "enabled": false
+          }
+        ]
+      },
+      "valid": true
+    },
+    {
+      "name": "valid-Quote",
+      "schema": "Quote",
+      "data": {
+        "quoteId": "33333333-3333-4333-8333-333333333333",
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "campaignId": "33333333-3333-4333-8333-333333333333",
+        "pipeline": {
+          "pipelineId": "33333333-3333-4333-8333-333333333333",
+          "version": 1,
+          "status": "published",
+          "engineId": "33333333-3333-4333-8333-333333333333",
+          "engineRevision": 1,
+          "stepKeys": [
+            "discovery",
+            "normalize",
+            "dedupe"
+          ],
+          "configurationHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "criteriaVersion": 1,
+        "rateVersion": "1.0",
+        "policyVersion": "1.0",
+        "fundingMode": "platform",
+        "estimatedCredits": 40,
+        "maxCredits": 50,
+        "expiresAt": "2026-09-29T00:05:00Z"
+      },
+      "valid": true
+    },
+    {
+      "name": "valid-Event",
+      "schema": "Event",
+      "data": {
+        "schemaVersion": "1.0",
+        "eventId": "33333333-3333-4333-8333-333333333333",
+        "eventType": "or.credit.granted",
+        "environment": "development",
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "aggregateId": "22222222-2222-4222-8222-222222222222",
+        "aggregateVersion": 1,
+        "businessKey": "fixture-invoice:period:allowance",
+        "policyVersion": "1.0",
+        "occurredAt": "2026-09-29T00:00:00Z",
+        "effectiveAt": "2026-09-29T00:00:00Z",
+        "data": {
+          "grantId": "33333333-3333-4333-8333-333333333333",
+          "originId": "fixture-invoice",
+          "bucket": "allowance",
+          "credits": 1000,
+          "expiresAt": "2026-10-29T00:00:00Z",
+          "policyVersion": "1.0"
+        }
+      },
+      "valid": true
+    },
+    {
+      "name": "wrong-product",
+      "schema": "AccessRequest",
+      "data": {
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OI"
+        },
+        "actor": {
+          "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+          "subject": "fixture-user-a"
+        },
+        "action": "lead.read"
+      },
+      "valid": false
+    },
+    {
+      "name": "actor-email-not-identity",
+      "schema": "AccessRequest",
+      "data": {
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "actor": {
+          "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+          "email": "fixture@example.invalid"
+        },
+        "action": "lead.read"
+      },
+      "valid": false
+    },
+    {
+      "name": "provider-leak",
+      "schema": "EngineCatalog",
+      "data": {
+        "schemaVersion": "1.0",
+        "revision": 1,
+        "engines": [
+          {
+            "engineId": "33333333-3333-4333-8333-333333333333",
+            "revision": 1,
+            "displayName": "OR Maps",
+            "capabilities": [
+              "discovery"
+            ],
+            "regions": [
+              "US"
+            ],
+            "freshnessDescription": "Extraction freshness varies by listing",
+            "rateVersion": "1.0",
+            "available": true,
+            "provider": "outscraper"
+          }
+        ]
+      },
+      "valid": false
+    },
+    {
+      "name": "credential-leak",
+      "schema": "EngineCatalog",
+      "data": {
+        "schemaVersion": "1.0",
+        "revision": 1,
+        "engines": [
+          {
+            "engineId": "33333333-3333-4333-8333-333333333333",
+            "revision": 1,
+            "displayName": "OR Maps",
+            "capabilities": [
+              "discovery"
+            ],
+            "regions": [
+              "US"
+            ],
+            "freshnessDescription": "Extraction freshness varies by listing",
+            "rateVersion": "1.0",
+            "available": true,
+            "apiKey": "fixture-not-secret"
+          }
+        ]
+      },
+      "valid": false
+    },
+    {
+      "name": "negative-credit-grant",
+      "schema": "Event",
+      "data": {
+        "schemaVersion": "1.0",
+        "eventId": "33333333-3333-4333-8333-333333333333",
+        "eventType": "or.credit.granted",
+        "environment": "development",
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "aggregateId": "22222222-2222-4222-8222-222222222222",
+        "aggregateVersion": 1,
+        "businessKey": "fixture-invoice:period:allowance",
+        "policyVersion": "1.0",
+        "occurredAt": "2026-09-29T00:00:00Z",
+        "effectiveAt": "2026-09-29T00:00:00Z",
+        "data": {
+          "grantId": "33333333-3333-4333-8333-333333333333",
+          "originId": "fixture-invoice",
+          "bucket": "allowance",
+          "credits": -1,
+          "expiresAt": "2026-10-29T00:00:00Z",
+          "policyVersion": "1.0"
+        }
+      },
+      "valid": false
+    },
+    {
+      "name": "grant-event-wrong-payload",
+      "schema": "Event",
+      "data": {
+        "schemaVersion": "1.0",
+        "eventId": "33333333-3333-4333-8333-333333333333",
+        "eventType": "or.credit.granted",
+        "environment": "development",
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "aggregateId": "22222222-2222-4222-8222-222222222222",
+        "aggregateVersion": 1,
+        "businessKey": "fixture-invoice:period:allowance",
+        "policyVersion": "1.0",
+        "occurredAt": "2026-09-29T00:00:00Z",
+        "effectiveAt": "2026-09-29T00:00:00Z",
+        "data": {
+          "state": "active",
+          "reason": "test",
+          "authorizationVersion": 1
+        }
+      },
+      "valid": false
+    },
+    {
+      "name": "unbound-grant",
+      "schema": "Event",
+      "data": {
+        "schemaVersion": "1.0",
+        "eventId": "33333333-3333-4333-8333-333333333333",
+        "eventType": "or.credit.granted",
+        "environment": "development",
+        "tenant": null,
+        "aggregateId": "22222222-2222-4222-8222-222222222222",
+        "aggregateVersion": 1,
+        "businessKey": "fixture-invoice:period:allowance",
+        "policyVersion": "1.0",
+        "occurredAt": "2026-09-29T00:00:00Z",
+        "effectiveAt": "2026-09-29T00:00:00Z",
+        "data": {
+          "grantId": "33333333-3333-4333-8333-333333333333",
+          "originId": "fixture-invoice",
+          "bucket": "allowance",
+          "credits": 1000,
+          "expiresAt": "2026-10-29T00:00:00Z",
+          "policyVersion": "1.0"
+        }
+      },
+      "valid": false
+    },
+    {
+      "name": "float-credits",
+      "schema": "Quote",
+      "data": {
+        "quoteId": "33333333-3333-4333-8333-333333333333",
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "campaignId": "33333333-3333-4333-8333-333333333333",
+        "pipeline": {
+          "pipelineId": "33333333-3333-4333-8333-333333333333",
+          "version": 1,
+          "status": "published",
+          "engineId": "33333333-3333-4333-8333-333333333333",
+          "engineRevision": 1,
+          "stepKeys": [
+            "discovery",
+            "normalize",
+            "dedupe"
+          ],
+          "configurationHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "criteriaVersion": 1,
+        "rateVersion": "1.0",
+        "policyVersion": "1.0",
+        "fundingMode": "platform",
+        "estimatedCredits": 40,
+        "maxCredits": 1.1,
+        "expiresAt": "2026-09-29T00:05:00Z"
+      },
+      "valid": false
+    },
+    {
+      "name": "arbitrary-redirect",
+      "schema": "Checkout",
+      "data": {
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "requestId": "33333333-3333-4333-8333-333333333333",
+        "catalogVersion": 1,
+        "kind": "subscription",
+        "itemId": "33333333-3333-4333-8333-333333333333",
+        "itemVersion": 1,
+        "returnPath": "https://evil.invalid/"
+      },
+      "valid": false
+    },
+    {
+      "name": "client-money-injection",
+      "schema": "Checkout",
+      "data": {
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "requestId": "33333333-3333-4333-8333-333333333333",
+        "catalogVersion": 1,
+        "kind": "subscription",
+        "itemId": "33333333-3333-4333-8333-333333333333",
+        "itemVersion": 1,
+        "returnPath": "/organizations",
+        "priceMinor": 1
+      },
+      "valid": false
+    },
+    {
+      "name": "missing-rate-revision",
+      "schema": "Quote",
+      "data": {
+        "quoteId": "33333333-3333-4333-8333-333333333333",
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "campaignId": "33333333-3333-4333-8333-333333333333",
+        "pipeline": {
+          "pipelineId": "33333333-3333-4333-8333-333333333333",
+          "version": 1,
+          "status": "published",
+          "engineId": "33333333-3333-4333-8333-333333333333",
+          "engineRevision": 1,
+          "stepKeys": [
+            "discovery",
+            "normalize",
+            "dedupe"
+          ],
+          "configurationHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "criteriaVersion": 1,
+        "policyVersion": "1.0",
+        "fundingMode": "platform",
+        "estimatedCredits": 40,
+        "maxCredits": 50,
+        "expiresAt": "2026-09-29T00:05:00Z"
+      },
+      "valid": false
+    },
+    {
+      "name": "secret-in-private-config",
+      "schema": "PrivateEngineCatalog",
+      "data": {
+        "schemaVersion": "1.0",
+        "revision": 1,
+        "engines": [
+          {
+            "engine": {
+              "engineId": "33333333-3333-4333-8333-333333333333",
+              "revision": 1,
+              "displayName": "OR Maps",
+              "capabilities": [
+                "discovery"
+              ],
+              "regions": [
+                "US"
+              ],
+              "freshnessDescription": "Extraction freshness varies by listing",
+              "rateVersion": "1.0",
+              "available": true
+            },
+            "adapterKey": "outscraper",
+            "credentialRef": "fixture-secret-reference",
+            "maxAttempts": 2,
+            "supplierBudgetMinor": 0,
+            "currency": "USD",
+            "enabled": false,
+            "apiKey": "fixture-not-secret"
+          }
+        ]
+      },
+      "valid": false
+    },
+    {
+      "name": "valid-event-or.engines.published",
+      "schema": "Event",
+      "data": {
+        "schemaVersion": "1.0",
+        "eventId": "33333333-3333-4333-8333-333333333333",
+        "eventType": "or.engines.published",
+        "environment": "development",
+        "tenant": null,
+        "aggregateId": "22222222-2222-4222-8222-222222222222",
+        "aggregateVersion": 1,
+        "businessKey": "fixture-invoice:period:allowance",
+        "policyVersion": "1.0",
+        "occurredAt": "2026-09-29T00:00:00Z",
+        "effectiveAt": "2026-09-29T00:00:00Z",
+        "data": {
+          "schemaVersion": "1.0",
+          "revision": 1,
+          "engines": [
+            {
+              "engine": {
+                "engineId": "33333333-3333-4333-8333-333333333333",
+                "revision": 1,
+                "displayName": "OR Maps",
+                "capabilities": [
+                  "discovery"
+                ],
+                "regions": [
+                  "US"
+                ],
+                "freshnessDescription": "Extraction freshness varies by listing",
+                "rateVersion": "1.0",
+                "available": true
+              },
+              "adapterKey": "outscraper",
+              "credentialRef": "fixture-secret-reference",
+              "maxAttempts": 2,
+              "supplierBudgetMinor": 0,
+              "currency": "USD",
+              "enabled": false
+            }
+          ]
+        }
+      },
+      "valid": true
+    },
+    {
+      "name": "valid-event-or.templates.published",
+      "schema": "Event",
+      "data": {
+        "schemaVersion": "1.0",
+        "eventId": "33333333-3333-4333-8333-333333333333",
+        "eventType": "or.templates.published",
+        "environment": "development",
+        "tenant": null,
+        "aggregateId": "22222222-2222-4222-8222-222222222222",
+        "aggregateVersion": 1,
+        "businessKey": "fixture-invoice:period:allowance",
+        "policyVersion": "1.0",
+        "occurredAt": "2026-09-29T00:00:00Z",
+        "effectiveAt": "2026-09-29T00:00:00Z",
+        "data": {
+          "schemaVersion": "1.0",
+          "revision": 1,
+          "templates": [
+            {
+              "templateId": "33333333-3333-4333-8333-333333333333",
+              "revision": 1,
+              "name": "Business Discovery",
+              "stepKeys": [
+                "discovery",
+                "normalize",
+                "dedupe"
+              ],
+              "engineId": "33333333-3333-4333-8333-333333333333"
+            }
+          ]
+        }
+      },
+      "valid": true
+    },
+    {
+      "name": "valid-event-or.product.lifecycle",
+      "schema": "Event",
+      "data": {
+        "schemaVersion": "1.0",
+        "eventId": "33333333-3333-4333-8333-333333333333",
+        "eventType": "or.product.lifecycle",
+        "environment": "development",
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "aggregateId": "22222222-2222-4222-8222-222222222222",
+        "aggregateVersion": 1,
+        "businessKey": "fixture-invoice:period:allowance",
+        "policyVersion": "1.0",
+        "occurredAt": "2026-09-29T00:00:00Z",
+        "effectiveAt": "2026-09-29T00:00:00Z",
+        "data": {
+          "state": "suspended",
+          "reason": "fixture",
+          "authorizationVersion": 2
+        }
+      },
+      "valid": true
+    },
+    {
+      "name": "valid-event-or.credit.adjusted",
+      "schema": "Event",
+      "data": {
+        "schemaVersion": "1.0",
+        "eventId": "33333333-3333-4333-8333-333333333333",
+        "eventType": "or.credit.adjusted",
+        "environment": "development",
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "aggregateId": "22222222-2222-4222-8222-222222222222",
+        "aggregateVersion": 1,
+        "businessKey": "fixture-invoice:period:allowance",
+        "policyVersion": "1.0",
+        "occurredAt": "2026-09-29T00:00:00Z",
+        "effectiveAt": "2026-09-29T00:00:00Z",
+        "data": {
+          "adjustmentId": "33333333-3333-4333-8333-333333333333",
+          "originalGrantId": "33333333-3333-4333-8333-333333333333",
+          "creditDelta": -10,
+          "reason": "refund"
+        }
+      },
+      "valid": true
+    },
+    {
+      "name": "valid-CatalogDraft",
+      "schema": "CatalogDraft",
+      "valid": true,
+      "data": {
+        "draftId": "33333333-3333-4333-8333-333333333333",
+        "draftVersion": 1,
+        "catalog": {
+          "schemaVersion": "1.0",
+          "catalogVersion": 1,
+          "effectiveAt": "2026-09-29T00:00:00Z",
+          "plans": [
+            {
+              "planId": "33333333-3333-4333-8333-333333333333",
+              "version": 1,
+              "code": "starter",
+              "displayName": "Starter",
+              "currency": "USD",
+              "monthlyPriceMinor": 4900,
+              "includedCredits": 1000,
+              "seats": 1,
+              "concurrentRuns": 1,
+              "trialDays": 14,
+              "trialCredits": 100
+            }
+          ],
+          "packs": []
+        },
+        "status": "draft"
+      }
+    },
+    {
+      "name": "valid-PublishCatalog",
+      "schema": "PublishCatalog",
+      "valid": true,
+      "data": {
+        "draftId": "33333333-3333-4333-8333-333333333333",
+        "expectedDraftVersion": 1,
+        "effectiveAt": "2026-09-29T00:00:00Z",
+        "existingSubscriptions": "keep_existing_terms"
+      }
+    },
+    {
+      "name": "valid-commercial-settings",
+      "schema": "CommercialSettings",
+      "valid": true,
+      "data": {
+        "policyVersion": "1.0",
+        "trial": {
+          "days": 14,
+          "credits": 100,
+          "requiresCard": false,
+          "enabled": false
+        },
+        "stageRates": {
+          "discovery": 1,
+          "icp": 1,
+          "phone": 1,
+          "website": 2,
+          "reviews": 2,
+          "registry": 5,
+          "personalization": 2
+        },
+        "maxPipelines": 25,
+        "byokEnabled": false,
+        "secondEngineEnabled": false,
+        "automaticFallbackEnabled": false,
+        "liveProviderSpendEnabled": false,
+        "liveProviderBudgetMinor": 0
+      }
+    }
+  ],
+  "semanticCases": [
+    {
+      "name": "semantic-valid-Quote",
+      "schema": "Quote",
+      "data": {
+        "quoteId": "33333333-3333-4333-8333-333333333333",
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "campaignId": "33333333-3333-4333-8333-333333333333",
+        "pipeline": {
+          "pipelineId": "33333333-3333-4333-8333-333333333333",
+          "version": 1,
+          "status": "published",
+          "engineId": "33333333-3333-4333-8333-333333333333",
+          "engineRevision": 1,
+          "stepKeys": [
+            "discovery",
+            "normalize",
+            "dedupe"
+          ],
+          "configurationHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "criteriaVersion": 1,
+        "rateVersion": "1.0",
+        "policyVersion": "1.0",
+        "fundingMode": "platform",
+        "estimatedCredits": 40,
+        "maxCredits": 50,
+        "expiresAt": "2026-09-29T00:05:00Z"
+      },
+      "valid": true
+    },
+    {
+      "name": "semantic-valid-AccessDecision",
+      "schema": "AccessDecision",
+      "data": {
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "actor": {
+          "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+          "subject": "fixture-user-a"
+        },
+        "action": "lead.read",
+        "allowed": true,
+        "reason": "ALLOWED",
+        "role": "OWNER",
+        "authorizationVersion": 1,
+        "policyVersion": "1.0",
+        "checkedAt": "2026-09-29T00:00:00Z",
+        "validUntil": "2026-09-29T00:01:00Z"
+      },
+      "valid": true
+    },
+    {
+      "name": "semantic-valid-Event",
+      "schema": "Event",
+      "data": {
+        "schemaVersion": "1.0",
+        "eventId": "33333333-3333-4333-8333-333333333333",
+        "eventType": "or.credit.granted",
+        "environment": "development",
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "aggregateId": "22222222-2222-4222-8222-222222222222",
+        "aggregateVersion": 1,
+        "businessKey": "fixture-invoice:period:allowance",
+        "policyVersion": "1.0",
+        "occurredAt": "2026-09-29T00:00:00Z",
+        "effectiveAt": "2026-09-29T00:00:00Z",
+        "data": {
+          "grantId": "33333333-3333-4333-8333-333333333333",
+          "originId": "fixture-invoice",
+          "bucket": "allowance",
+          "credits": 1000,
+          "expiresAt": "2026-10-29T00:00:00Z",
+          "policyVersion": "1.0"
+        }
+      },
+      "valid": true
+    },
+    {
+      "name": "quote-over-budget",
+      "schema": "Quote",
+      "data": {
+        "quoteId": "33333333-3333-4333-8333-333333333333",
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "campaignId": "33333333-3333-4333-8333-333333333333",
+        "pipeline": {
+          "pipelineId": "33333333-3333-4333-8333-333333333333",
+          "version": 1,
+          "status": "published",
+          "engineId": "33333333-3333-4333-8333-333333333333",
+          "engineRevision": 1,
+          "stepKeys": [
+            "discovery",
+            "normalize",
+            "dedupe"
+          ],
+          "configurationHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "criteriaVersion": 1,
+        "rateVersion": "1.0",
+        "policyVersion": "1.0",
+        "fundingMode": "platform",
+        "estimatedCredits": 51,
+        "maxCredits": 50,
+        "expiresAt": "2026-09-29T00:05:00Z"
+      },
+      "valid": false
+    },
+    {
+      "name": "quote-unpublished-pipeline",
+      "schema": "Quote",
+      "data": {
+        "quoteId": "33333333-3333-4333-8333-333333333333",
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "campaignId": "33333333-3333-4333-8333-333333333333",
+        "pipeline": {
+          "pipelineId": "33333333-3333-4333-8333-333333333333",
+          "version": 1,
+          "status": "draft",
+          "engineId": "33333333-3333-4333-8333-333333333333",
+          "engineRevision": 1,
+          "stepKeys": [
+            "discovery",
+            "normalize",
+            "dedupe"
+          ],
+          "configurationHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "criteriaVersion": 1,
+        "rateVersion": "1.0",
+        "policyVersion": "1.0",
+        "fundingMode": "platform",
+        "estimatedCredits": 40,
+        "maxCredits": 50,
+        "expiresAt": "2026-09-29T00:05:00Z"
+      },
+      "valid": false
+    },
+    {
+      "name": "authorization-overlong-cache",
+      "schema": "AccessDecision",
+      "data": {
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "actor": {
+          "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+          "subject": "fixture-user-a"
+        },
+        "action": "lead.read",
+        "allowed": true,
+        "reason": "ALLOWED",
+        "role": "OWNER",
+        "authorizationVersion": 1,
+        "policyVersion": "1.0",
+        "checkedAt": "2026-09-29T00:00:00Z",
+        "validUntil": "2026-09-29T00:02:00Z"
+      },
+      "valid": false
+    },
+    {
+      "name": "authorization-inconsistent-allow",
+      "schema": "AccessDecision",
+      "data": {
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "actor": {
+          "issuer": "https://ou.dev.invalid/api/v1/og/auth",
+          "subject": "fixture-user-a"
+        },
+        "action": "lead.read",
+        "allowed": true,
+        "reason": "SUSPENDED",
+        "role": "OWNER",
+        "authorizationVersion": 1,
+        "policyVersion": "1.0",
+        "checkedAt": "2026-09-29T00:00:00Z",
+        "validUntil": "2026-09-29T00:01:00Z"
+      },
+      "valid": false
+    },
+    {
+      "name": "event-cross-environment",
+      "schema": "Event",
+      "data": {
+        "schemaVersion": "1.0",
+        "eventId": "33333333-3333-4333-8333-333333333333",
+        "eventType": "or.credit.granted",
+        "environment": "development",
+        "tenant": {
+          "environment": "production",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "aggregateId": "22222222-2222-4222-8222-222222222222",
+        "aggregateVersion": 1,
+        "businessKey": "fixture-invoice:period:allowance",
+        "policyVersion": "1.0",
+        "occurredAt": "2026-09-29T00:00:00Z",
+        "effectiveAt": "2026-09-29T00:00:00Z",
+        "data": {
+          "grantId": "33333333-3333-4333-8333-333333333333",
+          "originId": "fixture-invoice",
+          "bucket": "allowance",
+          "credits": 1000,
+          "expiresAt": "2026-10-29T00:00:00Z",
+          "policyVersion": "1.0"
+        }
+      },
+      "valid": false
+    },
+    {
+      "name": "grant-policy-mismatch",
+      "schema": "Event",
+      "data": {
+        "schemaVersion": "1.0",
+        "eventId": "33333333-3333-4333-8333-333333333333",
+        "eventType": "or.credit.granted",
+        "environment": "development",
+        "tenant": {
+          "environment": "development",
+          "orgId": "11111111-1111-4111-8111-111111111111",
+          "productId": "22222222-2222-4222-8222-222222222222",
+          "productCode": "OR"
+        },
+        "aggregateId": "22222222-2222-4222-8222-222222222222",
+        "aggregateVersion": 1,
+        "businessKey": "fixture-invoice:period:allowance",
+        "policyVersion": "1.0",
+        "occurredAt": "2026-09-29T00:00:00Z",
+        "effectiveAt": "2026-09-29T00:00:00Z",
+        "data": {
+          "grantId": "33333333-3333-4333-8333-333333333333",
+          "originId": "fixture-invoice",
+          "bucket": "allowance",
+          "credits": 1000,
+          "expiresAt": "2026-10-29T00:00:00Z",
+          "policyVersion": "2.0"
+        }
+      },
+      "valid": false
+    }
+  ]
+}

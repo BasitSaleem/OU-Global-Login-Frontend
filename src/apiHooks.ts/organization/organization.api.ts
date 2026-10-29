@@ -1,3 +1,4 @@
+import { prepareOrOrganizationSelection } from "./orOrganizationSelection";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { request } from "@/utils/requestFunction";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -10,6 +11,13 @@ import {
   OgOrgDetailResponse,
 } from "./organization.types";
 import { toast } from "@/hooks/useToast";
+import { PRODUCT_AVAILABILITY_QUERY_KEY } from "../productAccess/productAccess.api";
+
+// Staff changed this account's product access since the modal loaded it.
+const isProductNotAvailable = (error: any) =>
+  !!error?.response?.errors?.some(
+    (e: any) => e?.code === "PRODUCT_NOT_AVAILABLE",
+  );
 
 //ENDPOINTS
 const ENDPOINTS = {
@@ -35,10 +43,11 @@ export const useCreateOrganization = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: CreateOrganizationData) => {
+      data = await prepareOrOrganizationSelection(data, queryClient);
       const res = await request<CreateOrganizationResponse>(
         ENDPOINTS.ORGANIZATIONS,
         "POST",
-        {},
+        { "Idempotency-Key": crypto.randomUUID() },
         data,
       );
       return res.data;
@@ -50,6 +59,10 @@ export const useCreateOrganization = () => {
     },
     retry: false,
     onError: (error: any) => {
+      if (isProductNotAvailable(error))
+        queryClient.invalidateQueries({
+          queryKey: PRODUCT_AVAILABILITY_QUERY_KEY,
+        });
       const message =
         (error as Error)?.message || "Organization creation failed";
       toast.error("Failed to create organization", message);
@@ -61,10 +74,11 @@ export const useAddProduct = (orgId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: CreateOrganizationData) => {
+      data = await prepareOrOrganizationSelection(data, queryClient);
       const res = await request<CreateOrganizationResponse>(
         ENDPOINTS.ADD_PRODUCT(orgId),
         "POST",
-        {},
+        { "Idempotency-Key": crypto.randomUUID() },
         data,
       );
       return res.data;
@@ -80,6 +94,10 @@ export const useAddProduct = (orgId: string) => {
     },
     retry: false,
     onError: (error: any) => {
+      if (isProductNotAvailable(error))
+        queryClient.invalidateQueries({
+          queryKey: PRODUCT_AVAILABILITY_QUERY_KEY,
+        });
       const message = (error as Error)?.message || "Failed to add product";
       toast.error("Failed to add product", message);
     },

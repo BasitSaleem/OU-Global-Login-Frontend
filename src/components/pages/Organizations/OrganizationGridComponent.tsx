@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { organizationName } from "@/utils/organizationName";
 import OILink from "./OrganizationMemberLink";
 import { useGhlLocation } from "@/apiHooks.ts/ghl/ghl.api";
+import { withOiSubscriptions } from "@/utils/oiSubscriptions";
 
 interface OrganizationGridComponentProps {
   id: string;
@@ -19,7 +20,8 @@ interface OrganizationGridComponentProps {
   onAddProduct?: (org: OgOrganization) => void;
 }
 
-const ADDABLE_PRODUCTS = ["OI", "OP"];
+import { useProductAvailability } from "@/apiHooks.ts/productAccess/productAccess.api";
+import { addableProducts } from "@/utils/productAvailability";
 
 export function OrganizationGridComponent({
   id,
@@ -35,17 +37,20 @@ export function OrganizationGridComponent({
   }, [org?.favorites, user?.id]);
   const bgColor = useMemo(() => getColorFromId(org.id), [org.id]);
 
-  // Owner-only "add product" affordance, shown when the org is missing an
-  // addable product. Mirrors the backend's creator-or-OWNER check.
-  const canAddProduct = useMemo(() => {
-    if (!onAddProduct) return false;
-    const existing = new Set((org.products ?? []).map((p) => p.product_name));
-    const missing = ADDABLE_PRODUCTS.filter((c) => !existing.has(c));
-    const isOwner =
-      org.ogUserId === user?.id ||
-      !!org.memberships?.some((m) => m.role === "OWNER");
-    return missing.length > 0 && isOwner;
-  }, [org, user?.id, onAddProduct]);
+  // Owner-only "add product" affordance, shown when the org is missing a
+  // product this account can add. Mirrors the backend's creator-or-OWNER check.
+  const access = useProductAvailability();
+  const isOwner =
+    org.ogUserId === user?.id ||
+    !!org.memberships?.some((m) => m.role === "OWNER");
+  const canAddProduct =
+    !!onAddProduct &&
+    isOwner &&
+    addableProducts(
+      access.isAvailable,
+      (org.products ?? []).map((p) => p.product_name as string),
+      org.removedProducts ?? [],
+    ).length > 0;
 
   // Owners Pulse members live in GHL, not our DB — fetch its live contact
   // count only when the org actually has an OP product, then fold it into
@@ -165,7 +170,7 @@ export function OrganizationGridComponent({
           <span className="text-[14px] font-medium text-primary">
             {totalMembers} member{totalMembers === 1 ? "" : "s"}
           </span>
-          <OILink org={org} subscription={org?.subscriptions?.[0]} />
+          <OILink org={org} subscription={withOiSubscriptions(org)?.subscriptions?.[0]} />
         </div>
       </div>
     </div>

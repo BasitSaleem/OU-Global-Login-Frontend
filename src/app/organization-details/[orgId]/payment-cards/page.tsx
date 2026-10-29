@@ -6,6 +6,8 @@ import OwnersProductItem, {
 } from "@/components/pages/OrganizationDetails/Billing/OwnersProductItem";
 import OpBillingSection from "@/components/pages/OrganizationDetails/Billing/OpBillingSection";
 import { useOrganizationDetails } from "@/apiHooks.ts/organization/organization.api";
+import { useOrBillingState } from "@/apiHooks.ts/orBilling/orBilling.api";
+import { Info } from "lucide-react";
 
 import PaymentMethodCard from "@/components/pages/OrganizationDetails/PaymentMethods/PaymentMethodCard";
 import DeletePaymentModal from "@/components/pages/OrganizationDetails/PaymentMethods/DeletePaymentModal";
@@ -38,7 +40,7 @@ export interface PaymentCardsType {
   cardHolderName: string;
 }
 
-const OWNER_ORDER = ["OI", "OP", "OJ", "OM", "OA"];
+const OWNER_ORDER = ["OI", "OP", "OR", "OJ", "OM", "OA"];
 
 const PaymentCardsPage = () => {
   const { orgId } = useParams<{ orgId: string }>();
@@ -65,6 +67,14 @@ const PaymentCardsPage = () => {
       setSelectedOwner(shownOwners[0].value);
     }
   }, [shownOwners, selectedOwner]);
+
+  // Owners Reach bills the organization's saved cards (the same ones Owners
+  // Inventory uses); its paid plan is charged to the card chosen at checkout.
+  const isReach = selectedOwner === "lead";
+  const { data: orBilling } = useOrBillingState(orgId, isReach);
+  const orPlanCardId = isReach
+    ? (orBilling?.subscription?.paymentMethodId ?? null)
+    : null;
 
   const makePrimaryMutation = useMakePrimaryPaymentMethod();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -132,6 +142,17 @@ const PaymentCardsPage = () => {
           />
         ) : (
           <>
+        {isReach && (
+          <div className="mb-4 flex items-start gap-2 rounded-xl border border-border bg-primary/5 px-4 py-3 text-sm text-text-secondary">
+            <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+            <p>
+              Owners Reach and Owners Inventory share this organization&apos;s
+              saved cards. Your Owners Reach plan is charged to the card you
+              chose at checkout
+              {orPlanCardId ? ", marked below." : "."}
+            </p>
+          </div>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
           <PaymentMethodCard variant="add" onAdd={handleAddClick} />
 
@@ -154,6 +175,8 @@ const PaymentCardsPage = () => {
               }
               expiry={`${method.exp_month}/${method.exp_year}`}
               isPrimary={method.is_primary}
+              tag={method.id === orPlanCardId ? "Owners Reach plan" : undefined}
+              canDelete={method.id !== orPlanCardId}
               onDelete={() => setDeleteId(method.id)}
               onMakePrimary={() => makePrimaryMutation.mutate(method.id)}
             />

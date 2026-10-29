@@ -21,14 +21,14 @@ const BillingAddOnsSection = ({ organization }: BillingAddOnsSectionProps) => {
   const subscription = organization?.subscriptions?.[0];
 
   const currentPackage =
-    subscription?.oiPackage.package_name || organization.packageName;
+    subscription?.oiPackage?.package_name || organization.packageName;
   const invoices = subscription?.invoices;
 
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { orgId } = useParams<{ orgId: string }>();
 
-  const { data, isLoading } = useGetPackageAddOns(subscription?.oiPackage.id);
+  const { data, isLoading } = useGetPackageAddOns(subscription?.oiPackage?.id);
   const availableAddons = getAvailableAddons(data?.addons ?? [], invoices);
   const [selectedAddOns, setSelectedAddOns] = useState<Record<string, number>>(
     {},

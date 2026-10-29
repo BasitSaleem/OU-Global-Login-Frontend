@@ -95,6 +95,8 @@ export const VALIDATION_RULES = {
   }
 } as const;
 
+// isDisabled marks coming-soon products. Whether a launched product can be
+// created comes from the account's product access (useProductAvailability).
 export const PRODUCTS = [
   {
     id: "inventory",
@@ -109,6 +111,13 @@ export const PRODUCTS = [
     fullname: "Owners Pulse",
     isDisabled: false,
     icon: "OP" as IconName,
+  },
+  {
+    id: "lead",
+    name: "OR",
+    fullname: "Owners Reach",
+    isDisabled: false,
+    icon: "OR" as IconName,
   },
   {
     id: "marketplace",

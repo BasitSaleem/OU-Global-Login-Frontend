@@ -10,6 +10,8 @@ export interface PlanCardData {
   tagline: string;
   price: number;
   trialDays: number;
+  actionLabel?: string;
+  priceLabel?: string;
   isBasic?: boolean;
   isPro?: boolean;
   isBusiness?: boolean;
@@ -31,12 +33,29 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
   billingCycle,
   isDirectFlow = false,
 }) => {
-  const { name, tagline, price, trialDays, isBasic, isPro, isBusiness, isEnterprise } =
-    plan;
+  const {
+    name,
+    tagline,
+    price,
+    trialDays,
+    isBasic,
+    isPro,
+    isBusiness,
+    isEnterprise,
+  } = plan;
 
   if (!isDirectFlow) {
     return (
       <div
+        role="button"
+        tabIndex={0}
+        aria-pressed={isSelected}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            onClick?.();
+          }
+        }}
         onClick={onClick}
         className={`relative w-full flex flex-col p-6 rounded-4xl border-2 transition-all duration-300 cursor-pointer h-full ${
           isSelected
@@ -90,7 +109,7 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
                   isEnterprise,
                 })}`}
               >
-                ${price.toFixed(0)}
+                {plan.priceLabel ?? "$" + price.toFixed(0)}
               </span>
               <span className="text-gray-400 text-lg font-medium">/month</span>
             </div>
@@ -100,7 +119,7 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
           </div>
 
           <div className="text-text font-bold">
-            Start {trialDays}-Day Free Trial
+            {plan.actionLabel ?? `Start ${trialDays}-Day Free Trial`}
           </div>
         </div>
       </div>
@@ -156,7 +175,7 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
                 isEnterprise,
               })}`}
             >
-              ${price.toFixed(0)}
+              {plan.priceLabel ?? "$" + price.toFixed(0)}
             </span>
             <span className="text-gray-400 text-sm font-medium">/month</span>
           </div>
@@ -171,7 +190,7 @@ const PlanSelectionCard: React.FC<PlanSelectionCardProps> = ({
       </p>
 
       <div className="mt-auto text-text font-bold text-sm">
-        Start {trialDays}-Day Free Trial
+        {plan.actionLabel ?? `Start ${trialDays}-Day Free Trial`}
       </div>
     </div>
   );

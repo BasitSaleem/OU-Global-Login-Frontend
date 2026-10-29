@@ -189,20 +189,25 @@ const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
                 <p className="text-text text-xs font-bold uppercase tracking-wider mb-2">
                   Payment Info
                 </p>
+                {/* An invoice can exist without a linked payment record. */}
                 <div className="flex items-center gap-2">
                   <p className="font-bold text-text text-base">
-                    Credit Card, {invoice?.payment.payment_method?.last4}
+                    {invoice?.payment?.payment_method?.last4
+                      ? `Credit Card, ${invoice.payment.payment_method.last4}`
+                      : "Credit Card"}
                   </p>
-                  <SvgIcon
-                    name={invoice?.payment.payment_method?.brand?.toLowerCase()}
-                    width={25}
-                    height={25}
-                  />
+                  {invoice?.payment?.payment_method?.brand && (
+                    <SvgIcon
+                      name={invoice.payment.payment_method.brand.toLowerCase()}
+                      width={25}
+                      height={25}
+                    />
+                  )}
                 </div>
                 <p className="text-text text-sm mt-1">
                   Billed in{" "}
                   <span className="font-bold text-primary">
-                    {invoice?.payment.currency}
+                    {invoice?.payment?.currency || invoice?.currency || "USD"}
                   </span>
                 </p>
               </div>

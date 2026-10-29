@@ -32,7 +32,7 @@ export const useGetAllAddons = (page: number = 1, limit: number = 15) => {
 };
 
 // 1. GET ALL PLANS
-export const useGetPackageAddOns = (packageId: string) => {
+export const useGetPackageAddOns = (packageId: string | undefined) => {
   return useQuery({
     queryKey: ["addons", packageId],
     queryFn: async () => {
@@ -45,6 +45,7 @@ export const useGetPackageAddOns = (packageId: string) => {
         addons: data.data,
       };
     },
+    enabled: !!packageId,
     staleTime: 3 * 60 * 1000,
     retry: 1,
     refetchOnWindowFocus: false,

@@ -1,5 +1,5 @@
 "use client";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 
 import PlanSection from "@/components/pages/OrganizationDetails/Billing/PlanSection";
@@ -8,11 +8,13 @@ import PaymentMethodSection from "@/components/pages/OrganizationDetails/Billing
 import InvoicesSection from "@/components/pages/OrganizationDetails/Billing/InvoicesSection";
 import BillingSection from "@/components/pages/OrganizationDetails/Billing/BillingSection";
 import OpBillingSection from "@/components/pages/OrganizationDetails/Billing/OpBillingSection";
+import OrBillingSection from "@/components/pages/OrganizationDetails/Billing/OrBillingSection";
 import {
   OwnerKey,
   OWNER_META,
 } from "@/components/pages/OrganizationDetails/Billing/OwnersProductItem";
 import { useOrganizationDetails } from "@/apiHooks.ts/organization/organization.api";
+import { withOiSubscriptions } from "@/utils/oiSubscriptions";
 
 import NotFound from "@/components/NotFound";
 import { useAppSelector } from "@/redux/store";
@@ -21,7 +23,7 @@ import BillingAddOnsSection from "@/components/pages/OrganizationDetails/Billing
 import CancelSubscriptionSection from "@/components/pages/OrganizationDetails/Billing/CancelSubscriptionSection";
 import SubscriptionPolicySection from "@/components/pages/OrganizationDetails/Billing/SubscriptionPolicySection";
 
-const OWNER_ORDER = ["OI", "OP", "OJ", "OM", "OA"];
+const OWNER_ORDER = ["OI", "OP", "OR", "OJ", "OM", "OA"];
 
 function BillingPage() {
   const { orgId } = useParams();
@@ -32,7 +34,11 @@ function BillingPage() {
     error,
   } = useOrganizationDetails(orgId as string);
 
-  const [selectedOwner, setSelectedOwner] = useState<OwnerKey>("inventory");
+  // ?product=<key> opens a product tab directly (e.g. after an Owners Reach checkout).
+  const requestedOwner = useSearchParams().get("product") as OwnerKey | null;
+  const [selectedOwner, setSelectedOwner] = useState<OwnerKey>(
+    requestedOwner ?? "inventory",
+  );
 
   // Keep the selected product valid for THIS org: default to the first product
   // the org actually has (in OWNER_ORDER), and correct the selection if it's not
@@ -65,6 +71,8 @@ function BillingPage() {
   if (!organization) {
     return <NotFound title={"Organization Not Found"} />;
   }
+  // Owners Inventory sections only see Owners Inventory subscriptions.
+  const oiOrganization = withOiSubscriptions(organization);
 
   return (
     <AuthGuard>
@@ -78,18 +86,20 @@ function BillingPage() {
 
         {selectedOwner === "pulse" ? (
           <OpBillingSection orgId={orgId as string} />
+        ) : selectedOwner === "lead" ? (
+          <OrBillingSection organization={organization} loading={isLoading} />
         ) : (
           <>
-            <PlanSection organization={organization} loading={isLoading} />
+            <PlanSection organization={oiOrganization} loading={isLoading} />
             <CancelSubscriptionSection
               loading={isLoading}
-              organization={organization}
+              organization={oiOrganization}
             />
-            <SubscriptionPolicySection organization={organization} />
-            <BillingAddOnsSection organization={organization} />
-            <RenewalSection organization={organization} loading={isLoading} />
+            <SubscriptionPolicySection organization={oiOrganization} />
+            <BillingAddOnsSection organization={oiOrganization} />
+            <RenewalSection organization={oiOrganization} loading={isLoading} />
             <PaymentMethodSection loading={isLoading} />
-            <InvoicesSection organization={organization} loading={isLoading} />
+            <InvoicesSection organization={oiOrganization} loading={isLoading} />
           </>
         )}
       </div>

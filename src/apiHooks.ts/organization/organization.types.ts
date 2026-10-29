@@ -1,9 +1,10 @@
+import type { OrPlanSelection } from "../orCatalog/orCatalog.types";
 import { Permission } from "@/types/common";
 import { OgOrgMembership } from "../membership/membership.types";
 import { PaymentType } from "../subscription/subscription.types";
 import { Invoice } from "../invoice/invoice.types";
 
-export type products = "OI" | "OG" | "OA" | "OJ";
+export type products = "OI" | "OP" | "OR" | "OG" | "OA" | "OJ";
 export interface Organization {
   name: string;
   product: products;
@@ -12,8 +13,19 @@ export interface Organization {
   [key: string]: any;
 }
 
+export type OrPlanVersionSummary = {
+  id: string;
+  tier: string;
+  name: string;
+  monthly_price_minor: number;
+  included_credits: number;
+  seats: number;
+  concurrent_runs: number;
+};
+
 export type Subscription = {
   id: string;
+  product?: products;
   billing_cycle: "MONTHLY" | "YEARLY";
   cancel_at_period_end: boolean;
   cancelled_at: string | null;
@@ -28,7 +40,8 @@ export type Subscription = {
     | "EXPIRED"
     | "INCOMPLETE";
   payment_method: string | null;
-  oiPackage: Package;
+  oiPackage: Package | null;
+  orPlanVersion: OrPlanVersionSummary | null;
   payments: PaymentType[];
   invoices: Invoice[];
 };
@@ -51,6 +64,7 @@ export interface CreateOrganizationData {
   // instead passes serviceIds (+ optional Domination upgrade) and is paid via
   // the buy-services endpoint after creation.
   opPackageId?: string | null;
+  orSelection?: OrPlanSelection;
   serviceIds?: string[];
   dominationUpgrade?: boolean;
   // The verified Stripe (OP account) invoice id for a services order's setup
@@ -108,10 +122,23 @@ export interface OgOrganization {
   };
   ogUserId?: string;
   products?: OgProduct[];
+  removedProducts?: OgRemovedProduct[];
   membersCount?: number;
   permissionNames?: Permission[];
   packageName?: string;
   subscriptions: Subscription[];
+}
+
+export interface OrProvisioningSummary {
+  state: string;
+  plan: OrPlanVersionSummary;
+}
+
+export interface OrTrialGrantSummary {
+  credits: number;
+  trial_days: number;
+  starts_at: string;
+  ends_at: string;
 }
 
 export interface OgProduct {
@@ -124,6 +151,15 @@ export interface OgProduct {
   external_tenant_ref?: string;
   plan?: string;
   seats?: number;
+  orProvisioning?: OrProvisioningSummary | null;
+  orTrialGrant?: OrTrialGrantSummary | null;
+}
+
+export interface OgRemovedProduct {
+  id: string;
+  product_name: string;
+  restoreUntil: string | null;
+  canRestore: boolean;
 }
 
 export interface OgOrgResponse {
@@ -159,6 +195,7 @@ export interface CreateOrganizationResponse {
   data: {
     organization: OgOrganization;
     product?: OgProduct;
+    products?: Record<string, { productId?: string; status?: string }>;
     leadRegistration?: LeadRegistrationResponse | null;
   };
   message?: string;

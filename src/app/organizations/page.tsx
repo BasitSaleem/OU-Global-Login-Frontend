@@ -1,4 +1,5 @@
 "use client";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
@@ -8,6 +9,7 @@ import {
   useCreateOrganization,
   useGetOrganizations,
 } from "@/apiHooks.ts/organization/organization.api";
+import { useOrTrialActivation, useOrProvisionRetry } from "@/apiHooks.ts/orTrial/orTrial.api";
 import {
   CreateOrganizationData,
   CreateOrganizationResponse,
@@ -52,10 +54,13 @@ function OrganizationsContent() {
   const {
     pkgId,
     product,
+    productRequested,
     billingCycle,
     opPkgId,
     opBillingCycle,
     hasDirectLink,
+    orIntent,
+    isReady,
   } = useIncomingPackageSelection();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -76,7 +81,10 @@ function OrganizationsContent() {
     useState<CreateOrganizationResponse | null>(null);
   const [addProductOrg, setAddProductOrg] = useState<any | null>(null);
   const [page, setPage] = useState(1);
+  const queryClient = useQueryClient();
   const { mutate: createOrg, isPending } = useCreateOrganization();
+  const { mutateAsync: activateOrTrial } = useOrTrialActivation();
+  const { mutateAsync: retryOrProvision } = useOrProvisionRetry();
   const {
     data: userOrgs,
     status: orgStatus,
@@ -115,7 +123,7 @@ function OrganizationsContent() {
         }
 
         if (selectedOwner) {
-          const productCode = (["OI", "OP"] as const).find(
+          const productCode = (["OI", "OP", "OR"] as const).find(
             (code) => OWNER_META[code].value === selectedOwner,
           );
           if (productCode) {
@@ -148,10 +156,37 @@ function OrganizationsContent() {
 
   const handleCreateOrg = (data: CreateOrganizationData) => {
     createOrg(data, {
-      onSuccess: (res) => {
+      onSuccess: async (res: any) => {
         setIsCreateModalOpen(false);
-        // OP no longer collects any in-app payment (GHL bills it), so every
-        // product flows straight to the provisioning progress modal.
+        clearIncomingPackageSelection();
+
+        const hasOrOnboarding = res.products && !res.leadRegistration;
+        const needsProgressModal = !!res.leadRegistration || res.product;
+
+        if (hasOrOnboarding && !needsProgressModal) {
+          const orProduct = res.products?.OR;
+          if (orProduct?.productId && res.organization?.id) {
+            try {
+              await activateOrTrial({ orgId: res.organization.id, productId: orProduct.productId });
+            } catch { }
+            try {
+              await retryOrProvision({ orgId: res.organization.id, productId: orProduct.productId });
+            } catch { }
+          }
+          queryClient.invalidateQueries({ queryKey: ["organizations"] });
+          toast.success("Created", "The organization has been successfully created.");
+          return;
+        }
+
+        const orProduct = res.products?.OR;
+        if (orProduct?.productId && res.organization?.id) {
+          try {
+            await activateOrTrial({ orgId: res.organization.id, productId: orProduct.productId });
+          } catch { }
+          try {
+            await retryOrProvision({ orgId: res.organization.id, productId: orProduct.productId });
+          } catch { }
+        }
         setOrganizationData({
           data: {
             organization: res.organization,
@@ -160,11 +195,8 @@ function OrganizationsContent() {
           },
         });
         setShowProgressModal(true);
-        clearIncomingPackageSelection();
       },
-      onError: () => {
-        // Handled centrally in useCreateOrganization hook
-      },
+      onError: () => {},
     });
   };
   const handleModalClose = () => {
@@ -184,7 +216,7 @@ function OrganizationsContent() {
       <div className="max-w-xs sm:max-w-7xl mx-auto space-y-8">
         {selectedOwner && (
           <div className="flex items-center justify-center gap-2 w-full">
-            {(["OI", "OP"] as const).map((code) => (
+            {(["OI", "OP", "OR"] as const).map((code) => (
               <OwnersProductItem
                 key={code}
                 value={OWNER_META[code].value}
@@ -224,17 +256,22 @@ function OrganizationsContent() {
           invitations={invitations}
         />
       </div>
-      <CreateOrgModal
-        isLoading={isPending}
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onSubmit={handleCreateOrg}
-        initialProduct={product}
-        initialPkgId={pkgId}
-        initialOpPkgId={opPkgId}
-        initialBillingCycle={product === "OP" ? opBillingCycle : billingCycle}
-        isDirectFlow={hasDirectLink}
-      />
+      {isReady && (
+        <CreateOrgModal
+          key={product + (orIntent?.itemId ?? pkgId ?? opPkgId ?? "")}
+          initialOrIntent={orIntent}
+          isLoading={isPending}
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          onSubmit={handleCreateOrg}
+          initialProduct={product}
+          productRequested={productRequested}
+          initialPkgId={pkgId}
+          initialOpPkgId={opPkgId}
+          initialBillingCycle={product === "OP" ? opBillingCycle : billingCycle}
+          isDirectFlow={hasDirectLink}
+        />
+      )}
       <ProgressModal
         isOpen={showProgressModal}
         organizationData={organizationData}
@@ -250,6 +287,7 @@ function OrganizationsContent() {
           existingProducts={(addProductOrg.products ?? [])
             .map((p: any) => p.product_name)
             .filter(Boolean)}
+          removedProducts={addProductOrg.removedProducts ?? []}
           onClose={() => setAddProductOrg(null)}
         />
       )}
