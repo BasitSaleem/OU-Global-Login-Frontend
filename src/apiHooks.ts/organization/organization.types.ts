@@ -28,6 +28,12 @@ export type Subscription = {
     | "EXPIRED"
     | "INCOMPLETE";
   payment_method: string | null;
+  // Gateway billing this subscription. PAYFAST (and future local gateways)
+  // are run by our own billing engine: no saved card, renewals via pay link.
+  provider?: "STRIPE" | "PAYFAST";
+  currency?: string | null;
+  total_amount?: string | number | null;
+  grace_ends_at?: string | null;
   oiPackage: Package;
   payments: PaymentType[];
   invoices: Invoice[];

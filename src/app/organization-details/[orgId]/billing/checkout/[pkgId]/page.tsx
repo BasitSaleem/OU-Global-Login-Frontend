@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, useCallback } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useGetPlanDetails } from "@/apiHooks.ts/plans/plans.api";
@@ -31,11 +31,21 @@ import CheckOutSkeleton from "@/components/pages/Checkout/CheckOutSkeleton";
 import StripeWrapper from "@/components/pages/OrganizationDetails/PaymentMethods/StripeWrapper";
 import PaymentSuccessModal from "@/components/modals/PaymentSuccessModal";
 import logger from "@/utils/logger";
+import {
+  useBillingOptions,
+  useBillingQuote,
+  useStartCheckout,
+} from "@/apiHooks.ts/billing/billingGateway.api";
+import PayFastPanel, { isValidPkMobile } from "@/components/pages/Checkout/PayFastPanel";
+import PlatformOrderSummary from "@/components/pages/Checkout/PlatformOrderSummary";
+import { runCheckoutAction } from "@/utils/checkoutAction";
+import { catalogPriceMinor } from "@/utils/money";
 
 type BillingCycle = "monthly" | "yearly";
 
 function CheckoutPage() {
   const { orgId, pkgId } = useParams<{ orgId: string; pkgId: string }>();
+  const router = useRouter();
 
   const searchParams = useSearchParams();
   const initialBillingCycle =
@@ -127,6 +137,56 @@ function CheckoutPage() {
 
   const watchFields = watch();
 
+  // Gateway for the chosen billing country: Pakistan pays through PayFast
+  // (redirect, PKR), everyone else with a saved Stripe card (USD).
+  const { data: billingOptions } = useBillingOptions(orgId, watchFields.country || null);
+  const isPlatform = billingOptions?.flow === "redirect";
+  const gatewayProvider = billingOptions?.provider ?? "STRIPE";
+  const localCurrency = billingOptions?.currency ?? "PKR";
+  const cycleKey: "MONTHLY" | "YEARLY" = billingCycle === "monthly" ? "MONTHLY" : "YEARLY";
+  const [phone, setPhone] = useState("");
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (billingOptions?.savedPhone) {
+      setPhone((current) => current || billingOptions.savedPhone || "");
+    }
+  }, [billingOptions?.savedPhone]);
+
+  const localPlanMinor = isPlatform
+    ? catalogPriceMinor(selectedPlan?.catalogPrices, gatewayProvider, localCurrency, cycleKey)
+    : null;
+
+  // Only add-ons that have a price for this gateway can be bought through it.
+  const platformAddOns = useMemo(
+    () =>
+      availableAddOns.filter(
+        (a) =>
+          catalogPriceMinor(a.addOn.catalogPrices, gatewayProvider, localCurrency, cycleKey) !== null,
+      ),
+    [availableAddOns, gatewayProvider, localCurrency, cycleKey],
+  );
+
+  const platformSelection = useMemo(() => {
+    if (!isPlatform || !selectedPlan) return null;
+    return {
+      packageId: pkgId,
+      billingCycle: cycleKey,
+      addOns: Object.entries(selectedAddOns)
+        .filter(([id]) => platformAddOns.some((a) => a.addOnId === id))
+        .map(([addOnId, quantity]) => ({ addOnId, quantity })),
+      country: watchFields.country,
+    };
+  }, [isPlatform, selectedPlan, pkgId, cycleKey, selectedAddOns, platformAddOns, watchFields.country]);
+
+  const {
+    data: platformQuote,
+    isFetching: isQuoting,
+    error: quoteError,
+  } = useBillingQuote(orgId, platformSelection, isPlatform);
+
+  const { mutateAsync: startCheckout, isPending: isStartingCheckout } = useStartCheckout(orgId);
+
   const addOnPayload = useMemo(() => {
     const payload: { priceId: string; quantity: number }[] = [];
     Object.entries(selectedAddOns).forEach(([id, quantity]) => {
@@ -150,7 +210,8 @@ function CheckoutPage() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (!watchFields.country) return;
+      // Stripe tax only; PayFast prices are tax inclusive and quoted server-side.
+      if (!watchFields.country || isPlatform) return;
 
       const isUS = watchFields.country === "US";
 
@@ -188,6 +249,7 @@ function CheckoutPage() {
     watchFields.country,
     watchFields.billing_state,
     watchFields.billing_postal_code,
+    isPlatform,
   ]);
 
   useEffect(() => {
@@ -388,6 +450,35 @@ function CheckoutPage() {
     }
   };
 
+  // PayFast (and other redirect gateways): the server prices the order, mints
+  // the gateway checkout, and we hand the browser over to the gateway page.
+  const handlePlatformCheckout = async (data: CheckoutFormValues) => {
+    if (!platformSelection) return;
+    if (!isValidPkMobile(phone)) {
+      setPhoneError("Enter a valid Pakistani mobile number, e.g. 03001234567");
+      return;
+    }
+    setPhoneError(null);
+    try {
+      const result = await startCheckout({
+        provider: gatewayProvider,
+        packageId: pkgId,
+        billingCycle: cycleKey,
+        addOns: platformSelection.addOns,
+        billing: { country: data.country, phone },
+      });
+      const leaving = await runCheckoutAction(result.action);
+      // Nothing to pay (fully covered by credit): show the confirmation page.
+      if (!leaving && result.checkoutId) {
+        router.push(
+          `/organization-details/${orgId}/billing/payment-return?checkout=${result.checkoutId}`,
+        );
+      }
+    } catch (error) {
+      logger.error("PayFast checkout error:", error);
+    }
+  };
+
   const handleScrollToBillingInfo = () => {
     const element = document.getElementById("billing-info-section");
     if (element) {
@@ -416,21 +507,41 @@ function CheckoutPage() {
           <PlanCard
             packageName={selectedPlan.package_name}
             planType={selectedPlan.type}
-            currency={selectedPlan.currency}
-            basePrice={basePlanPrice}
+            currency={isPlatform ? localCurrency : selectedPlan.currency}
+            basePrice={isPlatform ? (localPlanMinor ?? 0) / 100 : basePlanPrice}
             billingCycle={billingCycle}
             setBillingCycle={setBillingCycle}
-            yearlySavings={yearlySavings}
+            yearlySavings={isPlatform ? null : yearlySavings}
             selectedPlan={selectedPlan}
-            yearlyDiscount={selectedPlan.yearly_discount}
+            yearlyDiscount={isPlatform ? null : selectedPlan.yearly_discount}
           />
 
-          <AddOnsSection
-            addOns={availableAddOns}
-            selectedAddOns={selectedAddOns}
-            billingCycle={billingCycle}
-            onUpdateQuantity={updateAddOnQuantity}
-          />
+          {isPlatform ? (
+            <AddOnsSection
+              addOns={platformAddOns}
+              selectedAddOns={selectedAddOns}
+              billingCycle={billingCycle}
+              onUpdateQuantity={updateAddOnQuantity}
+              currency={localCurrency}
+              priceFor={(addOnId) => {
+                const entry = platformAddOns.find((a) => a.addOnId === addOnId);
+                const minor = catalogPriceMinor(
+                  entry?.addOn.catalogPrices,
+                  gatewayProvider,
+                  localCurrency,
+                  cycleKey,
+                );
+                return minor === null ? null : minor / 100;
+              }}
+            />
+          ) : (
+            <AddOnsSection
+              addOns={availableAddOns}
+              selectedAddOns={selectedAddOns}
+              billingCycle={billingCycle}
+              onUpdateQuantity={updateAddOnQuantity}
+            />
+          )}
 
           <div
             id="billing-info-section"
@@ -446,39 +557,64 @@ function CheckoutPage() {
             />
           </div>
 
-          <PaymentMethodSelector
-            paymentMethods={paymentMethods}
-            selectedPaymentMethodId={selectedPaymentMethodId}
-            onSelectPaymentMethod={setSelectedPaymentMethodId}
-            onManageCards={() => setIsModalOpen(true)}
-            orgId={orgId}
-          />
+          {isPlatform && billingOptions ? (
+            <PayFastPanel
+              displayName={billingOptions.displayName}
+              methods={billingOptions.methods}
+              phone={phone}
+              onPhoneChange={(value) => {
+                setPhone(value);
+                setPhoneError(null);
+              }}
+              phoneError={phoneError}
+            />
+          ) : (
+            <PaymentMethodSelector
+              paymentMethods={paymentMethods}
+              selectedPaymentMethodId={selectedPaymentMethodId}
+              onSelectPaymentMethod={setSelectedPaymentMethodId}
+              onManageCards={() => setIsModalOpen(true)}
+              orgId={orgId}
+            />
+          )}
         </div>
 
         <div className="lg:col-span-1 self-start sticky top-10 z-10">
-          <OrderSummary
-            country={watchFields.country}
-            isPaymentMethodAvailable={paymentMethods.length > 0}
-            packageName={selectedPlan.package_name}
-            currency={selectedPlan.currency}
-            billingCycle={billingCycle}
-            basePrice={basePlanPrice}
-            discountedBasePrice={discountedBasePrice}
-            yearlyPerMonth={yearlyPerMonth}
-            discount={discount}
-            yearlySavings={yearlySavings}
-            selectedAddOns={selectedAddOns}
-            availableAddOns={availableAddOns}
-            addOnsTotal={addOnsTotal}
-            totalPrice={totalPrice}
-            taxDetails={taxData}
-            isProcessing={isProcessing || isProcessingBuyNewPlan}
-            isCalculatingTax={isCalculatingTax}
-            canCheckout={!!selectedPaymentMethodId && !!stripePriceId}
-            onCheckout={handleSubmit(handleCheckout)}
-            onManageCards={() => setIsModalOpen(true)}
-            onAddBillingInfo={handleScrollToBillingInfo}
-          />
+          {isPlatform && billingOptions ? (
+            <PlatformOrderSummary
+              quote={platformQuote}
+              isQuoting={isQuoting}
+              quoteError={quoteError ? (quoteError as Error).message : null}
+              displayName={billingOptions.displayName}
+              isProcessing={isStartingCheckout}
+              canCheckout={!!watchFields.country && phone.trim().length > 0}
+              onCheckout={handleSubmit(handlePlatformCheckout)}
+            />
+          ) : (
+            <OrderSummary
+              country={watchFields.country}
+              isPaymentMethodAvailable={paymentMethods.length > 0}
+              packageName={selectedPlan.package_name}
+              currency={selectedPlan.currency}
+              billingCycle={billingCycle}
+              basePrice={basePlanPrice}
+              discountedBasePrice={discountedBasePrice}
+              yearlyPerMonth={yearlyPerMonth}
+              discount={discount}
+              yearlySavings={yearlySavings}
+              selectedAddOns={selectedAddOns}
+              availableAddOns={availableAddOns}
+              addOnsTotal={addOnsTotal}
+              totalPrice={totalPrice}
+              taxDetails={taxData}
+              isProcessing={isProcessing || isProcessingBuyNewPlan}
+              isCalculatingTax={isCalculatingTax}
+              canCheckout={!!selectedPaymentMethodId && !!stripePriceId}
+              onCheckout={handleSubmit(handleCheckout)}
+              onManageCards={() => setIsModalOpen(true)}
+              onAddBillingInfo={handleScrollToBillingInfo}
+            />
+          )}
         </div>
         {isModalOpen && (
           <StripeWrapper orgId={orgId} onClose={() => setIsModalOpen(false)} />

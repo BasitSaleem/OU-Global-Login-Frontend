@@ -14,6 +14,7 @@ import {
   fetchInvoiceBreakdown,
 } from "@/apiHooks.ts/invoice/inovice.api";
 import { formatDate } from "@/utils/helpers";
+import { currencyPrefix } from "@/utils/money";
 
 interface OrgInvoiceItemProps {
   invoice: Invoice;
@@ -31,6 +32,9 @@ const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
     invoice,
     invoice.subscription?.billing_cycle,
   );
+
+  // "$" for USD invoices (unchanged), "PKR " etc. for local-gateway invoices.
+  const sym = currencyPrefix(invoice.currency).replace("$ ", "$");
 
   // Generate the PDF on click using the authoritative Stripe breakdown (falls
   // back to legacy calc inside InvoicePDF when the breakdown is unavailable).
@@ -95,7 +99,8 @@ const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
         className="px-6 py-4 whitespace-nowrap text-sm cursor-pointer"
         onClick={() => onView(invoice)}
       >
-        ${originalSubtotal.toFixed(2)}
+        {sym}
+        {originalSubtotal.toFixed(2)}
       </td>
       <td
         className="px-6 py-4 whitespace-nowrap text-sm cursor-pointer"
@@ -104,16 +109,18 @@ const OrgInvoiceItem = ({ invoice, onView, orgName }: OrgInvoiceItemProps) => {
         {Number(discountPercent).toFixed(0)}%
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm">
-        $
+        {sym}
         {Number(
           invoice.payment?.subtotal ?? invoice.payment?.amount ?? 0,
         ).toFixed(2)}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm">
-        ${invoice.payment?.tax_amount || "0.00"}
+        {sym}
+        {invoice.payment?.tax_amount || "0.00"}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm">
-        ${Number(invoice.amount ?? 0).toFixed(2)}
+        {sym}
+        {Number(invoice.amount ?? 0).toFixed(2)}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm">
         <span

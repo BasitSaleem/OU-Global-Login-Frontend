@@ -55,9 +55,13 @@ const TOTAL_MOVE = CARD_WIDTH + GAP;
 const PlanSection = ({
   organization,
   loading,
+  localPricing,
 }: {
   organization?: OgOrganization;
   loading: boolean;
+  // Set when the org pays through a local gateway (PayFast): plan cards show
+  // that gateway's catalog prices instead of USD.
+  localPricing?: { provider: string; currency: string };
 }) => {
   const { data, isLoading, error } = useGetAllPlans();
 
@@ -370,6 +374,7 @@ const PlanSection = ({
                         }
                         subscriptionId={organization?.subscriptions?.[0]?.id}
                         billingCycle={billingCycle}
+                        localPricing={localPricing}
                       />
                     </motion.div>
                   ))}

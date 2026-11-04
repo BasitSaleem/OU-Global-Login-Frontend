@@ -2,6 +2,7 @@ import React from "react";
 import { Check, Zap } from "lucide-react";
 import { OiPlanType } from "@/apiHooks.ts/plans/plans.types";
 import RenderPackageFeature from "./RenderPackageFeature";
+import { currencyPrefix } from "@/utils/money";
 
 type BillingCycle = "monthly" | "yearly";
 
@@ -71,6 +72,7 @@ const BillingCycleToggle: React.FC<BillingCycleToggleProps> = ({
 const PlanCard: React.FC<PlanCardProps> = ({
   packageName,
   planType,
+  currency,
   basePrice,
   billingCycle,
   setBillingCycle,
@@ -98,7 +100,8 @@ const PlanCard: React.FC<PlanCardProps> = ({
         </div>
         <div className="text-right flex items-center ">
           <span className="text-xl font-bold text-primary">
-            {/* {currency} */}$ {basePrice.toFixed(2)}
+            {currencyPrefix(currency)}
+            {basePrice.toFixed(2)}
           </span>
           <span className="text-xs text-text block">
             /{billingCycle === "monthly" ? "mo" : "yr"}

@@ -1,3 +1,5 @@
+import type { CatalogPrice } from "@/utils/money";
+
 export type PlanFeatureType = [
   {
     feature_key: string;
@@ -233,6 +235,9 @@ export interface OiPlanType {
   member: any | null;
 
   packageAddOns: packageAddOnsType[];
+  // Per-gateway prices for local gateways (e.g. PayFast PKR). Stripe (USD)
+  // keeps using the price fields above.
+  catalogPrices?: CatalogPrice[];
 }
 
 export interface OgPlansResponse {
@@ -264,5 +269,6 @@ export interface packageAddOnsType {
     discounted_yearly_price: string | null;
     is_active: boolean;
     is_quantity_allowed: boolean;
+    catalogPrices?: CatalogPrice[];
   };
 }

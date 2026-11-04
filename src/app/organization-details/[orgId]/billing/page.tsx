@@ -20,6 +20,8 @@ import { AuthGuard } from "@/components/HOCs/auth-guard";
 import BillingAddOnsSection from "@/components/pages/OrganizationDetails/Billing/AddOnsSection";
 import CancelSubscriptionSection from "@/components/pages/OrganizationDetails/Billing/CancelSubscriptionSection";
 import SubscriptionPolicySection from "@/components/pages/OrganizationDetails/Billing/SubscriptionPolicySection";
+import PlatformBillingSection from "@/components/pages/OrganizationDetails/Billing/PlatformBillingSection";
+import { useBillingOptions } from "@/apiHooks.ts/billing/billingGateway.api";
 
 const OWNER_ORDER = ["OI", "OP", "OJ", "OM", "OA"];
 
@@ -33,6 +35,19 @@ function BillingPage() {
   } = useOrganizationDetails(orgId as string);
 
   const [selectedOwner, setSelectedOwner] = useState<OwnerKey>("inventory");
+
+  // Gateway for this org (billing country / live subscription). Redirect
+  // gateways (PayFast) price plans in their own currency.
+  const { data: billingOptions } = useBillingOptions(orgId as string);
+  const localPricing =
+    billingOptions?.flow === "redirect"
+      ? { provider: billingOptions.provider, currency: billingOptions.currency }
+      : undefined;
+  const latestSubscription = organization?.subscriptions?.[0];
+  const isPlatformBilled =
+    !!latestSubscription?.provider &&
+    latestSubscription.provider !== "STRIPE" &&
+    latestSubscription.status !== "CANCELLED";
 
   // Keep the selected product valid for THIS org: default to the first product
   // the org actually has (in OWNER_ORDER), and correct the selection if it's not
@@ -78,9 +93,28 @@ function BillingPage() {
 
         {selectedOwner === "pulse" ? (
           <OpBillingSection orgId={orgId as string} />
+        ) : isPlatformBilled ? (
+          // Billed by our own engine (PayFast): no saved cards, no Stripe
+          // schedules; renewals are paid per period from this page.
+          <>
+            <PlanSection
+              organization={organization}
+              loading={isLoading}
+              localPricing={localPricing}
+            />
+            <PlatformBillingSection
+              orgId={orgId as string}
+              organization={organization}
+            />
+            <InvoicesSection organization={organization} loading={isLoading} />
+          </>
         ) : (
           <>
-            <PlanSection organization={organization} loading={isLoading} />
+            <PlanSection
+              organization={organization}
+              loading={isLoading}
+              localPricing={localPricing}
+            />
             <CancelSubscriptionSection
               loading={isLoading}
               organization={organization}

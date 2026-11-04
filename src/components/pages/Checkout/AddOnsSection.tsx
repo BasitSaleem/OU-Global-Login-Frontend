@@ -1,6 +1,7 @@
 import React from "react";
 import { Check, Minus, Plus, Puzzle, X } from "lucide-react";
 import { packageAddOnsType } from "@/apiHooks.ts/plans/plans.types";
+import { currencyPrefix } from "@/utils/money";
 
 type BillingCycle = "monthly" | "yearly";
 
@@ -9,6 +10,10 @@ interface AddOnsSectionProps {
   selectedAddOns: Record<string, number>; // addOnId -> quantity
   billingCycle: BillingCycle;
   onUpdateQuantity: (addOnId: string, quantity: number) => void;
+  // Local gateways (PayFast): show catalog prices in their currency instead
+  // of the USD add-on prices.
+  currency?: string;
+  priceFor?: (addOnId: string) => number | null;
 }
 
 const AddOnsSection: React.FC<AddOnsSectionProps> = ({
@@ -16,6 +21,8 @@ const AddOnsSection: React.FC<AddOnsSectionProps> = ({
   selectedAddOns,
   billingCycle,
   onUpdateQuantity,
+  currency,
+  priceFor,
 }) => {
   return (
     <div className="bg-bg-secondary border rounded-xl p-6">
@@ -43,8 +50,9 @@ const AddOnsSection: React.FC<AddOnsSectionProps> = ({
             const addOn = entry.addOn;
             const quantity = selectedAddOns[entry.addOnId] || 0;
             const isSelected = quantity > 0;
-            const addOnPrice =
-              billingCycle === "monthly"
+            const addOnPrice = priceFor
+              ? (priceFor(entry.addOnId) ?? 0)
+              : billingCycle === "monthly"
                 ? parseFloat(addOn.monthly_price || "0")
                 : parseFloat(addOn.yearly_price || "0");
 
@@ -125,7 +133,7 @@ const AddOnsSection: React.FC<AddOnsSectionProps> = ({
                 {/* Price */}
                 <div className="text-right shrink-0 flex items-center ">
                   <span className="text-sm font-semibold text-primary">
-                    {/* {addOn.currency} */}$
+                    {priceFor ? currencyPrefix(currency) : "$"}
                     {(addOnPrice * (quantity || 1)).toFixed(2)}
                   </span>
                   <span className="text-xs text-text block">

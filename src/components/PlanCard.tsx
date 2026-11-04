@@ -7,6 +7,7 @@ import {
   formatFeature,
 } from "./pages/Checkout/RenderPackageFeature";
 import { getPlanTextColor, returnPackageName } from "@/utils/package-utils";
+import { catalogPriceMinor } from "@/utils/money";
 
 interface PlanCardProps {
   plan: OiPlanType;
@@ -15,6 +16,8 @@ interface PlanCardProps {
   className?: string;
   subscriptionId?: string;
   billingCycle: "monthly" | "yearly";
+  // Local gateway pricing (PayFast PKR) instead of the USD plan prices.
+  localPricing?: { provider: string; currency: string };
 }
 
 const PlanCard: React.FC<PlanCardProps> = ({
@@ -23,6 +26,7 @@ const PlanCard: React.FC<PlanCardProps> = ({
   subscriptionStatus,
   className = "",
   billingCycle,
+  localPricing,
 }) => {
   const { orgId } = useParams();
   const router = useRouter();
@@ -43,6 +47,17 @@ const PlanCard: React.FC<PlanCardProps> = ({
   const buttonColor = plan.package_name.toUpperCase().includes("ENTERPRISE")
     ? "bg-[#5588DF]"
     : "bg-[#1AD1B9]";
+
+  // Per-month price in the local currency (yearly shown as a monthly average).
+  const localMinor = localPricing
+    ? catalogPriceMinor(
+        plan.catalogPrices,
+        localPricing.provider,
+        localPricing.currency,
+        billingCycle === "monthly" ? "MONTHLY" : "YEARLY",
+      )
+    : null;
+  const unavailableLocally = !!localPricing && localMinor === null;
 
   return (
     <div
@@ -96,17 +111,28 @@ const PlanCard: React.FC<PlanCardProps> = ({
             isEnterprise,
           })}`}
         >
-          $
-          {billingCycle === "monthly"
-            ? Number(plan.monthly_price).toFixed(0)
-            : (Number(plan.discounted_yearly_price) / 12).toFixed(0) ||
-            plan.yearly_price}
+          {localPricing
+            ? localMinor === null
+              ? "--"
+              : `${localPricing.currency} ${Math.round(
+                  (billingCycle === "monthly" ? localMinor : localMinor / 12) / 100,
+                ).toLocaleString("en-US")}`
+            : `$${
+                billingCycle === "monthly"
+                  ? Number(plan.monthly_price).toFixed(0)
+                  : (Number(plan.discounted_yearly_price) / 12).toFixed(0) ||
+                    plan.yearly_price
+              }`}
         </span>
         <span className="text-text font-medium text-sm">/month</span>
       </div>
+      {unavailableLocally && (
+        <p className="text-xs text-text-secondary -mt-3 mb-4">Not yet available in {localPricing!.currency}</p>
+      )}
 
       <button
-        className={`w-full py-2.5 rounded-xl text-white font-bold text-sm mb-5 transition-opacity cursor-pointer hover:opacity-90 ${buttonColor}`}
+        className={`w-full py-2.5 rounded-xl text-white font-bold text-sm mb-5 transition-opacity cursor-pointer hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed ${buttonColor}`}
+        disabled={unavailableLocally && !(isCurrentPlan && subscriptionStatus !== "CANCELLED")}
         onClick={(e) => {
           e.stopPropagation();
           if (isCurrentPlan && subscriptionStatus !== "CANCELLED") return;

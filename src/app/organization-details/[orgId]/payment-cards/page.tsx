@@ -44,6 +44,11 @@ const PaymentCardsPage = () => {
   const { orgId } = useParams<{ orgId: string }>();
   const { data, isLoading, error } = useGetPaymentMethods(orgId as string);
   const { data: organization } = useOrganizationDetails(orgId as string);
+  const latestSubscription = organization?.subscriptions?.[0];
+  const isPlatformBilled =
+    !!latestSubscription?.provider &&
+    latestSubscription.provider !== "STRIPE" &&
+    latestSubscription.status !== "CANCELLED";
 
   // Same product-switcher behaviour as the Billing page: only offer the
   // products this org actually has, and keep the selection valid.
@@ -130,6 +135,17 @@ const PaymentCardsPage = () => {
             title="Owners Pulse Payment Cards"
             message="To manage your payment methods, please navigate to your Owners Pulse account."
           />
+        ) : isPlatformBilled ? (
+          // PayFast-billed plans have no stored cards: the customer picks a
+          // card / wallet / bank account on PayFast's page each period.
+          <div className="border rounded-lg p-6 text-sm">
+            <h2 className="font-semibold mb-1">No saved cards needed</h2>
+            <p className="text-text">
+              Your plan is paid through PayFast. Each billing period you choose a card, JazzCash,
+              Easypaisa or bank account on PayFast&apos;s secure page, so no payment details are
+              stored here.
+            </p>
+          </div>
         ) : (
           <>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
